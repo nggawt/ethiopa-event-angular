@@ -1,0 +1,23 @@
+<app-blog-template (itemsPost)="blog($event)" [displayNavs]="userPromise"><!-- *ngIf="user$ | async as user" -->
+    
+  <form *ngIf="userPromise" class="p-3 border rounded" [formGroup]="createPost" (ngSubmit)="onSubmit()">
+      <h2 class="h5 d-inline">
+        צור פוסט.
+      </h2>
+      <div class="form-group">
+        <label for="title" class="form-control-label">
+          נושא:
+        </label>
+        <input class="form-control" formControlName="title" type="text">
+      </div>
+      <div class="form-group">
+        <label for="subject" class="form-control-label">
+          תוכן:
+        </label>
+        <textarea class="form-control" formControlName="body" type="text" rows="8"></textarea>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-success btn-sm" type="submit">שלח</button>
+     </div>
+    </form>
+  </app-blog-template>

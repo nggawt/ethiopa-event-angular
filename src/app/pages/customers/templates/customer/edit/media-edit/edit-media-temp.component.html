@@ -1,0 +1,213 @@
+<div class="row" [formGroup]="addCostumerForm">
+    <div class="col-sm-12">
+      <div class="h-100 p-3">
+        <!-- Chose loggo -->
+        <p class="pb-2 m-0">לוגו החברה</p>
+        <div class="form-group border bg-white clearfix">
+          <span class="py-2 px-2 m-0 float-right">
+            בחר קובץ...
+          </span>
+          <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="loggo">
+            <span>
+              החלף לוגו
+              <i class="fa fa-search text-success"></i>
+            </span>
+          </label>
+          <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required (change)="selectedFiles($event,'loggo')"
+            #loggoFIle />
+        </div>
+
+        <div class="border bg-dark d-flex-row" #loggo>
+
+
+        </div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galUpdate(loggoFIle, 'loggo')">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                update
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galReset(loggo, loggoFIle)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galDefault('loggo')">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <!-- messages -->
+        <div *ngIf="messages && messages['loggo']" class="bg-light p-1 ml-1">
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['loggo']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['loggo'] || gal['fileSize'] || gal['fileType'] || gal['fileExist'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['loggo'] || gal['fileSize'] || gal['fileExist'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen'] }} </b>
+              </p>
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b>
+              </p>
+
+              <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
+                <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }}
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p class="pb-2 m-0">סרטון תדמיתי</p>
+        <div class="form-group border bg-white clearfix">
+
+
+          <span class="py-2 px-2 m-0 float-right">
+            בחר קובץ...
+          </span>
+          <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="video">
+            <span>
+              הוסף סרטון
+              <i class="fa fa-search text-success"></i>
+            </span>
+          </label>
+
+          <input type="file" id="video" class="video" style="display: none;" accept="video/*" (change)="selectedFiles($event,'video')"
+            required #vidFile />
+        </div>
+
+        <div class="border border-success bg-dark d-flex-row" #video>
+
+        </div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galUpdate(vidFile, 'video')">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                update
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galReset(video, vidFile)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galDefault('video')">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <!-- display video messages from server -->
+        <div *ngIf="messages && messages['video']" class="bg-light p-1 ml-1">
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['video']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['video'] || gal['fileSize'] || gal['fileType'] || gal['fileExist'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['video'] || gal['fileSize'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen'] || gal['fileExist'] }} </b>
+              </p>
+
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b>
+              </p>
+
+              <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
+                <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }}
+              </p>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- gallery -->
+        <p class="pb-2 m-0">גלרית תמונות</p>
+        <div class="form-group bg-white border clearfix">
+
+          <span class="py-2 px-2 m-0 float-right">
+            בחר קובץ...
+          </span>
+          <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="gallery">
+            <span>
+              הוסף תמונות
+              <i class="fa fa-search text-success"></i>
+            </span>
+          </label>
+          <input type="file" id="gallery" class="gallery" style="display: none;" accept="image/*" required multiple
+            (change)="selectedFiles($event,'gallery')" #galFile />
+        </div>
+        <div class="border border-success bg-dark d-flex-row" #gall>
+
+        </div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galUpdate(galFile, 'gallery')">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                update
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galReset(gall, galFile) ">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galDefault('gallery')">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <!-- display gallery messages -->
+        <div *ngIf="messages && messages['gallery']" class="bg-light p-1 ml-1">
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['gallery']" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['gallery'] || gal['fileSize'] || gal['fileType'] || gal['fileExist'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['gallery'] || gal['fileSize'] || gal['fileExist'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen'] }} </b>
+              </p>
+
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['image'] }}
+              </p>
+              <p *ngIf="gal['min-files']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['min-files'] }}
+              </p>
+
+              <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
+                <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }}
+              </p>
+            </li>
+          </ul>
+        </div>
+        <!-- display messages gallery from claint -->
+        <div *ngIf="messages && messages['files']" class="bg-light p-1 ml-1">
+          <p *ngFor="let gal of messages['files']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="gal['fileSize']">
+              <b [ngClass]="{'text-danger':gal['fileSize']}">{{ gal['fileSize'] }} </b>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>

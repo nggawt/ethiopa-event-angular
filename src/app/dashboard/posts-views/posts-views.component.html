@@ -1,0 +1,168 @@
+<ng-template #default>
+  Loading...
+</ng-template>
+<div class="text-right" *ngIf="(itemsResources$  | async )?.articles as articles">
+  
+  <div class="clearfix">
+    <h5 class="shadow-sm py-2 text-black-50 h2">
+      <i class="fa fa-message text-secondary"></i>
+      מאמרים\פוסטים
+      <span class="btn btn-success btn-sm float-left m-1">צור מאמר\פוסט חדש</span>
+    </h5>
+  </div>
+
+  <div *ngIf="articles && articles.pending.length">
+    <app-pending [itemsLists]="articles"></app-pending>
+  </div>
+  <ng-container *ngTemplateOutlet="tempType; context:{elem: articles}"></ng-container>
+</div>
+
+
+<ng-template #tableArticles let-resource="elem">
+
+  <div class="table-responsive">
+    <table class="table">
+      <ng-container [ngTemplateOutlet]="articlesTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
+    </table>
+  </div>
+
+  <div class="text-center clearfix py-3">
+    <pagination-template #p="paginationApi" [id]="resource.config.id"
+      (pageChange)="resource.config.currentPage = $event">
+
+      <div class="custom-pagination float-right">
+        <div class="pagination-previous" [class.disabled]="p.isFirstPage()">
+          <i *ngIf="!p.isFirstPage()" (click)="p.previous()" class="fa fa-angle-double-right"></i>
+        </div>
+        <div class="page-number border" *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
+          <span (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</span>
+          <div *ngIf="p.getCurrent() === page.value">
+            <span>{{ page.label }}</span>
+          </div>
+        </div>
+        <div class="pagination-next" [class.disabled]="p.isLastPage()">
+          <i *ngIf="!p.isLastPage()" (click)="p.next()" class="fa fa-angle-double-left"></i>
+        </div>
+      </div>
+    </pagination-template>
+  </div>
+</ng-template>
+
+<!-- articles Table -->
+<ng-template #articlesTable let-articlesData="res">
+
+  <thead class="thead-dark text-right">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">שם</th>
+      <!-- <th scope="col">אימייל</th> -->
+      <th scope="col">נושא\כותרת</th>
+      <th scope="col">תוכן</th>
+      <th scope="col">פורסם בתאריך</th>
+      <!-- <th scope="col">יצירת האירוע</th> -->
+      <!-- <th scope="col">עידכון האירוע</th> -->
+      <th scope="col">פרסם</th>
+      <th><span class="border-warning">עדכן</span></th>
+      <th><span class="border-warning">ערוך</span></th>
+    </tr>
+  </thead>
+  <tbody *ngIf="articlesData" class="text-right">
+    <tr *ngFor="let article of articlesData.data | paginate: articlesData.config; let idx = index">
+      <th scope="row">{{article.id}}</th>
+      <td>{{article.name}}</td>
+      <td>{{article.title}} </td>
+      <td>
+        <p [title]="article.body">
+          {{article.body.length > 15? article.body.slice(0, 15)+"...": article.body}}
+        </p>
+        <ng-container
+          *ngTemplateOutlet="viewOrEdit; context:{elem: article, input: 'body', inputId: 'articlesbody'+ article.id+idx}">
+        </ng-container>
+      </td>
+      <td>
+        {{article.date | dateHebraw:'full'}}
+      </td>
+      <td>
+        {{article.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
+        <ng-container *ngTemplateOutlet="checkBox; context:{elem: article}"></ng-container>
+      </td>
+      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
+      <td><span class="btn btn-outline-danger btn-sm" [routerLink]="article.id+'/edit'">ערוך</span></td><!-- (click)="initForm(article, articlesForm)" -->
+    </tr>
+  </tbody>
+</ng-template>
+
+<ng-template #checkBox let-itemObj="elem">
+  <div class="custom-control custom-checkbox">
+    <input [id]="itemObj.name+itemObj.id" class="custom-control-input" type="checkbox" [checked]="itemObj.confirmed">
+
+    <label [for]="itemObj.name+itemObj.id" class="custom-control-label">
+      {{ itemObj.confirmed? "סרב": "אשר" }}
+    </label>
+  </div>
+</ng-template>
+
+<ng-template #viewOrEdit let-itemObj="elem" let-inputType="input" let-inputId="inputId">
+
+  <label [for]="inputId" class="w-100 col-form-label">
+
+    <a class="text-primary float-right link" (click)="editIem(inputId)">
+      {{ itemObj[inputType].trim().length > 15? 'ערוך או הצג תוכן': 'ערוך' }}
+    </a>
+  </label>
+  <textarea class="form-control text-break hide" name="body" [id]="inputId">
+          {{ itemObj[inputType].trim() }}
+    </textarea>
+</ng-template>
+
+<ng-template #articlesForm>
+
+  <form class="form-row p-3 border rounded" [formGroup]="formGr" (ngSubmit)="onSubmit()">
+    <div class="form-group col-sm-12">
+      <h5 class="shadow-sm py-2 text-black-50 h4">
+
+        <i class="fa fa-message text-secondary"></i>
+        ערוך מאמר\פוסט
+      </h5>
+    </div>
+    <div class="form-group col-md-6">
+      <label for="name" class="form-control-label">
+        שם:
+      </label>
+      <input class="form-control" formControlName="name" type="text">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="date" class="form-control-label">
+        תאריך:
+      </label>
+      <input class="form-control" id="date" formControlName="date" type="text">
+    </div>
+    <div class="form-group col-md-12">
+      <label for="title" class="form-control-label">
+        נושא:
+      </label>
+      <input class="form-control" id="title" formControlName="title" type="title">
+    </div>
+    <div class="form-group col-md-12">
+      <label for="body" class="form-control-label">
+        תיאור\הודעה:
+      </label>
+      <textarea class="form-control" id="body" formControlName="body" type="text" rows="8"></textarea>
+    </div>
+
+    <div class="form-group col-2 custom-control custom-checkbox">
+      <input [id]="confirmed" class="custom-control-input" type="checkbox" [checked]="f.confirmed.value">
+
+      <label [for]="confirmed" class="custom-control-label">
+        סטטוס:
+        {{ f.confirmed.value? "סרב": "אשר" }}
+      </label>
+    </div>
+    <div class="form-group col-sm-12 clearfix">
+      <a class="btn btn-link" (click)="initForm(false, tableArticles)">
+        חזור
+      </a>
+      <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,21 @@
+/* 
+green    #47BD35;
+yellow   #F6DC2F;
+red      #F02B2B;
+*/
+
+aside nav li.nav-item {}
+
+ul li.active {
+    /* border-bottom: 2px solid #F6DC2F; */
+}
+
+header ul.navbar-nav li:hover {
+    /* color: #47BD35; */
+    /* background: #F6DC2F; */
+}
+
+ul.navbar-nav li:hover> a {
+    color: #47BD35;
+    /* color: #F6DC2F; */
+}

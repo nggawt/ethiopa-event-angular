@@ -1,0 +1,87 @@
+<hr class="d-sm-none">
+<div *ngIf="posts$ | async as posts" class="container-fluid">
+
+  <div *ngIf="displayNavs" class="row text-right bg-light">
+
+    <div  class="col-sm-12 col-md-3">
+        <div class="shadow-sm mb-3 py-1 rounded">
+          <h5 class="text-black-50 h2">
+
+            <i class="fa fa-archive text-secondary"></i>
+            ארכיון
+          </h5>
+        </div>
+        <ol class="bg-info rounded list-unstyled text-secondary d-flex bd-highlight flex-wrap d-md-block">
+          <li *ngFor="let post of posts; let idx = index">
+            <a href="#">{{ post.date | dateHebraw:'month' }} {{ post.date | dateHebraw:'year' }}</a>
+          </li>
+          <div class="dropdown-divider"></div>
+          <li class="flex-fill bd-highlight">
+            <h5 class="text-black-50 mr-3">
+                <!-- <i class="fa fa-link text-secondary"></i> -->
+                <span class="glyphicons glyphicons-link"></span>
+                קישורים חיצונים
+              </h5>
+            <ol class="list-unstyled d-flex align-content-start flex-wrap d-md-block">
+              <li class="flex-fill bd-highlight">
+                <a href="#">GitHub</a>
+              </li>
+              <li class="flex-fill bd-highlight">
+                <a href="#">Twitter</a>
+              </li>
+              <li class="flex-fill bd-highlight">
+                <a href="#">Facebook</a>
+              </li>
+            </ol>
+          </li>
+
+          <!-- <li class="flex-fill bd-highlight">
+            <a href="#">מרץ 2018</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">פברואר 2018</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">ינואר 2018</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">דצמבר 2017</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">נובמבר 2017</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">אוקטובר 2017</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">ספטמבר 2017</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">אוגוסט 2017</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">יולי 2018</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">יוני 2018</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">מאי 2018</a>
+          </li>
+          <li class="flex-fill bd-highlight">
+            <a href="#">מרץ 2018</a>
+          </li> -->
+        </ol>
+    </div>
+    <!-- <hr class="d-flex flex-sm-row"> -->
+
+    <div class="col-sm-12 col-md-9 blog-main">
+      <div class="shadow-sm mb-3 py-1 rounded-info">
+        <h2 class="mr-2">בלוג
+          <span class="text-danger">אתיופיה אירועים</span>
+        </h2>
+      </div>
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

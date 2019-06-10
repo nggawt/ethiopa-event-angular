@@ -1,0 +1,181 @@
+<router-outlet *ngIf="! path"></router-outlet>
+<hr class="d-sm-none">
+<div *ngIf="path" class="row text-right">
+    <div *ngIf="hallsProps | async as dataResources" class="col-sm-12 mb-3">
+        <h1 class="h2 py-2 pr-3 bg-light text-success rounded">
+            {{ dataResources[0].customer.businessType == 'halls-events'? " אולמות אירועים": (dataResources[0].customer.businessType == 'salons')? "סלון כלות": (dataResources[0].customer.businessType == 'hotels')? "בתי מלון וצימרים":(dataResources[0].customer.businessType
+            == 'photographers')? "צילום וידאו וסטילס": (dataResources[0].customer.businessType == 'djs')? "די-ג'י": (dataResources[0].customer.businessType == 'car-rents')? "השכרת רכב": (dataResources[0].customer.businessType == 'transports')?
+            "הסעות": (dataResources[0].customer.businessType == 'prints')? "בתי דפוס": (dataResources[0].customer.businessType == 'fireworks')? "זיקוקים ואטרקציות": (dataResources[0].customer.businessType == 'kyses')? "קייסים ורבנים": "מגוון
+            בעלי מקצוע מובילים בתחומם" }}
+        </h1>
+        <p class="h5 pr-3 pb-3 shadow-sm">
+            לקוחות יקרים, לפניכם מגוון בעלי מקצוע המובילים בתחומם לבחירתכם ,תתקשרו עכשיו לקבלת פרטים ויעוץ.
+            <span class="text-danger">
+                צוות אתיופיה אירועים.
+            </span>
+        </p>
+    </div>
+
+    <div class="col-sm-10 col-md-6 col-lg-6 col-xl-4 mb-3 d-flex flex-row align-items-stretch"
+        *ngFor="let hallsProp of (hallsProps | async); let idx = index">
+        <div class="border w-100 d-flex align-items-between flex-column">
+            <div class="py-2 mb-2 px-2 shadow-sm bg-light">
+                <div class="d-flex-column">
+                    <h5 class="p-2 m-0 bg-success rounded text-white">{{ hallsProp.customer.company }} {{ idx+1 }}</h5>
+                    <img style="max-height: 90px" src="{{ hallsProp.customer.loggo }}"
+                        alt="{{ hallsProp.customer.company }}" class="img-fluid p-2 mx-auto" />
+                </div>
+            </div>
+            <div class="mt-auto p-2 d-inline-block">
+                <div class="text-right">
+                    <h4 class="bg-succes text-success">
+                        {{ hallsProp.customer.title }}
+                    </h4>
+                    <p class="card-text p-1 d-block">
+                        {{ (hallsProp.customer.descriptions.length > 90)? hallsProp.customer.descriptions.replace(hallsProp.customer.descriptions.slice(hallsProp.customer.descriptions.slice(0, 120).lastIndexOf(',')), '...'):(hallsProp.customer.descriptions) }}
+                    </p>
+                    <a (click)="onSelectedLink(hallsProp.customer)" routerLink="{{ hallsProp.customer.id }}/about"
+                        class="text-info font-weight-bold">
+                        המשך לקרוא
+                        <i class="fa fa-angle-double-left"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- justify-content-center  (click)="contactModel('ee')"-->
+            <div class="card-footer mt-auto p-2 bd-highlight text-right">
+                <div class="text-center">
+                    <a class="btn btn-success btn-sm" data-toggle="modal" data-target=".bd-example-modal-lg1">
+                        <span class="text-right float-right">
+                            צור קשר
+                        </span>
+                        <br />
+                        <i class="material-icons btn btn-success btn-sm float-left">
+                            contact_phone
+                        </i>
+                    </a>
+                    <a class="btn btn-warning btn-sm" (click)="contactModel(hallsProp.customer)">
+                        <span class="text-right float-right">
+                            שלח הודעה
+                        </span>
+                        <br />
+                        <i class="material-icons btn-warning btn-sm float-left">
+                            email
+                        </i>
+                    </a>
+                    <a class="btn btn-danger btn-sm" routerLink="{{ hallsProp.customer.id }}"
+                        (click)="onSelectedLink(hallsProp.customer)">
+                        <span class="text-right float-right">
+                            עבור לעסק
+                        </span>
+                        <br />
+                        <i class="material-icons btn btn-danger btn-sm float-left">
+                            navigate_before
+                        </i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="customerMsgs" class="modal fade container" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg text-right">
+
+        <div class="modal-content border col-sm-10 mx-auto">
+            <app-contact *ngIf="customerMessage" [sendMessageTo]="customerMessage"></app-contact>
+        </div>
+    </div>
+</div>
+<!--Contact Modal -->
+<!-- form model -->
+<!-- 
+<div *ngIf="path" class="modal fade bd-example-modal-lg1" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+
+        <div class="border-danger modal-content col-sm-6 mx-auto text-right">
+            <button type="button" class="close float-left" data-dismiss="modal" aria-label="Close">
+                <span class="float-left" aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="text-success">ארמונות לב המחודשים</h5>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 border-bottom p-2">
+                        <span class="font-weight-bold text-dark rounded p-1">איש קשר:</span> הנהלה
+                    </div>
+                    <div class="col-sm-12 border-bottom p-2">
+                        <span class="font-weight-bold text-dark rounded p-1">טלפון/פלאפון:</span> 08-6640450 או
+                        08-664042
+                    </div>
+                    <div class="col-sm-12 border-bottom p-2">
+                        <span class="font-weight-bold text-dark rounded p-1">כתובת:</span> אשקלון, ההסתדרות 40 (קניון לב
+                        אשקלון)
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2">
+                <a class="btn btn-danger btn-sm float-left text-white" data-dismiss="modal">סגור</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div *ngIf="path" class="modal fade bd-example-modal-lg container" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg row">
+        <div class="modal-content col-sm-8 mx-auto text-right">
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span class="float-left" aria-hidden="true">&times;</span>
+            </button>
+            <div class="p-3">
+                <h2 class="text-right text-success">שלח הודעה</h2>
+                <p>
+                    לקוחות יקרים, מלאו את הפרטים בשדות הבאים ונחזור אליכם תוך זמן קצר
+                    <span class="text-danger">
+
+                        צוות אתיופיה אירועים.
+                    </span>
+                </p>
+            </div>
+
+            <hr>
+            <form class="p-3">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="שם מלא">
+                </div>
+                <div class="form-group">
+                    <input type="city" class="form-control" placeholder="עיר מגורים">
+
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" placeholder="אימייל">
+                </div>
+                <div class="form-group">
+
+                    <select id="rigion" class="rigion">
+                        <option selected>אזור</option>
+                        <option value="1">צפון</option>
+                        <option value="2">מרכז והשפלה</option>
+                        <option value="3">דרום</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="tel" class="form-control" id="phone" placeholder="טלפון/פלאפון">
+                </div>
+
+                <div class="form-group">
+                    <textarea class="form-control" id="textarea" rows="3" placeholder="הוסף הודעה"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fa fa-envelope"></i>
+                    שלח</button>
+                <button type="button" class="btn btn-danger btn-sm float-left" data-dismiss="modal">בטל וסגור</button>
+            </form>
+        </div>
+    </div>
+</div>
+ -->

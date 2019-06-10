@@ -1,0 +1,36 @@
+<ng-template  #clickedMethods let-param="param">
+        <div class="my-2">
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(param)">
+          <span>
+            עדכן
+            <i class="material-icons text-success">
+              update
+            </i>
+          </span>
+        </a>
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(param)">
+          <span>
+            נקה
+            <i class="material-icons text-warning">
+              clear
+            </i>
+          </span>
+        </a>
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(param)">
+          <span>
+            מקור
+            <i class="material-icons text-primary">
+              redo
+            </i>
+          </span>
+        </a>
+      </div>
+      <div *ngIf="messages && messages['param']" class="bg-light p-1 ml-1">
+          <p *ngFor="let message of messages['param']" class="bg-light p-1 m-1 d-inline-block">
+              
+            <span *ngIf="message['param']">
+                <b [ngClass]="'text-'+message['type']"> {{ message['param']  }} </b> 
+            </span>
+          </p>
+      </div>
+  </ng-template>

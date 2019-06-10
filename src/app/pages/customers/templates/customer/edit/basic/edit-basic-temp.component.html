@@ -1,0 +1,387 @@
+
+<div [formGroup]="addCostumerForm" class="row">
+    <div class="col-sm-12">
+        <div class="col form-group py-2 my-0">
+          <label for="company">שם חברה</label>
+      
+          <div class="inputTypeNumber my-2">
+            <input value="{{ customer.company }}" class="col-11 px-1" type="text" name="company" id="company"
+              formControlName="company" required #company />
+      
+            <span class="validity float-left"></span>
+          </div>
+      
+          <div *ngIf="f.company.invalid && f.company.touched" class="invalid-feedback d-block">* שדה חובה</div>
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(company)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(company)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(company)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['company']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['company']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['company']">
+                    <b [ngClass]="'text-'+message['type']"> {{ message['company']  }} </b> 
+                </span>
+              </p>
+          </div>
+      </div>
+      
+        <div class="col form-group py-2 my-0">
+          <label for="contact">איש קשר</label>
+      
+          <div class="inputTypeNumber my-2">
+            <input value="{{ customer.contact }}" class="col-11 px-1" type="text" name="contact" id="contact"
+              formControlName="contact" required #contact />
+      
+            <span class="validity float-left"></span>
+          </div>
+          
+          <div *ngIf="f.contact.invalid && f.contact.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(contact)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(contact)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(contact)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['contact']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['contact']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['contact']">
+                    <b [ngClass]="'text-'+message['type']">{{ message['contact']  }} </b> 
+                </span>
+              </p>
+          </div>
+        </div>
+      
+        <div class="col form-group py-2 my-0">
+          <label for="tel">פלאפון/טלפון</label>
+      
+          <div class="inputTypeNumber my-2">
+            <input value="{{ customer.tel }}" type="tel" id="tel" name="tel" class="col-11 px-1" formControlName="tel" required #tel />
+      
+            <span class="validity float-left"></span>
+          </div>
+          <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* נא למלא שדה בתבנית המתאימה
+            לפאלפון/טלפון
+          </div>
+          
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(tel)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(tel)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(tel)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['tel']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['tel']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['tel']">
+                    <b [ngClass]="'text-'+message['type']">{{ message['tel']  }} </b> 
+                </span>
+              </p>
+          </div>
+        </div>
+      
+        <div class="col form-group py-2 my-0">
+          <label for="address">כתובת</label>
+      
+          <div class="inputTypeNumber my-2">
+            <input value="{{ customer.address }}" class="col-11 px-1" type="text" name="address" id="address"
+              formControlName="address" required #address />
+      
+            <span class="validity float-left"></span>
+          </div>
+          <div *ngIf="f.address.invalid && f.address.touched" class="invalid-feedback d-block">* שדה חובה</div>
+          
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(address)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(address)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(address)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['address']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['address']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['address']">
+                    <b [ngClass]="'text-'+message['type']">{{ message['address']  }} </b> 
+                </span>
+              </p>
+          </div>
+        </div>
+      
+        <div class="col form-group py-2 my-0">
+          <label for="email">אימייל</label>
+          <div class="inputTypeNumber my-2">
+            <input value="{{ customer.email }}" class="col-11 px-1" type="email" name="email" id="email" formControlName="email" required #email />
+      
+            <span [ngClass]="'validity float-left'"></span>
+          </div>
+          <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
+          
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(email)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(email)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(email)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['email']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['email']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['email']">
+                    <b [ngClass]="'text-'+message['type']">{{ message['email']  }} </b> 
+                </span>
+              </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- company title -->
+      
+      <div class="col-sm-12">
+        <div class="col-sm-12 form-group py-3">
+          <label for="title">תיאור או כותרת החברה</label>
+      
+          <div class="inputTypeNumber my-2 textarea">
+            <textarea value="{{ customer.title }}" class="col-11 px-1" type="text" name="title" id="title" formControlName="title" required minlength="12" #title>
+            </textarea>
+            <span class="validity float-left"></span>
+          </div>
+          <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
+          
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(title)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(title)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(title)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['title']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['title']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['title']">
+                    <b [ngClass]="'text-'+message['type']"> {{ message['title']  }} </b> 
+                </span>
+              </p>
+          </div>
+        </div>
+        <!-- END Company title -->
+        
+        <!-- about company -->
+        <div class="col-sm-12 form-group border p-3">
+      
+          <label for="descriptions">אודות החברה</label>
+          <textarea wrap="hard" value="{{ customer.descriptions | removeWhiteSpace  }}" class="w-100 form-control text-right note" (mouseenter)="textAreaAdjust($event)" (mouseleave)="textAreamouseleave($event)" type="text" name="descriptions"
+            id="descriptions" formControlName="descriptions" minlength="6" #descriptions>
+      
+          </textarea>
+          
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(descriptions)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(descriptions)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(descriptions)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['descriptions']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['descriptions']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['descriptions']">
+                    <b [ngClass]="'text-'+message['type']">
+                      {{ message['descriptions']  }} 
+                    </b> 
+                </span>
+              </p>
+          </div>
+        </div>
+        <!-- END About company -->
+
+        <!-- deals -->
+        <div class="col-sm-12 form-group py-3">
+          <label for="title">מבצעים*</label>
+      
+          <div class="inputTypeNumber my-2 textarea">
+            <textarea value="{{ customer.deals }}" class="col-11 px-1" type="text" name="deals" id="deals" formControlName="deals" required minlength="12" #deals>
+            </textarea>
+            <span class="validity float-left"></span>
+          </div>
+          <div *ngIf="f.deals.invalid && f.deals.touched" class="invalid-feedback d-block">* שדה חובה</div>
+          
+          <div class="my-2">
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(deals)">
+              <span>
+                עדכן
+                <i class="material-icons text-success">
+                  update
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(deals)">
+              <span>
+                נקה
+                <i class="material-icons text-warning">
+                  clear
+                </i>
+              </span>
+            </a>
+            <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(deals)">
+              <span>
+                מקור
+                <i class="material-icons text-primary">
+                  redo
+                </i>
+              </span>
+            </a>
+          </div>
+          <div *ngIf="messages && messages['deals']" class="bg-light p-1 ml-1">
+              <p *ngFor="let message of messages['deals']" class="bg-light p-1 m-1 d-inline-block">
+                 
+                <span *ngIf="message['deals']">
+                    <b [ngClass]="'text-'+message['type']"> {{ message['deals']  }} </b> 
+                </span>
+              </p>
+          </div>
+        </div>
+      <!-- END Deals -->
+      </div>
+</div>
+

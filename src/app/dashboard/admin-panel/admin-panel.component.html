@@ -1,0 +1,324 @@
+<!-- <main-dashboard (resourcesEmmiter)="getResources($event)"> -->
+  <div class="text-right">
+    <h5 class="shadow-sm py-2 text-black-50 h2">
+
+      <i class="fa fa-message text-secondary"></i>
+      עורך תוכן מהיר
+    </h5>
+  </div>
+  <form *ngIf="(itemsResources$ | async) as itemsResources"><!--  && itemsResources$['customers'] -->
+    <div *ngFor="let resource of itemsResources | keyvalue">
+      <!-- <ng-container *ngTemplateOutlet="resourceTamplate; context:{elem: resource}"></ng-container> -->
+      <hr>
+    </div>
+  </form>
+<!-- </main-dashboard> -->
+
+
+
+<ng-template #resourceTamplate let-resource="elem">
+
+  <table class="table text-right">
+    <ng-container
+      [ngTemplateOutlet]="resource.key == 'customers'? customersTable:resource.key == 'events'? eventsTable: resource.key == 'articles'? articlesTable: false"
+      [ngTemplateOutletContext]="{res:resource}">
+    </ng-container>
+  </table>
+
+  <div class="text-center clearfix">
+    <pagination-template #p="paginationApi" [id]="resource.value.config.id"
+      (pageChange)="resource.value.config.currentPage = $event">
+
+      <div class="custom-pagination float-right">
+        <div class="pagination-previous" [class.disabled]="p.isFirstPage()">
+          <i *ngIf="!p.isFirstPage()" (click)="p.previous()" class="fa fa-angle-double-right"></i>
+        </div>
+        <div class="page-number border" *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
+          <span (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</span>
+          <div *ngIf="p.getCurrent() === page.value">
+            <span>{{ page.label }}</span>
+          </div>
+        </div>
+        <div class="pagination-next" [class.disabled]="p.isLastPage()">
+          <i *ngIf="!p.isLastPage()" (click)="p.next()" class="fa fa-angle-double-left"></i>
+        </div>
+      </div>
+    </pagination-template>
+  </div>
+</ng-template>
+
+<!-- customers form -->
+<ng-template #customersTable let-customersData="res">
+  <caption class="text-right">
+    <h3 class="h4">
+      קליינטים
+    </h3>
+  </caption>
+  <thead class="thead-light text-right">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">שם</th>
+      <th scope="col">אימייל</th>
+      <th scope="col">כותרת\נושא</th>
+      <th scope="col">תוכן</th>
+      <th scope="col">פלאפון\טלפון</th>
+      <th scope="col">סוג העסק</th>
+      <th scope="col">שם העסק</th>
+      <!-- <th *ngIf="customer.deals" scope="col">מבצעים</th> -->
+      <th scope="col">פרסם</th>
+      <th><span class="border-warning">עדכן</span></th>
+      <th><span class="border-warning">עורך מתקדם</span></th>
+    </tr>
+  </thead>
+  <tbody class="text-right">
+    <tr class="form-group"
+      *ngFor="let customer of customersData.value.data | paginate: customersData.value.config; let idx = index">
+      <th scope="row">{{customer.id}}</th>
+      <td>{{customer.name}}</td>
+      <td>{{customer.email}}</td>
+      <td>
+        <label [for]="'customerstitle'+customer.id+idx" class="col-form-label word-break" [title]="customer.title">
+          {{customer.title}}
+
+        </label>
+        <input [id]="'customerstitle'+customer.id+idx" class="form-control" type="text">
+      </td>
+      <td>
+        <p [title]="customer.descriptions">
+          {{customer.descriptions.length > 15? customer.descriptions.slice(0, 15)+"...": customer.descriptions}}
+        </p>
+        <ng-container
+          *ngTemplateOutlet="viewOrEdit; context:{elem: customer, input: 'descriptions', inputId: 'customerdescriptions'+ customer.id+idx}">
+        </ng-container>
+      </td>
+      <td>
+        <label [for]="'customerstel'+customer.id+idx" class="col-form-label word-break" [title]="customer.tel">
+          {{customer.tel}}
+        </label>
+        <input [id]="'customerstel'+customer.id+idx" class="form-control" type="tel">
+      </td>
+      <td>{{customer.businessType}}</td>
+      <td>
+        <label [for]="'customerscompany'+customer.id+idx" class="col-form-label word-break" [title]="customer.company">
+          {{customer.company}}
+        </label>
+        <input [id]="'customerscompany'+customer.id+idx" class="form-control" type="text">
+      </td>
+      <!-- <td *ngIf="customer.deals">{{customer.deals}}</td> -->
+      <td>
+        {{customer.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
+        <ng-container *ngTemplateOutlet="checkBox; context:{elem: customer}"></ng-container>
+      </td>
+      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
+      <td><span class="btn btn-outline-danger btn-sm">עורך מתקדם</span></td>
+    </tr>
+  </tbody>
+</ng-template>
+
+<!-- אירועים -->
+<ng-template #eventsTable let-eventsData="res">
+
+  <caption class="text-right">
+    <h3 class="h4">
+      אירועים
+    </h3>
+  </caption>
+  <thead class="thead-dark text-right">
+    <tr>
+      <th scope="col">#</th>
+      <!-- <th scope="col">id </th> -->
+      <!-- <th scope="col">user_id</th> -->
+      <th scope="col">שם</th>
+      <!-- <th scope="col">אימייל</th> -->
+      <th scope="col">סוג האירוע</th>
+      <th scope="col">כתובת</th>
+      <th scope="col">תיאור\הודעה</th>
+      <th scope="col">תאריך</th>
+      <th scope="col">פלאפון\טלפון</th>
+      <th scope="col">מיקום</th>
+      <!-- <th scope="col">יצירת האירוע</th> -->
+      <th scope="col">סטטוס</th>
+      <th><span class="border-warning">עדכן</span></th>
+      <th><span class="border-warning">עורך מתקדם</span></th>
+    </tr>
+  </thead>
+  <tbody class="text-right">
+    <tr class="form-group"
+      *ngFor="let event of eventsData.value.data | paginate: eventsData.value.config; let idx = index">
+      <th scope="row">{{event.id}}</th>
+      <!-- <td>{{event.user_id}}</td> -->
+      <td>
+        <label [for]="'eventsname'+event.id+idx" class="col-form-label word-break text-left" [title]="event.name">
+          {{event.name.length > 10? event.name.split(" ")[0]: event.name}}
+        </label>
+        <input [id]="'eventsname'+event.id+idx" class="form-control" type="text">
+      </td>
+      <!-- <td>
+        <label dir="ltr" [for]="'eventsemail'+event.id+idx" class="col-form-label word-break text-left" [title]="event.email">
+            {{ event.email.length > 10? event.email.slice(0, (event.email.indexOf('@') + 2))+"...": event.email }}
+        </label>
+        <input [id]="'eventsemail'+event.id+idx" class="form-control" type="email">
+      </td> -->
+      <td>{{event.eventType | eventTypeToHeb}}</td>
+      <td>
+        {{event.address}}
+        <ng-container
+          *ngTemplateOutlet="viewOrEdit; context:{elem: event, input: 'address', inputId: 'eventsaddress'+ event.id+idx}">
+        </ng-container>
+      </td>
+      <td>
+        <p [title]="event.description">
+          {{event.description.length > 15? event.description.slice(0, 15)+"...": event.description}}
+        </p>
+        <ng-container
+          *ngTemplateOutlet="viewOrEdit; context:{elem: event, input: 'description', inputId: 'eventsdescription'+ event.id+idx}">
+        </ng-container>
+      </td>
+      <td>
+        <label [for]="'eventsdate'+event.id+idx" class="col-form-label word-break" [title]="event.date">
+          {{event.date | dateHebraw:'full'}}
+        </label>
+        <input [id]="'eventsdate'+event.id+idx" class="form-control" type="date">
+      </td>
+      <td>
+        <label [for]="'eventsphone'+event.id+idx" class="col-form-label word-break text-left" [title]="event.phone">
+          {{event.phone}}
+        </label>
+        <input [id]="'eventsphone'+event.id+idx" class="form-control" type="tel">
+      </td>
+      <td>{{event.location}}</td>
+      <!-- <td>{{event.created_at | dateHebraw:'full'}}</td> -->
+      <td>
+        {{event.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
+        <ng-container *ngTemplateOutlet="checkBox; context:{elem: event}"></ng-container>
+      </td>
+      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
+      <td><span class="btn btn-outline-danger btn-sm">עורך מתקדם</span></td>
+    </tr>
+  </tbody>
+</ng-template>
+
+<ng-template #articlesTable let-articlesData="res">
+
+  <caption class="text-right">
+    <h3 class="h4">
+      מאמרים ופוסטים
+    </h3>
+  </caption>
+
+  <thead class="thead-dark text-right">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">שם</th>
+      <!-- <th scope="col">אימייל</th> -->
+      <th scope="col">נושא\כותרת</th>
+      <th scope="col">תוכן</th>
+      <th scope="col">פורסם בתאריך</th>
+      <th scope="col">יצירת האירוע</th>
+      <!-- <th scope="col">עידכון האירוע</th> -->
+      <th scope="col">פרסם</th>
+      <th><span class="border-warning">עדכן</span></th>
+      <th><span class="border-warning">עורך מתקדם</span></th>
+    </tr>
+  </thead>
+  <tbody class="text-right">
+    <tr class="form-group"
+      *ngFor="let article of articlesData.value.data | paginate: articlesData.value.config; let idx = index">
+      <th scope="row">{{article.id}}</th>
+      <td>
+        <label [for]="'articlename'+article.id+idx" class="w-100 col-form-label">
+          {{article.name}}
+        </label>
+        <input [id]="'articlename'+article.id+idx" class="form-control" type="text">
+      </td>
+      <!-- <td class="text-wrap">{{article.email}}</td> -->
+      <td>
+        <label [for]="'articletitle'+article.id+idx" class="w-100 col-form-label">
+          {{article.title}}
+        </label>
+        <input [id]="'articletitle'+article.id+idx" class="form-control" type="text">
+      </td>
+      <td>
+        {{article.body.slice(0,20)+ "..."}}
+        <ng-container
+          *ngTemplateOutlet="viewOrEdit; context:{elem: article, input: 'body', inputId: 'articlebody'+article.id+idx}">
+        </ng-container>
+      </td>
+      <td>{{article.date | dateHebraw:'full'}}</td>
+      <td>{{article.created_at | dateHebraw:'full'}}</td>
+      <td>
+        {{article.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
+        <ng-container *ngTemplateOutlet="checkBox; context:{elem: article}"></ng-container>
+      </td>
+      <!-- <td>{{article.updated_at | dateHebraw:'full'}}</td> -->
+      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
+      <td><span class="btn btn-outline-danger btn-sm">עורך מתקדם</span></td>
+    </tr>
+  </tbody>
+</ng-template>
+
+<ng-template #checkBox let-itemObj="elem">
+  <div class="custom-control custom-checkbox">
+    <input [id]="itemObj.name+itemObj.id" class="custom-control-input" type="checkbox" [checked]="itemObj.confirmed">
+
+    <label [for]="itemObj.name+itemObj.id" class="custom-control-label">
+      {{ itemObj.confirmed? "סרב": "אשר" }}
+    </label>
+  </div>
+</ng-template>
+
+<ng-template #viewOrEdit let-itemObj="elem" let-inputType="input" let-inputId="inputId">
+
+  <label [for]="inputId" class="w-100 col-form-label">
+
+    <a class="text-primary float-right link" (click)="editIem(inputId)">
+      {{ itemObj[inputType].trim().length > 15? 'עדכן או הצג תוכן': 'עדכן' }}
+    </a>
+  </label>
+  <textarea class="form-control text-break hide" name="body" [id]="inputId">
+        {{ itemObj[inputType].trim() }}
+  </textarea>
+</ng-template>
+<!-- 
+<tr *ngFor="let article of resource.value.data | paginate: resource.value.config; let idx = index">
+    <th scope="row">{{ article.id }}</th>
+    <td *ngFor="let item of article | keyvalue">
+      <div *ngIf="item.key == 'name' || item.key == 'title' || 
+                  item.key == 'body' || item.key == 'confirmed' || 
+                  item.key == 'description' else default"
+        [ngClass]="{'custom-control custom-checkbox': (item.key == 'confirmed')}">
+
+        <label
+          *ngIf="item.key != 'confirmed' && item.key != 'body' && item.key != 'title' && item.key != 'description'"
+          [for]="resource.key+item.key+article.id+idx" class="col-form-label w-100">
+          {{ item.value }}
+        </label>
+        <label *ngIf="item.key == 'body' || item.key == 'title' || item.key == 'description'"
+          [for]="resource.key+item.key+article.id+idx" class="w-100 col-form-label">
+
+          <a class="text-primary float-right link" (click)="editIem(resource.key+item.key+article.id+idx)">
+            עדכן או הצג תוכן
+          </a>
+        </label>
+        <input
+          *ngIf="item.key != 'body' && item.key != 'confirmed' && item.key != 'title' && item.key != 'description'"
+          [id]="resource.key+item.key+article.id+idx" class="form-control" type="text">
+
+        <input *ngIf="item.key == 'confirmed'" [id]="resource.key+item.key+article.id+idx"
+          class="custom-control-input" type="checkbox" [checked]="item.value">
+
+        <label *ngIf="item.key == 'confirmed'" [for]="resource.key+item.key+article.id+idx"
+          class="custom-control-label">
+          {{ 'אשר הצגת תוכן לכל המשתמשים' }}
+        </label>
+        <textarea *ngIf="item.key == 'body' || item.key == 'title' || item.key == 'description'" 
+          class="form-control text-break hide" name="body" [id]="resource.key+item.key+article.id+idx">
+              {{ item.value.trim() }}
+          </textarea>
+      </div>
+      <ng-template #default>
+        <p class="w-25 text-wrap">{{ item.value }}</p>
+      </ng-template>
+    </td>
+    <td><span class="btn btn-outline-success btn-sm">עדכן</span></td>
+  </tr> -->

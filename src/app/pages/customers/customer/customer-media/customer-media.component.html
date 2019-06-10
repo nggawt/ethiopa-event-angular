@@ -1,0 +1,68 @@
+<div *ngIf="customer | async">
+  <div class="bg-success text-center text-white p-2 rounded">
+    <h2>גלריית {{ (customer | async).company }}</h2>
+    <div class="media-slider border border-success bg-dark">
+      <div id="meidia-carousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators p-0">
+          <li *ngFor="let gallery of galleries;let idx = index" data-target="#meidia-carousel" attr.data-slide-to="{{ idx }}"
+            [ngClass]="{ 'active': idx === 0 }"></li>
+
+        </ol>
+        <div class="carousel-inner">
+          <div *ngFor="let gallery of galleries;let ii = index" [ngClass]="{ 'carousel-item active': ii === 0,'carousel-item': i !== 0 }">
+            <img class="my-5 mx-0 px-0" style="height:240px" [src]="gallery" alt="{{ gallery | splitText:'/' | splitText:'.':0 }}" />
+          </div>
+        </div>
+
+        <a class="carousel-control-prev" href="#meidia-carousel" role="button" data-slide="next">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#meidia-carousel" role="button" data-slide="prev">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+  <hr>
+  <div class="bg-light text-right text-success p-2 rounded">
+    <h2 class="col-sm-12">בחר תמונות</h2>
+
+    <div class="border border-success bg-dark d-flex-row">
+
+      <img *ngFor="let gallery of galleries;let ii = index" [src]="gallery"
+      style="height:90px; cursor: pointer" class="m-1" alt="{{ gallery | splitText:'/' | splitText:'.':0 }}" 
+      (click)="galActiveItem(ii)" />
+    </div>
+
+  </div>
+  <hr>
+  <div class="bg-success text-center text-white p-2 rounded">
+    <h2 class="col-sm-12">סרטוני תדמית</h2>
+
+    <div *ngFor="let video of videos" class="col-sm-12 mh-25 border border-success bg-dark ">
+      <video id="vidPlayer" class="my-3"  controls=true  #vidPlayer (durationchange)="setSnapShut($event)">
+        <source type="video/mp4" [src]="video" />
+      </video>
+    </div>
+
+  </div>
+  <hr>
+  <div class="bg-light text-right text-success p-2 rounded">
+    <h2 class="col-sm-12">בחר סרטון</h2>
+
+      <div *ngFor="let vid of videos" class="col-sm-12 border border-success bg-dark">
+        <div id="canvasImage" class="m-1 d-inline-block bg-secondary" ><!-- (click)="playVideo('vidPlayer')" -->
+          <p class="mb-0 pb-0 text-center text-white"> 
+            {{ vid.split('video/')[1].split('.')[0] }}
+          </p>
+          <!-- <img id="canvasImage" alt="{{ vid.split('video/')[1].split('.')[0] }}" (click)="playVideo('vidPlayer')" /> -->
+          <!-- <i class="fa fa-film mr-1 position-relative mx-auto" style="font-size: 72px;"></i> -->
+        </div>
+      </div>
+      <!-- <canvas></canvas> -->
+  </div>
+</div>
+<!-- <img style="height:90px; cursor: pointer" class="m-1" *ngFor="let video of videos;let ii = index" [src]="video.video" alt="first-slide1" /> -->

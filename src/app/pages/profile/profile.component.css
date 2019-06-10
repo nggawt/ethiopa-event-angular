@@ -1,0 +1,337 @@
+/* profile */
+
+.list-group {
+    padding-left: 15px;
+}
+
+.list-group-item {
+    /* position: relative;
+    display: block;
+    padding: .75rem 1.25rem;
+    margin-bottom: -1px;
+    background-color: #fff; */
+    /* border: 1px solid rgba(0,0,0,.125); */
+    border: none;
+}
+
+.list-group-item.active {
+    background-color: none;
+}
+
+.list-group-item:first-child {
+    /* border-top-left-radius: .25rem; */
+    /* border-top-right-radius: .25rem; */
+    border: none;
+}
+
+.validity {
+    content: '✖';
+    color: #f00;
+    padding-left: 5px;
+}
+
+input.ng-valid+span:after,
+select.ng-valid+span:after,
+textarea.ng-valid+span:after,
+input:valid+small:after {
+    content: '✓';
+    color: #26b72b;
+    padding-left: 5px;
+}
+
+input.ng-invalid+span:after,
+select.ng-invalid+span:after,
+textarea.ng-invalid+span:after,
+input:invalid+small:after {
+    content: '✖';
+    color: #f00;
+    padding-left: 5px;
+}
+
+input:invalid+small:after {
+    position: relative;
+    content: '✖';
+    padding-left: 5px;
+}
+
+input:valid+small:after {
+    position: relative;
+    content: '✓';
+    padding-left: 5px;
+}
+
+small.validity {
+    font-size: 100%;
+}
+
+.inputTypeNumber {
+    height: calc(2.25rem + 2px);
+    padding: .375rem .25rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    position: relative;
+}
+
+.inputTypeNumber input,
+.inputTypeNumber select {
+    border: none;
+    outline: none;
+}
+
+.inputTypeNumber textarea {
+    border: none;
+    outline: none;
+    resize: none;
+    width: 100%;
+    height: 100%;
+}
+
+div.textarea {
+    min-height: 100px;
+}
+
+input:valid+span:after,
+select:valid+span:after,
+textarea:valid+span:after {
+    content: '✓';
+    color: #26b72b;
+    padding-left: 5px;
+}
+
+input:invalid+span:after,
+select:invalid+span:after,
+textarea:invalid+span:after {
+    content: '✖';
+    color: #f00;
+    padding-left: 5px;
+}
+
+textarea.note {
+    text-align: right;
+    text-indent: 0px;
+    /* color: #26b72b; */
+    /* word-break: break-all; */
+    /* overflow: hidden; */
+    white-space: wrap;
+    box-sizing: border-box;
+    min-height: 40%;
+    direction: rtl;
+    display: inline;
+    min-height: 30%;
+    line-height: 1.5;
+    padding: 15px 15px 30px;
+    border-radius: 3px;
+    border: 1px solid #F7E98D;
+    font: 13px Tahoma, cursive;
+    transition: box-shadow 0.5s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-smoothing: subpixel-antialiased;
+    background: linear-gradient(#F9EFAF, #F7E98D);
+    background: -o-linear-gradient(#F9EFAF, #F7E98D);
+    background: -ms-linear-gradient(#F9EFAF, #F7E98D);
+    background: -moz-linear-gradient(#F9EFAF, #F7E98D);
+    background: -webkit-linear-gradient(#F9EFAF, #F7E98D);
+}
+
+a {
+    cursor: pointer;
+}
+
+a.googleFont {
+    text-decoration: none;
+}
+
+.material-icons {
+    position: relative;
+    top: 5px;
+}
+
+
+/********Date peacker*********/
+
+div.datepickr-year div.dropdown-custom,
+div.datepickr-months div.dropdown-custom {
+    transform: none !important;
+}
+
+form {
+    width: 100%;
+    color: #1c94c4;
+}
+
+form div.input {
+    height: calc(2.25rem + 2px);
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+form div.input input {
+    border: none;
+    outline: none;
+    width: 90%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+}
+
+.formGroup {
+    width: 100%;
+}
+
+.datepickr-wrapper {
+    display: block;
+    /* position: relative; */
+    /* background: #C77405; */
+    width: 100%;
+    height: 100%;
+}
+
+.datepickr-calendar {
+    font-family: 'Trebuchet MS', Tahoma, Verdana, Arial, sans-serif;
+    font-size: 12px;
+    background-color: #eee;
+    color: #333;
+    border: 1px solid #ddd;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    padding: 2px;
+    display: none;
+    position: relative;
+    top: 100%;
+    right: 0;
+    /* z-index: 100; */
+}
+
+form div.open {
+    display: block;
+}
+
+form div.close {
+    display: none;
+}
+
+.forPage {
+    width: 100%;
+}
+
+.forPageDiv {
+    width: 100%;
+}
+
+.datepickr-calendar .datepickr-year,
+.datepickr-calendar .datepickr-months {
+    background-color: #f6af3a;
+    border: 1px solid #e78f08;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    color: #fff;
+    padding: 2px;
+    text-align: center;
+    font-size: 120%;
+}
+
+.datepickr-calendar .datepickr-prev-year,
+.datepickr-calendar .datepickr-next-year,
+.datepickr-calendar .datepickr-prev-month,
+.datepickr-calendar .datepickr-next-month {
+    color: #fff;
+    text-decoration: none;
+    padding: 0 .4em;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.datepickr-calendar .datepickr-prev-month {
+    float: left;
+}
+
+.datepickr-calendar .datepickr-next-month {
+    float: right;
+}
+
+.datepickr-calendar .datepickr-current-month {
+    padding: 0 .5em;
+}
+
+.datepickr-calendar .datepickr-prev-month:hover,
+.datepickr-calendar .datepickr-next-month:hover {
+    background-color: #fdf5ce;
+    color: #c77405;
+}
+
+.datepickr-calendar table {
+    border-collapse: collapse;
+    padding: 0;
+    width: 100%;
+}
+
+.datepickr-calendar thead {
+    font-size: 90%;
+}
+
+.datepickr-calendar th,
+.datepickr-calendar td {
+    width: 14.3%;
+}
+
+.datepickr-calendar th {
+    text-align: center;
+    padding: 5px;
+}
+
+.datepickr-calendar td {
+    text-align: right;
+    padding: 1px;
+    position: relative;
+    height: 4.5em;
+}
+
+.datepickr-calendar .datepickr-day {
+    display: block;
+    color: #1c94c4;
+    background-color: #f6f6f6;
+    border: 1px solid #ccc;
+    padding: 5px;
+    height: 4em;
+    cursor: pointer;
+}
+
+.datepickr-calendar .datepickr-day:hover {
+    color: #C77405;
+    /* color:  */
+    background-color: #fdf5ce;
+    border: 1px solid #fbcb09;
+}
+
+.datepickr-calendar .today .datepickr-day {
+    background-color: #fff0A5;
+    border: 1px solid #fed22f;
+    color: #363636;
+}
+
+.datepickr-calendar .selected .datepickr-day {
+    background-color: #1c94c4;
+    color: #f6f6f6;
+}
+
+.datepickr-calendar .disabled .datepickr-day,
+.datepickr-calendar .disabled .datepickr-day:hover {
+    background-color: #eee;
+    border: 1px dotted #ccc;
+    color: #bbb;
+    cursor: default;
+}

@@ -1,0 +1,92 @@
+<div class="row card-group">
+
+    <div class="col-sm-12 col-md-7 d-md-flex d-xl-block col-xl-12 mb-3">
+        <div class="w-100 border text-center">
+
+            <div class="shadow-sm bg-light">
+                <h5 class="p-3 text-success">{{ (costumerProps | async)?.company }}</h5>
+            </div>
+            <img class="card-img-top py-3 w-25 m-auto" [src]="(costumerProps | async)?.loggo"
+                [alt]="(costumerProps | async)?.company" />
+
+            <div class="card-footer col">
+                <div class="div p-3">
+                    <a routerLink="/customers/{{ (costumerProps | async)?.businessType }}"
+                        class="btn btn-outline-success btn-sm">
+                        <i class="fa fa-location-arrow"></i>
+                        חזור
+                    </a>
+                    <a class="btn btn-warning btn-sm" data-toggle="modal" data-target=".bd-example-modal-lg">
+                        <i class="fa fa-envelope text-success"></i>
+
+                        שלח הודעה</a>
+                    <a routerLink="./" class="btn btn-danger btn-sm">הדף שלי</a>
+                    <a routerLink="about" class="btn btn-info btn-sm">אודות</a>
+
+                </div>
+            </div>
+        </div>
+        <div *ngIf="ownerLogged | async" class="btn-group border mt-2 w-100">
+            <div class="div p-3">
+                <a routerLink="/customers/{{ (costumerProps | async)?.businessType }}/{{ (costumerProps | async)?.company | strSpliter  }}/create"
+                    class="btn btn-primary btn-sm">
+                    + צור אירוע
+                </a>
+                <a routerLink="/customers/{{ (costumerProps | async)?.businessType }}/{{ (costumerProps | async)?.company | strSpliter }}/edit/basic"
+                    class="btn btn-danger text-light btn-sm">
+                    <i class="fa fa-pencil"></i>
+                    ערוך
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-5 d-md-flex d-xl-block col-xl-12 text-right mb-3">
+        <div class="card  border border-warning">
+            <div class="card-header bg-warning">
+                <h4 class="card-title text-center text-light">
+                    צור קשר
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-12 border-bottom p-2">
+                        <span class="font-weight-bold text-dark rounded p-1">איש קשר:</span>
+                        {{ (costumerProps | async)?.contact }}
+                    </div>
+                    <div class="col-sm-12 border-bottom p-2">
+                        <span class="font-weight-bold text-dark rounded p-1">טלפון/פלאפון:</span>
+                        {{ (costumerProps | async)?.tel }}
+                    </div>
+                    <div class="col-sm-12 border-bottom p-2">
+                        <span class="font-weight-bold text-dark rounded p-1">כתובת:</span>
+                        {{ (costumerProps | async)?.address }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-col-xl-12">
+        <div class="border border-danger text-right">
+            <div class="card-header bg-danger">
+                <h4 class="text-center text-light">
+                    {{ (costumerProps | async)?.company }}
+                    <span class="font-weight-bold text-warning">*מבצעים</span>
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-4 col-xl-12 border-bottom p-2">
+                        <p>
+                            <span class="font-weight-bold text-danger rounded p-1">*</span>
+                            {{ (costumerProps | async)?.deals }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

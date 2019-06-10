@@ -1,0 +1,122 @@
+
+<!-- <form class="pull-right p-3 border border-left rounded" [formGroup]="createUserEvents" (ngSubmit)="onSubmit()"> -->
+<div [formGroup]="formEvents" id="customGroup"> 
+
+    <div class="form-group">
+      <label for="name" class="col-form-label">שם</label>
+      <input type="text" id="name" class="form-control" formControlName="name" #name>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: name, itemMethod: formMethod}"></ng-container>
+
+      <div *ngIf="f.name.invalid && f.name.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+    <div class="form-group d-block">
+      <!-- (change)="selectedText(select)" -->
+      <select name="eventType" id="eventType"  formControlName="eventType" class="form-control" (change)="toggleHidden(select, other)" #select >
+     
+        <option value="" [selected]="true" disabled>סוג האירוע</option>
+        <option value="wedding">חתונה</option>
+        <option value="bar-mitzvah">בר/בת מצווה</option>
+        <option value="hina">חינה</option>
+        <option value="other" >אחר</option> 
+      </select>
+      <!-- <span class="validity float-left"></span> -->
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: select, itemMethod: formMethod}"></ng-container>
+    </div>
+
+    <div class="form-group">
+      <label for="other" [ngClass]="other.hidden? 'col-form-label d-none':'col-form-label d-block'">סוג אירוע אחר 
+        <span class="btn btn-link btn-sm text-success" (click)="toggleHidden(other, select)">בחר מרשימה</span>
+      </label>
+      <input type="text" id="other" formControlName="other" hidden class="form-control" #other>
+      <div  *ngIf="!other.hidden">
+          <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: other, itemMethod: formMethod }"></ng-container>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="location" class="col-form-label">עיר/מיקום</label>
+      <input type="text" id="location" class="form-control" formControlName="location" #location>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: location, itemMethod: formMethod }"></ng-container>
+    </div>
+
+    <div class="form-group">
+      <label for="address" class="col-form-label">כתובת</label>
+      <input type="text" id="address" class="form-control" formControlName="address" #address>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: address, itemMethod: formMethod }"></ng-container>
+    </div>
+    <div class="form-group">
+      <label for="email" class="col-form-label">אימייל</label>
+      <input type="email" id="email" class="form-control" formControlName="email" #email>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: email, itemMethod: formMethod }"></ng-container>
+    </div>
+
+    <div class="form-group">
+      <label for="phone" class="col-form-label ">טלפון/פלאפון</label>
+      <input type="tel" id="phone" class="form-control" formControlName="phone" #phone>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: phone, itemMethod: formMethod}"></ng-container>
+    </div>
+
+    <div class="form-group">
+      <textarea class="form-control" id="description" formControlName="description" rows="3"
+        placeholder="הוסף הודעה" #description></textarea>
+        <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: description, itemMethod: formMethod}"></ng-container>
+    </div>
+    
+    <div *ngIf="messages && messages['violation']" class="bg-light p-1 ml-1">
+      <div *ngFor="let message of messages['violation']; let idx = index" class="bg-light p-1 m-1 d-block">
+
+        <p *ngFor="let item of messages['violation'][idx] | keyvalue; let key = index">
+            <b [ngClass]="'text-danger'">*
+                {{ item.key+': ' }}
+            </b>
+            {{ item.value }}
+        </p>
+      </div>
+    </div> 
+</div>
+
+<ng-template  #clickedMethods let-elem="elem" let-itemValue="itemValue" let-itemMethod="itemMethod">
+    <div class="my-2">
+      
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(elem)">
+      <span>
+        עדכן
+        <i class="material-icons text-success">
+          update
+        </i>
+      </span>
+    </a>
+    <a *ngIf="elem.value" class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(elem)">
+      <span>
+        נקה
+        <i class="material-icons text-warning">
+          clear
+        </i>
+      </span>
+    </a>
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(elem)">
+      <span>
+        מקור
+        <i class="material-icons text-primary">
+          redo
+        </i>
+      </span>
+    </a>
+  </div>
+  <div *ngIf="messages && messages[elem.id]" class="bg-light p-1 ml-1">
+    <p *ngFor="let message of messages[elem.id]" class="bg-light p-1 m-1 d-block">
+      <span *ngIf="message['message']">
+          <b [ngClass]="message['type']? 'text-danger': 'text-warning'">*</b> 
+          {{ message['message']  }}
+      </span>
+    </p>
+  </div> 
+</ng-template>
+<!-- 
+  <div class="form-group">
+      <label for="appt-time">שעת האירוע</label>
+      <input class="form-control" id="appt-time" formControlName="time" type="time" name="appt-time" min="12:00"
+        max="24:00">
+      <span class="validity"></span>
+    </div>
+ -->

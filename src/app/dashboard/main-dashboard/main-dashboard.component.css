@@ -1,0 +1,66 @@
+/* aside dashboard */
+ul > li {
+    padding: .7rem;
+ }
+
+/* 
+ul li a {
+    color: #6f9ccc;
+}
+ul li i.material-icons{
+    color: #007bff;
+}
+
+ul > li a:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+*/
+ul li i.material-icons{
+    color: #007bff;
+}
+ul.navbar-nav li {
+    /* border-top: 2px solid gray; 
+    margin-left: 10px;
+    padding: 1px 1px;*/
+}
+
+ul.navbar-nav li.active > a{
+    color: #47BD35;
+}
+
+header ul.navbar-nav li:hover {
+    /* color: #47BD35; */
+    /* background: #F6DC2F; */
+}
+
+ul.navbar-nav li:hover > a {
+    color: #47BD35;
+    /* color: #F6DC2F; */
+}
+
+
+div.costum{
+    /* background: #868e96; */
+    /* font-size: 1rem; */
+}
+
+div.header{
+    
+}
+.body,  .footer{
+    /* text-align: center; */
+}
+
+div.text{
+    /* text-align: right; */
+}
+
+.total {
+    font-size: 2.5rem;
+    /* border: 1px solid cadetblue; */
+    /* border-radius: 100%; */
+}
+.recently{
+    font-size: 1.5rem;
+}

@@ -1,0 +1,20 @@
+.btn-group-vertical, .btn-group {
+    /* -ms-flex-direction: inherit;
+    flex-direction: inherit; 
+    display: block; */
+}
+
+.material-icons {
+    font-size: inherit;
+}
+
+@media(max-width:1500px){
+
+    /* .costum-query {
+        width: 500px;
+    }
+    .costum-query-datil{
+        width: 1200px;
+    } */
+
+}

@@ -1,0 +1,33 @@
+<hr class="d-xl-none">
+<div class="row  text-right">
+    <div class="col-sm-12">
+        <div class="p-3 border border-success">
+            <a class="close float-left" routerLink="/אולם-אירועים/ארמונות-לב/מדיה" type="button" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </a>
+            <div *ngIf="(customer$ | async )" class="media">
+
+                <img  [src]="(customer$ | async )?.loggo" [alt]="(customer$ | async )?.company">
+
+                <div class="media-body mr-3">
+
+                    <h4>
+                        {{ (customer$ | async )?.title }}
+                    </h4>
+                    <p class="text-xl-right text-dar p-2">
+                        {{ (customer$ | async )?.descriptions }}
+                    </p>
+                    <hr>
+
+                    <p>
+                        <a routerLink="../מדיה" class="btn btn-outline-info font-weight-bold">
+                            <i class="fa fa-location-arrow"></i>
+                            חזור
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

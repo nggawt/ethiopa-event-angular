@@ -1,0 +1,28 @@
+
+.custom-pagination .page-number{
+    display: inline-block;
+    /* padding: 5px 12px; */
+    /* background: #F6DC2F; */
+    margin: 0px 4px;
+    /* border-radius: 25px; */
+}
+ 
+.page-number.current{
+    /* background: #ffffff!important; */
+    /* background: #F6DC2F; */
+    border-radius: 5px;
+    border: 1px solid #F6DC2F !important;;
+}
+ 
+.page-number span, .pagination-previous i,.pagination-next i{
+    display: block;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    cursor: pointer;
+}
+ 
+.pagination-previous,.pagination-next{
+    display: inline-block;
+    font-weight: bold;
+}

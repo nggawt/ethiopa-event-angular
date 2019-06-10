@@ -1,0 +1,51 @@
+<app-auth>
+    <form class="p-3" [formGroup]="logInform" (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+          <div class="inputTypeNumber">
+            <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם" required />
+      
+            <span class="validity float-left"></span>
+          </div>
+          <div *ngIf="logInform.controls.name.invalid && logInform.controls.name.touched" class="invalid-feedback d-block">*
+            שדה חובה </div>
+        </div>
+      
+        <div class="form-group">
+      
+          <div class="inputTypeNumber">
+            <input name="email" type="email" class="col-11" formControlName="email" placeholder="אימייל" [pattern]="emailPatt"
+              required />
+      
+            <span class="validity float-left"></span>
+          </div>
+          <div *ngIf="logInform.controls.email.invalid && logInform.controls.email.touched" class="invalid-feedback d-block">*
+            שדה חובה</div>
+        </div>
+      
+        <div class="form-group">
+      
+          <div class="inputTypeNumber">
+            <input name="password" type="password" class="col-11" formControlName="password" placeholder="סיסמה"
+              [pattern]="passwordPatt" required />
+            <span class="validity float-left"></span>
+          </div>
+      
+          <div *ngIf="logInform.controls.password.invalid && logInform.controls.password.touched"
+            class="invalid-feedback d-block">* שדה חובה</div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="fa fa-envelope"></i>
+            שלח
+          </button>
+          <a class="btn btn-primary btn-sm text-light float-left" (click)="register()">
+            <span class="fa fa-user-plus"></span> הרשמה
+          </a>
+        </div>
+      
+        <p *ngIf="!resetPass">
+          <a class="text-warning" (click)="sendEmail('/password/email')" >שכחתי סיסמה? </a>
+        </p>
+      </form>
+</app-auth>

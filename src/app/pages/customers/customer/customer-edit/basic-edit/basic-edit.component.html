@@ -1,0 +1,18 @@
+
+
+<form *ngIf="isTrue | async" [formGroup]="addCostumerForm" 
+      class="border border rounded text-right mt-2" (ngSubmit)="childInstans.onSubmit()">
+
+  <edit-basic-temp  [formInstans]="addCostumerForm" [cus]="customer" (ins)="childIns($event)"></edit-basic-temp>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="btn-group w-100 p-3 bg-light">
+        <button class="btn btn-success" type="childInstans.submit">עדכן הכל</button>
+        <a class="btn btn-warning" (click)="childInstans.reset()">אפס</a>
+        <a class="btn btn-danger" (click)="childInstans.close()">בטל וסגור</a>
+        <a class="btn btn-info" (click)="childInstans.allTodefault()">שחזר ברירת מחדל</a>
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,364 @@
+<!-- *ngIf="isTrue" [formGroup]="addCostumerForm"  -->
+<form *ngIf="isTrue | async" [formGroup]="addCostumerForm" class="border border rounded text-right mt-2" (ngSubmit)="onSubmit()">
+  <!-- basic edite -->
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col form-group py-2 my-0">
+        <label for="company">שם החברה</label>
+
+        <div class="inputTypeNumber my-2">
+          <input value="{{ customer.company }}" class="col-11 px-1" type="text" name="company" id="company"
+            formControlName="company" required #company />
+
+          <span class="validity float-left"></span>
+        </div>
+
+        <div *ngIf="f.company.invalid && f.company.touched" class="invalid-feedback d-block">* שדה חובה</div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(company)">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                person_add
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(company)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(company)">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="masseges && masseges['company']" class="bg-light p-1 ml-1">
+            <p *ngFor="let gal of masseges['company'];let idx = index" class="bg-light p-1 m-1 d-inline-block">
+               
+              <span *ngIf="gal['company']">
+                  <b [ngClass]="{'text-warning':gal['type'] === 'warning','text-success':gal['type'] === 'success', 'text-danger':gal['type'] === 'errors'}"> {{ gal['company']  }} </b> 
+              </span>
+            </p>
+        </div>
+    </div>
+
+      <div class="col form-group py-2 my-0">
+        <label for="contact">איש קשר</label>
+
+        <div class="inputTypeNumber my-2">
+          <input value="{{ customer.contact }}" class="col-11 px-1" type="text" name="contact" id="contact"
+            formControlName="contact" required #contact />
+
+          <span class="validity float-left"></span>
+        </div>
+        
+        <div *ngIf="f.contact.invalid && f.contact.touched" class="invalid-feedback d-block">* שדה חובה</div>
+
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(contact)">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                person_add
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(contact)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(contact)">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="masseges && masseges['contact']" class="bg-light p-1 ml-1">
+            <p *ngFor="let gal of masseges['contact'];let idx = index" class="bg-light p-1 m-1 d-inline-block">
+               
+              <span *ngIf="gal['contact']">
+                  <b [ngClass]="{'text-warning':gal['type'] === 'warning','text-success':gal['type'] === 'success', 'text-danger':gal['type'] === 'errors'}">{{ gal['contact']  }} </b> 
+              </span>
+            </p>
+        </div>
+      </div>
+
+      <div class="col form-group py-2 my-0">
+        <label for="tel">פלאפון/טלפון</label>
+
+        <div class="inputTypeNumber my-2">
+          <input value="{{ customer.tel }}" type="tel" id="tel" name="tel" class="col-11 px-1" formControlName="tel"
+            [pattern]="phoneNum" required #tel />
+
+          <span class="validity float-left"></span>
+        </div>
+        <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* נא למלא שדה בתבנית המתאימה
+          לפאלפון/טלפון
+        </div>
+        
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(tel)">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                person_add
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(tel)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(tel)">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="masseges && masseges['tel']" class="bg-light p-1 ml-1">
+            <p *ngFor="let gal of masseges['tel'];let idx = index" class="bg-light p-1 m-1 d-inline-block">
+               
+              <span *ngIf="gal['tel']">
+                  <b [ngClass]="{'text-warning':gal['type'] === 'warning','text-success':gal['type'] === 'success', 'text-danger':gal['type'] === 'errors'}">{{ gal['tel']  }} </b> 
+              </span>
+            </p>
+        </div>
+      </div>
+
+      <div class="col form-group py-2 my-0">
+        <label for="address">כתובת</label>
+
+        <div class="inputTypeNumber my-2">
+          <input value="{{ customer.address }}" class="col-11 px-1" type="text" name="address" id="address"
+            formControlName="address" required #address />
+
+          <span class="validity float-left"></span>
+        </div>
+        <div *ngIf="f.address.invalid && f.address.touched" class="invalid-feedback d-block">* שדה חובה</div>
+        
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(address)">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                person_add
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(address)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(address)">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="masseges && masseges['address']" class="bg-light p-1 ml-1">
+            <p *ngFor="let gal of masseges['address'];let idx = index" class="bg-light p-1 m-1 d-inline-block">
+               
+              <span *ngIf="gal['address']">
+                  <b [ngClass]="{'text-warning':gal['type'] === 'warning','text-success':gal['type'] === 'success', 'text-danger':gal['type'] === 'errors'}">{{ gal['address']  }} </b> 
+              </span>
+            </p>
+        </div>
+      </div>
+
+      <div class="col form-group py-2 my-0">
+        <label for="email">אימייל</label>
+        <div class="inputTypeNumber my-2">
+          <input value="{{ customer.email }}" class="col-11 px-1" type="email" name="email" id="email" formControlName="email"
+            [pattern]="emailPatteren" required #email />
+
+          <span class="validity float-left"></span>
+        </div>
+        <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
+        
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(email)">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                person_add
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(email)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(email)">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="masseges && masseges['email']" class="bg-light p-1 ml-1">
+            <p *ngFor="let gal of masseges['email'];let idx = index" class="bg-light p-1 m-1 d-inline-block">
+               
+              <span *ngIf="gal['email']">
+                  <b [ngClass]="{'text-warning':gal['type'] === 'warning','text-success':gal['type'] === 'success', 'text-danger':gal['type'] === 'errors'}">{{ gal['email']  }} </b> 
+              </span>
+            </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- about edite -->
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col-sm-12 form-group py-3">
+        <label for="title">תיאור או כותרת החברה</label>
+
+        <div class="inputTypeNumber my-2 textarea">
+          <textarea value="{{ customer.title }}" class="col-11 px-1" type="text" name="title" id="title"
+            formControlName="title" required minlength="12" #title>
+          </textarea>
+          <span class="validity float-left"></span>
+        </div>
+        <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
+        
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(title)">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                person_add
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(title)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(title)">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="masseges && masseges['title']" class="bg-light p-1 ml-1">
+            <p *ngFor="let gal of masseges['title'];let idx = index" class="bg-light p-1 m-1 d-inline-block">
+               
+              <span *ngIf="gal['title']">
+                  <b [ngClass]="{'text-warning':gal['type'] === 'warning','text-success':gal['type'] === 'success', 'text-danger':gal['type'] === 'errors'}"> {{ gal['title']  }} </b> 
+              </span>
+            </p>
+        </div>
+      </div>
+
+      <div class="col-sm-12 form-group border p-3">
+
+        <label for="descriptions">אודות החברה</label>
+        <textarea wrap="hard" value="{{ customer.descriptions | removeWhiteSpace  }}" class="w-100 form-control text-right note"
+          (mouseenter)="textAreaAdjust($event)" (mouseleave)="textAreamouseleave($event)" type="text" name="descriptions"
+          id="descriptions" formControlName="descriptions" minlength="6" #descriptions>
+
+        </textarea>
+        
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(descriptions)">
+            <span>
+              עדכן
+              <i class="material-icons text-success">
+                person_add
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(descriptions)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="default(descriptions)">
+            <span>
+              מקור
+              <i class="material-icons text-primary">
+                redo
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="masseges && masseges['descriptions']" class="bg-light p-1 ml-1">
+            <p *ngFor="let gal of masseges['descriptions'];let idx = index" class="bg-light p-1 m-1 d-inline-block">
+               
+              <span *ngIf="gal['descriptions']">
+                  <b [ngClass]="{'text-warning':gal['type'] === 'warning','text-success':gal['type'] === 'success',
+                   'text-danger':gal['type'] === 'errors'}">
+                    {{ gal['descriptions']  }} 
+                  </b> 
+              </span>
+            </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- media and galleries edite -->
+
+  <div class="row">
+
+    <div class="col-sm-12">
+
+      <div class="btn-group w-100 p-3 bg-light">
+        <button class="btn btn-success" type="submit">שמור הכל</button>
+        <a class="btn btn-warning" (click)="reset()">אפס</a>
+        <a class="btn btn-danger" (click)="close()">בטל וסגור</a>
+        <a class="btn btn-info" (click)="allTodefault()">שחזר ברירת מחדל</a>
+      </div>
+    </div>
+
+  </div>
+</form>

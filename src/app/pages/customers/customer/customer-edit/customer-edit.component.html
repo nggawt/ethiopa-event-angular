@@ -1,0 +1,51 @@
+<!-- header edite -->
+<div *ngIf="isTrue | async" class="row">
+  <div class="col-sm-12">
+    <div class="shadow-sm text-right">
+      <h2 class="h5 bg-light p-3 rounded">ערוך דף</h2>
+
+      <div class="p-3 clearfix">
+        <a routerLinkActive="active" routerLink="basic" class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
+          <span>
+            בסיסי
+
+            <i class="material-icons">supervisor_account</i>
+          </span>
+        </a>
+        <a routerLinkActive="active" routerLink="gallery" class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
+          <span>
+            מדיה
+
+            <i class="material-icons">perm_media</i>
+          </span>
+        </a>
+
+        <a routerLinkActive="active" routerLink="all" class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
+          <span>
+            ערוך הכל
+            <i class="material-icons">select_all</i>
+          </span>
+        </a>
+
+        <a routerLinkActive="active" routerLink="events" class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
+          <span>
+              יומן אירועים
+            <i class="material-icons">add</i>
+          </span>
+        </a>
+
+        <a routerLinkActive="active" (click)="destroy()" class="googleFont px-2 p-2 border rounded text-center float-left">
+          <span>
+            הסר חשבון
+            <i class="material-icons text-danger">
+              delete_forever
+            </i>
+          </span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

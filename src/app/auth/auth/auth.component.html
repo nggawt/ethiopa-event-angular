@@ -1,0 +1,28 @@
+  <div class="row">
+    <div id="forgotPassword" class="modal fade" tabindex="-1" role="dialog"
+      aria-labelledby="myLargeModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg text-right">
+
+        <div class="modal-content border col-sm-8 mx-auto">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span class="float-left" aria-hidden="true">&times;</span>
+          </button>
+          <div class="p-0">
+            <h2 class="h4" [ngClass]="resetPass? 'text-warning': 'text-success'">{{ resetPass?"אפס סיסמה":"התחבר" }}
+            </h2>
+            <p>
+              <span class="text-danger">
+
+                צוות אתיופיה אירועים.
+              </span>
+            </p>
+          </div>
+          <!-- <ng-container *ngTemplateOutlet="formType;"></ng-container> -->
+          <!-- <ng-container *ngTemplateOutlet="sendResetEmail;"></ng-container>
+            <ng-container *ngTemplateOutlet="sendResetPassword;"></ng-container> -->
+          <!--  context:{elem: description, itemMethod: formMethod} -->
+          <ng-content></ng-content>
+        </div>
+      </div>
+    </div>
+  </div>

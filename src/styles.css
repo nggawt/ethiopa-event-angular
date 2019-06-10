@@ -1,1 +1,304 @@
 /* You can add global styles to this file, and also import other style files */
+
+
+/* @import 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'; */
+
+
+/* @import '~font-awesome/css/font-awesome.css'; */
+
+/* @import "../node_modules/font-awesome/css/font-awesome.css"; */
+html {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    /* height: 100%; */
+    /* overflow: hidden; */
+}
+
+body {
+    font-family: Arial, Georgia, 'Times New Roman', Times, serif;
+    /* font-family: 'Frank Ruhl Libre', Arial, Georgia, 'Times New Roman', Times, serif; */
+    /* background: #F6DC2F; */
+    overflow-x:hidden;
+    height: 100%;
+}
+
+div.main-header {
+    height: 10%;
+    /* position: fixed; */
+    top: 0;
+    z-index: 100;
+    background: white;
+    box-shadow: 1px 1px 40px gray;
+}
+
+main.main {
+    position: relative;
+    /* margin-top: 10%; */
+    /* min-height: 100%; */
+    height: 80%;
+    /* top: 80px; */
+}
+
+.main-row {
+    position: relative;
+    min-height: 100%;
+}
+
+footer.footer {
+    position: relative;
+    bottom: 0px;
+    height: 10%;
+}
+
+.modal-backdrop {
+    z-index: auto;
+}
+
+
+/* html {
+    font-size: 1rem;
+  }
+  
+  @include media-breakpoint-up(sm) {
+    html {
+      font-size: 1.2rem;
+    }
+  }
+  
+  @include media-breakpoint-up(md) {
+    html {
+      font-size: 1.4rem;
+    }
+  }
+  
+  @include media-breakpoint-up(lg) {
+    html {
+      font-size: 1.6rem;
+    }
+  } */
+
+.rounded {
+    /* border-right: 5px solid #F6DC2F; */
+}
+
+
+/* form validaty */
+
+.validity {
+    content: '✖';
+    color: #f00;
+    padding-left: 5px;
+}
+
+input.ng-valid+span:after,
+select.ng-valid+span:after,
+textarea.ng-valid+span:after,
+input:valid+small:after {
+    content: '✓';
+    color: #26b72b;
+    padding-left: 5px;
+}
+
+input.ng-invalid+span:after,
+select.ng-invalid+span:after,
+textarea.ng-invalid+span:after,
+input:invalid+small:after {
+    content: '✖';
+    color: #f00;
+    padding-left: 5px;
+}
+
+input:invalid+small:after {
+    position: relative;
+    content: '✖';
+    padding-left: 5px;
+}
+
+input:valid+small:after {
+    position: relative;
+    content: '✓';
+    padding-left: 5px;
+}
+
+.inputTypeNumber {
+    height: calc(2.25rem + 2px);
+    padding: .375rem .25rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    position: relative;
+}
+
+.inputTypeNumber input,
+.inputTypeNumber select {
+    border: none;
+    outline: none;
+}
+
+.inputTypeNumber textarea {
+    border: none;
+    outline: none;
+    resize: none;
+    width: 100%;
+    height: 100%;
+}
+
+div.textarea {
+    min-height: 100px;
+}
+
+input:valid+span:after,
+select:valid+span:after,
+textarea:valid+span:after {
+    content: '✓';
+    color: #26b72b;
+    padding-left: 5px;
+}
+
+input:invalid+span:after,
+select:invalid+span:after,
+textarea:invalid+span:after {
+    content: '✖';
+    color: #f00;
+    padding-left: 5px;
+}
+
+textarea.note {
+    text-align: right;
+    text-indent: 0px;
+    /* color: #26b72b; */
+    /* word-break: break-all; */
+    /* overflow: hidden; */
+    white-space: wrap;
+    box-sizing: border-box;
+    min-height: 40%;
+    direction: rtl;
+    display: inline;
+    min-height: 30%;
+    line-height: 1.5;
+    padding: 15px 15px 30px;
+    border-radius: 3px;
+    border: 1px solid #F7E98D;
+    font: 13px Tahoma, cursive;
+    transition: box-shadow 0.5s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-smoothing: subpixel-antialiased;
+    background: linear-gradient(#F9EFAF, #F7E98D);
+    background: -o-linear-gradient(#F9EFAF, #F7E98D);
+    background: -ms-linear-gradient(#F9EFAF, #F7E98D);
+    background: -moz-linear-gradient(#F9EFAF, #F7E98D);
+    background: -webkit-linear-gradient(#F9EFAF, #F7E98D);
+}
+
+a {
+    cursor: pointer;
+}
+
+a.googleFont {
+    text-decoration: none;
+}
+
+.material-icons {
+    position: relative;
+    top: 5px;
+}
+/* end form validaty */
+
+.rounded-right-warning{
+    border-radius: .25rem;
+    border-right: 5px solid #F6DC2F;
+}
+
+.rounded-right-green{
+    border-radius: .25rem;
+    border-right: 5px solid #28a745;
+}
+
+.rounded-right-danger{
+    border-radius: .25rem;
+    border-right: 5px solid #dc3545;
+}
+.rounded-right-info{
+    border-radius: .25rem;
+    border-right: 5px solid #17a2b8;
+}
+
+.rounded-right-light{
+    border-radius: .25rem;
+    border-right: 5px solid #f8f9fa;
+}
+
+
+.rounded-left-warning{
+    border-radius: .25rem;
+    border-left: 5px solid #F6DC2F;
+}
+
+.rounded-left-green{
+    border-radius: .25rem;
+    border-left: 5px solid #28a745;
+}
+
+.rounded-left-danger{
+    border-radius: .25rem;
+    border-left: 5px solid #dc3545;
+}
+.rounded-left-info{
+    border-radius: .25rem;
+    border-left: 5px solid #17a2b8;
+}
+
+.rounded-left-light{
+    border-radius: .25rem;
+    border-left: 5px solid #f8f9fa;
+}
+
+
+/*  spinner */
+
+
+.spinner-wrraper {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* bottom: 0; */
+    background: white;
+    /* background: rgba(220,220,220,1); */
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+}
+
+.spinner {
+    position: absolute;
+    border: 32px solid #F6DC2F;
+    border-top: 32px solid #47BD35;
+    border-bottom: 32px solid #F02B2B;
+    /******default*******/
+    /* border: 32px solid silver; */
+    /* border-top: 32px solid #337AB7; */
+    border-radius: 50%;
+    animation: spin 700ms linear infinite;
+    /* width: fit-content; */
+    /* height: fit-content; */
+    top: 50%;
+    left: 50%;
+    /* position: fixed; */
+    z-index: 99;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg)
+    }
+    100% {
+        transform: rotate(360deg)
+    }
+}
+/* end spinner */

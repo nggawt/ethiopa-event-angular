@@ -1,0 +1,24 @@
+<app-blog-template (itemsPost)="blog($event)" [displayNavs]="post"><!-- *ngIf="post$ | async as post"  -->
+
+  <form *ngIf="post" class="p-3 border rounded" [formGroup]="updatePost" (ngSubmit)="onSubmit()">
+    <h2 class="h5 d-inline">
+      ערוך פוסט.
+    </h2>
+    <div class="form-group">
+      <label for="title" class="form-control-label">
+        נושא:
+      </label>
+      <input class="form-control" formControlName="title" type="text" [value]="post.title">
+    </div>
+    <div class="form-group">
+      <label for="subject" class="form-control-label">
+        תוכן:
+      </label>
+      <textarea class="form-control" formControlName="body" type="text" [value]="post.body" [rows]="setHight(teatArea)"  #teatArea> </textarea>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-success btn-sm" type="submit">עדכן</button>
+      <a class="btn btn-danger btn-sm float-left">מחק פוסט</a>
+   </div>
+  </form>
+</app-blog-template>

@@ -1,0 +1,63 @@
+<div *ngIf="sendMessageTo" class="p-3">
+    <h2 class="text-right text-success">
+            {{ sendMessageTo.company? sendMessageTo.company: sendMessageTo.name? sendMessageTo.name:sendMessageTo }}
+        
+    </h2>
+    <h1 class="h4">
+            צור קשר
+    </h1>
+    <p>
+        לקוחות יקרים, מלאו את הפרטים בשדות הבאים ונחזור אליכם תוך זמן קצר
+        <span class="text-danger d-block">
+
+            צוות: 
+            {{ sendMessageTo.company? sendMessageTo.company: sendMessageTo.name? sendMessageTo.name:sendMessageTo }}
+        </span>
+    </p>
+    <hr>
+    <form [formGroup]="formConcat" class="p-3" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <input type="text" formControlName="name" class="form-control" id="name" placeholder="השם שלך" >
+            <!-- [ngClass]="getStl(formConcat.controls['name'])" -->
+        </div>
+        <div class="form-group">
+            <input type="city" formControlName="city" class="form-control" id="city" placeholder="עיר מגורים">
+        </div>
+        <div class="form-group">
+
+            <select id="rigion" formControlName="area" class="form-control">
+                <option selected>אזור</option>
+                <option value="north">צפון</option>
+                <option value="center">מרכז והשפלה</option>
+                <option value="south">דרום</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="tel" formControlName="phone" class="form-control" id="phone" placeholder="טלפון/פלאפון">
+        </div>
+        <div class="form-group">
+            <input type="email" formControlName="email" class="form-control" id="email" placeholder="אימייל">
+        </div>
+        <div class="form-group">
+            <input type="text" formControlName="msg_subject" class="form-control" id="input" placeholder="נושא הפניה">
+        </div>
+        <div class="form-group">
+            <textarea formControlName="message" class="form-control" id="textarea" rows="3"
+                placeholder="הוסף הודעה"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">שלח</button>
+    </form>
+
+    <div *ngFor="let msgs of messages | keyvalue; let idx = index" class="col-sm-9 col-lg-10 float-left">
+        <div class="row">
+            <p *ngFor="let item of messages[msgs.key] | keyvalue; let idxKey = index" class="col-6 p-1 mb-1 bg-light">
+                <b [ngClass]="'text-'+item.value.type" (click)="logItem(item)">
+                    *
+                    {{ msgs.key == "currentEmail"? "אימייל נוכחי":msgs.key == "newEmail"? "אימייל חדש": "סיסמה" }}
+                </b>
+                : {{ item.value[msgs.key] || item.value['message'] }}
+            </p>
+        </div>
+    </div>
+</div>

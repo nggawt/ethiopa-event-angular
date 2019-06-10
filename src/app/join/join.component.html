@@ -1,0 +1,441 @@
+<!-- *ngIf="isTrue" [formGroup]="addCostumerForm"  -->
+<form *ngIf="isTrue | async" [formGroup]="addCostumerForm" class="border border rounded text-right mt-2" (ngSubmit)="onSubmit()">
+  <!-- basic edite -->
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col form-group py-2 my-0">
+        <label for="company">סוג העסק</label>
+
+        <div class="inputTypeNumber">
+          <select name="businessType" id="businessType" class="col-11 selectList" formControlName="businessType"
+            required #businessType>
+            <option value="בחר תחום" selected disabled>בחר תחום</option>
+            <option value="halls-events">אולם אירועים</option>
+            <option value="salons">סלון כלות</option>
+            <option value="photographers">צלמים</option>
+            <option value="djs">די-ג'י</option>
+            <option value="printing">בתי דפוס</option>
+            <option value="fireworks">זיקוקים ואטרקציות</option>
+            <option value="transportation">הסעות</option>
+            <option value="car-rental">השכרת רכב</option>
+            <option value="hotels">צמרים ובתי מלון</option>
+            <option value="kyses">קייסים/רבנות</option>
+            <option value="שונות">שונות</option>
+          </select>
+
+          <span class="validity float-left"></span>
+        </div>
+        <div *ngIf="f.businessType.invalid && f.businessType.touched" class="invalid-feedback d-block">* שדה חובה סוג העסק:</div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(businessType)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+        </div>
+    </div>
+    <div *ngIf="messages && messages['businessType']" class="bg-light p-1 ml-1">
+      <p *ngFor="let message of messages['businessType']" class="bg-light p-1 m-1 d-inline-block">
+
+        <span *ngIf="message['businessType']">
+          <b [ngClass]="'text-'+message['type']"> {{ message['businessType'] }} </b>
+        </span>
+      </p>
+    </div>
+
+    <div class="col form-group py-2 my-0">
+
+      <label for="company">שם החברה</label>
+      <div class="inputTypeNumber my-2">
+        <input class="col-11 px-1" type="text" name="company" id="company" formControlName="company" required #company />
+
+        <span class="validity float-left"></span>
+      </div>
+
+      <div *ngIf="f.company.invalid && f.company.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <div class="my-2">
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(company)">
+          <span>
+            נקה
+            <i class="material-icons text-warning">
+              clear
+            </i>
+          </span>
+        </a>
+      </div>
+      
+    </div>
+
+    <div *ngIf="messages && messages['company']" class="bg-light p-1 ml-1">
+      <p *ngFor="let message of messages['company']" class="bg-light p-1 m-1 d-inline-block">
+
+        <span *ngIf="message['company']">
+          <b [ngClass]="'text-'+message['type']"> {{ message['company'] }} </b>
+        </span>
+      </p>
+    </div>
+
+    <div class="col form-group py-2 my-0">
+      <label for="contact">איש קשר</label>
+
+      <div class="inputTypeNumber my-2">
+        <input class="col-11 px-1" type="text" name="contact" id="contact" formControlName="contact" required #contact />
+
+        <span class="validity float-left"></span>
+      </div>
+
+      <div *ngIf="f.contact.invalid && f.contact.touched" class="invalid-feedback d-block">* שדה חובה</div>
+
+      <div class="my-2">
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(contact)">
+          <span>
+            נקה
+            <i class="material-icons text-warning">
+              clear
+            </i>
+          </span>
+        </a>
+      </div>
+      <div *ngIf="messages && messages['contact']" class="bg-light p-1 ml-1">
+        <p *ngFor="let message of messages['contact']" class="bg-light p-1 m-1 d-inline-block">
+
+          <span *ngIf="message['contact']">
+            <b [ngClass]="'text-'+message['type']">{{ message['contact'] }} </b>
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="col form-group py-2 my-0">
+      <label for="tel">פלאפון/טלפון</label>
+
+      <div class="inputTypeNumber my-2">
+        <input type="tel" id="tel" name="tel" class="col-11 px-1" formControlName="tel" [pattern]="phoneNum" required
+          #tel />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* נא למלא שדה בתבנית המתאימה
+        לפאלפון/טלפון
+      </div>
+
+      <div class="my-2">
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(tel)">
+          <span>
+            נקה
+            <i class="material-icons text-warning">
+              clear
+            </i>
+          </span>
+        </a>
+      </div>
+      <div *ngIf="messages && messages['tel']" class="bg-light p-1 ml-1">
+        <p *ngFor="let message of messages['tel']" class="bg-light p-1 m-1 d-inline-block">
+
+          <span *ngIf="message['tel']">
+            <b [ngClass]="'text-'+message['type']">{{ message['tel'] }} </b>
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="col form-group py-2 my-0">
+      <label for="address">כתובת</label>
+
+      <div class="inputTypeNumber my-2">
+        <input class="col-11 px-1" type="text" name="address" id="address" formControlName="address" required #address />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.address.invalid && f.address.touched" class="invalid-feedback d-block">* שדה חובה</div>
+
+      <div class="my-2">
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(address)">
+          <span>
+            נקה
+            <i class="material-icons text-warning">
+              clear
+            </i>
+          </span>
+        </a>
+      </div>
+      <div *ngIf="messages && messages['address']" class="bg-light p-1 ml-1">
+        <p *ngFor="let message of messages['address']" class="bg-light p-1 m-1 d-inline-block">
+
+          <span *ngIf="message['address']">
+            <b [ngClass]="'text-'+message['type']">{{ message['address'] }} </b>
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <div class="col form-group py-2 my-0">
+      <label for="email">אימייל</label>
+      <div class="inputTypeNumber my-2">
+        <input class="col-11 px-1" type="email" name="email" id="email" formControlName="email" [pattern]="emailPatteren"
+          required #email />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
+
+      <div class="my-2">
+        <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(email)">
+          <span>
+            נקה
+            <i class="material-icons text-warning">
+              clear
+            </i>
+          </span>
+        </a>
+      </div>
+      <div *ngIf="messages && messages['email']" class="bg-light p-1 ml-1">
+        <p *ngFor="let message of messages['email']" class="bg-light p-1 m-1 d-inline-block">
+
+          <span *ngIf="message['email']">
+            <b [ngClass]="'text-'+message['type']">{{ message['email'] }} </b>
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- about edite -->
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="col-sm-12 form-group py-3">
+        <label for="title">תיאור או כותרת החברה</label>
+
+        <div class="inputTypeNumber my-2 textarea">
+          <textarea class="col-11 px-1" type="text" name="title" id="title" formControlName="title" required minlength="12"
+            #title>
+          </textarea>
+          <span class="validity float-left"></span>
+        </div>
+        <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
+
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(title)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="messages && messages['title']" class="bg-light p-1 ml-1">
+          <p *ngFor="let message of messages['title']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['title']">
+              <b [ngClass]="'text-'+message['type']"> {{ message['title'] }} </b>
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div class="col-sm-12 form-group border p-3">
+
+        <label for="discription">אודות החברה</label>
+        <textarea wrap="hard" class="w-100 form-control text-right note" type="text" name="discription" id="discription"
+          formControlName="discription" minlength="6" #discription>
+
+        </textarea>
+
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(discription)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="messages && messages['discription']" class="bg-light p-1 ml-1">
+          <p *ngFor="let message of messages['discription']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['discription']">
+              <b [ngClass]="'text-'+message['type']">
+                {{ message['discription'] }}
+              </b>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- media and gallery edite -->
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="h-100 p-3">
+        <!-- Chose loggo -->
+        <p class="pb-2 m-0">לוגו החברה</p>
+        <div class="form-group border bg-white clearfix">
+          <span class="py-2 px-2 m-0 float-right">
+            בחר קובץ...
+          </span>
+          <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="loggo">
+            <span>
+              החלף לוגו
+              <i class="fa fa-search text-success"></i>
+            </span>
+          </label>
+          <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required (change)="selectedFiles($event,'loggo')" />
+        </div>
+
+        <div class="border bg-dark d-flex-row" #loggo>
+
+
+        </div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galReset(loggo)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+        </div>
+        <div *ngIf="messages && messages['loggo']" class="bg-light p-1 ml-1">
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['loggo']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['loggo'] || gal['fileSize'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['loggo'] || gal['fileSize'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen'] }} </b>
+              </p>
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <p class="pb-2 m-0">סרטון תדמיתי</p>
+        <div class="form-group border bg-white clearfix">
+
+
+          <span class="py-2 px-2 m-0 float-right">
+            בחר קובץ...
+          </span>
+          <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="video">
+            <span>
+              הוסף סרטון
+              <i class="fa fa-search text-success"></i>
+            </span>
+          </label>
+
+          <input type="file" id="video" class="video" style="display: none;" accept="video/*" (change)="selectedFiles($event,'video')"
+            required />
+        </div>
+
+        <div class="border border-success bg-dark d-flex-row" #video>
+
+        </div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galReset(video)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+        </div>
+        <!-- display video messages from server -->
+        <div *ngIf="messages && messages['video']" class="bg-light p-1 ml-1">
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['video']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['video'] || gal['fileSize'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['video'] || gal['fileSize'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen'] }} </b>
+              </p>
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b>
+              </p>
+            </li>
+          </ul>
+        </div>
+        <!-- display messages video from claint -->
+        <!-- <p *ngIf="messages[0] && messages[0].video" class="alert alert-danger">{{ messages[0].video }}</p> -->
+        <!-- gallery -->
+        <p class="pb-2 m-0">גלרית תמונות</p>
+        <div class="form-group bg-white border clearfix">
+
+          <span class="py-2 px-2 m-0 float-right">
+            בחר קובץ...
+          </span>
+          <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="gallery">
+            <span>
+              הוסף תמונות
+              <i class="fa fa-search text-success"></i>
+            </span>
+          </label>
+          <input type="file" id="gallery" class="gallery" style="display: none;" accept="image/*" required multiple
+            (change)="selectedFiles($event,'gallery')" />
+        </div>
+        <div class="border border-success bg-dark d-flex-row" #gall>
+
+        </div>
+        <div class="my-2">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galReset(gall)">
+            <span>
+              נקה
+              <i class="material-icons text-warning">
+                clear
+              </i>
+            </span>
+          </a>
+        </div>
+        <!-- display gallery messages from server -->
+        <div *ngIf="messages && messages['gallery']" class="bg-light p-1 ml-1">
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['gallery']" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['gallery'] || gal['fileSize'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['gallery'] || gal['fileSize'] || gal['fileType'] || gal['minMaxFile'] || gal['fileUnchange'] ||  gal['fileCharLen'] }} </b>
+              </p>
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['image'] }}
+              </p>
+              <p *ngIf="gal['min-files']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['min-files'] }}
+              </p>
+
+            </li>
+          </ul>
+        </div>
+        <!-- display messages gallery from claint -->
+        <div *ngIf="messages && messages['files']" class="bg-light p-1 ml-1">
+          <p *ngFor="let gal of messages['files']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="gal['size']">
+              <b [ngClass]="{'text-danger':gal['size']}">{{ gal['size'] }} </b>
+            </span>
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-sm-12">
+
+      <div class="btn-group w-100 p-3 bg-light">
+        <button  class="btn btn-success" type="submit">העלה</button><!-- [disabled]="! f.valid" -->
+        <a class="btn btn-warning" (click)="reset()">אפס</a>
+        <a class="btn btn-danger" (click)="close()">בטל וסגור</a>
+      </div>
+    </div>
+
+  </div>
+  <!-- END Gallery -->
+</form>

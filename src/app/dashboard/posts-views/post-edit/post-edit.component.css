@@ -1,0 +1,25 @@
+
+.mt-icons {
+    font-size: 1.2em;
+}
+
+.costum-btn {
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+.costum-btn-success:hover {
+    color: white;
+    border: 1px solid rgb(220, 248, 221) !important;
+    background: #47BD35;
+}
+
+.costum-btn-warning:hover {
+    background: #F6DC2F;
+    color: white;
+}
+
+.costum-btn-danger:hover {
+    background: #F02B2B;
+    color: white;
+}

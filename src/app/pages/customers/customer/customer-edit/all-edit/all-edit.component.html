@@ -1,0 +1,23 @@
+
+<!-- *ngIf="isTrue" [formGroup]="addCostumerForm"  -->
+<form *ngIf="isTrue | async" [formGroup]="addCostumerForm" class="border border rounded text-right mt-2" (ngSubmit)="onSubmit()">
+  <!-- <edit-all-temp [formAll]="addCostumerForm" [cus]="customer" (ins)="childIns($event)"></edit-all-temp> -->
+   <!-- basic edite -->
+
+   <edit-basic-temp [formInstans]="addCostumerForm" [cus]="customer" (ins)="childIns($event)"></edit-basic-temp>
+   <!-- media and gallery edite -->
+ 
+     <edit-media-temp [formInstans]="addCostumerForm" [cus]="customer" (ins)="childIns($event)"></edit-media-temp>
+ 
+   <!-- END Gallery -->
+  <div class="row">
+      <div class="col-sm-12">
+          <div class="btn-group w-100 p-3 bg-light">
+            <button class="btn btn-success" type="submit">עדכן הכל</button>
+            <a class="btn btn-warning" (click)="reset()">אפס</a>
+            <a class="btn btn-danger" (click)="close()">בטל וסגור</a>
+            <a class="btn btn-info" (click)="allTodefault()">שחזר ברירת מחדל</a>
+          </div>
+      </div>
+  </div>  
+</form>

@@ -1,0 +1,84 @@
+
+/* Bootstrap text secundry */
+/* 
+green    #47BD35;
+yellow   #F6DC2F;
+red      #F02B2B;
+*/
+
+.list-group-item {
+    border: none;
+    background: transparent;
+}
+
+aside ul li a, aside ul li.d-block a {
+    color: white;
+    /* padding: .7rem; */
+    font-size: 1.5em;
+}
+
+aside ul .active:hover a {
+    color: #ffc107;
+}
+
+
+@media(min-width: 1200px){
+    aside ul {
+        /* border-right: 1px solid #F6DC2F; */
+    }
+    aside ul .active a {
+        color:  #F6DC2F;
+    }
+    
+    aside ul li:hover a {
+        color: #F6DC2F;
+        text-decoration: none;
+    }
+    
+}
+
+@media(max-width: 1200px){
+    h1.h4 {
+        text-align: center;
+    }
+    aside ul li.d-block a, ul li a i.material-icons {
+        /* color: #999; */
+        color: #a4bacf;
+        /* font-size: 1.5em; */
+        /* border-bottom: 1px solid #47BD35; */
+        /* padding: 0 -.5rem; */
+        
+    }
+    aside ul li.d-block .material-icons, aside ul li.d-block .fa {
+        font-size: 1.6em;
+    }
+    aside ul li:hover .material-icons, aside ul li:hover .fa {
+        color: #ffc107;
+    }
+    aside ul li.active .material-icons, aside ul li.active .fa{
+        color:  #F6DC2F;
+    }
+    aside ul {
+        border: none;
+    }
+    aside ul li{
+        padding-top: 1em;
+    }
+    
+}
+@media (max-width: 991.98px) { 
+    aside ul li.d-block i{
+        /* font-size: 1rem; */
+    }
+ }
+
+@media(max-width: 576px){
+
+    aside ul li.d-block a {
+        font-size: 1.5em;
+    }
+    aside ul li.d-block .material-icons, aside ul li.d-block .fa {
+        font-size: inherit;
+    }
+    
+}

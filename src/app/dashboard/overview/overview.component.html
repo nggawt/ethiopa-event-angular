@@ -1,0 +1,263 @@
+<div *ngIf="(itemResource$ | async ) as items" class="col-12 text-right">
+  <ng-container
+    [ngTemplateOutlet]="(itemType == 'customers')? cleint:(itemType == 'articles')? articles: (itemType == 'events')? events:(itemType == 'users')? users: default">
+  </ng-container>
+  <!-- <ng-container [ngTemplateOutlet]="cleint"></ng-container> -->
+  <!-- </div> -->
+  <div class="border rounded my-3 p-3">
+
+    <div class="clearfix">
+      <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
+      <span class="border border-success rounded p-1 costum-btn costum-btn-success" routerLink="../">
+        <i class="material-icons"> chevron_right </i>
+        <i class="mt-icons"> חזור </i>
+      </span>
+
+      <span class="border border-warning rounded mr-1 p-1 costum-btn costum-btn-warning" routerLink="edit">
+        <i class="mt-icons"> ערוך </i>
+        <i class="material-icons"> chevron_left </i>
+      </span>
+
+      <span class="border border-danger rounded mr-1 p-1 costum-btn costum-btn-danger" routerLink="edit">
+        <i class="mt-icons">מחק</i>
+        <i class="material-icons"> delete_forever </i>
+      </span>
+    </div>
+  </div>
+
+  <ng-template #default>
+    <div>default</div>
+  </ng-template>
+
+  <ng-template #cleint>
+
+    <div class="card">
+      <div class="row no-gutters">
+        <div class="card-header">
+          <img class="img-fluid" [src]="items.customer.loggo" [alt]="items.customer.company">
+        </div>
+        <div class="col">
+          <div class="card-body">
+            <h5 class="card-title">{{ items.customer.title }}</h5>
+            <ul class="list-group p-0">
+              <li class="list-group-item">
+                שם: {{ items.customer.company }}
+              </li>
+              <li class="list-group-item">
+                אימייל: {{ items.customer.email }}
+              </li>
+              <li class="list-group-item">
+                טל: {{ items.customer.tel }}
+              </li>
+              <li class="list-group-item">
+                כתובת: {{ items.customer.address }}
+              </li>
+              <li class="list-group-item">
+                אודות:
+                <p>
+                  {{ items.customer.descriptions }}
+                </p>
+              </li>
+              <li class="list-group-item">
+                מבצעים:
+                <p>
+                  {{ items.customer.deals && items.customer.deals.trim().length > 5? items.customer.deals: "יעודכן בקרוב" }}
+                </p>
+              </li>
+              <li *ngIf="items.gallery && items.gallery.image as images" class="list-group-item">
+                גלריית תמונות:
+                <div class="border border-success bg-dark d-flex-row">
+                  <img *ngFor="let image of images; let idx = index" [src]="image" class="m-1" [alt]="'img:'+idx"
+                    style="height:90px; cursor: pointer">
+                </div>
+              </li>
+              <li *ngIf="items.gallery && items.gallery.video as videos" class="list-group-item">
+                גלריית וידאו:
+                <div class="border border-success bg-dark d-flex-row">
+                  <video *ngFor="let video of videos; let idxVid = index" controls=true class="m-1">
+                    <source [src]="video" type="video/mp4">
+                  </video>
+                </div>
+              </li>
+              <li class="list-group-item">
+                סטטוס: {{ items.customer.confirmed? "מאושר" : "ממתין" }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #articles>
+
+    <div class="card">
+      <div class="row no-gutters">
+        <div class="card-header">
+          <div>
+            <h5 class="card-title">מאמר</h5>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card-body">
+            <h5 class="card-title">{{ items.title }}</h5>
+            <ul class="list-group p-0">
+              <li class="list-group-item">
+                שם: {{ items.name }}
+              </li>
+              <li class="list-group-item">
+                פורסם בתאריך:
+                <p>{{ items.date | dateHebraw:"full" }}</p>
+              </li>
+              <li class="list-group-item">
+                אודות:
+                <p>
+                  {{ items.body }}
+                </p>
+              </li>
+              <li class="list-group-item">
+                  סטטוס: {{ items.confirmed? "מאושר" : "ממתין" }}
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #events>
+
+    <div class="card">
+      <div class="row no-gutters">
+        <div class="card-header">
+          <div>
+            <h5 class="card-title">אירוע</h5>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card-body">
+            <h5 class="card-title">אירוע {{ items.eventType | eventType}}</h5>
+            <ul class="list-group p-0">
+              <li class="list-group-item">
+                שם: {{ items.name }}
+              </li>
+              <li class="list-group-item">
+                אימייל: {{ items.email }}
+              </li>
+              <li class="list-group-item">
+                טל: {{ items.phone }}
+              </li>
+              <li class="list-group-item">
+                כתובת: {{ items.address }}
+              </li>
+              <li class="list-group-item">
+                סוג האירוע: {{ items.eventType | eventType }}
+              </li>
+              <li class="list-group-item">
+                תאריך האירוע:
+                <p>{{ items.date | dateHebraw:"full" }}</p>
+              </li>
+              <li class="list-group-item">
+                אודות:
+                <p>
+                  {{ items.description }}
+                </p>
+              </li>
+              <li class="list-group-item">
+                  סטטוס: {{ items.confirmed? "מאושר" : "ממתין" }}
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #users>
+
+      <div class="card">
+        <div class="row no-gutters">
+          <div class="card-header">
+            <div>
+              <h5 class="card-title">משתמש</h5>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card-body">
+              <h5 class="card-title"> {{ items.name }}</h5>
+              <ul class="list-group p-0">
+                <li class="list-group-item">
+                  שם: {{ items.name }}
+                </li>
+                <li class="list-group-item">
+                  אימייל: {{ items.email }}
+                </li>
+                <li class="list-group-item">
+                  טל: {{ items.tel }}
+                </li>
+                <li class="list-group-item">
+                   אזור: {{ items.area }}
+                  </li>
+                <li class="list-group-item">
+                  כתובת: {{ items.city }}
+                </li>
+                
+                <li *ngIf="items.created_at as userDt" class="list-group-item">
+                  נוצר בתאריך:
+                  <p>{{ userDt | dateHebraw:"full" }}</p>
+                </li>
+                <li class="list-group-item">
+                  אודות:
+                  <p>
+                    {{ items.about }}
+                  </p>
+                </li>
+                <li class="list-group-item">
+                    סטטוס: {{ items.confirmed? "מאושר" : "ממתין" }}
+                  </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+</div>
+<!-- 
+<div class="card mb-3" style="max-width: 540px;">
+  <div class="row no-gutters">
+    <div class="col-md-4">
+      <img src="..." class="card-img" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+ -->
+<!-- cards... 
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Special title treatment</h5>
+        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Special title treatment</h5>
+        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+      </div>
+    </div>
+  </div>
+</div>
+ -->

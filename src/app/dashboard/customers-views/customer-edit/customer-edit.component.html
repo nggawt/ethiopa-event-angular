@@ -1,0 +1,93 @@
+<div *ngIf="itemForm$ | async as formItems" class="col-12 text-right">
+    <div class="border rounded p-3">
+        <form class="form-row" [formGroup]="formGr" (ngSubmit)="onSubmit()">
+            <div class="form-group col-sm-12">
+                <h5 class="text-black-50 h4">
+    
+                    <i class="fa fa-message text-secondary"></i> ערוך קליינט
+                </h5>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="company" class="form-control-label">
+                    שם:
+                </label>
+                <input class="form-control" formControlName="company" type="text">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="email" class="form-control-label">
+                    אימייל:
+                </label>
+                <input class="form-control" id="email" formControlName="email" type="email">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="tel" class="form-control-label">
+                    טל:
+                </label>
+                <input class="form-control" id="tel" formControlName="tel" type="tel">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="address" class="form-control-label">
+                    כתובת:
+                </label>
+                <input class="form-control" id="address" formControlName="address" type="address">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="businessType" class="form-control-label">
+                    סוג העסק:
+                </label>
+                <select name="businessType" id="businessType" class="form-control" formControlName="businessType"
+                    required #businessType>
+                    <option value="בחר תחום" selected disabled>בחר תחום</option>
+                    <option value="halls-events">אולם אירועים</option>
+                    <option value="salons">סלון כלות</option>
+                    <option value="photographers">צלמים</option>
+                    <option value="djs">די-ג'י</option>
+                    <option value="printing">בתי דפוס</option>
+                    <option value="fireworks">זיקוקים ואטרקציות</option>
+                    <option value="transportation">הסעות</option>
+                    <option value="car-rental">השכרת רכב</option>
+                    <option value="hotels">צמרים ובתי מלון</option>
+                    <option value="kyses">קייסים/רבנות</option>
+                    <option value="שונות">שונות</option>
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="title" class="form-control-label">
+                    נושא:
+                </label>
+                <input class="form-control" id="title" formControlName="title" type="text">
+            </div>
+            <div class="form-group col-md-12">
+                <label for="deals" class="form-control-label">
+                    מבצעים:
+                </label>
+                <textarea class="form-control" id="deals" formControlName="deals" type="text" rows="3"></textarea>
+            </div>
+            <div class="form-group col-md-12">
+                <label for="descriptions" class="form-control-label">
+                    תוכן:
+                </label>
+                <textarea class="form-control" id="descriptions" formControlName="descriptions" type="text"
+                    rows="8"></textarea>
+            </div>
+            <div class="form-group col-2 custom-control custom-checkbox">
+                <input [id]="confirmed" class="custom-control-input" type="checkbox" [checked]="f.confirmed.value">
+    
+                <label [for]="confirmed" class="custom-control-label">
+                    סטטוס:
+                    {{ f.confirmed.value? "סרב": "אשר" }}
+                </label>
+            </div>
+            <div class="col-sm-12 clearfix">
+                <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
+                <span class="border border-success rounded p-1 costum-btn costum-btn-success" routerLink="../">
+                    <i class="material-icons"> chevron_right </i>
+                    <i class="mt-icons"> חזור </i>
+                </span>
+    
+                <!-- </span> -->
+                <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
+            </div>
+        </form>
+    </div>
+</div>
