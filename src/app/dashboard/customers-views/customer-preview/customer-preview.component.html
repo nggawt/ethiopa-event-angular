@@ -1,0 +1,56 @@
+<div class="card">
+    <div class="row no-gutters">
+      <div class="card-header">
+        <img class="img-fluid" [src]="customerItem.customer.loggo" [alt]="customerItem.customer.company">
+      </div>
+      <div class="col">
+        <div class="card-body">
+          <h5 class="card-title">{{ customerItem.customer.title }}</h5>
+          <ul class="list-group p-0">
+            <li class="list-group-item">
+              שם: {{ customerItem.customer.company }}
+            </li>
+            <li class="list-group-item">
+              אימייל: {{ customerItem.customer.email }}
+            </li>
+            <li class="list-group-item">
+              טל: {{ customerItem.customer.tel }}
+            </li>
+            <li class="list-group-item">
+              כתובת: {{ customerItem.customer.address }}
+            </li>
+            <li class="list-group-item">
+              אודות:
+              <p>
+                {{ customerItem.customer.descriptions }}
+              </p>
+            </li>
+            <li class="list-group-item">
+              מבצעים:
+              <p>
+                {{ customerItem.customer.deals && customerItem.customer.deals.trim().length > 5? customerItem.customer.deals: "יעודכן בקרוב" }}
+              </p>
+            </li>
+            <li *ngIf="customerItem.gallery && customerItem.gallery.image as images" class="list-group-item">
+              גלריית תמונות:
+              <div class="border border-success bg-dark d-flex-row">
+                <img *ngFor="let image of images; let idx = index" [src]="image" class="m-1" [alt]="'img:'+idx"
+                  style="height:90px; cursor: pointer">
+              </div>
+            </li>
+            <li *ngIf="customerItem.gallery && customerItem.gallery.video as videos" class="list-group-item">
+              גלריית וידאו:
+              <div class="border border-success bg-dark d-flex-row">
+                <video *ngFor="let video of videos; let idxVid = index" controls=true class="m-1">
+                  <source [src]="video" type="video/mp4">
+                </video>
+              </div>
+            </li>
+            <li class="list-group-item">
+              סטטוס: {{ customerItem.customer.confirmed? "מאושר" : "ממתין" }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>

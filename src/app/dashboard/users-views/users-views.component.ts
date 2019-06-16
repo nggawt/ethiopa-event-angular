@@ -115,4 +115,12 @@ export class UsersViewsComponent implements OnInit {
       }
     });
   }
+
+  destroy(items){
+    
+    let url = "users/"+items.id+"? _method=DELETE";
+    this.http.postData(url, null).subscribe(response => {
+      console.log(response);
+    });
+  }
 }

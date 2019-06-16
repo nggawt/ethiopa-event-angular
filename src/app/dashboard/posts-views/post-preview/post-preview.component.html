@@ -1,0 +1,32 @@
+<div class="card">
+    <div class="row no-gutters">
+      <div class="card-header">
+        <div>
+          <h5 class="card-title">מאמר</h5>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card-body">
+          <h5 class="card-title">{{ postItem.title }}</h5>
+          <ul class="list-group p-0">
+            <li class="list-group-item">
+              שם: {{ postItem.name }}
+            </li>
+            <li class="list-group-item">
+              פורסם בתאריך:
+              <p>{{ postItem.date | dateHebraw:"full" }}</p>
+            </li>
+            <li class="list-group-item">
+              אודות:
+              <p>
+                {{ postItem.body }}
+              </p>
+            </li>
+            <li class="list-group-item">
+              סטטוס: {{ postItem.confirmed? "מאושר" : "ממתין" }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>

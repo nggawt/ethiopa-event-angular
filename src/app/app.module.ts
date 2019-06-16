@@ -89,7 +89,7 @@ import { MessagesComponent } from './dashboard/messages/messages.component';
 import { TasksComponent } from './dashboard/tasks/tasks.component';
 import { SecurityComponent } from './dashboard/security/security.component';
 import { PostsViewsComponent } from './dashboard/posts-views/posts-views.component';
-import { AdminProfileComponent } from './dashboard/admin-profile/admin-profile.component';
+import { AdminProfileComponent } from './dashboard/admins-views/admin-profile/admin-profile.component';
 import { CustomersViewsComponent } from './dashboard/customers-views/customers-views.component';
 import { NotificationsComponent } from './dashboard/notifications/notifications.component';
 import { AdminsViewsComponent } from './dashboard/admins-views/admins-views.component';
@@ -107,6 +107,13 @@ import { UserEditComponent } from './dashboard/users-views/user-edit/user-edit.c
 import { AdminCreateComponent } from './dashboard/admins-views/admin-create/admin-create.component';
 import { LogInComponent } from './auth/log-in/log-in.component';
 import { AuthComponent } from './auth/auth/auth.component';
+import { OverviewTemplateComponent } from './dashboard/overview-template/overview-template.component';
+import { ModelTemplateComponent } from './dashboard/model-template/model-template.component';
+import { AdminEditComponent } from './dashboard/admins-views/admin-edit/admin-edit.component';
+import { UserProfileComponent } from './dashboard/users-views/user-profile/user-profile.component';
+import { EventPreviewComponent } from './dashboard/events-views/event-preview/event-preview.component';
+import { PostPreviewComponent } from './dashboard/posts-views/post-preview/post-preview.component';
+import { CustomerPreviewComponent } from './dashboard/customers-views/customer-preview/customer-preview.component';
 
 @NgModule({
   declarations: [
@@ -164,7 +171,14 @@ import { AuthComponent } from './auth/auth/auth.component';
     EventTypePipe,
     UserEditComponent,
     AdminCreateComponent,
-    AuthComponent
+    AuthComponent,
+    OverviewTemplateComponent,
+    ModelTemplateComponent,
+    AdminEditComponent,
+    UserProfileComponent,
+    EventPreviewComponent,
+    PostPreviewComponent,
+    CustomerPreviewComponent
     // ConcatFormComponent,
     // CustomerComponent
   ],

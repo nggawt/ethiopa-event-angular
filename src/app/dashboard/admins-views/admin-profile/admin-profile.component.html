@@ -1,0 +1,30 @@
+<div class="card">
+    <div class="row no-gutters">
+      <div class="card-header">
+        <div>
+          <h5 class="card-title">מנהל</h5>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card-body">
+          <h5 class="card-title"> {{ adminItem.name }}</h5>
+          <ul class="list-group p-0">
+            <li class="list-group-item">
+              שם: {{ adminItem.name }}
+            </li>
+            <li class="list-group-item">
+              אימייל: {{ adminItem.email }}
+            </li>
+            <li *ngIf="adminItem.created_at as userDt" class="list-group-item">
+              נוצר בתאריך:
+              <p>{{ userDt | dateHebraw:"full" }}</p>
+            </li>
+            <li class="list-group-item">
+              הרשאה:
+                {{ adminItem.authority?.slug }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>

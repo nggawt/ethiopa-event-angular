@@ -39,6 +39,9 @@ import { CanDeactivateGuardService } from './services/can-deactivate-guard/can-d
 import { RouteGuardService } from './services/route-guard/route-guard.service';
 import { AdminCreateComponent } from './dashboard/admins-views/admin-create/admin-create.component';
 import { LogInComponent } from './auth/log-in/log-in.component';
+import { ModelTemplateComponent } from './dashboard/model-template/model-template.component';
+import { OverviewTemplateComponent } from './dashboard/overview-template/overview-template.component';
+import { AdminEditComponent } from './dashboard/admins-views/admin-edit/admin-edit.component';
 
 
 // import { NotificationsComponent } from './dashboard/notifications/notifications.component';
@@ -51,15 +54,18 @@ const routes: Routes = [
     { path: 'admins-views', component: AdminsViewsComponent, children: [
       { path: 'admin-profile', component: AdminPanelComponent },
       { path: 'create', component: AdminCreateComponent },
+      { path: ':id/edit', component: AdminEditComponent },
     ] },
+    { path: 'admins-views/:id', component: OverviewComponent, data : { itemType: "admins"} },
+    // { path: 'admins-views/:id/edit', component: AdminEditComponent, data : { itemType: "admins"} },
 
     { path: 'users-views', component: UsersViewsComponent },
     { path: 'users-views/:id', component: OverviewComponent, data : { itemType: "users"} },
     { path: 'users-views/:id/edit', component: UserEditComponent, data : { itemType: "users"} },
 
-    { path: 'articles-views', component: PostsViewsComponent },
-    { path: 'articles-views/:id', component: OverviewComponent, data : { itemType: "articles"} },
-    { path: 'articles-views/:id/edit', component: PostEditComponent, data : { itemType: "articles"} },
+    { path: 'blog-views', component: PostsViewsComponent },
+    { path: 'blog-views/:id', component: OverviewComponent, data : { itemType: "blog"} },
+    { path: 'blog-views/:id/edit', component: PostEditComponent, data : { itemType: "blog"} },
 
     { path: 'customers-views', component: CustomersViewsComponent },
     { path: 'customers-views/:id', component: OverviewComponent, data : { itemType: "customers"} },

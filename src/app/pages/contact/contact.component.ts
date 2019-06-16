@@ -91,7 +91,7 @@ export class ContactComponent implements OnInit {
         console.log(err);
         if (err["status"] === 401) {
           this.http.nextIslogged(false);
-          window.sessionStorage.removeItem('user_key');
+          window.localStorage.removeItem('user_key');
           window.location.reload();
         }
       });

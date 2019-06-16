@@ -27,7 +27,6 @@
       <ng-container [ngTemplateOutlet]="customersTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
     </table>
   </div>
-
   <div class="text-center clearfix py-3">
     <pagination-template #p="paginationApi" [id]="resource.config.id"
       (pageChange)="resource.config.currentPage = $event">
@@ -55,60 +54,35 @@
 
   <thead class="thead-light">
     <tr>
-      <th scope="col">#</th>
-      <th scope="col">שם</th>
-      <th scope="col">אימייל</th>
-      <th scope="col">כותרת\נושא</th>
-      <th scope="col">תוכן\תיאור</th>
-      <th scope="col">פלאפון\טלפון</th>
       <th scope="col">סוג העסק</th>
       <th scope="col">שם החברה</th>
-      <!-- <th *ngIf="customer.deals" scope="col">מבצעים</th> -->
-      <th scope="col">פרסם</th>
-      <!-- <th><span class="border-warning">עדכן</span></th> -->
+      <th scope="col">פרסם ב</th>
+      <th scope="col">סטטוס</th>
+      <th><span class="border-primary">הצג</span></th>
+      <th><span class="border-info">משתמש</span></th>
       <th><span class="border-warning">ערוך</span></th>
+      <th><span class="border-danger">מחק</span></th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let customer of customersData.data | paginate: customersData.config; let idx = index">
-      <th scope="row">{{customer.customer.id}}</th>
-      <td>{{customer.customer.name}}</td>
-      <td>{{customer.customer.email}}</td>
+      <th scope="row">
+        {{customer.customer.businessType == "halls-events"? "אולם אירועים": customer.customer.businessType}}</th>
+      <td> {{customer.customer.company}}</td>
       <td>
-        <!-- <label [for]="'customer.customerstitle'+customer.customer.id+idx" class="col-form-label word-break" [title]="customer.customer.title"> -->
-        {{customer.customer.title}}
-
-        <!-- </label> -->
-        <!-- <input [id]="'customer.customerstitle'+customer.customer.id+idx" class="form-control" type="text"> -->
+        <small *ngIf="customer.customer.created_at as dt" class="text-muted">
+          {{ dt | dateHebraw:'full' }}
+        </small>
       </td>
-      <td>
-        <p [title]="customer.customer.descriptions">
-          {{customer.customer.descriptions.length > 15? customer.customer.descriptions.slice(0, 15)+"...": customer.customer.descriptions}}
-        </p>
-        <ng-container
-          *ngTemplateOutlet="viewOrEdit; context:{elem: customer.customer, input: 'descriptions', inputId: 'customer.customerdescriptions'+ customer.customer.id+idx}">
-        </ng-container>
+      <td [ngClass]="customer.customer.confirmed? 'text-success':'text-danger'">
+        {{customer.customer.confirmed? "פעיל":  "ממתין"}}
       </td>
-      <td>
-        <!-- <label [for]="'customer.customerstel'+customer.customer.id+idx" class="col-form-label word-break" [title]="customer.customer.tel"> -->
-        {{customer.customer.tel}}
-        <!-- </label> -->
-        <!-- <input [id]="'customer.customerstel'+customer.customer.id+idx" class="form-control" type="tel"> -->
+      <td><a class="btn btn-primary btn-sm" [routerLink]="customer.customer.id">הצג</a>
       </td>
-      <td>{{customer.customer.businessType == "halls-events"? "אולם אירועים": customer.customer.businessType}}</td>
-      <td>
-        <!-- <label [for]="'customer.customerscompany'+customer.customer.id+idx" class="col-form-label word-break" [title]="customer.customer.company"> -->
-        {{customer.customer.company}}
-        <!-- </label> -->
-        <!-- <input [id]="'customer.customerscompany'+customer.customer.id+idx" class="form-control" type="text"> -->
+      <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+customer.customer.user_id">משתמש</a>
       </td>
-      <!-- <td *ngIf="customer.customer.deals">{{customer.customer.deals}}</td> -->
-      <td>
-        {{customer.customer.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
-        <ng-container *ngTemplateOutlet="checkBox; context:{elem: customer.customer}"></ng-container>
-      </td>
-      <!-- <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td> -->
-      <td><span class="btn btn-outline-danger btn-sm" [routerLink]="customer.customer.id+'/edit'">ערוך</span></td><!-- (click)="initForm(customer.customer, customer.customersForm)" -->
+      <td><a class="btn btn-outline-danger btn-sm" [routerLink]="customer.customer.id+'/edit'">ערוך</a></td>
+      <td><a class="btn btn-danger btn-sm" (click)="destroy(customer.customer)">מחק</a></td>
     </tr>
   </tbody>
 </ng-template>
@@ -128,14 +102,14 @@
   <label [for]="inputId" class="w-100 col-form-label">
 
     <a class="text-primary float-right link" (click)="editIem(inputId)">
-      {{ itemObj[inputType].trim().length > 15? 'עדכן או הצג תוכן': 'עדכן' }}
+      {{ itemObj[inputType].trim().length > 15? 'ערוך או הצג תוכן': 'ערוך' }}
     </a>
   </label>
   <textarea class="form-control text-break hide" name="body" [id]="inputId">
-        {{ itemObj[inputType].trim() }}
-  </textarea>
+            {{ itemObj[inputType].trim() }}
+      </textarea>
 </ng-template>
 
 <ng-template #customersForm>
-  <app-dashboard-edit ></app-dashboard-edit>
+  <app-dashboard-edit></app-dashboard-edit>
 </ng-template>

@@ -24,8 +24,6 @@ export class ResetPasswordComponent implements OnInit {
 
   ngOnInit() {
     this.initRestPasswordForm();
-    console.log("reset");
-    
   }
 
   initRestPasswordForm() {
@@ -36,7 +34,15 @@ export class ResetPasswordComponent implements OnInit {
       'password': new FormControl(null, [Validators.required]),
       'password_confirmation': new FormControl(null, [Validators.required]),
     });
-    
+    $('#forgotPassword').modal();
+
+    let thiz = this;
+    $(document).on('hidden.bs.modal', '.modal', function () {
+
+      /// TODO EVENTS
+      console.log(thiz.http.requestUrl);
+      thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) : thiz.router.navigate(['../'], { relativeTo: this.route });
+    });
   }
 
 
@@ -80,7 +86,6 @@ export class ResetPasswordComponent implements OnInit {
   // f() { return this.logInform.controls; }
 
   reset(){
-    console.log(this.resetPassword);
     let values = this.resetPassword.value;
     values['token'] = this.token;
     // values['token'] = this.route.snapshot.queryParamMap['params']['token'];

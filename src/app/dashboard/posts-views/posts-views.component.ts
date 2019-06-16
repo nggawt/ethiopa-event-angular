@@ -14,7 +14,7 @@ export class PostsViewsComponent implements OnInit {
   formGr: FormGroup;
 
   @ViewChild('default', {static: true}) tempType: TemplateRef<any>;
-  @ViewChild('tableArticles', {static: true}) tableArticles: TemplateRef<any>;
+  @ViewChild('tableblog', {static: true}) tableblog: TemplateRef<any>;
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
@@ -23,7 +23,7 @@ export class PostsViewsComponent implements OnInit {
   ngOnInit() {
 
     this.itemsResources$ = this.resSrv.resourcesObsever;
-    this.tempType =  this.tableArticles;
+    this.tempType =  this.tableblog;
   }
   
   get f() : {} {
@@ -119,5 +119,13 @@ export class PostsViewsComponent implements OnInit {
     // $("#search_form").on("focus",() => {
     //   $(ul).show();
     // });
+  }
+  
+  destroy(items){
+    
+    let url = "blog/"+items.id+"? _method=DELETE";
+    this.http.postData(url, null).subscribe(response => {
+      console.log(response);
+    });
   }
 }

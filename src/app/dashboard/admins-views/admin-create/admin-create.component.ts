@@ -15,13 +15,10 @@ declare var $;
 })
 export class AdminCreateComponent implements OnInit {
 
-  logInform: FormGroup;
-  phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
+  regiter: FormGroup;
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
 
-  loginUrl = "admin-login";
-  md;
   
   constructor(private router: Router, 
     private http: HttpService, 
@@ -36,36 +33,22 @@ export class AdminCreateComponent implements OnInit {
       }
     ); */
     this.formInit();
-
-    let thiz = this;
-    $(document).on('hidden.bs.modal','.modal', function () {
-
-      /// TODO EVENTS
-      console.log("called create method ", thiz.http.requestUrl);
-      thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate([thiz.router.url.split('/create')[0]]);//, {relativeTo: this.route}
-      
-      // console.log(thiz.loc.normalize(thiz.loc.path()));
-      // thiz.loc.replaceState(thiz.loc.path());
-      // thiz.loc.back()
-      //thiz.loc.getState()['navigationId'] >= 2? thiz.loc.back():
-        // thiz.router.navigate(['../'], {relativeTo: this.route});
-      });
   }
   onSubmit(){
 
-    if(this.logInform.valid){
+    if(this.regiter.valid){
       /****** handel form inputs *****/
-      let formInputes = this.logInform;
+      let formInputes = this.regiter;
       let details = formInputes.value;
     
-      /* let formInputes = this.logInform;
+      /* let formInputes = this.regiter;
       let controls = formInputes.controls;
       
       
       let items = this.valForm.validate(controls, formInputes.value);
       let success = items['status'] ? items['success'] : false; */
       const theUrl = "http://ethio:8080/api/admin-register";
-      if(this.logInform.valid){
+      if(this.regiter.valid){
         const body = new HttpParams()
           .set('name', details['name'])
           .set('email', details['email'])
@@ -79,6 +62,7 @@ export class AdminCreateComponent implements OnInit {
           
           if(evt['access_token']){
             this.http.nextIslogged(true);
+            $(".close").click();
             // location.reload();
             // this.router.navigate(['/']);
           }
@@ -92,16 +76,22 @@ export class AdminCreateComponent implements OnInit {
     }
   }
 
-  get f() { return this.logInform.controls; }
+  get f() { return this.regiter.controls; }
 
   private formInit(){
-    this.logInform = new FormGroup({
+    this.regiter = new FormGroup({
       "name": new FormControl(null),
       'email': new FormControl(null),
       'password': new FormControl(null),
       'passwordConfirm': new FormControl(null),
       'admin_type': new FormControl(""),
     });
-    this.md = $('#forgotPassword').modal();
+    $('#forgotPassword').modal();
+
+    let thiz = this;
+    $(document).on('hidden.bs.modal','.modal', function () {
+      /// TODO EVENTS
+      thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate(['../'], {relativeTo: this.route});
+    });
   }
 }

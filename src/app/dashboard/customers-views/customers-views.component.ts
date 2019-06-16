@@ -51,7 +51,7 @@ export class CustomersViewsComponent implements OnInit {
   editIem(textArea){
     console.log(textArea);
     let elem = $('#'+textArea)[0];
-    // console.log(elem);
+    console.log(elem);
     elem.style.whiteSpace ="normal";
 
     let storageId = this.savedId['prevElemId'];
@@ -120,6 +120,12 @@ export class CustomersViewsComponent implements OnInit {
     //   $(ul).show();
     // });
   }
-
+  destroy(items){
+    console.log(items);
+    let url = "customers/"+items.id+"? _method=DELETE";
+    this.http.postData(url, null).subscribe(response => {
+      console.log(response);
+    });
+  }
   
 }

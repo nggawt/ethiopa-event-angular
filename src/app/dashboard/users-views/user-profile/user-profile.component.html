@@ -1,0 +1,45 @@
+<div class="card">
+    <div class="row no-gutters">
+      <div class="card-header">
+        <div>
+          <h5 class="card-title">משתמש</h5>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card-body">
+          <h5 class="card-title"> {{ usersItem.name }}</h5>
+          <ul class="list-group p-0">
+            <li class="list-group-item">
+              שם: {{ usersItem.name }}
+            </li>
+            <li class="list-group-item">
+              אימייל: {{ usersItem.email }}
+            </li>
+            <li class="list-group-item">
+              טל: {{ usersItem.tel }}
+            </li>
+            <li class="list-group-item">
+               אזור: {{ usersItem.area }}
+              </li>
+            <li class="list-group-item">
+              כתובת: {{ usersItem.city }}
+            </li>
+            
+            <li *ngIf="usersItem.created_at as userDt" class="list-group-item">
+              נוצר בתאריך:
+              <p>{{ userDt | dateHebraw:"full" }}</p>
+            </li>
+            <li class="list-group-item">
+              אודות:
+              <p>
+                {{ usersItem.about }}
+              </p>
+            </li>
+            <li class="list-group-item">
+                סטטוס: {{ usersItem.confirmed? "מאושר" : "ממתין" }}
+              </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>

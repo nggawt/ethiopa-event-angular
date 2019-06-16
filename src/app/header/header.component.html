@@ -1,27 +1,33 @@
 <!-- position-relative -->
 <header class="d-flex flex-row-reverse">
-    <div class="align-self-center">
+    <div *ngIf="user$ | async as user; else noUser" class="align-self-center">
 
-        <a *ngIf="! (user$ | async) as islogged" class="btn btn--light" (click)="logIn(islogged)">
-            <i class="fa fa-sign-in text-success rotated"></i>
-        </a>
 
-        <a *ngIf="! (user$ | async)" (click)="register('/register')" class="btn btn--light">
-            <i class="fa fa-user-plus text-primary"></i>
-        </a>
         <!-- userProfil -->
-        <a *ngIf="user$ | async as user" [routerLink]="setUrlProfile(user)" class="btn btn-light">
+        <a [routerLink]="setUrlProfile(user)" class="btn btn-light">
             <i class="material-icons">person</i>
         </a>
         <!-- customerPage -->
-        <a *ngIf="(user$ | async)?.customer as customer" [routerLink]="setUrlPage(customer)" class="btn btn-light">
+        <a *ngIf="user.customer as customer" [routerLink]="setUrlPage(customer)" class="btn btn-light">
             <i class="material-icons">pages</i>
         </a>
-        <a *ngIf="(user$ | async)" class="btn btn-light" (click)="logOut()">
+        <a class="btn btn-light" (click)="logOut()">
             <i class="fa fa-sign-out text-danger rotated"></i>
         </a>
 
     </div>
+    <ng-template #noUser>
+        <div class="align-self-center">
+            <a class="btn btn--light" (click)="logIn(islogged)">
+                <i class="fa fa-sign-in text-success rotated"></i>
+            </a>
+
+            <a (click)="register('/register')" class="btn btn--light">
+                <i class="fa fa-user-plus text-primary"></i>
+            </a>
+        </div>
+    </ng-template>
+
     <div class="align-self-center position-relative">
 
         <form class="form-inline float-right">
@@ -112,33 +118,6 @@
     </nav>
 </header>
 
-<!-- Form Log-in Model -->
-<!-- *ngIf="(allowLog | async)"  -->
-<div *ngIf="! (user$ | async)" id="myFormModel" class="modal fade container" tabindex="-1" role="dialog"
-    aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg text-right">
-
-        <div *ngIf="formType" class="modal-content border col-sm-8 mx-auto">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span class="float-left" aria-hidden="true">&times;</span>
-            </button>
-            <div class="p-0">
-                <h2 class="h4" [ngClass]="resetPass? 'text-warning': 'text-success'">{{ resetPass?"אפס סיסמה":"התחבר" }}
-                </h2>
-                <p>
-                    <span class="text-danger">
-
-                        צוות אתיופיה אירועים.
-                    </span>
-                </p>
-            </div>
-            <ng-container *ngTemplateOutlet="formType;"></ng-container>
-            <!-- <ng-container *ngTemplateOutlet="sendResetEmail;"></ng-container>
-            <ng-container *ngTemplateOutlet="sendResetPassword;"></ng-container> -->
-            <!--  context:{elem: description, itemMethod: formMethod} -->
-        </div>
-    </div>
-</div>
 
 <div id="contactModel" class="modal fade container" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
     aria-hidden="true">
@@ -149,174 +128,3 @@
         </div>
     </div>
 </div>
-
-<ng-template #logInTemplate let-elem="elem" let-itemValue="itemValue" let-itemMethod="itemMethod">
-
-    <form class="p-3" [formGroup]="logInform" (ngSubmit)="onSubmit()">
-
-        <div class="form-group">
-
-            <div class="inputTypeNumber">
-                <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם"
-                    required />
-
-                <span class="validity float-left"></span>
-            </div>
-
-            <div *ngIf="logInform.controls.name.invalid && logInform.controls.name.touched"
-                class="invalid-feedback d-block">* שדה חובה
-            </div>
-        </div>
-
-        <div class="form-group">
-
-            <div class="inputTypeNumber">
-                <input name="email" type="email" class="col-11" formControlName="email" placeholder="אימייל"
-                    [pattern]="emailPatt" required />
-
-                <span class="validity float-left"></span>
-            </div>
-
-            <div *ngIf="logInform.controls.email.invalid && logInform.controls.email.touched"
-                class="invalid-feedback d-block">* שדה חובה</div>
-        </div>
-
-        <div class="form-group">
-
-            <div class="inputTypeNumber">
-                <input name="password" type="password" class="col-11" formControlName="password" placeholder="סיסמה"
-                    [pattern]="passwordPatt" required />
-                <span class="validity float-left"></span>
-            </div>
-
-            <div *ngIf="logInform.controls.password.invalid && logInform.controls.password.touched"
-                class="invalid-feedback d-block">* שדה חובה</div>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success btn-sm">
-                <i class="fa fa-envelope"></i>
-                שלח
-            </button>
-            <a class="btn btn-primary btn-sm text-light float-left" (click)="register()">
-                <span class="fa fa-user-plus"></span> הרשמה
-            </a>
-        </div>
-
-        <p *ngIf="!resetPass">
-            <a class="text-warning" (click)="sendReset()">שכחתי סיסמה? </a>
-        </p>
-    </form>
-</ng-template>
-
-<ng-template #sendResetEmailTemplate let-elem="elem" let-itemValue="itemValue" let-itemMethod="itemMethod">
-
-    <form class="p-3" [formGroup]="sendResetPasswordToEmail" (ngSubmit)="sendPasswordResetEmail()">
-
-        <div class="form-group">
-
-            <div class="inputTypeNumber">
-                <input name="userName" type="text" class="col-11" formControlName="userName" placeholder="שם"
-                    required />
-
-                <span class="validity float-left"></span>
-            </div>
-
-            <div *ngIf="sendResetPasswordToEmail.controls.userName.invalid && sendResetPasswordToEmail.controls.userName.touched"
-                class="invalid-feedback d-block">* שדה חובה
-            </div>
-        </div>
-
-        <div class="form-group">
-
-            <div class="inputTypeNumber">
-                <input name="email" type="email" class="col-11" formControlName="logInEmail" placeholder="אימייל"
-                    [pattern]="emailPatt" required />
-
-                <span class="validity float-left"></span>
-            </div>
-
-            <div *ngIf="sendResetPasswordToEmail.controls.logInEmail.invalid && sendResetPasswordToEmail.controls.logInEmail.touched"
-                class="invalid-feedback d-block">* שדה חובה</div>
-        </div>
-
-
-        <div class="form-group">
-            <button type="submit" class="btn btn-success btn-sm">
-                <i class="fa fa-envelope"></i>
-                שלח
-            </button>
-            <a class="btn btn-primary btn-sm text-light float-left" (click)="register()">
-                <span class="fa fa-user-plus"></span> הרשמה
-            </a>
-        </div>
-    </form>
-</ng-template>
-
-<ng-template #sendResetPasswordTemplate let-elem="elem" let-itemValue="itemValue" let-itemMethod="itemMethod">
-
-    <form class="p-3" [formGroup]="resetPassword" (ngSubmit)="reset()">
-        <div class="form-group row">
-
-            <div class="col-sm-12">
-                <h2 class="h5">שנה סיסמה</h2>
-            </div>
-            <label for="email" class="col col-form-label">שם</label>
-            <div class="col-sm-9 col-lg-10 clearfix">
-                <div class="inputTypeNumber clearfix">
-                    <input name="userName" type="text" class="col-11" formControlName="userName" placeholder="שם"
-                        required />
-
-                    <span class="validity float-left"></span>
-                </div>
-            </div>
-            <div *ngIf="resetPassword.controls.userName.invalid && resetPassword.controls.userName.touched"
-                class="invalid-feedback d-block">* שדה חובה
-            </div>
-        </div>
-
-        <div class="form-group row">
-
-            <label for="email" class="col col-form-label">אימייל</label>
-            <div class="col-sm-9 col-lg-10 clearfix">
-                <div class="inputTypeNumber clearfix">
-                    <input type="email" name="email" id="email" class="col-11" aria-describedby="email"
-                        [pattern]="emailPatteren" formControlName="email" min="6" max="12"
-                        placeholder="פורמט: name10@email.com" required>
-                    <small id="email" class="validity float-left"></small>
-                </div>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="newPassword" class="col col-form-label">סיסמה חדשה</label>
-
-            <div class="col-sm-9 col-lg-10">
-                <div class="inputTypeNumber clearfix">
-                    <input type="password" name="newPassword" id="newPassword" class="col-11"
-                        formControlName="newPassword" aria-describedby="newPassword" min="6" max="12"
-                        placeholder=" (מנימום 6 תווים)" required>
-                    <small id="newPassword" class="validity float-left"></small>
-                </div>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="password_conf" class="col col-form-label">אשר סיסמה</label>
-            <div class="col-sm-9 col-lg-10">
-                <div class="inputTypeNumber clearfix clearfix">
-                    <input type="password" name="password_conf" id="password_conf" class="col-11"
-                        formControlName="password_conf" aria-describedby="password_conf" min="6" max="12"
-                        placeholder=" (מנימום 6 תווים)" required>
-                    <small id="password_conf" class="validity float-left"></small>
-                </div>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-12 clearfix">
-                <div class="float-left">
-                    <button class="btn btn-outline-success btn-sm" type="submit">
-                        שנה סיסמה
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-</ng-template>

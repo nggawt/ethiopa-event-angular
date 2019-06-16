@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ResourcesService } from '../resources.service';
-import { Observable } from 'rxjs';
-import { map, tap, filter } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, tap, filter, first } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service/http.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -18,7 +18,18 @@ export class AdminsViewsComponent implements OnInit {
   constructor(private rSrv: ResourcesService, private http: HttpService, private router:Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.usersType$ = this.rSrv.resourcesObsever.pipe(filter(items => typeof items == "object"), map(items => this.getUserTypes(items)),tap(items => console.log(items)));
+    // let url = "http://ethio:8080/api/admins";
+    this.initAdmins();
+  }
+
+  initAdmins(){
+    // this.rSrv.initResources('admins');
+    this.rSrv.initResources('admins').then(items => {
+      console.log(items);
+      this.usersType$ = of({admins: items})
+    });
+    
+    // this.usersType$  = this.rSrv.resourcesObsever.pipe(first(item => typeof item == "object"));
   }
 
   getUserTypes(items){
@@ -26,5 +37,14 @@ export class AdminsViewsComponent implements OnInit {
     return { users: items['users'], customers: items['customers'] };
   }
 
-  
+  edit(path){
+    // console.log("create");
+    this.http.requestUrl = location.pathname;
+    this.router.navigate([path]);
+  }
+
+  show(path){
+    this.http.requestUrl = location.pathname;
+    this.router.navigate([path]);
+  }
 }

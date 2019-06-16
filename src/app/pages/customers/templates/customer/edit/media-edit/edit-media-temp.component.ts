@@ -54,6 +54,7 @@ export class EditMediaTempComponent implements OnInit{
       let cu = this.cus['customer'];
       if(localStorage.getItem('msgs')){
         console.log(localStorage.getItem('msgs'));
+        localStorage.clear();
       }
       let cId = (cu && cu["user_id"]) ? cu["user_id"] : false;
       let uId = this.http.authUser["id"];
@@ -249,7 +250,7 @@ export class EditMediaTempComponent implements OnInit{
     let messages = filestObject['messages'];
 
 
-    if(true){//messages['success'] && (filestObject['haveFilesToSend'] || filestObject['filesToDelete'])
+    if(messages['success'] && (filestObject['haveFilesToSend'] || filestObject['filesToDelete'])){//messages['success'] && (filestObject['haveFilesToSend'] || filestObject['filesToDelete'])
       /* 
       if(! filestObject['filesToDelete']) filestObject['filesToDelete'] = this.filesDl;
       (filestObject['filesToDelete']['video'] && filestObject['filesToDelete']['video'].length < 3)?  
@@ -365,7 +366,7 @@ export class EditMediaTempComponent implements OnInit{
 
   send(body, method) {
 
-    let updaterUrl = "http://ethio:8080/api/customers/" + this.customer["id"] + "? _method=" + method;
+    let updaterUrl = "customers/" + this.customer["id"] + "? _method=" + method;
 
     this.http.postData(updaterUrl, body)
       .subscribe(evt => {
@@ -383,7 +384,7 @@ export class EditMediaTempComponent implements OnInit{
         console.log(err);
         if (err["status"] === 401) {
           this.http.nextIslogged(false);
-          window.sessionStorage.removeItem('user_key');
+          window.localStorage.removeItem('user_key');
           // window.location.reload();
         }
       });

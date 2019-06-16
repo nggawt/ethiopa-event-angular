@@ -36,7 +36,7 @@
       </li>
       <li class="nav-item" routerLinkActive="active"><a routerLink="customers-views">קליינטים</a></li>
       <!--  (click)=setTemplateType(customersView) -->
-      <li class="nav-item" routerLinkActive="active"><a routerLink="articles-views">פוסטים</a></li>
+      <li class="nav-item" routerLinkActive="active"><a routerLink="blog-views">פוסטים</a></li>
       <!-- (click)=setTemplateType(posts) -->
       <li class="nav-item" routerLinkActive="active"><a routerLink="events-views">אירועים</a></li>
       <!-- (click)=setTemplateType(events) -->
@@ -55,7 +55,7 @@
       <li class="nav-item" routerLinkActive="active"><a (click)=setTemplateType(security)>אבטחה</a></li>
     </ul>
   </div>
-  <div class="col-sm-10">
+  <div *ngIf="resources$ | async as resources" class="col-sm-10">
     <!-- <app-admin-panel [resources]="resources"></app-admin-panel> -->
     <!-- <ng-content *ngIf="resources"></ng-content> -->
     <!-- <ng-content></ng-content> -->
@@ -74,7 +74,6 @@
       </div>
     </div>
   </div>
-
 </ng-template>
 
 <ng-template #default let-res="elem">
@@ -103,6 +102,7 @@
         </div>
       </div>
     </div>
+    
     <div *ngIf="res['customers'] && res['customers'].data as customers" class="col-sm-3">
       <div class="p-3 border rounded">
         <div class="header">
@@ -126,7 +126,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="res['articles'] && res['articles'].data as articles" class="col-sm-3">
+    <div *ngIf="res['blog'] && res['blog'].data as blog" class="col-sm-3">
       <div class="p-3 border rounded">
         <div class="header">
           <!-- <i class="fa fa-users" style="font-size: 1.5rem;"></i> -->
@@ -138,7 +138,7 @@
             סהכ:
           </span>
           <div class="circle text-center">
-            <span class="total p-3">{{ articles.length }}</span>
+            <span class="total p-3">{{ blog.length }}</span>
           </div>
         </div>
         <div class="footer p-1">
@@ -182,19 +182,19 @@
       </div>
     </div>
 
-    <div *ngIf="resources" class="col">
+    <div class="col">
       <h5 class="shadow-sm py-2 text-black-50 h5">
         <i class="fa fa-message text-secondary"></i>
         ממתינים:
       </h5>
       <div class="border rounded p-3">
-        <div *ngFor="let resource of resources | keyvalue">
-
+        <div *ngFor="let resource of res | keyvalue">
+          
           <div *ngIf="resource.value && resource.value.pending as pend" class="border-bottom">
             <!-- <app-pending [itemsLists]="resource.value"></app-pending> -->
             <a class="py-2 d-flex justify-content-between align-items-center" [routerLink]="resource.key+'-views'">
               <h3 class="h6">
-                {{ (resource.key == 'customers')? 'קליינטים':(resource.key == 'users')? 'משתמשים': (resource.key == 'articles')? 'מאמרים\\פוסטים':'אירועים' }}
+                {{ (resource.key == 'customers')? 'קליינטים':(resource.key == 'users')? 'משתמשים': (resource.key == 'blog')? 'מאמרים\\פוסטים':'אירועים' }}
 
                 <small
                   *ngIf="(pend[0] && pend[0].created_at) || (pend[0] && pend[0].customer && pend[0].customer.created_at) as dt; else dateTxt"
@@ -298,7 +298,7 @@
     <app-messages [itemsResources]="res"></app-messages>
 </ng-template>
 
-<ng-template #posts let-res="elem['articles']">
+<ng-template #posts let-res="elem['blog']">
     <app-posts-views [itemsResources]="res"></app-posts-views>
 </ng-template>
 

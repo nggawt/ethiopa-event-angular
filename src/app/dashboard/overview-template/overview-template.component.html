@@ -1,0 +1,67 @@
+  <div *ngIf="itemResource$ | async as items" class="card">
+    <div class="row no-gutters">
+      <div class="card-header">
+        <div>
+          <h5 class="card-title">משתמש</h5>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card-body">
+          <h5 class="card-title"> {{ items.name }}</h5>
+          <ul class="list-group p-0">
+            <li class="list-group-item">
+              שם: {{ items.name }}
+            </li>
+            <li class="list-group-item">
+              אימייל: {{ items.email }}
+            </li>
+            <li class="list-group-item">
+              טל: {{ items.tel }}
+            </li>
+            <li class="list-group-item">
+              אזור: {{ items.area }}
+            </li>
+            <li class="list-group-item">
+              כתובת: {{ items.city }}
+            </li>
+
+            <li *ngIf="items.created_at as userDt" class="list-group-item">
+              נוצר בתאריך:
+              <p>{{ userDt | dateHebraw:"full" }}</p>
+            </li>
+            <li class="list-group-item">
+              אודות:
+              <p>
+                {{ items.about }}
+              </p>
+            </li>
+            <li class="list-group-item">
+              סטטוס: {{ items.confirmed? "מאושר" : "ממתין" }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- <ng-container [ngTemplateOutlet]="cleint"></ng-container> -->
+  <!-- </div> -->
+  <div class="border rounded my-3 p-3">
+
+    <div class="clearfix">
+      <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
+      <span class="border border-success rounded p-1 costum-btn costum-btn-success" routerLink="../">
+        <i class="material-icons"> chevron_right </i>
+        <i class="mt-icons"> חזור </i>
+      </span>
+
+      <span class="border border-warning rounded mr-1 p-1 costum-btn costum-btn-warning" routerLink="edit">
+        <i class="mt-icons"> ערוך </i>
+        <i class="material-icons"> chevron_left </i>
+      </span>
+
+      <span class="border border-danger rounded mr-1 p-1 costum-btn costum-btn-danger" routerLink="edit">
+        <i class="mt-icons">מחק</i>
+        <i class="material-icons"> delete_forever </i>
+      </span>
+    </div>
+  </div>

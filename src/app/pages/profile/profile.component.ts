@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
 
   user: User | boolean;
   show: boolean = true;
-  messages: object | boolean;
+  messages: {} | boolean;
   eventsOb: Object = {};
   currentEvt;
   date: Date = new Date();
@@ -583,7 +583,7 @@ export class ProfileComponent implements OnInit {
         console.log(err);
         if (err["status"] === 401) {
           this.http.nextIslogged(false);
-          window.sessionStorage.removeItem('user_key');
+          window.localStorage.removeItem('user_key');
           window.location.reload();
         }
       });

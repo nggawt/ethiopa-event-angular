@@ -424,25 +424,3 @@ export class FormFilesProccesorService {
 }
 
 
-declare interface MessegesInterface {
-  success: MessegesGalleryInterface | MessegesLoggoInterface | MessegesVideoInterface;
-}
-
-declare interface MessegesGalleryInterface {
-  gallery:Array<{type: string, message: string | number}>;
-}
-
-declare interface MessegesLoggoInterface {
-  loggo:Array<{type: string, message: string | number}>;
-}
-
-declare interface MessegesVideoInterface {
-  video:Array<{type: string, message: string | number}>;
-}
-
-declare interface MessegesFilesInterface {
-  files:Array<{type: string, message: string | number}>;
-}
-
-
-

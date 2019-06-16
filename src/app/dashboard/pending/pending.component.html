@@ -21,15 +21,15 @@
                   <p>
                     {{ list.customer? list.customer.title: list.title? list.title: list.about? list.about:list.description? list.description:'' }}
                   </p>
-                  <span class="badge badge-primary badge-pill page-link" [routerLink]="list.customer? list.customer.id: list.id">הצג
+                  <a class="badge badge-primary badge-pill page-link" [routerLink]="list.customer? list.customer.id: list.id">הצג
                     תוכן
-                  </span>
+                  </a>
                   <a class="badge badge-primary badge-pill page-link" 
                    [routerLink]="(list.customer && list.customer.user_id)? '/dashboard/users-views/'+list.customer.user_id: list.user_id? '/dashboard/users-views/'+list.user_id:'./'">הצג משתמש</a>
-                  <span class="badge badge-warning badge-pill page-link"
-                    [routerLink]="list.customer? list.customer.id+'/edit':list.id+'/edit'">ערוך תוכן</span>
-                  <span class="badge badge-danger badge-pill page-link">חסום</span>
-                  <span class="badge badge-danger badge-pill page-link">מחק</span>
+                  <a class="badge badge-warning badge-pill page-link"
+                    [routerLink]="list.customer? list.customer.id+'/edit':list.id+'/edit'">ערוך תוכן</a>
+                  <a class="badge badge-danger badge-pill page-link">חסום</a>
+                  <a class="badge badge-danger badge-pill page-link">מחק</a>
             </div>
             
           </div>

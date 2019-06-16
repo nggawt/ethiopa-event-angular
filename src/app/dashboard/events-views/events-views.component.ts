@@ -121,4 +121,12 @@ export class EventsViewsComponent implements OnInit {
     //   $(ul).show();
     // });
   }
+
+  destroy(items){
+    
+    let url = "events/"+items.id+"? _method=DELETE";
+    this.http.postData(url, null).subscribe(response => {
+      console.log(response);
+    });
+  }
 }

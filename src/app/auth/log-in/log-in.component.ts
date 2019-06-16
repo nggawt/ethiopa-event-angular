@@ -58,7 +58,7 @@ export class LogInComponent implements OnInit {
       'email': new FormControl(null, [Validators.required]),
       'password': new FormControl(null, [Validators.required])
     });
-    this.md = $('#forgotPassword').modal();
+    $('#forgotPassword').modal();
   }
 
   logOut(){

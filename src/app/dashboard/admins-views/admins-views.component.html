@@ -3,15 +3,11 @@
   <div class="col-sm-12">
     <div class="shadow-sm text-right">
 
-      
-      
-
       <div class="p-3 clearfix">
         <a routerLinkActive="active" routerLink="basic"
           class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
           <span>
             אדמנים
-
             <i class="material-icons">supervisor_account</i>
           </span>
         </a>
@@ -53,28 +49,46 @@
 
     </div>
   </div>
-  <div *ngFor="let userTp of users | keyvalue" class="col">
+  <div *ngFor="let userTp of users | keyvalue" class="col-sm-12">
     <div *ngIf="userTp.value && userTp.value.data as usersData" class="border p-3 rounded">
       <h2 class="h4">{{ userTp.key == "customers"? "קליינטים": "משתמשים" }}</h2>
-      <div *ngFor="let user of usersData" class="row">
 
-        <div class="col-sm-12 col-xl-1">שם</div>
+      <table class="table">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">שם</th>
+            <th scope="col">תאריך</th>
+            <th scope="col">מחק</th>
+            <th scope="col">ערוך</th>
+            <th scope="col">הצג</th>
+            <th scope="col">סמכות</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let user of usersData; let idx = index">
+          <tr>
+            <th scope="row">{{ idx }}</th>
+            <td>
+              {{ user.name? user.name: user.customer? user.customer.company:user.name }}
+            </td>
 
-        <div class="col-sm-12 col-xl-7">
-          <h3 class="h5">
-            {{ user.name? user.name: user.customer? user.customer.company:user.name }}
-            <small *ngIf="user.created_at || (user.customer && user.customer.created_at) as dt" class="text-muted">
-              {{ dt | dateHebraw:'full' }}
-            </small>
-          </h3>
-        </div>
-
-        <div class="col-sm-12 col-xl-2">סוג</div>
-        <div class="col-sm-12 col-xl-2">{{ userTp.key == "customers"? "קליינט": "רגיל" }}</div>
-
-      </div>
+            <td>
+              <small *ngIf="user.created_at || (user.customer && user.customer.created_at) as dt" class="text-muted">
+                {{ dt | dateHebraw:'full' }}
+              </small>
+            </td>
+            <td><a class="btn btn-outline-primary btn-sm" (click)="show('/dashboard/admins-views/'+user.id)">הצג</a>
+            </td>
+            <td><a class="btn btn-outline-warning btn-sm"
+                (click)="edit('/dashboard/admins-views/'+user.id+'/edit')">ערוך</a></td>
+            <td><a class="btn btn-outline-danger btn-sm">מחק</a></td>
+            <td>
+              {{ user.authority?.slug }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
-
 <router-outlet></router-outlet>

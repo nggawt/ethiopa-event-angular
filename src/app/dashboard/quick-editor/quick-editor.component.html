@@ -5,23 +5,20 @@
     עורך תוכן מהיר
   </h5>
 </div>
-<form *ngIf="(itemsResources$ | async) as itemsResources">
-  <!--  && itemsResources$['customers'] -->
+<div *ngIf="(itemsResources$ | async) as itemsResources">
   <div *ngFor="let resource of itemsResources | keyvalue">
     <ng-container *ngTemplateOutlet="resourceTamplate; context:{elem: resource}"></ng-container>
     <hr>
   </div>
-</form>
+</div>
 
 <ng-template #resourceTamplate let-resource="elem">
-
   <table class="table">
     <ng-container
-      [ngTemplateOutlet]="resource.key == 'customers'? customersTable:resource.key == 'events'? eventsTable: resource.key == 'articles'? articlesTable: false"
+      [ngTemplateOutlet]="resource.key == 'customers'? customersTable:resource.key == 'events'? eventsTable: resource.key == 'blog'? blogTable: (resource.key == 'users')? usersTable: false"
       [ngTemplateOutletContext]="{res:resource}">
     </ng-container>
   </table>
-  
   <div class="text-center clearfix">
     <pagination-template #p="paginationApi" [id]="resource.value.config.id"
       (pageChange)="resource.value.config.currentPage = $event">
@@ -51,70 +48,76 @@
       קליינטים
     </h3>
   </caption>
-  <thead class="thead-light text-right">
+  <thead class="thead-light">
     <tr>
-      <th scope="col">#</th>
-      <th scope="col">שם</th>
-      <th scope="col">אימייל</th>
-      <th scope="col">כותרת\נושא</th>
-      <th scope="col">תוכן</th>
-      <th scope="col">פלאפון\טלפון</th>
       <th scope="col">סוג העסק</th>
-      <th scope="col">שם העסק</th>
-      <!-- <th *ngIf="customer.deals" scope="col">מבצעים</th> -->
-      <th scope="col">פרסם</th>
-      <th><span class="border-warning">עדכן</span></th>
-      <th><span class="border-warning">עורך מתקדם</span></th>
+      <th scope="col">שם החברה</th>
+      <th scope="col">פרסם ב</th>
+      <th scope="col">סטטוס</th>
+      <th><span class="border-primary">הצג</span></th>
+      <th><span class="border-info">משתמש</span></th>
+      <th><span class="border-warning">ערוך</span></th>
+      <th><span class="border-danger">מחק</span></th>
     </tr>
   </thead>
-  <tbody class="text-right">
-    <tr class="form-group"
-      *ngFor="let customer of customersData.value.data | paginate: customersData.value.config; let idx = index">
-      <th scope="row">{{customer.customer.id}}</th>
-      <td>{{customer.customer.name}}</td>
-      <td>{{customer.customer.email}}</td>
+  <tbody>
+    <tr *ngFor="let customer of customersData.value.data | paginate: customersData.value.config; let idx = index">
+      <th scope="row">{{customer.customer.businessType == "halls-events"? "אולם אירועים": customer.customer.businessType}}</th>
+      <td> {{customer.customer.company}}</td>
       <td>
-        <label [for]="'customerstitle'+customer.customer.id+idx" class="col-form-label word-break"
-          [title]="customer.customer.title">
-          {{customer.customer.title}}
-
-        </label>
-        <input [id]="'customerstitle'+customer.customer.id+idx" class="form-control" type="text">
+        <small *ngIf="customer.customer.created_at as dt" class="text-muted">
+          {{ dt | dateHebraw:'full' }}
+        </small>
       </td>
-      <td>
-        <p [title]="customer.customer.descriptions">
-          {{customer.customer.descriptions.length > 15? customer.customer.descriptions.slice(0, 15)+"...": customer.customer.descriptions}}
-        </p>
-        <ng-container
-          *ngTemplateOutlet="viewOrEdit; context:{elem: customer.customer, input: 'descriptions', inputId: 'customerdescriptions'+ customer.customer.id+idx}">
-        </ng-container>
+      <td [ngClass]="customer.customer.confirmed? 'text-success':'text-danger'">
+        {{customer.customer.confirmed? "פעיל":  "ממתין"}}
       </td>
-      <td>
-        <label [for]="'customerstel'+customer.customer.id+idx" class="col-form-label word-break"
-          [title]="customer.customer.tel">
-          {{customer.customer.tel}}
-        </label>
-        <input [id]="'customerstel'+customer.customer.id+idx" class="form-control" type="tel">
+      <td><a class="btn btn-primary btn-sm" [routerLink]="'/dashboard/customers-views/'+customer.customer.id">הצג</a>
       </td>
-      <td>{{customer.customer.businessType}}</td>
-      <td>
-        <label [for]="'customerscompany'+customer.customer.id+idx" class="col-form-label word-break"
-          [title]="customer.customer.company">
-          {{customer.customer.company}}
-        </label>
-        <input [id]="'customerscompany'+customer.customer.id+idx" class="form-control" type="text">
+      <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+customer.customer.user_id">משתמש</a>
       </td>
-      <!-- <td *ngIf="customer.customer.deals">{{customer.customer.deals}}</td> -->
-      <td>
-        {{customer.customer.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
-        <ng-container *ngTemplateOutlet="checkBox; context:{elem: customer.customer}"></ng-container>
-      </td>
-      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
-      <td><a class="btn btn-outline-danger btn-sm" [routerLink]="'/dashboard/customers-views/'+customer.customer.id+'/edit'">עורך מתקדם</a></td>
+      <td><a class="btn btn-outline-danger btn-sm"
+          [routerLink]="'/dashboard/customers-views/'+customer.customer.id+'/edit'">ערוך</a></td>
+      <td><a class="btn btn-danger btn-sm" (click)="destroy(customersData.key,customer.customer)">מחק</a></td>
     </tr>
   </tbody>
 </ng-template>
 
+<ng-template #usersTable let-usersData="res">
+  <caption class="text-right">
+    <h3 class="h4">
+      משתמשים
+    </h3>
+  </caption>
+  <thead class="thead-dark text-right">
+    <tr>
+      <th scope="col">שם</th>
+      <!-- <th scope="col">אימייל</th> -->
+      <th scope="col">אימייל</th>
+      <th scope="col">נוצר בתאריך</th>
+      <th scope="col">סטטוס</th>
+      <th><span class="border-primary">הצג</span></th>
+      <th><span class="border-warning">ערוך</span></th>
+      <th><span class="border-danger">מחק</span></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of usersData.value.data | paginate: usersData.value.config; let idx = index">
+      <th scope="row">{{user.name}}</th>
+      <td>{{user.email}} </td>
+      <td>
+        <small class="text-muted">
+          {{ user.created_at  | dateHebraw:'full' }}
+        </small>
+      </td>
+      <td class="text-success">פעיל</td>
+      <td><a class="btn btn-primary btn-sm" [routerLink]="'/dashboard/users-views/'+user.id">הצג</a></td>
+      <td><a class="btn btn-outline-danger btn-sm" [routerLink]="'/dashboard/users-views/'+user.id+'/edit'">ערוך</a>
+      </td>
+      <td><a class="btn btn-danger btn-sm" (click)="destroy(usersData.key, user)">מחק</a></td>
+    </tr>
+  </tbody>
+</ng-template>
 <!-- אירועים -->
 <ng-template #eventsTable let-eventsData="res">
 
@@ -123,82 +126,41 @@
       אירועים
     </h3>
   </caption>
-  <thead class="thead-dark text-right">
+  <thead class="thead-light text-right">
     <tr>
-      <th scope="col">#</th>
-      <!-- <th scope="col">id </th> -->
-      <!-- <th scope="col">user_id</th> -->
       <th scope="col">שם</th>
-      <!-- <th scope="col">אימייל</th> -->
       <th scope="col">סוג האירוע</th>
-      <th scope="col">כתובת</th>
-      <th scope="col">תיאור\הודעה</th>
-      <th scope="col">תאריך</th>
-      <th scope="col">פלאפון\טלפון</th>
-      <th scope="col">מיקום</th>
-      <!-- <th scope="col">יצירת האירוע</th> -->
+      <th scope="col">פורסם ב</th>
       <th scope="col">סטטוס</th>
-      <th><span class="border-warning">עדכן</span></th>
-      <th><span class="border-warning">עורך מתקדם</span></th>
+      <th><span class="border-primary">הצג</span></th>
+      <th><span class="border-info">משתמש</span></th>
+      <th><span class="border-warning">ערוך</span></th>
+      <th><span class="border-danger">מחק</span></th>
     </tr>
   </thead>
-  <tbody class="text-right">
-    <tr class="form-group"
-      *ngFor="let event of eventsData.value.data | paginate: eventsData.value.config; let idx = index">
-      <th scope="row">{{event.id}}</th>
-      <!-- <td>{{event.user_id}}</td> -->
-      <td>
-        <label [for]="'eventsname'+event.id+idx" class="col-form-label word-break text-left" [title]="event.name">
-          {{event.name.length > 10? event.name.split(" ")[0]: event.name}}
-        </label>
-        <input [id]="'eventsname'+event.id+idx" class="form-control" type="text">
-      </td>
-      <!-- <td>
-            <label dir="ltr" [for]="'eventsemail'+event.id+idx" class="col-form-label word-break text-left" [title]="event.email">
-                {{ event.email.length > 10? event.email.slice(0, (event.email.indexOf('@') + 2))+"...": event.email }}
-            </label>
-            <input [id]="'eventsemail'+event.id+idx" class="form-control" type="email">
-          </td> -->
+  <tbody>
+    <tr *ngFor="let event of eventsData.value.data | paginate: eventsData.value.config; let idx = index">
+      <th scope="row">{{event.name}}</th>
       <td>{{event.eventType | eventTypeToHeb}}</td>
+
       <td>
-        {{event.address}}
-        <ng-container
-          *ngTemplateOutlet="viewOrEdit; context:{elem: event, input: 'address', inputId: 'eventsaddress'+ event.id+idx}">
-        </ng-container>
+        <small class="text-muted">
+          {{ event.created_at  | dateHebraw:'full' }}
+        </small>
       </td>
-      <td>
-        <p [title]="event.description">
-          {{event.description.length > 15? event.description.slice(0, 15)+"...": event.description}}
-        </p>
-        <ng-container
-          *ngTemplateOutlet="viewOrEdit; context:{elem: event, input: 'description', inputId: 'eventsdescription'+ event.id+idx}">
-        </ng-container>
+      <td [ngClass]="event.confirmed? 'text-success':'text-danger'">
+        {{event.confirmed? "פעיל":  "ממתין"}}
       </td>
-      <td>
-        <label [for]="'eventsdate'+event.id+idx" class="col-form-label word-break" [title]="event.date">
-          {{event.date | dateHebraw:'full'}}
-        </label>
-        <input [id]="'eventsdate'+event.id+idx" class="form-control" type="date">
+      <td><a class="btn btn-primary btn-sm" [routerLink]="'/dashboard/events-views/'+event.id">הצג</a></td>
+      <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+event.user_id">משתמש</a></td>
+      <td><a class="btn btn-outline-danger btn-sm" [routerLink]="'/dashboard/events-views/'+event.id+'/edit'">ערוך</a>
       </td>
-      <td>
-        <label [for]="'eventsphone'+event.id+idx" class="col-form-label word-break text-left" [title]="event.phone">
-          {{event.phone}}
-        </label>
-        <input [id]="'eventsphone'+event.id+idx" class="form-control" type="tel">
-      </td>
-      <td>{{event.location}}</td>
-      <!-- <td>{{event.created_at | dateHebraw:'full'}}</td> -->
-      <td>
-        {{event.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
-        <ng-container *ngTemplateOutlet="checkBox; context:{elem: event}"></ng-container>
-      </td>
-      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
-      <td><span class="btn btn-outline-danger btn-sm">עורך מתקדם</span></td>
+      <td><a class="btn btn-danger btn-sm" (click)="destroy(eventsData.key, event)">מחק</a></td>
     </tr>
   </tbody>
 </ng-template>
 
-<ng-template #articlesTable let-articlesData="res">
+<ng-template #blogTable let-blogData="res">
 
   <caption class="text-right">
     <h3 class="h4">
@@ -208,117 +170,31 @@
 
   <thead class="thead-dark text-right">
     <tr>
-      <th scope="col">#</th>
       <th scope="col">שם</th>
-      <!-- <th scope="col">אימייל</th> -->
-      <th scope="col">נושא\כותרת</th>
-      <th scope="col">תוכן</th>
       <th scope="col">פורסם בתאריך</th>
-      <th scope="col">יצירת האירוע</th>
-      <!-- <th scope="col">עידכון האירוע</th> -->
-      <th scope="col">פרסם</th>
-      <th><span class="border-warning">עדכן</span></th>
-      <th><span class="border-warning">עורך מתקדם</span></th>
+      <th scope="col">סטטוס</th>
+      <th><span class="border-primary">הצג</span></th>
+      <th><span class="border-info">משתמש</span></th>
+      <th><span class="border-warning">ערוך</span></th>
+      <th><span class="border-danger">מחק</span></th>
     </tr>
   </thead>
-  <tbody class="text-right">
-    <tr class="form-group"
-      *ngFor="let article of articlesData.value.data | paginate: articlesData.value.config; let idx = index">
-      <th scope="row">{{article.id}}</th>
+  <tbody>
+    <tr *ngFor="let article of blogData.value.data | paginate: blogData.value.config; let idx = index">
+      <th scope="row">{{article.name}}</th>
       <td>
-        <label [for]="'articlename'+article.id+idx" class="w-100 col-form-label">
-          {{article.name}}
-        </label>
-        <input [id]="'articlename'+article.id+idx" class="form-control" type="text">
+        <small class="text-muted">
+          {{ article.created_at  | dateHebraw:'full' }}
+        </small>
       </td>
-      <!-- <td class="text-wrap">{{article.email}}</td> -->
-      <td>
-        <label [for]="'articletitle'+article.id+idx" class="w-100 col-form-label">
-          {{article.title}}
-        </label>
-        <input [id]="'articletitle'+article.id+idx" class="form-control" type="text">
+      <td [ngClass]="article.confirmed? 'text-success':'text-danger'">
+        {{article.confirmed? "פעיל":  "ממתין"}}
       </td>
-      <td>
-        {{article.body.slice(0,20)+ "..."}}
-        <ng-container
-          *ngTemplateOutlet="viewOrEdit; context:{elem: article, input: 'body', inputId: 'articlebody'+article.id+idx}">
-        </ng-container>
+      <td><a class="btn btn-primary btn-sm" [routerLink]="'/dashboard/blog-views/'+article.id">הצג</a></td>
+      <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+article.user_id">משתמש</a></td>
+      <td><a class="btn btn-outline-danger btn-sm" [routerLink]="'/dashboard/blog-views/'+article.id+'/edit'">ערוך</a>
       </td>
-      <td>{{article.date | dateHebraw:'full'}}</td>
-      <td>{{article.created_at | dateHebraw:'full'}}</td>
-      <td>
-        {{article.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
-        <ng-container *ngTemplateOutlet="checkBox; context:{elem: article}"></ng-container>
-      </td>
-      <!-- <td>{{article.updated_at | dateHebraw:'full'}}</td> -->
-      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
-      <td><span class="btn btn-outline-danger btn-sm">עורך מתקדם</span></td>
+      <td><a class="btn btn-danger btn-sm" (click)="destroy(blogData.key, article)">מחק</a></td>
     </tr>
   </tbody>
 </ng-template>
-
-<ng-template #checkBox let-itemObj="elem">
-  <div class="custom-control custom-checkbox">
-    <input [id]="itemObj.name+itemObj.id" class="custom-control-input" type="checkbox" [checked]="itemObj.confirmed">
-
-    <label [for]="itemObj.name+itemObj.id" class="custom-control-label">
-      {{ itemObj.confirmed? "סרב": "אשר" }}
-    </label>
-  </div>
-</ng-template>
-
-<ng-template #viewOrEdit let-itemObj="elem" let-inputType="input" let-inputId="inputId">
-
-  <label [for]="inputId" class="w-100 col-form-label">
-
-    <a class="text-primary float-right link" (click)="editIem(inputId)">
-      {{ itemObj[inputType].trim().length > 15? 'עדכן או הצג תוכן': 'עדכן' }}
-    </a>
-  </label>
-  <textarea class="form-control text-break hide" name="body" [id]="inputId">
-            {{ itemObj[inputType].trim() }}
-      </textarea>
-</ng-template>
-<!-- 
-    <tr *ngFor="let article of resource.value.data | paginate: resource.value.config; let idx = index">
-        <th scope="row">{{ article.id }}</th>
-        <td *ngFor="let item of article | keyvalue">
-          <div *ngIf="item.key == 'name' || item.key == 'title' || 
-                      item.key == 'body' || item.key == 'confirmed' || 
-                      item.key == 'description' else default"
-            [ngClass]="{'custom-control custom-checkbox': (item.key == 'confirmed')}">
-    
-            <label
-              *ngIf="item.key != 'confirmed' && item.key != 'body' && item.key != 'title' && item.key != 'description'"
-              [for]="resource.key+item.key+article.id+idx" class="col-form-label w-100">
-              {{ item.value }}
-            </label>
-            <label *ngIf="item.key == 'body' || item.key == 'title' || item.key == 'description'"
-              [for]="resource.key+item.key+article.id+idx" class="w-100 col-form-label">
-    
-              <a class="text-primary float-right link" (click)="editIem(resource.key+item.key+article.id+idx)">
-                עדכן או הצג תוכן
-              </a>
-            </label>
-            <input
-              *ngIf="item.key != 'body' && item.key != 'confirmed' && item.key != 'title' && item.key != 'description'"
-              [id]="resource.key+item.key+article.id+idx" class="form-control" type="text">
-    
-            <input *ngIf="item.key == 'confirmed'" [id]="resource.key+item.key+article.id+idx"
-              class="custom-control-input" type="checkbox" [checked]="item.value">
-    
-            <label *ngIf="item.key == 'confirmed'" [for]="resource.key+item.key+article.id+idx"
-              class="custom-control-label">
-              {{ 'אשר הצגת תוכן לכל המשתמשים' }}
-            </label>
-            <textarea *ngIf="item.key == 'body' || item.key == 'title' || item.key == 'description'" 
-              class="form-control text-break hide" name="body" [id]="resource.key+item.key+article.id+idx">
-                  {{ item.value.trim() }}
-              </textarea>
-          </div>
-          <ng-template #default>
-            <p class="w-25 text-wrap">{{ item.value }}</p>
-          </ng-template>
-        </td>
-        <td><span class="btn btn-outline-success btn-sm">עדכן</span></td>
-      </tr> -->

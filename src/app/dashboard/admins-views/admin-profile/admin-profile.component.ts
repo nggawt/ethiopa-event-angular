@@ -6,7 +6,7 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./admin-profile.component.css']
 })
 export class AdminProfileComponent implements OnInit {
-  @Input() itemsResources:{};
+  @Input() adminItem:{};
   constructor() { }
 
   ngOnInit() {

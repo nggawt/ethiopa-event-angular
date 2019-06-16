@@ -1,7 +1,7 @@
 <ng-template #default>
   Loading...
 </ng-template>
-<div class="text-right" *ngIf="(itemsResources$  | async )?.articles as articles">
+<div class="text-right" *ngIf="(itemsResources$  | async )?.blog as blog">
   
   <div class="clearfix">
     <h5 class="shadow-sm py-2 text-black-50 h2">
@@ -11,18 +11,18 @@
     </h5>
   </div>
 
-  <div *ngIf="articles && articles.pending.length">
-    <app-pending [itemsLists]="articles"></app-pending>
+  <div *ngIf="blog && blog.pending.length">
+    <app-pending [itemsLists]="blog"></app-pending>
   </div>
-  <ng-container *ngTemplateOutlet="tempType; context:{elem: articles}"></ng-container>
+  <ng-container *ngTemplateOutlet="tempType; context:{elem: blog}"></ng-container>
 </div>
 
 
-<ng-template #tableArticles let-resource="elem">
+<ng-template #tableblog let-resource="elem">
 
   <div class="table-responsive">
     <table class="table">
-      <ng-container [ngTemplateOutlet]="articlesTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
+      <ng-container [ngTemplateOutlet]="blogTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
     </table>
   </div>
 
@@ -48,48 +48,38 @@
   </div>
 </ng-template>
 
-<!-- articles Table -->
-<ng-template #articlesTable let-articlesData="res">
+<!-- blog Table -->
+<ng-template #blogTable let-blogData="res">
 
-  <thead class="thead-dark text-right">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">שם</th>
-      <!-- <th scope="col">אימייל</th> -->
-      <th scope="col">נושא\כותרת</th>
-      <th scope="col">תוכן</th>
-      <th scope="col">פורסם בתאריך</th>
-      <!-- <th scope="col">יצירת האירוע</th> -->
-      <!-- <th scope="col">עידכון האירוע</th> -->
-      <th scope="col">פרסם</th>
-      <th><span class="border-warning">עדכן</span></th>
-      <th><span class="border-warning">ערוך</span></th>
-    </tr>
-  </thead>
-  <tbody *ngIf="articlesData" class="text-right">
-    <tr *ngFor="let article of articlesData.data | paginate: articlesData.config; let idx = index">
-      <th scope="row">{{article.id}}</th>
-      <td>{{article.name}}</td>
-      <td>{{article.title}} </td>
-      <td>
-        <p [title]="article.body">
-          {{article.body.length > 15? article.body.slice(0, 15)+"...": article.body}}
-        </p>
-        <ng-container
-          *ngTemplateOutlet="viewOrEdit; context:{elem: article, input: 'body', inputId: 'articlesbody'+ article.id+idx}">
-        </ng-container>
-      </td>
-      <td>
-        {{article.date | dateHebraw:'full'}}
-      </td>
-      <td>
-        {{article.confirmed? "סטטוס אושר":  "סטטוס ממתין"}}
-        <ng-container *ngTemplateOutlet="checkBox; context:{elem: article}"></ng-container>
-      </td>
-      <td><span class="btn btn-outline-warning btn-sm">עדכן</span></td>
-      <td><span class="btn btn-outline-danger btn-sm" [routerLink]="article.id+'/edit'">ערוך</span></td><!-- (click)="initForm(article, articlesForm)" -->
-    </tr>
-  </tbody>
+    <thead class="thead-dark text-right">
+        <tr>
+          <th scope="col">שם</th>
+          <th scope="col">פורסם בתאריך</th>
+          <th scope="col">סטטוס</th>
+          <th><span class="border-primary">הצג</span></th>
+          <th><span class="border-info">משתמש</span></th>
+          <th><span class="border-warning">ערוך</span></th>
+          <th><span class="border-danger">מחק</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let article of blogData.data | paginate: blogData.config; let idx = index">
+          <th scope="row">{{article.name}}</th>
+          <td>
+            <small class="text-muted">
+              {{ article.created_at  | dateHebraw:'full' }}
+            </small>
+          </td>
+          <td [ngClass]="article.confirmed? 'text-success':'text-danger'">
+            {{article.confirmed? "פעיל":  "ממתין"}}
+          </td>
+          <td><a class="btn btn-primary btn-sm" [routerLink]="article.id">הצג</a></td>
+          <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+article.user_id">משתמש</a></td>
+          <td><a class="btn btn-outline-danger btn-sm" [routerLink]="article.id+'/edit'">ערוך</a>
+          </td>
+          <td><a class="btn btn-danger btn-sm" (click)="destroy(article)">מחק</a></td>
+        </tr>
+      </tbody>
 </ng-template>
 
 <ng-template #checkBox let-itemObj="elem">
@@ -115,7 +105,7 @@
     </textarea>
 </ng-template>
 
-<ng-template #articlesForm>
+<ng-template #blogForm>
 
   <form class="form-row p-3 border rounded" [formGroup]="formGr" (ngSubmit)="onSubmit()">
     <div class="form-group col-sm-12">
@@ -159,7 +149,7 @@
       </label>
     </div>
     <div class="form-group col-sm-12 clearfix">
-      <a class="btn btn-link" (click)="initForm(false, tableArticles)">
+      <a class="btn btn-link" (click)="initForm(false, tableblog)">
         חזור
       </a>
       <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>

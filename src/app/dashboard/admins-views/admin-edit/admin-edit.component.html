@@ -1,0 +1,43 @@
+<model-template>
+  <div *ngIf="itemForm$ | async as formItems" class="border p-3 rounded">
+    <h2 class="h4 text-right text-success">ערוך אדמין</h2>
+
+    <form class="form-row" [formGroup]="formGr" (ngSubmit)="onSubmit()">
+      <div class="form-group col-md-6">
+        <label for="name" class="form-control-label">
+          שם:
+        </label>
+        <input class="form-control" formControlName="name" type="text">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="email" class="form-control-label">
+          אימייל:
+        </label>
+        <input class="form-control" id="email" formControlName="email" type="email">
+      </div>
+
+      <div class="form-group col-md-6">
+        <label for="admin_type" class="form-control-label">
+          הרשאות :
+        </label>
+        <select id="admin_type" class="form-control" required>
+
+          <option [value]="formItems.authority?.id" disabled>{{ formItems.authority?.name }}</option>
+          <option *ngIf="formItems.authority?.slug != 'admin'" [value]="formItems.authority?.id">Admin</option>
+          <option *ngIf="formItems.authority?.slug != 'author'" [value]="formItems.authority?.id">Author</option>
+          <option *ngIf="formItems.authority?.slug != 'editor'" [value]="formItems.authority?.id">Editor</option>
+        </select>
+      </div>
+
+      <div class="col-sm-12 clearfix">
+        <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
+        <span class="border border-success rounded p-1 costum-btn costum-btn-success" (click)="back()">
+          <i class="material-icons"> chevron_right </i>
+          <i class="mt-icons"> חזור </i>
+        </span>
+        <!-- </span> -->
+        <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
+      </div>
+    </form>
+  </div>
+</model-template>

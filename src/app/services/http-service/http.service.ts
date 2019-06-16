@@ -20,7 +20,7 @@ export class HttpService {
 
   private apiKey: any;
   private logged: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  private user: BehaviorSubject<User | number | boolean> = new BehaviorSubject(1);
+  private user: BehaviorSubject<User | boolean> = new BehaviorSubject(false);
 
   public allowLogIn = new BehaviorSubject(false);
 
@@ -33,19 +33,15 @@ export class HttpService {
   private baseUrl: string = "http://ethio:8080/api";
 
   public isLogedIn: Observable<boolean> = this.logged.asObservable();
-  public userObs: Observable<User | number | boolean> = this.user.asObservable();
+  public userObs: Observable<User | boolean> = this.user.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {
-    console.log(location.pathname);
-    this.sendTo = ! this.sendTo? (location.pathname.indexOf("/dashboard") >= 0)? 'auth-admin':'auth-user': this.sendTo;
-    this.userPromise().then(user => user? this.user.next(user.status ? user['user'] : user.status): this.user.next(false));
-  }
+  constructor(private http: HttpClient, private router: Router) {this.userPromise();}
 
   public logIn(credential, path?) {
     path = path ? path : this.loginTo ? this.loginTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/login";
     console.log(credential);
-    
+
     let body = new HttpParams()
       .set('name', credential['name'])
       .set('email', credential['email'])
@@ -58,6 +54,7 @@ export class HttpService {
           if (res && res['access_token']) {
             this.allowLogIn.next(false);
             this.setUserProps(res);
+            this.setApiKey(res);
             this.user.next(res['user'] ? res['user'] : false);
           }
         }));
@@ -77,6 +74,7 @@ export class HttpService {
           if (res && res['access_token']) {
             this.allowLogIn.next(false);
             this.setUserProps(res);
+            this.setApiKey(res);
           }
           console.log(res);
 
@@ -99,6 +97,7 @@ export class HttpService {
           if (res && res['access_token']) {
             this.allowLogIn.next(false);
             this.setUserProps(res);
+            this.setApiKey(res);
           }
           console.log(res);
 
@@ -106,19 +105,22 @@ export class HttpService {
   }
 
   store(theUrl, body) {
+
     return this.http.post(theUrl, body, this.headersOpt)
       .pipe(
         tap(user => {
           if (user['access_token']) {
             this.allowLogIn.next(false);
             this.setUserProps(user);
+            this.setApiKey(user);
+            console.log(user);
           }
         }));
   }
 
   postData(postUrl, body, opt?) {
+    postUrl = postUrl ? this.baseUrl + "/" + postUrl: false;
     if (!opt) opt = this.getHttpOpt();
-
     return this.http.post(postUrl, body, opt);
   }
 
@@ -138,66 +140,39 @@ export class HttpService {
       .pipe(
         tap(msg => {
           this.removePropsUser();
-          if (this.apiKey) {
-            window.sessionStorage.removeItem('user_key');
-            this.apiKey = false;
-          }
+          this.removeApiKey();
         }, (err) => {
           this.removePropsUser();
-          if (this.apiKey) {
-            window.sessionStorage.removeItem('user_key');
-            this.apiKey = false;
-          }
+          this.removeApiKey();
         }));
   }
 
-  // isAuthenticeted() {
-
-  //   const theUrl = "http://ethio:8080/api/authUser";
-  //   let sSK = window.sessionStorage.getItem('user_key');
-  //   this.apiKey = this.apiKey ? this.apiKey : sSK;
-  //   let token = new HttpParams().set('token', this.apiKey);
-
-  //   this.http.post(theUrl, token, this.headersOpt).pipe(first())
-  //     .subscribe(
-  //       (res) => {
-  //         let user = res && res["user"]? res["user"]:false;
-
-  //         if (user) {
-  //           this.setUserProps(user);
-  //           // console.log(user);
-  //         } else {
-  //           console.log("No user");
-  //           this.removePropsUser();
-  //     }});
-  //   return this.userObs;
-  // }
-
   userPromise(path?): Promise<User | any> {
 
-    path = path ? path : this.sendTo ? this.sendTo : false;
+    path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/auth-user";
 
-    let sSK = window.sessionStorage.getItem('user_key');
+    let sSK = window.localStorage.getItem('user_key');
     this.apiKey = this.apiKey ? this.apiKey : sSK;
-    
+
     let token = new HttpParams().set('token', this.apiKey);
 
-    console.log('url: ', theUrl, "token: ", this.apiKey);
-    
+    // console.log('url: ', theUrl, "token: ", this.apiKey);
+
     return this.http.post(theUrl, token, this.headersOpt)
       .pipe(
         first(),
         tap((resp) => {
           console.log('response: ', resp);
-          
-          let user: User = resp && resp["user"] ? resp["user"] : false;
+
+          let user: User = resp['status'] && resp["user"] ? resp["user"] : false;
           if (user) {
             this.setUserProps(user);
-            // return response(user);
+            this.setApiKey(resp);
           } else {
 
             this.removePropsUser();
+            this.removeApiKey();
             // return reject(user);
           }
         })).toPromise().catch(this.handleError);
@@ -208,36 +183,38 @@ export class HttpService {
   }
 
   private removePropsUser() {
-    // console.log('removePropsUser');
-    this.apiKey = false;
     this.logged.next(false);
     this.user.next(false);
-
-    const userKey = "user_key";
-    window.sessionStorage.removeItem(userKey);
   }
 
   private setUserProps(user) {
-    // console.log(user);
-
-    const apiKey = user['access_token'];
-    user = user && user['user'] ? user['user'] : user['id'] ? user : false;
-
-    if (user) {
-      this.authUser = user;
-      const userKey = "user_key";
-      this.logged.next(true);
-      console.log("apiKey ", apiKey);
-
-      this.apiKey = apiKey ? apiKey : this.apiKey;
-      window.sessionStorage.setItem(userKey, this.apiKey);
-    } else {
-      // this.authUser = user &&  user['email']? user: this.authUser;
-    }
+    this.authUser = user;
+    this.logged.next(true);
+    this.user.next(user);
   }
 
   isAuth() {
     return this.isLogedIn;
+  }
+
+  setApiKey(user) {
+    user['authority'] ? window.localStorage.setItem("admin_key", "true") : "";
+
+    if(user['access_token']){
+      this.apiKey = user['access_token'];
+      window.localStorage.setItem('user_key', this.apiKey);
+    } 
+  }
+
+  removeApiKey() {
+    console.log("tokken remove");
+    window.localStorage.clear();
+    this.apiKey = false;
+
+    // const userKey = "user_key";
+    // window.localStorage.removeItem(userKey);
+    // window.localStorage.getItem("admin_key")? window.localStorage.removeItem("admin_key"): '';
+
   }
 
   getApiKey() {

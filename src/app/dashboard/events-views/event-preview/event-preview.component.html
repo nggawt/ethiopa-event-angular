@@ -1,0 +1,44 @@
+<div class="card">
+    <div class="row no-gutters">
+      <div class="card-header">
+        <div>
+          <h5 class="card-title">אירוע</h5>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card-body">
+          <h5 class="card-title">אירוע {{ eventItem.eventType | eventType}}</h5>
+          <ul class="list-group p-0">
+            <li class="list-group-item">
+              שם: {{ eventItem.name }}
+            </li>
+            <li class="list-group-item">
+              אימייל: {{ eventItem.email }}
+            </li>
+            <li class="list-group-item">
+              טל: {{ eventItem.phone }}
+            </li>
+            <li class="list-group-item">
+              כתובת: {{ eventItem.address }}
+            </li>
+            <li class="list-group-item">
+              סוג האירוע: {{ eventItem.eventType | eventType }}
+            </li>
+            <li class="list-group-item">
+              תאריך האירוע:
+              <p>{{ eventItem.date | dateHebraw:"full" }}</p>
+            </li>
+            <li class="list-group-item">
+              אודות:
+              <p>
+                {{ eventItem.description }}
+              </p>
+            </li>
+            <li class="list-group-item">
+              סטטוס: {{ eventItem.confirmed? "מאושר" : "ממתין" }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>

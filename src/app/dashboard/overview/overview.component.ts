@@ -17,11 +17,13 @@ export class OverviewComponent implements OnInit {
   constructor(private srv: ResourcesService, private route: ActivatedRoute) { }
 
   ngOnInit() {
+
+    this.srv.initResources(['admins']);
     this.itemType = this.route.snapshot.data['itemType'];
-    console.log(this.itemType );
+    // console.log(this.itemType );
     this.route.params.subscribe(routeId => {
-      console.log(routeId);
-      this.itemResource$ = this.srv.findItem(+routeId.id, this.itemType).pipe(tap(item => console.log(item)));
+      // console.log(routeId);
+      this.itemResource$ = this.srv.findItem(+routeId.id, this.itemType);
       //this.itemForm$ = this.srv.findItem(+routeId.id, this.itemType).pipe(tap(item => item? this.itemForm(this.srv.checkTypeId(item)): ''));
     });
   }

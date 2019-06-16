@@ -375,7 +375,7 @@ export class JoinComponent implements OnInit, CanDeactivateComponent {
           console.log(err['status']);
           
           this.http.nextIslogged(false);
-         // window.sessionStorage.removeItem('user_key');
+         // window.localStorage.removeItem('user_key');
           window.location.reload();
         }
       });
