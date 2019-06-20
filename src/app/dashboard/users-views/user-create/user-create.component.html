@@ -1,0 +1,106 @@
+<model-template>
+  <div class="px-3">
+    <h2 class="h4 text-right text-success">צור משתמש</h2>
+  </div>
+
+  <form class="p-3 form-row" [formGroup]="userCreate" (ngSubmit)="onSubmit()">
+
+    <div class="col-6 pb-3">
+
+      <div class="inputTypeNumber">
+        <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם מלא" required minlength="3" maxlength="50" />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.name.invalid && f.name.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+
+    <div class="col-6 pb-3">
+
+      <div class="inputTypeNumber">
+        <input name="city" type="text" class="col-11" formControlName="city" placeholder="עיר מגורים" required minlength="3" maxlength="50" />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.city.invalid && f.city.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+
+
+    <div class="col-6 pb-3">
+
+      <div class="inputTypeNumber">
+        <input name="email" type="text" class="col-11" formControlName="email" placeholder="אימייל" [pattern]="emailPatt" required
+        />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+
+    <div class="col-6 pb-3">
+
+      <div class="inputTypeNumber">
+        <input name="password" type="password" class="col-11" formControlName="password" placeholder="סיסמה" [pattern]="passwordPatt"
+          autocomplete required />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.password.invalid && f.password.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+
+    <div class="col-6 pb-3">
+
+      <div class="inputTypeNumber">
+        <input name="passwordConfirm" type="password" class="col-11" formControlName="passwordConfirm" placeholder="אשר סיסמה" [pattern]="passwordPatt"
+          autocomplete required />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.passwordConfirm.invalid && f.passwordConfirm.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+
+    <div class="col-6 pb-3">
+
+      <div class="inputTypeNumber">
+        <select id="area" class="col-11" formControlName="area" required>
+          <option value="" selected disabled>אזור</option>
+          <option value="צפון">צפון</option>
+          <option value="מרכז והשפלה">מרכז והשפלה</option>
+          <option value="דרום">דרום</option>
+        </select>
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.area.invalid && f.area.touched" class="invalid-feedback d-block">* בחר אזור מתוך הרשימה </div>
+    </div>
+
+    <div class="col-6 pb-3">
+
+      <div class="inputTypeNumber">
+        <input name="tel" type="text" class="col-11" formControlName="tel" placeholder="טלפון/פלאפון" [pattern]="phoneNum" required
+        />
+
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+
+
+    <div class="col-12 pb-3">
+
+      <div class="inputTypeNumber textarea">
+        <textarea class="col-11" type="text" name="title" id="about" formControlName="about" required minlength="12" placeholder="הוסף הודעה">
+            
+            </textarea>
+        <span class="validity float-left"></span>
+      </div>
+      <div *ngIf="f.about.invalid && f.about.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-success btn-sm">
+        <i class="fa fa-envelope"></i>
+        שלח
+      </button>
+    </div>
+  </form>
+</model-template>

@@ -121,7 +121,7 @@ export class CustomersViewsComponent implements OnInit {
     // });
   }
   destroy(items){
-    console.log(items);
+    
     let url = "customers/"+items.id+"? _method=DELETE";
     this.http.postData(url, null).subscribe(response => {
       console.log(response);

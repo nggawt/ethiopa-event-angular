@@ -114,6 +114,10 @@ import { UserProfileComponent } from './dashboard/users-views/user-profile/user-
 import { EventPreviewComponent } from './dashboard/events-views/event-preview/event-preview.component';
 import { PostPreviewComponent } from './dashboard/posts-views/post-preview/post-preview.component';
 import { CustomerPreviewComponent } from './dashboard/customers-views/customer-preview/customer-preview.component';
+import { CustomerCreateComponent } from './dashboard/customers-views/customer-create/customer-create.component';
+import { UserCreateComponent } from './dashboard/users-views/user-create/user-create.component';
+import { EventCreateComponent } from './dashboard/events-views/event-create/event-create.component';
+import { PostCreateComponent } from './dashboard/posts-views/post-create/post-create.component';
 
 @NgModule({
   declarations: [
@@ -178,7 +182,11 @@ import { CustomerPreviewComponent } from './dashboard/customers-views/customer-p
     UserProfileComponent,
     EventPreviewComponent,
     PostPreviewComponent,
-    CustomerPreviewComponent
+    CustomerPreviewComponent,
+    CustomerCreateComponent,
+    UserCreateComponent,
+    EventCreateComponent,
+    PostCreateComponent
     // ConcatFormComponent,
     // CustomerComponent
   ],

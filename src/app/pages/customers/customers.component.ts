@@ -22,11 +22,10 @@ export class CustomersComponent implements OnInit, OnDestroy {
   customerMessage: {};
   
   private address:string;
-
   private allawAddress = [
     'halls-events','salons', 'app/salons', 'app/halls-events', "hotels", "app/hotels", "photographers", 
     "app/photographers", "djs", "app/djs", , "kyses", "app/kyses", , "car-rents", "app/car-rents",
-    "transports", "app/transports", , "printing", "app/printing", , "fireworks", "app/fireworks"
+    "transportation", "app/transportation", , "printing", "app/printing", , "fireworks", "app/fireworks"
   ];
 
   constructor(private router: Router, private route: ActivatedRoute,private halls: CustomersDataService ) {}
@@ -79,6 +78,8 @@ export class CustomersComponent implements OnInit, OnDestroy {
         this.hallsProps = data && data['customers'] && data['customers'][addr]? of(data['customers'][addr]):false;
         
         this.path = this.hallsProps ? true: this.timesNavigated();
+        console.log(this.path );
+        
      });
     }else{
       this.path = false;

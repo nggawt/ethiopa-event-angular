@@ -42,6 +42,9 @@ import { LogInComponent } from './auth/log-in/log-in.component';
 import { ModelTemplateComponent } from './dashboard/model-template/model-template.component';
 import { OverviewTemplateComponent } from './dashboard/overview-template/overview-template.component';
 import { AdminEditComponent } from './dashboard/admins-views/admin-edit/admin-edit.component';
+import { CustomerCreateComponent } from './dashboard/customers-views/customer-create/customer-create.component';
+import { UserCreateComponent } from './dashboard/users-views/user-create/user-create.component';
+import { PostCreateComponent } from './dashboard/posts-views/post-create/post-create.component';
 
 
 // import { NotificationsComponent } from './dashboard/notifications/notifications.component';
@@ -49,6 +52,7 @@ import { AdminEditComponent } from './dashboard/admins-views/admin-edit/admin-ed
 
 const routes: Routes = [
   { path: '', component: WellcomeComponent },
+  { path: 'users/:id', component: ProfileComponent },
   { path: 'dashboard', component: MainDashboardComponent, children: [
     
     { path: 'admins-views', component: AdminsViewsComponent, children: [
@@ -59,15 +63,22 @@ const routes: Routes = [
     { path: 'admins-views/:id', component: OverviewComponent, data : { itemType: "admins"} },
     // { path: 'admins-views/:id/edit', component: AdminEditComponent, data : { itemType: "admins"} },
 
-    { path: 'users-views', component: UsersViewsComponent },
+    { path: 'users-views', component: UsersViewsComponent, children: [
+      { path: 'create', component: UserCreateComponent },
+    ]},
+
     { path: 'users-views/:id', component: OverviewComponent, data : { itemType: "users"} },
     { path: 'users-views/:id/edit', component: UserEditComponent, data : { itemType: "users"} },
 
-    { path: 'blog-views', component: PostsViewsComponent },
+    { path: 'blog-views', component: PostsViewsComponent, children: [
+      { path: 'create', component: PostCreateComponent },
+    ]},
+
     { path: 'blog-views/:id', component: OverviewComponent, data : { itemType: "blog"} },
     { path: 'blog-views/:id/edit', component: PostEditComponent, data : { itemType: "blog"} },
 
     { path: 'customers-views', component: CustomersViewsComponent },
+    { path: 'customers-views/create', component: CustomerCreateComponent },
     { path: 'customers-views/:id', component: OverviewComponent, data : { itemType: "customers"} },
     { path: 'customers-views/:id/edit', component: CustomerEditComponent, data : { itemType: "customers"} },
 
@@ -89,7 +100,6 @@ const routes: Routes = [
   { path: 'password/email', component: ForgotPasswordComponent },
   { path: 'password/reset', component: ResetPasswordComponent },
   // { path: 'password/reset', component: ResetPasswordComponent },
-  { path: 'users/:id', component: ProfileComponent },
 
   // { path: 'יומן-אירועים', component: clande },
   { path: 'מטרת-האתר', component: GoalComponent },

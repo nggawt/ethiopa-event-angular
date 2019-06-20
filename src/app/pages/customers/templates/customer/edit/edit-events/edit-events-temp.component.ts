@@ -23,7 +23,7 @@ export class EditEventsTempComponent implements OnInit {
   @Output() ins: EventEmitter<any> = new EventEmitter<any>();
   customer;
   formMethod: string;
-  messages:object | boolean = {};
+  messages:{} = {};
   eventObj;
 
   private itemsRule: object = {

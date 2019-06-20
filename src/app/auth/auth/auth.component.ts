@@ -16,10 +16,7 @@ declare let $:any;
 export class AuthComponent implements OnInit {
 
 
-  constructor(
-    private http: HttpService, 
-    private router: Router, 
-    private route: ActivatedRoute) {}
+  constructor() {}
 
   ngOnInit() {
    

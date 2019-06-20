@@ -157,7 +157,7 @@ export class JoinComponent implements OnInit, CanDeactivateComponent {
       'tel': new FormControl(null,[Validators.required]),
       'email': new FormControl(null,[Validators.required]),
       'address': new FormControl(null,[Validators.required]),
-      'discription': new FormControl(null,[Validators.required])
+      'descriptions': new FormControl(null,[Validators.required])
     });
   }
 

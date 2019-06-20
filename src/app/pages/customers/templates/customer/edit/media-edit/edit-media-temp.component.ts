@@ -33,15 +33,13 @@ export class EditMediaTempComponent implements OnInit{
     'loggo': []
   };
 
-  private messages: {}  = {};
-
   private filesDl: {} = {
     'loggo': [],
     'video': [],
     'gallery': []
   };
 
-  isTrue: Observable<boolean>;
+  private messages: {}  = {};
 
   constructor(private router: Router,
     private http: HttpService,
@@ -248,7 +246,6 @@ export class EditMediaTempComponent implements OnInit{
     let filestObject = this.handleFilesBeforSend(extractFilesSend);
 
     let messages = filestObject['messages'];
-
 
     if(messages['success'] && (filestObject['haveFilesToSend'] || filestObject['filesToDelete'])){//messages['success'] && (filestObject['haveFilesToSend'] || filestObject['filesToDelete'])
       /* 

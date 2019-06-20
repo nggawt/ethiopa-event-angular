@@ -1,0 +1,252 @@
+<h2 class="h4 text-right text-success">צור קליינט</h2>
+
+<form class="form-row p-3 border rounded" [formGroup]="createCustomer" (ngSubmit)="onSubmit()">
+
+  <div class="col-6">
+    <label for="company">סוג העסק</label>
+    <div class="inputTypeNumber my-2">
+      <select name="businessType" id="businessType" class="col-11 selectList" formControlName="businessType" required
+        #businessType>
+        <option value="" selected disabled>בחר תחום</option>
+        <option value="halls-events">אולם אירועים</option>
+        <option value="salons">סלון כלות</option>
+        <option value="photographers">צלמים</option>
+        <option value="djs">די-ג'י</option>
+        <option value="printing">בתי דפוס</option>
+        <option value="fireworks">זיקוקים ואטרקציות</option>
+        <option value="transportation">הסעות</option>
+        <option value="car-rental">השכרת רכב</option>
+        <option value="hotels">צמרים ובתי מלון</option>
+        <option value="kyses">קייסים/רבנות</option>
+        <option value="שונות">שונות</option>
+      </select>
+
+      <span class="validity float-left"></span>
+    </div>
+    <div *ngIf="f.businessType.invalid && f.businessType.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: businessType, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+
+  <div class="col-sm-6">
+
+    <label for="company">שם החברה</label>
+    <div class="inputTypeNumber my-2">
+      <input name="company" type="text" id="company" class="col-11" formControlName="company" placeholder="שם מלא" required
+        minlength="3" maxlength="50" #company/>
+
+      <span class="validity float-left"></span>
+    </div>
+    <div *ngIf="f.company.invalid && f.company.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: company, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+
+  <div class="col-6">
+
+    <label for="contact">אימייל</label>
+    <div class="inputTypeNumber my-2">
+      <input name="email" type="text" id="email" class="col-11" formControlName="email" placeholder="אימייל" [pattern]="emailPatt"
+        required #email/>
+
+      <span class="validity float-left"></span>
+    </div>
+    <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: email, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="col-6">
+    <label for="contact">איש קשר</label>
+
+    <div class="inputTypeNumber my-2">
+      <input class="col-11 px-1" type="text" name="contact" id="contact" formControlName="contact" required #contact />
+
+      <span class="validity float-left"></span>
+    </div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: contact, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="col-6">
+    <label for="tel">פלאפון/טלפון</label>
+
+    <div class="inputTypeNumber my-2">
+      <input type="tel" id="tel" name="tel" class="col-11 px-1" formControlName="tel" [pattern]="phoneNum" required
+        #tel />
+
+      <span class="validity float-left"></span>
+    </div>
+
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: tel, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="col-6">
+    <label for="address">כתובת</label>
+
+    <div class="inputTypeNumber my-2">
+      <input class="col-11 px-1" type="text" name="address" id="address" formControlName="address" required #address />
+
+      <span class="validity float-left"></span>
+    </div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: address, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="col-6">
+    <label for="title">סלוגן החברה</label>
+
+    <div class="inputTypeNumber my-2 textarea">
+      <textarea class="col-11 px-1" type="text" name="title" id="title" formControlName="title" required minlength="12"
+        #title>
+        </textarea>
+      <span class="validity float-left"></span>
+    </div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: title, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="col-6">
+
+    <label for="descriptions">אודות החברה</label>
+    <div class="inputTypeNumber my-2 textarea">
+      <textarea wrap="hard" class="col-11 px-1" type="text" name="descriptions" id="descriptions"
+        formControlName="descriptions" minlength="6" required #descriptions>
+
+      </textarea>
+      <span class="validity float-left"></span>
+    </div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: descriptions, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="col-12">
+
+    <label for="deals">אודות החברה</label>
+    <div class="inputTypeNumber my-2 textarea">
+      <textarea wrap="hard" class="col-11 px-1" type="text" name="deals" id="deals"
+        formControlName="deals" minlength="6" required #deals>
+
+      </textarea>
+      <span class="validity float-left"></span>
+    </div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: deals, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="col-6">
+    <p class="pb-2 m-0">לוגו החברה</p>
+    <div class="form-group border bg-white clearfix">
+      <span class="py-2 px-2 m-0 float-right">
+        בחר קובץ...
+      </span>
+      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="loggo">
+        <span>
+          בחר לוגו
+          <i class="fa fa-search text-success"></i>
+        </span>
+      </label>
+      <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required
+        (change)="formFiles.selectedFiles($event,'loggo')" />
+    </div>
+    <div class="media-placeholder border bg-dark d-flex-row" #loggo>
+
+
+    </div>
+  </div>
+
+  <div class="col-6">
+    <p class="pb-2 m-0">סרטון תדמיתי</p>
+    <div class="form-group border bg-white clearfix">
+
+
+      <span class="py-2 px-2 m-0 float-right">
+        בחר קובץ...
+      </span>
+      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="video">
+        <span>
+          בחר סרטון
+          <i class="fa fa-search text-success"></i>
+        </span>
+      </label>
+
+      <input type="file" id="video" class="video" style="display: none;" accept="video/*"
+        (change)="formFiles.selectedFiles($event,'video')" required />
+    </div>
+    <div class="media-placeholder border border-success bg-dark d-flex-row" #video>
+
+    </div>
+  </div>
+
+  <div class="col-12">
+    <p class="pb-2 m-0">גלרית תמונות</p>
+    <div class="form-group bg-white border clearfix">
+
+      <span class="py-2 px-2 m-0 float-right">
+        בחר קובץ...
+      </span>
+      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="gallery">
+        <span>
+          בחר תמונות
+          <i class="fa fa-search text-success"></i>
+        </span>
+      </label>
+      <input type="file" id="gallery" class="gallery" style="display: none;" accept="image/*" required multiple
+        (change)="formFiles.selectedFiles($event,'gallery')" />
+    </div>
+    <div class="media-placeholder border border-success bg-dark d-flex-row" #gall>
+
+    </div>
+  </div>
+
+  <div class="form-group col-12">
+    <button type="submit" class="btn btn-success">
+      <i class="fa fa-envelope"></i>
+      שלח
+    </button>
+  </div>
+</form>
+
+<ng-template #clickedMethods let-elem="elem" let-itemValue="itemValue" let-itemMethod="itemMethod">
+  <div class="my-2">
+
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active"
+      (click)="update(elem)">
+      <span>
+        עדכן
+        <i class="material-icons text-success">
+          update
+        </i>
+      </span>
+    </a>
+    <a *ngIf="elem.value" class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(elem)">
+      <span>
+        נקה
+        <i class="material-icons text-warning">
+          clear
+        </i>
+      </span>
+    </a>
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active"
+      (click)="default(elem)">
+      <span>
+        מקור
+        <i class="material-icons text-primary">
+          redo
+        </i>
+      </span>
+    </a>
+  </div>
+  <div *ngIf="messages && messages[elem.id]" class="bg-light p-1 ml-1">
+    <p *ngFor="let message of messages[elem.id]" class="bg-light p-1 m-1 d-block">
+      <span *ngIf="message[elem.id] || message['message']"
+        [ngClass]="message['type'] == 'errors'? 'text-danger': 'text-'+message['type'] ">
+        <b>#</b>
+        {{ message[elem.id] || message['message'] }}
+      </span>
+    </p>
+  </div>
+</ng-template>

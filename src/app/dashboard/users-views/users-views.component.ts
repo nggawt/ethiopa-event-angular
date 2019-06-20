@@ -2,6 +2,7 @@ import { Component, OnInit, Input, TemplateRef, ViewChild } from '@angular/core'
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ResourcesService } from '../resources.service';
 import { FormGroup, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 declare var $;
 
 @Component({
@@ -18,7 +19,7 @@ export class UsersViewsComponent implements OnInit {
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
-  constructor(private http: HttpService, private resSrv: ResourcesService) { }
+  constructor(private http: HttpService, private resSrv: ResourcesService, private router: Router) { }
 
   ngOnInit() {
     this.itemsResources$ = this.resSrv.resourcesObsever;
@@ -27,6 +28,13 @@ export class UsersViewsComponent implements OnInit {
   
   get f() : {} {
     return this.formGr.controls;
+  }
+  
+  create(path){
+    // console.log("create");
+    
+    this.http.requestUrl = location.pathname;
+    this.router.navigate([path]);
   }
   
   initForm(customer, temp){

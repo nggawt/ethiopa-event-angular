@@ -243,14 +243,14 @@
 
       <div class="col-sm-12 form-group border p-3">
 
-        <label for="discription">אודות החברה</label>
-        <textarea wrap="hard" class="w-100 form-control text-right note" type="text" name="discription" id="discription"
-          formControlName="discription" minlength="6" #discription>
+        <label for="descriptions">אודות החברה</label>
+        <textarea wrap="hard" class="w-100 form-control text-right note" type="text" name="descriptions" id="descriptions"
+          formControlName="descriptions" minlength="6" #descriptions>
 
         </textarea>
 
         <div class="my-2">
-          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(discription)">
+          <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(descriptions)">
             <span>
               נקה
               <i class="material-icons text-warning">
@@ -259,12 +259,12 @@
             </span>
           </a>
         </div>
-        <div *ngIf="messages && messages['discription']" class="bg-light p-1 ml-1">
-          <p *ngFor="let message of messages['discription']" class="bg-light p-1 m-1 d-inline-block">
+        <div *ngIf="messages && messages['descriptions']" class="bg-light p-1 ml-1">
+          <p *ngFor="let message of messages['descriptions']" class="bg-light p-1 m-1 d-inline-block">
 
-            <span *ngIf="message['discription']">
+            <span *ngIf="message['descriptions']">
               <b [ngClass]="'text-'+message['type']">
-                {{ message['discription'] }}
+                {{ message['descriptions'] }}
               </b>
             </span>
           </p>

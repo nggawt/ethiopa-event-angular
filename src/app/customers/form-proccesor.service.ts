@@ -71,14 +71,14 @@ export class FormProccesorService {
       tel: "טלפון",
       address: "כתובת",
       title: "תיאור או כותרת",
-      discription: "אודות החברה",
+      descriptions: "אודות החברה",
       deals: "מבצעים"
     };
 
     let inputs = {};
     let isTrue = true;
     let transformHebKey = {};
-
+    
     if (!gnKey[ii]) {
       return {
         'status': false,

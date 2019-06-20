@@ -43,6 +43,13 @@ export class AdminsViewsComponent implements OnInit {
     this.router.navigate([path]);
   }
 
+  create(path){
+    // console.log("create");
+    
+    this.http.requestUrl = location.pathname;
+    this.router.navigate([path]);
+  }
+
   show(path){
     this.http.requestUrl = location.pathname;
     this.router.navigate([path]);

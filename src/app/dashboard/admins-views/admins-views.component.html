@@ -35,7 +35,7 @@
             <i class="material-icons">add</i>
           </span>
         </a>
-
+        
         <a routerLinkActive="active" (click)="destroy()"
           class="googleFont px-2 p-2 border rounded text-center float-left">
           <span>
@@ -45,8 +45,17 @@
             </i>
           </span>
         </a>
-      </div>
 
+        <a routerLinkActive="active" class="btn btn-primary" (click)="create('/dashboard/admins-views/create')"
+          class="googleFont px-2 p-2 border rounded text-center float-left">
+          <span>
+            צור אדמין חדש
+            <i class="material-icons">
+              create
+            </i>
+          </span>
+        </a>
+      </div>
     </div>
   </div>
   <div *ngFor="let userTp of users | keyvalue" class="col-sm-12">

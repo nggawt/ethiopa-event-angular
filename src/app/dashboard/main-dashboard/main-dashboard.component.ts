@@ -75,12 +75,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  create(path){
-    // console.log("create");
-    
-    this.http.requestUrl = location.pathname;
-    this.router.navigate([path]);
-  }
+
 
   ngOnDestroy() {
     /* this.usersSubsription.unsubscribe();

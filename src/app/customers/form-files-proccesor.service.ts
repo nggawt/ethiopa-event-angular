@@ -158,7 +158,7 @@ export class FormFilesProccesorService {
     let concatArrays: Array<{}>[] = [];
     for(let ii in obArr){
 
-      if(Array.isArray(obArr[ii]) && obArr[ii].length > 0){
+      if(Array.isArray(obArr[ii]) && obArr[ii].length){
         obArr[ii].forEach(elem => {
           if(!elem.exisst) concatArrays.length > 0? concatArrays = concatArrays.concat(elem): concatArrays.push(elem);
         });
@@ -327,13 +327,14 @@ export class FormFilesProccesorService {
   }
 
   getUrl(customer) {
-    
-    let comp = (customer['company'].indexOf(' ') >= 0) ? customer['company'].split(' ')[0]
-     + "-" + customer['company'].split(' ')[1] : customer['company'];
+    if(customer && customer['company']){
+      let comp = (customer['company'].indexOf(' ') >= 0) ? customer['company'].split(' ')[0]
+      + "-" + customer['company'].split(' ')[1] : customer['company'];
 
-    let company = (comp === "ארמונות-לב") ? 'palace-lev' : comp;
-    let urls: string = customer['businessType'] + "/" + company;
-    return urls;
+      let company = (comp === "ארמונות-לב") ? 'palace-lev' : comp;
+      let urls: string = customer['businessType'] + "/" + company;
+      return urls;
+    }
   }
 
   validateFilesSizes(files) {
