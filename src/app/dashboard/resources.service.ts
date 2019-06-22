@@ -57,9 +57,12 @@ export class ResourcesService {
   }
 
   protected getCustomersItems(customers) {
-    return Object.keys(customers).map(customersType => customers[customersType].map(item => {
-      return { customer: item['customer'], gallery: item['gallery'] };
+    let customersArray = [];
+    Object.keys(customers).forEach(customersType => customers[customersType].forEach(item => {
+      let customer =  { customer: item['customer'], gallery: item['gallery'] };
+      customersArray.push(customer);
     }));
+    return customersArray;
   }
 
   checkHasKey(item, key) {
@@ -72,14 +75,15 @@ export class ResourcesService {
       activeated: [],
       pending: []
     };
-
-    let customers;
-    if (customers = (items['customers'])) {
-      customers = this.getCustomersItems(items['customers'])[0];
+    
+    if (items['customers'] && typeof items['customers'] == "object") {
+      
+      let customers = this.getCustomersItems(items['customers']);
+      console.log(customers);
       arr['activeated'] = customers.filter(item => item['customer'].confirmed || !this.checkHasKey(item['customer'], 'confirmed'))
       arr['pending'] = customers.filter(item => this.checkHasKey(item['customer'], 'confirmed') && item['customer'].confirmed === false)
 
-    } else {
+    } else if(items && items.length){
       arr['activeated'] = items.filter(item => item.confirmed || !this.checkHasKey(item, 'confirmed'));
       arr['pending'] = items.filter(item => this.checkHasKey(item, 'confirmed') && item.confirmed === false);
     }
