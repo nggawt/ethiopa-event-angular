@@ -7,7 +7,7 @@
     <h5 class="shadow-sm py-2 text-black-50 h2">
       <i class="fa fa-message text-secondary"></i>
       אירועים
-      <span class="btn btn-success btn-sm float-left m-1">צור אירוע חדש</span>
+      <!-- <span class="btn btn-success btn-sm float-left m-1">צור אירוע חדש</span> -->
     </h5>
   </div>
   <div *ngIf="events && events.pending.length">
@@ -16,6 +16,7 @@
 
   <ng-container *ngTemplateOutlet="tempType; context:{elem: events}"></ng-container>
 </div>
+<router-outlet></router-outlet>
 
 <ng-template #tableEvents let-resource="elem">
   <!-- <div class="table-responsive"> -->

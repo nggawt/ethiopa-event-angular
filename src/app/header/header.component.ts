@@ -45,8 +45,11 @@ export class HeaderComponent implements OnInit {
     this.msgTo ={
       name: "אתיופיה אירועים"
     };
+    // let auth = this.http.isAuth();
+    // console.log(auth);
     
-    this.user$ = this.http.userObs.pipe(first(item => typeof item == "object"));
+    
+    this.user$ = this.http.userObs.pipe(filter(item => typeof item == "object"));
   }
 
   contactModel(param){

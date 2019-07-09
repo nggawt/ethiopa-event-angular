@@ -87,29 +87,6 @@
   </tbody>
 </ng-template>
 
-<ng-template #checkBox let-itemObj="elem">
-  <div class="custom-control custom-checkbox">
-    <input [id]="itemObj.name+itemObj.id" class="custom-control-input" type="checkbox" [checked]="itemObj.confirmed">
-
-    <label [for]="itemObj.name+itemObj.id" class="custom-control-label">
-      {{ itemObj.confirmed? "סרב": "אשר" }}
-    </label>
-  </div>
-</ng-template>
-
-<ng-template #viewOrEdit let-itemObj="elem" let-inputType="input" let-inputId="inputId">
-
-  <label [for]="inputId" class="w-100 col-form-label">
-
-    <a class="text-primary float-right link" (click)="editIem(inputId)">
-      {{ itemObj[inputType].trim().length > 15? 'ערוך או הצג תוכן': 'ערוך' }}
-    </a>
-  </label>
-  <textarea class="form-control text-break hide" name="body" [id]="inputId">
-            {{ itemObj[inputType].trim() }}
-      </textarea>
-</ng-template>
-
 <ng-template #customersForm>
   <app-dashboard-edit></app-dashboard-edit>
 </ng-template>

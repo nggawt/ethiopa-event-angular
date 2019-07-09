@@ -1,13 +1,23 @@
 <div class="row text-right">
-  <div class="col-12">
-    <div class="rounded-right-warning">
-      <h5 class="shadow-sm p-2 text-black-50 h2">
-        דשבורד
-        <div class="float-left m-1">
-          <a class="btn btn-success btn-sm float-left m-1" (click)="login('/login')"> התחבר</a>
-          <a class="btn btn-danger btn-sm float-left m-1" (click)="logout()"> התנתק</a>
-        </div>
+  <div class="col-12 mb-3">
+    <div class="rounded-right-warning bg-light shadow-sm clearfix">
+      <h5 class="p-2 text-black-50 h2 float-right">
+          <a routerLink="/dashboard">
+            <!-- (click)=setTemplateType(default) -->
+            <i class="material-icons">dashboard</i>
+          </a>
+          דשבורד
+        
       </h5>
+      <div class="float-left m-1">
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/admins-views/create')"> צור אדמין</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/users-views/create')"> צור משתמש</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/customers-views/create')"> צור קליינט</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/blog-views/create')"> צור פוסט</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/events-views/create')"> צור אירוע</button>
+        <a class="btn btn-outline-success m-1" (click)="login('/login')"> התחבר</a>
+        <a class="btn btn-outline-danger m-1" (click)="logout()"> התנתק</a>
+      </div>
     </div>
   </div>
   <div class="col-sm-2">
@@ -25,8 +35,6 @@
       <!-- (click)=setTemplateType(adminProfile) -->
       <li class="nav-item" routerLinkActive="active">
         <a routerLink="users-views">
-          <!-- (click)=setTemplateType(users) -->
-          <!-- <i class="fa fa-users-cog"></i> -->
           <i class="fa fa-users"></i>
           משתמשים
         </a>

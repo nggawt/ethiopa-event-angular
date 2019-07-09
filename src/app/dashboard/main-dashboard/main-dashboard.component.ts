@@ -85,4 +85,10 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.routerSubscrition.unsubscribe();
     // this.resources$.unsubscribe();
   }
+
+  create(path){
+    this.http.requestUrl = location.pathname;
+    this.router.navigate([path]);
+  }
+
 }

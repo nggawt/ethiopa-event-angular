@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 
 export class CustomersResolver implements Resolve<HallType> {
 
-    constructor(private halls: CustomersDataService,private router:Router){}
+    constructor(private halls: CustomersDataService, private router:Router){}
 
     resolve(): Observable<HallType[]> | Promise<HallType[]> | HallType[] | any {
         let loc = decodeURIComponent(location.pathname);

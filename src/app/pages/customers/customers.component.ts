@@ -40,7 +40,8 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
       this.urlUnsubscribe = this.router.events.pipe(
         filter((evt) => evt instanceof RoutesRecognized),
-        map(_evt => decodeURIComponent(_evt["url"]).slice(1)),).subscribe(evt => {
+        map(_evt => decodeURIComponent(_evt["url"]).slice(1))).subscribe(evt => {
+          console.log(evt);
           
           urSnapShut = (evt.indexOf('customers') >= 0)?  evt.split('customers/')[1]: evt;
           urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
@@ -51,7 +52,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
             (urSnapShut != 'join')? this.path = false: this.path = true;
           }
       });
-      this.getCustomerResources(urSnapShut);
+      (urlExist)? this.getCustomerResources(urSnapShut):this.timesNavigated();
   }
 
   contactModel(paramCustomer){
@@ -64,7 +65,6 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
     let splitedUrl = (url.indexOf('/') >= 0)? url.split('/'): url;
     let mailResourceUrl = (typeof splitedUrl == "object" && splitedUrl.length >= 2)? splitedUrl[0]: splitedUrl;
-      console.log(splitedUrl);
       
     if(this.allawAddress.indexOf(url) >= 0){
     

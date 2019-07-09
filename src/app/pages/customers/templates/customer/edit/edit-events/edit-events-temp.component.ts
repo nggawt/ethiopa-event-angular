@@ -8,6 +8,7 @@ import { find } from 'rxjs/operators';
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
 import { ValidationService } from 'src/app/services/validation/validation.service';
+import { MessagesService } from 'src/app/services/messages/messages.service';
 declare var $: any;
 
 @Component({
@@ -42,6 +43,7 @@ export class EditEventsTempComponent implements OnInit {
   constructor(private router: Router,
               private http: HttpService,
               private route: ActivatedRoute,
+              private msgSrv: MessagesService,
               private valForm: ValidationService) { }
 
   ngOnInit() {
@@ -136,7 +138,7 @@ default(event) {
   }
 
   async resetMessages(){
-    let response = await this.valForm.resetMessages();
+    let response = await this.msgSrv.resetMessages();
     this.messages = await response;
     
     /* await this.valForm.resetMessages().then(res => {
@@ -214,7 +216,7 @@ default(event) {
       console.log("im not validated");
       console.log(items);
       
-      this.valForm.resetMessages(9000).then(res => {
+      this.msgSrv.resetMessages(9000).then(res => {
         // this.messages = res;
       });
     } 
@@ -245,7 +247,7 @@ default(event) {
       .subscribe(evt => {
 
         console.log(evt);
-        let msgs = this.valForm.getMassages(evt);
+        let msgs = this.msgSrv.getMassages(evt);
         console.log(msgs);
         this.messages = msgs;
         this.resetMessages();

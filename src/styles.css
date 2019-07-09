@@ -84,44 +84,10 @@ footer.footer {
 
 /* form validaty */
 
-.validity {
-    content: '✖';
-    color: #f00;
-    padding-left: 5px;
-}
 
-input.ng-valid+span:after,
-select.ng-valid+span:after,
-textarea.ng-valid+span:after,
-input:valid+small:after {
-    content: '✓';
-    color: #26b72b;
-    padding-left: 5px;
-}
-
-input.ng-invalid+span:after,
-select.ng-invalid+span:after,
-textarea.ng-invalid+span:after,
-input:invalid+small:after {
-    content: '✖';
-    color: #f00;
-    padding-left: 5px;
-}
-
-input:invalid+small:after {
-    position: relative;
-    content: '✖';
-    padding-left: 5px;
-}
-
-input:valid+small:after {
-    position: relative;
-    content: '✓';
-    padding-left: 5px;
-}
 
 .inputTypeNumber {
-    height: calc(2.25rem + 2px);
+    /* height: calc(2.25rem + 2px); */
     padding: .375rem .25rem;
     font-size: 1rem;
     line-height: 1.5;
@@ -138,6 +104,7 @@ input:valid+small:after {
 .inputTypeNumber select {
     border: none;
     outline: none;
+    padding-right: 3px;
 }
 
 .inputTypeNumber textarea {
@@ -152,21 +119,6 @@ div.textarea {
     min-height: 100px;
 }
 
-input:valid+span:after,
-select:valid+span:after,
-textarea:valid+span:after {
-    content: '✓';
-    color: #26b72b;
-    padding-left: 5px;
-}
-
-input:invalid+span:after,
-select:invalid+span:after,
-textarea:invalid+span:after {
-    content: '✖';
-    color: #f00;
-    padding-left: 5px;
-}
 
 textarea.note {
     text-align: right;

@@ -7,7 +7,7 @@
     <h5 class="shadow-sm py-2 text-black-50 h2">
       <i class="fa fa-message text-secondary"></i>
       מאמרים\פוסטים
-      <span class="btn btn-success btn-sm float-left m-1">צור מאמר\פוסט חדש</span>
+      <!-- <span class="btn btn-success btn-sm float-left m-1">צור מאמר\פוסט חדש</span> -->
     </h5>
   </div>
 
@@ -17,6 +17,7 @@
   <ng-container *ngTemplateOutlet="tempType; context:{elem: blog}"></ng-container>
 </div>
 
+<router-outlet></router-outlet>
 
 <ng-template #tableblog let-resource="elem">
 

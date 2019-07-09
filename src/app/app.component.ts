@@ -4,7 +4,8 @@ import { Location } from '@angular/common';
 // import { PagesService } from './pages-service';
 // import { UrlServiceService } from './url-service.service';
 import { Observable, of, Subject, Subscription, Subscriber } from 'rxjs';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map, tap, first } from 'rxjs/operators';
+import { HttpService } from './services/http-service/http.service';
 
 // import { map, filter, tap, first, debounceTime, distinctUntilChanged, takeWhile } from 'rxjs/operators';
 // import * as $ from 'jquery';
@@ -20,7 +21,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   showIndicetor: Observable<boolean>;
   uriObject: Subscription;
 
-  constructor(private location: Location, private router: Router) {}
+  constructor(private location: Location, private router: Router, private http: HttpService) {}
 
   ngOnInit() {
     this.uriObject = this.router.events.pipe(filter(evt => {
@@ -29,6 +30,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       
     }))
     .subscribe((_evt:any) => {
+      
+      let isLogged = this.http.isAuth();
+      console.log("user is logged: ", isLogged);
       
       this.constHome = this.location.path() === '' ? true : false;
       if(_evt instanceof NavigationStart){

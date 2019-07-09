@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormValidationsService } from 'src/app/customers/form-validations.service';
 import { FormFilesProccesorService } from 'src/app/customers/form-files-proccesor.service';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 declare var $: any;
 
@@ -9,45 +10,48 @@ declare var $: any;
 })
 export class FormFilesAndInputsProccesorService {
 
-  private galleries: any;
-  private videos: any;
-  private guard = {};
-
+  public galleries: any;
+  public videos: any;
+  formIns: FormGroup;
+  
+  public guard = {};
   public arrayFlies: {} = {
-    'gallery': [],
+    'images': [],
     'video': [],
     'loggo': []
   };
 
-  private filesDl: {} = {
+  public filesDl: {} = {
     'loggo': [],
     'video': [],
-    'gallery': []
+    'images': []
   };
 
   customer;
-  method:string = "post";
+  method: string = "post";
 
-  private messages: {} = {};
+  messages: {} = {};
 
   constructor(
     private formFiles: FormFilesProccesorService,
     private filesValidator: FormValidationsService) { }
 
-  ngOnInit() { }
+  initApp(customer, formIns, method: string) {
 
-  initApp(customer) {
+    this.formIns = formIns;
+    this.method = method;
 
     if (customer && customer['gallery']) {
       let gal = customer['gallery'];
-      let cu = customer['customer'];
-
-      this.galleries = gal['image'];
+      this.method = "update";
+      this.galleries =  typeof gal['image'] == "object"? Object.keys(gal['image']).map(item => gal['image'][item]): gal['image'];
       this.videos = gal['video'];
-      this.customer = cu;
+      this.customer = customer['customer'];
       this.galleryInit();
     }
   }
+
+  handleFilesBeforSend(){}
 
   async galleryInit() {
 
@@ -55,45 +59,169 @@ export class FormFilesAndInputsProccesorService {
     let vid = await this.formFiles.createFilesOb(this.videos);
     let loggo = await this.formFiles.createFilesOb([this.customer.loggo]);
 
-    this.selectedFiles(imgs, 'gallery');
+    this.selectedFiles(imgs, 'images');
     this.selectedFiles(vid, 'video');
     this.selectedFiles(loggo, 'loggo');
   }
 
-  reset() {
-    ['loggo', 'video', 'gallery'].forEach((el) => {
+  removeItem(gal, theFile) {
+    for (let idx = 0, len = gal.length; idx < len; idx++) {
 
-      this.galReset(el);
-    });
+      if (gal[idx].id === theFile.id) {
+        gal.splice(idx, 1);
+        break;
+      }
+    }
+    return gal;
   }
 
-  resetToDefualt(fdel?, filesToSend?) {
+  fileContains(gal, theFile) {
 
-    fdel = fdel ? fdel : this.filesDl;
+    let isTrueOrFalse: any = false;
 
-    for (let item in fdel) {
-      let galLen: boolean = (filesToSend && filesToSend[item] && item == "gallery") ? ((this.galleries.length + filesToSend[item].length) - (fdel[item].length) < 3) :
-        (item == "gallery" && fdel[item].length) ? true : false;// || (this.findItemInArrayFiles(item, false, true)
+    for (let idx = 0, len = gal.length; idx < len; idx++) {
 
-      let loggoAndVideoDel = (item == "loggo" || item == "video") && (fdel[item].length && (!filesToSend[item] || filesToSend[item].length === 0));
-
-      if (galLen || loggoAndVideoDel) {
-
-        console.log("inside resetToDefualt FN!");
-        this.galReset(item);
-        this.galDefault(item);
+      if (gal[idx].id === theFile.id) {
+        isTrueOrFalse = true;
       }
+    }
+    return isTrueOrFalse;
+  }
+
+  extractDelFiles(delFiles?) {
+    let del = delFiles? delFiles: this.filesDl,
+        delFilesLink = {};
+
+    this.getFileObject(Object.keys(del),(item) => {
+      if(del[item].length ) delFilesLink[item]= del[item];
+    });
+    return delFilesLink;
+  }
+
+  getUrl(customer) {
+    if (customer && customer['company']) {
+      let comp = (customer['company'].indexOf(' ') >= 0) ? customer['company'].split(' ')[0]
+        + "-" + customer['company'].split(' ')[1] : customer['company'];
+
+      let company = (comp === "ארמונות-לב") ? 'palace-lev' : comp;
+      let urls: string = customer['businessType'] + "/" + company;
+      return urls;
     }
   }
 
-  galReset(item?, type?) {
+  createElements(elem) {
 
+    let div = document.createElement('DIV');
+    let aTag = document.createElement('A');
+    let span = document.createElement('SPAN');
+    let elemType = elem.type.split("/")[0];
+
+    let itemObj = {};
+
+    aTag.id = elem.id;
+    aTag.setAttribute('data-target', elem.target);
+    div.id = elem.id;
+    div.className = "d-inline-block p-1 m-1 border border-info rounded bg-secondary";
+
+    aTag.className = "close bg-white text-danger";
+
+    span.setAttribute('aria-hidden', 'true');
+    span.innerHTML = '&times';
+    aTag.appendChild(span);
+    div.appendChild(aTag);
+
+    if (elemType === "image") {
+
+      let img = new Image();
+      img.src = elem.src;
+      // img.className = "border border-info rounded";
+      img.setAttribute("height", "90px");
+      img.setAttribute("alt", elem.type);
+      div.appendChild(img);
+
+    } else if (elemType === "video") {
+
+      let video: any = document.createElement('video');
+      let source = document.createElement('source');
+      video.controls = true;
+      video.height = 90;
+      source.type = elem.type;
+      source.src = elem.src;
+      video.appendChild(source);
+      div.appendChild(video);
+    }
+    itemObj['elemDiv'] = div;
+    itemObj['atag'] = aTag;
+    itemObj['theElem'] = elem;
+    return itemObj;
+  }
+
+  concatArrs(obArr, isTrue?) {
+
+    let concatArrays: Array<{}>[] = [];
+    for (let ii in obArr) {
+
+      if (Array.isArray(obArr[ii]) && obArr[ii].length) {
+        obArr[ii].forEach(elem => {
+          if (!elem.exisst) concatArrays.length > 0 ? concatArrays = concatArrays.concat(elem) : concatArrays.push(elem);
+        });
+      }
+    }
+    return concatArrays;
+  }
+
+  extractSendingFiles(filesOb) {
+    let attrOb = {};
+
+    for (let ii in filesOb) {
+
+      attrOb[ii] = filesOb[ii].filter(elem => {
+        return !elem.exisst;
+      });
+    }
+    return attrOb;
+  }
+
+  rmFromGall(target, item: string) {
+
+    this.formIns.controls[target].value.forEach((element, idx) => {
+      if (element.id == item) (<FormArray>this.formIns.get(target)).removeAt(idx);
+    });
+  }
+
+  addToGall(target, item) {
+    (<FormArray>this.formIns.get(target)).push(new FormControl(item));//, [this.validateSize.bind(this), this.validateType, this.validateExsst]
+  }
+  
+  allTodefault() {
+
+    let controls = this.formIns.controls;
+    for (let ii in controls) {
+      if (ii == "images" || ii == "loggo" || ii == "video") continue;
+      if (controls.hasOwnProperty(ii)) {
+        if (controls[ii].value !== this.customer[ii]) {
+          if (this.customer[ii]) controls[ii].setValue(this.customer[ii]);
+        }
+      }
+    }
+    ['loggo', 'video', 'images'].forEach(el => {
+
+      this.galReset(el);
+      this.filesDl[el] = [];
+    });
+    this.galleryInit();
+  }
+
+  galReset(item?, type?) {
+    console.log(item, type);
+    
     let input = (typeof item === "string") ? document.getElementById(item) : false;
     let elem = input ? input.parentElement.nextElementSibling : item;
     let childrens = elem.querySelectorAll('A');
-
+    console.log(childrens);
+    
     for (let ii = 0, len = childrens.length; ii < len; ii++) {
-      this.unSelectFiles(childrens[ii]);
+     if(childrens[ii] && childrens[ii].id) this.unSelectFiles(childrens[ii]);
       // this.filesDl[childrens[ii].getAttribute('data-target')] = [];
     }
     if (type) type.value = "";
@@ -110,8 +238,9 @@ export class FormFilesAndInputsProccesorService {
   }
 
   async galDefault(galType) {
+    // galType = typeof galType == "string" ? galType : galType.id.split('-')[0];
 
-    let item = galType === "gallery" ? await this.formFiles.createFilesOb(this.galleries) :
+    let item = galType === "images" ? await this.formFiles.createFilesOb(this.galleries) :
       galType === "loggo" ? await this.formFiles.createFilesOb([this.customer.loggo]) :
         galType === "video" ? await this.formFiles.createFilesOb(this.videos) : false;
 
@@ -121,96 +250,81 @@ export class FormFilesAndInputsProccesorService {
     }
   }
 
-  findItemInArrayFiles(type, arr?, exisst?) {
+  getFileObject(files, callBacked) {
 
-    let mySerchArray = (arr && arr[type]) ? arr[type] : arr && Array.isArray(arr) ? arr : this.arrayFlies[type];
-
-    let item = exisst ? mySerchArray.find(elem => {
-      return elem.target == type && !elem['exisst'];
-    }) : mySerchArray.find(elem => {
-      return elem.target == type;
+    files.forEach(item => {
+      callBacked(item);
     });
-
-    return item;
   }
 
-  buildSendingFiles(fUp, fDel, customer) {
-    let fData: FormData = new FormData();
-    let keys = Object.keys(fUp);
-    let extractTargetName: string;
+  buildSendingFiles(fUp, fDel, customer?) {
 
-    if (fUp) {
+    customer = customer? customer:this.customer;
+    
+    let fData: FormData = new FormData(), 
+        gal = fUp['gallery']? fUp['gallery']:[], 
+        inputs = fUp['inputs']? fUp['inputs']:[],
+        keys = Object.keys(gal),
+        extractTargetName: string,
+        isValid: boolean = true;
+
+    if (keys.length && customer.company) {
       keys.forEach(key => {
-        let itemes = fUp[key].slice(0);
-        
-        this.filesValidator.getFileObject(itemes, (file) => {
-          let splUrl = this.formFiles.getUrl(customer).split('/');
+
+        this.getFileObject(gal[key], (file) => {
+
+          let splUrl = this.getUrl(customer).split('/');
           extractTargetName = key + ":" + splUrl[0] + ':' + splUrl[1] + ":" + file.target + ":" + file.name.split('.')[0];
-
+          console.log(extractTargetName);
+          
           fData.append('files[]', file, extractTargetName);
-
         });
       });
+    }else{
+      if(this.method == "post") isValid = false;
     }
-    fDel ? fData.set('filesToDelete', JSON.stringify(fDel)) : "";
-    return fData;
+    if (Object.keys(inputs).length) fData.set('formInputs', JSON.stringify(inputs));
+    if (fDel) fData.set('filesToDelete', JSON.stringify(fDel));
+
+    return isValid? fData: false;
   }
 
-  handleFilesBeforSend(filesToSend?, filesDel?) {
 
-    /****** handel form files and validate *****/
-    filesToSend = filesToSend ? filesToSend : this.formFiles.extractSendingFiles(this.arrayFlies);
-    filesDel = filesDel ? filesDel : this.filesDl;
-    let validator = this.filesValidator.validateInit(filesToSend, filesDel, this.galleries, this.customer);
-
-    let messages = validator.geAlltMessges();
-
-    let filesToDel: {} | boolean = (filesDel['gallery'] && filesDel['gallery'].length || filesDel['video'] && filesDel['video'].length || filesDel['loggo'] && filesDel['loggo'].length) ? filesDel : false;
-    let haveFilesToSend: boolean = (filesToSend['gallery'] && filesToSend['gallery'].length || filesToSend['video'] && filesToSend['video'].length || filesToSend['loggo'] && filesToSend['loggo'].length) ? true : false;
-
-    return {
-      filesToSend: haveFilesToSend ? filesToSend : false,
-      validator: validator,
-      filesToDelete: filesToDel,
-      haveFilesToSend: haveFilesToSend,
-      messages: messages
-    };
-  }
-
-  getUrl(param){
-    return this.formFiles.getUrl(param);
-  }
 
   selectedFiles(event, elemTarget) {
 
     let files = event.target;
-    let targetElement = $('input.' + elemTarget)[0].parentElement.nextElementSibling;
+    files = files && files.files ? files.files : event;
+
+    // let targetElement = $('input.' + elemTarget)[0].parentElement.nextElementSibling;
 
     if (this.guard[elemTarget] == elemTarget) {
       console.log("You cant uplaod twise " + elemTarget);
       console.log(this.guard);
       return false;
     }
+    
+    if ((elemTarget != "images") && ! this.guard[elemTarget]) this.guard[elemTarget] = elemTarget;
 
-    if ((elemTarget !== "gallery") && !this.guard[elemTarget]) this.guard[elemTarget] = elemTarget;
-
-    files = files && files.files ? files.files : event;
 
     for (let file of files) {// start for of loop
-
-      let elemName = file.name.split('.')[0];
+      let splitedName = file.name.split('.');
+      let elemName = splitedName[splitedName.length -1];
       file.id = elemName + '_' + file.size;
       file.target = elemTarget;
 
-      if (!this.formFiles.fileContains(this.arrayFlies[file.target], file)) {
+      if (! this.fileContains(this.arrayFlies[file.target], file)) {
 
         this.formFiles.filseReader(file).then(res => {
+          // this.formFn(imgs, vid, loggo);
+          // let elemOb = this.createElements(res);
+          // elemOb['atag'].addEventListener("click", this.unSelectFiles.bind(this));
+          this.arrayFlies[file.target].push(res);
 
-          let elemOb = this.formFiles.createElements(res);
-          elemOb['atag'].addEventListener("click", this.unSelectFiles.bind(this));
-          this.arrayFlies[file.target].push(elemOb['theElem']);
-          targetElement.appendChild(elemOb['elemDiv']);
-          this.toggleHiddenMediaBox(targetElement, targetElement.children);
+          this.addToGall(file.target, res);
+          // targetElement.appendChild(elemOb['elemDiv']);
+          // targetElement.firstElementChild.setAttribute("formControlName", elemOb['theElem']);
+          // this.toggleHiddenMediaBox(targetElement, targetElement.children);
         },
           (error) => {
             console.log(error);
@@ -219,32 +333,36 @@ export class FormFilesAndInputsProccesorService {
     }//END for loop
   }
 
+  restInput(selectot: string){
+    let input = <HTMLInputElement>document.getElementById(selectot);
+    console.log(input.value);
+    (input && input.value) ? input.value = "" : "";
+  }
+
   unSelectFiles(evt) {
+    
+    let aTag = evt && evt.target ? (typeof evt.target == "string")? evt: evt.target.parentElement : evt,
+    div = aTag.parentElement,
+    parent = div.parentElement,
+    childrens = parent.children,
+    target = aTag.getAttribute('target'), 
+        targetIsVideoOrLoggo = (target == "loggo") || (target == "video");
 
-    let aTag = evt && evt.target ? evt.target.parentElement : evt;
-
-    let div = aTag.parentElement;
-    let parent = div.parentElement;
-    let childrens = parent.children;
-
-    let target = aTag.getAttribute('data-target');
-    let input = <HTMLInputElement>document.getElementById(target);
-    (input.value) ? input.value = "" : "";
-
-    console.log("aTag.id: ", aTag.id, "target: ", target, "this.arrayFlies: ", this.arrayFlies);
-
-    if(this.method == "update") this.updateFileTodelete(target, aTag.id);
-    if ((target == "loggo") || (target == "video")) this.guard[target] = false;
-
+    if (this.method == "update" && (targetIsVideoOrLoggo || target == "images")) {
+      this.updateFileTodelete(target, aTag.id);
+      this.rmFromGall(target, aTag.id);
+    }
+    this.restInput(target);
+    if (targetIsVideoOrLoggo) this.guard[target] = false;
     for (let ii = 0, len = childrens.length; ii < len; ii++) {
 
       if (childrens[ii] && aTag.id === childrens[ii].id) {
-
-        this.arrayFlies[target] = this.formFiles.removeItem(this.arrayFlies[target], childrens[ii]);
+        this.arrayFlies[target] = this.removeItem(this.arrayFlies[target], childrens[ii]);
         parent.removeChild(childrens[ii]);
         break;
       }
     }
+
     this.toggleHiddenMediaBox(parent, childrens);
   }
 
@@ -253,28 +371,42 @@ export class FormFilesAndInputsProccesorService {
     ch.length && $(parent).is(":hidden") ? $(parent).show() : !ch.length && $(parent).is(":visible") ? $(parent).hide() : '';
   }
 
-  updateFileTodelete(target, id){
+  updateFileTodelete(target, id) {
     if ((target == "loggo") || (target == "video") && this.filesDl[target]) {
-      let LinksToVideoOrloggo = this.findElemLinks(id, target);
-
-      (LinksToVideoOrloggo != this.filesDl[target][0]) ? this.filesDl[target].push(LinksToVideoOrloggo) : "";
+      let link = this.findElemLinks(id, target);
+      
+      (link && link != this.filesDl[target][0]) ? this.filesDl[target].push(link) : "";
     }
 
-    if (target == "gallery") {
+    if (target == "images") {
+      console.log(target, id);
       
       let linnkName = this.findElemLinks(id, target);
       let galLinksExists = this.findItemInArrayFiles(target, this.filesDl[target]);
 
-      (linnkName && !galLinksExists) ? this.filesDl['gallery'].push(linnkName) : "";
+      (linnkName && !galLinksExists) ? this.filesDl['images'].push(linnkName) : "";
     }
   }
 
   private findElemLinks(id, target) {
-
+    
     let ob = this.arrayFlies[target].find(elem => elem['id'] == id);
-    let item = (ob && target == 'gallery') ? this.galleries.find(el => el.indexOf(ob.name) >= 0) :
-      (ob && target == 'video') ? this.videos.find(el => el.indexOf(ob.name) >= 0) : (ob && target == 'loggo') ? this.customer.loggo : false;
 
+    console.log(target, id, ob, this.arrayFlies);
+    let item = (ob && target == 'images') ? this.galleries.find(el => el.indexOf(ob.name) >= 0) :
+      (ob && target == 'video') ? this.videos.find(el => el.indexOf(ob.name) >= 0) : (ob && target == 'loggo') ? this.customer.loggo : false;
+    return item;
+  }
+
+  findItemInArrayFiles(type, arr?, exisst?) {
+
+    let mySearchArray = (arr && arr[type]) ? arr[type] : arr && Array.isArray(arr) ? arr : this.arrayFlies[type];
+
+    let item = exisst ? mySearchArray.find(elem => {
+      return elem.target == type && !elem['exisst'];
+    }) : mySearchArray.find(elem => {
+      return elem.target == type;
+    });
     return item;
   }
 }

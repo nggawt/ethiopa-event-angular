@@ -1,6 +1,6 @@
-
 <!-- *ngIf="isTrue" [formGroup]="addCostumerForm"  -->
-<form *ngIf="isTrue | async" [formGroup]="addCostumerForm" class="border border rounded text-right mt-2" (ngSubmit)="onSubmit()">
+<form *ngIf="isTrue | async" [formGroup]="addCostumerForm" class="border border rounded text-right mt-2"
+  (ngSubmit)="onSubmit()">
   <!-- basic edite -->
 
   <div class="row">
@@ -43,14 +43,14 @@
           </a>
         </div>
         <div *ngIf="messages && messages['company']" class="bg-light p-1 ml-1">
-            <p *ngFor="let message of messages['company']" class="bg-light p-1 m-1 d-inline-block">
-               
-              <span *ngIf="message['company']">
-                  <b [ngClass]="'text-'+message['type']"> {{ message['company']  }} </b> 
-              </span>
-            </p>
+          <p *ngFor="let message of messages['company']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['company']">
+              <b [ngClass]="'text-'+message['type']"> {{ message['company']  }} </b>
+            </span>
+          </p>
         </div>
-    </div>
+      </div>
 
       <div class="col form-group py-2 my-0">
         <label for="contact">איש קשר</label>
@@ -61,7 +61,7 @@
 
           <span class="validity float-left"></span>
         </div>
-        
+
         <div *ngIf="f.contact.invalid && f.contact.touched" class="invalid-feedback d-block">* שדה חובה</div>
 
         <div class="my-2">
@@ -91,12 +91,12 @@
           </a>
         </div>
         <div *ngIf="messages && messages['contact']" class="bg-light p-1 ml-1">
-            <p *ngFor="let message of messages['contact']" class="bg-light p-1 m-1 d-inline-block">
-               
-              <span *ngIf="message['contact']">
-                  <b [ngClass]="'text-'+message['type']">{{ message['contact']  }} </b> 
-              </span>
-            </p>
+          <p *ngFor="let message of messages['contact']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['contact']">
+              <b [ngClass]="'text-'+message['type']">{{ message['contact']  }} </b>
+            </span>
+          </p>
         </div>
       </div>
 
@@ -112,7 +112,7 @@
         <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* נא למלא שדה בתבנית המתאימה
           לפאלפון/טלפון
         </div>
-        
+
         <div class="my-2">
           <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(tel)">
             <span>
@@ -140,12 +140,12 @@
           </a>
         </div>
         <div *ngIf="messages && messages['tel']" class="bg-light p-1 ml-1">
-            <p *ngFor="let message of messages['tel']" class="bg-light p-1 m-1 d-inline-block">
-               
-              <span *ngIf="message['tel']">
-                  <b [ngClass]="'text-'+message['type']">{{ message['tel']  }} </b> 
-              </span>
-            </p>
+          <p *ngFor="let message of messages['tel']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['tel']">
+              <b [ngClass]="'text-'+message['type']">{{ message['tel']  }} </b>
+            </span>
+          </p>
         </div>
       </div>
 
@@ -159,7 +159,7 @@
           <span class="validity float-left"></span>
         </div>
         <div *ngIf="f.address.invalid && f.address.touched" class="invalid-feedback d-block">* שדה חובה</div>
-        
+
         <div class="my-2">
           <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(address)">
             <span>
@@ -187,25 +187,25 @@
           </a>
         </div>
         <div *ngIf="messages && messages['address']" class="bg-light p-1 ml-1">
-            <p *ngFor="let message of messages['address']" class="bg-light p-1 m-1 d-inline-block">
-               
-              <span *ngIf="message['address']">
-                  <b [ngClass]="'text-'+message['type']">{{ message['address']  }} </b> 
-              </span>
-            </p>
+          <p *ngFor="let message of messages['address']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['address']">
+              <b [ngClass]="'text-'+message['type']">{{ message['address']  }} </b>
+            </span>
+          </p>
         </div>
       </div>
 
       <div class="col form-group py-2 my-0">
         <label for="email">אימייל</label>
         <div class="inputTypeNumber my-2">
-          <input value="{{ customer.email }}" class="col-11 px-1" type="email" name="email" id="email" formControlName="email"
-            [pattern]="emailPatteren" required #email />
+          <input value="{{ customer.email }}" class="col-11 px-1" type="email" name="email" id="email"
+            formControlName="email" [pattern]="emailPatteren" required #email />
 
           <span class="validity float-left"></span>
         </div>
         <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
-        
+
         <div class="my-2">
           <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(email)">
             <span>
@@ -233,12 +233,12 @@
           </a>
         </div>
         <div *ngIf="messages && messages['email']" class="bg-light p-1 ml-1">
-            <p *ngFor="let message of messages['email']" class="bg-light p-1 m-1 d-inline-block">
-               
-              <span *ngIf="message['email']">
-                  <b [ngClass]="'text-'+message['type']">{{ message['email']  }} </b> 
-              </span>
-            </p>
+          <p *ngFor="let message of messages['email']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['email']">
+              <b [ngClass]="'text-'+message['type']">{{ message['email']  }} </b>
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -259,7 +259,7 @@
           <span class="validity float-left"></span>
         </div>
         <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
-        
+
         <div class="my-2">
           <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(title)">
             <span>
@@ -287,24 +287,25 @@
           </a>
         </div>
         <div *ngIf="messages && messages['title']" class="bg-light p-1 ml-1">
-            <p *ngFor="let message of messages['title']" class="bg-light p-1 m-1 d-inline-block">
-               
-              <span *ngIf="message['title']">
-                  <b [ngClass]="'text-'+message['type']"> {{ message['title']  }} </b> 
-              </span>
-            </p>
+          <p *ngFor="let message of messages['title']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['title']">
+              <b [ngClass]="'text-'+message['type']"> {{ message['title']  }} </b>
+            </span>
+          </p>
         </div>
       </div>
 
       <div class="col-sm-12 form-group border p-3">
 
         <label for="descriptions">אודות החברה</label>
-        <textarea wrap="hard" value="{{ customer.descriptions | removeWhiteSpace  }}" class="w-100 form-control text-right note"
-          (mouseenter)="textAreaAdjust($event)" (mouseleave)="textAreamouseleave($event)" type="text" name="descriptions"
-          id="descriptions" formControlName="descriptions" minlength="6" #descriptions>
+        <textarea wrap="hard" value="{{ customer.descriptions | removeWhiteSpace  }}"
+          class="w-100 form-control text-right note" (mouseenter)="textAreaAdjust($event)"
+          (mouseleave)="textAreamouseleave($event)" type="text" name="descriptions" id="descriptions"
+          formControlName="descriptions" minlength="6" #descriptions>
 
         </textarea>
-        
+
         <div class="my-2">
           <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="update(descriptions)">
             <span>
@@ -332,14 +333,14 @@
           </a>
         </div>
         <div *ngIf="messages && messages['descriptions']" class="bg-light p-1 ml-1">
-            <p *ngFor="let message of messages['descriptions']" class="bg-light p-1 m-1 d-inline-block">
-               
-              <span *ngIf="message['descriptions']">
-                  <b [ngClass]="'text-'+message['type']">
-                    {{ message['descriptions']  }} 
-                  </b> 
-              </span>
-            </p>
+          <p *ngFor="let message of messages['descriptions']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="message['descriptions']">
+              <b [ngClass]="'text-'+message['type']">
+                {{ message['descriptions']  }}
+              </b>
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -363,12 +364,13 @@
               <i class="fa fa-search text-success"></i>
             </span>
           </label>
-          <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required (change)="selectedFiles($event,'loggo')" #loggoFIle/>
+          <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required
+            (change)="selectedFiles($event,'loggo')" #loggoFIle />
         </div>
 
         <div class="border bg-dark d-flex-row" #loggo>
 
-          
+
         </div>
         <div class="my-2">
           <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galUpdate(loggoFIle, 'loggo')">
@@ -397,20 +399,20 @@
           </a>
         </div>
         <div *ngIf="messages && messages['loggo']" class="bg-light p-1 ml-1">
-            <ul class="list-style-errors">
-              <li *ngFor="let gal of messages['loggo']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
-               
-                <p *ngIf="gal['loggo'] || gal['size']" class="d-inline-block mr-2">
-                    <b [ngClass]="'text-'+gal['type']">{{ gal['loggo'] || gal['size'] }} </b> 
-                </p>
-                <p *ngIf="gal['image']" class="d-inline-block mr-2">
-                  <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b> 
-                </p>
-                
-                <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
-                    <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }} 
-                </p>
-              </li>
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['loggo']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['loggo'] || gal['size']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['loggo'] || gal['size'] }} </b>
+              </p>
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b>
+              </p>
+
+              <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
+                <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }}
+              </p>
+            </li>
           </ul>
         </div>
         <p class="pb-2 m-0">סרטון תדמיתי</p>
@@ -427,10 +429,10 @@
             </span>
           </label>
 
-          <input type="file" id="video" class="video" style="display: none;" accept="video/*" (change)="selectedFiles($event,'video')" required
-          #vidFile/>
+          <input type="file" id="video" class="video" style="display: none;" accept="video/*"
+            (change)="selectedFiles($event,'video')" required #vidFile />
         </div>
-        
+
         <div class="border border-success bg-dark d-flex-row" #video>
 
         </div>
@@ -462,21 +464,21 @@
         </div>
         <!-- display video messages from server -->
         <div *ngIf="messages && messages['video']" class="bg-light p-1 ml-1">
-            <ul class="list-style-errors">
-                <li *ngFor="let gal of messages['video']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
-                 
-                  <p *ngIf="gal['video'] || gal['size']" class="d-inline-block mr-2">
-                      <b [ngClass]="'text-'+gal['type']">{{ gal['video'] || gal['size'] }} </b> 
-                  </p>
-                  <p *ngIf="gal['image']" class="d-inline-block mr-2">
-                    <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b> 
-                  </p>
-                  
-                  <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
-                      <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }} 
-                  </p>
-                </li>
-            </ul>
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['video']" class="bg-light p-1 m-1 block" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['video'] || gal['size']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['video'] || gal['size'] }} </b>
+              </p>
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">{{ gal['image'] }} </b>
+              </p>
+
+              <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
+                <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }}
+              </p>
+            </li>
+          </ul>
         </div>
         <!-- display messages video from claint -->
         <!-- <p *ngIf="messages[0] && messages[0].video" class="alert alert-danger">{{ messages[0].video }}</p> -->
@@ -493,11 +495,11 @@
               <i class="fa fa-search text-success"></i>
             </span>
           </label>
-          <input type="file" id="gallery" class="gallery" style="display: none;" accept="image/*" required multiple (change)="selectedFiles($event,'gallery')"
-          #galFile/>
+          <input type="file" id="gallery" class="gallery" style="display: none;" accept="image/*" required multiple
+            (change)="selectedFiles($event,'gallery')" #galFile />
         </div>
         <div class="border border-success bg-dark d-flex-row" #gall>
-          
+
         </div>
         <div class="my-2">
           <a class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="galUpdate(galFile, 'gallery')">
@@ -535,45 +537,45 @@
         </div>
         <!-- display gallery messages from server -->
         <div *ngIf="messages && messages['gallery']" class="bg-light p-1 ml-1">
-            <ul class="list-style-errors">
-                <li *ngFor="let gal of messages['gallery']" class="bg-light m-1 d-block">
-                 
-                  <p *ngIf="gal['gallery'] || gal['size']" class="d-inline-block mr-2">
-                      <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['gallery'] || gal['size'] }} 
-                  </p>
-                  <p *ngIf="gal['image']" class="d-inline-block mr-2">
-                    <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['image'] }}
-                  </p>
-                  <p *ngIf="gal['min-files']" class="d-inline-block mr-2">
-                      <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['min-files'] }}
-                  </p>
-                  
-                  <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
-                      <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }} 
-                  </p>
-                </li>
-            </ul>
-        </div>
-          <!-- display messages gallery from claint -->
-          <div *ngIf="messages && messages['files']" class="bg-light p-1 ml-1">
-              <p *ngFor="let gal of messages['files']" class="bg-light p-1 m-1 d-inline-block">
-                 
-                <span *ngIf="gal['size']">
-                    <b [ngClass]="{'text-danger':gal['size']}">{{ gal['size']  }} </b> 
-                </span>
+          <ul class="list-style-errors">
+            <li *ngFor="let gal of messages['gallery']" class="bg-light m-1 d-block">
+
+              <p *ngIf="gal['gallery'] || gal['size']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['gallery'] || gal['size'] }}
               </p>
-          </div>
+              <p *ngIf="gal['image']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['image'] }}
+              </p>
+              <p *ngIf="gal['min-files']" class="d-inline-block mr-2">
+                <b [ngClass]="'text-'+gal['type']">גלריה:</b> {{ gal['min-files'] }}
+              </p>
+
+              <p *ngIf="gal['deletedFiles']" class="d-inline-block mr-2">
+                <b [ngClass]="{'text-warning':gal['deletedFiles']}">קובץ הוסר:</b> {{ gal['deletedFiles'] }}
+              </p>
+            </li>
+          </ul>
+        </div>
+        <!-- display messages gallery from claint -->
+        <div *ngIf="messages && messages['files']" class="bg-light p-1 ml-1">
+          <p *ngFor="let gal of messages['files']" class="bg-light p-1 m-1 d-inline-block">
+
+            <span *ngIf="gal['size']">
+              <b [ngClass]="{'text-danger':gal['size']}">{{ gal['size']  }} </b>
+            </span>
+          </p>
+        </div>
       </div>
 
     </div>
     <div class="col-sm-12">
-      
-        <div class="btn-group w-100 p-3 bg-light">
-          <button class="btn btn-success" type="submit">שמור הכל</button>
-          <a class="btn btn-warning" (click)="reset()">אפס</a>
-          <a class="btn btn-danger" (click)="close()">בטל וסגור</a>
-          <a class="btn btn-info" (click)="allTodefault()">שחזר ברירת מחדל</a>
-        </div>
+
+      <div class="btn-group w-100 p-3 bg-light">
+        <button class="btn btn-success" type="submit">שמור הכל</button>
+        <a class="btn btn-warning" (click)="reset()">אפס</a>
+        <a class="btn btn-danger" (click)="close()">בטל וסגור</a>
+        <a class="btn btn-info" (click)="allTodefault()">שחזר ברירת מחדל</a>
+      </div>
     </div>
 
   </div>

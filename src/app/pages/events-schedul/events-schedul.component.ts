@@ -6,6 +6,7 @@ import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker
 import { CreateDateTableService } from 'src/app/services/create-date-table/create-date-table.service';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { tap, map, filter } from 'rxjs/operators';
+import { MessagesService } from 'src/app/services/messages/messages.service';
 declare var $: any;
 
 @Component({
@@ -55,6 +56,7 @@ export class EventsSchedulComponent implements OnInit {
         private calendar: CalendarDatePickerService,
         private tableEvents: CreateDateTableService,
         private valForm: ValidationService,
+        private msgSrv: MessagesService,
         private router: Router) { }
 
     ngOnInit() {
@@ -161,7 +163,7 @@ export class EventsSchedulComponent implements OnInit {
             console.log("im not validated");
             console.log(items);
 
-            this.valForm.resetMessages(9000).then(res => {
+            this.msgSrv.resetMessages(9000).then(res => {
                 // this.messages = res;
             });
         }
@@ -174,7 +176,7 @@ export class EventsSchedulComponent implements OnInit {
             .subscribe(evt => {
 
                 console.log(evt);
-                let msgs = this.valForm.getMassages(evt);
+                let msgs = this.msgSrv.getMassages(evt);
                 console.log(msgs);
                 this.messages = msgs;
                 this.resetMessages();
@@ -288,7 +290,7 @@ export class EventsSchedulComponent implements OnInit {
     }
 
     async resetMessages() {
-        let response = await this.valForm.resetMessages();
+        let response = await this.msgSrv.resetMessages();
         this.messages = await response;
 
         /* await this.valForm.resetMessages().then(res => {

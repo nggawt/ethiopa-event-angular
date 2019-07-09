@@ -48,22 +48,22 @@ export class EditMediaTempComponent implements OnInit{
 
   ngOnInit() {
 
-      let gal = this.cus['gallery'];
-      let cu = this.cus['customer'];
-      if(localStorage.getItem('msgs')){
-        console.log(localStorage.getItem('msgs'));
-        localStorage.clear();
-      }
-      let cId = (cu && cu["user_id"]) ? cu["user_id"] : false;
-      let uId = this.http.authUser["id"];
+      // let gal = this.cus['gallery'];
+      // let cu = this.cus['customer'];
+      // if(localStorage.getItem('msgs')){
+      //   console.log(localStorage.getItem('msgs'));
+      //   localStorage.clear();
+      // }
+      // let cId = (cu && cu["user_id"]) ? cu["user_id"] : false;
+      // let uId = this.http.authUser["id"];
 
-      if (cId === uId) {
-        this.galleries = gal['image'];
-        this.videos = gal['video'];
-        this.customer = cu;
-        this.galleryInit();
-        this.ins.emit({media: this});
-      }
+      // if (cId === uId) {
+      //   this.galleries = gal['image'];
+      //   this.videos = gal['video'];
+      //   this.customer = cu;
+      //   this.galleryInit();
+      //   this.ins.emit({media: this});
+      // }
   }
 
   canLeaveThePage(): Observable<boolean> | Promise<boolean> | boolean {

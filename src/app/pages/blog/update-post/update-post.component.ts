@@ -7,6 +7,7 @@ import { map, tap } from 'rxjs/operators';
 import { User } from 'src/app/types/user-type';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ValidationService } from 'src/app/services/validation/validation.service';
+import { MessagesService } from 'src/app/services/messages/messages.service';
 declare var $;
 
 @Component({
@@ -25,13 +26,14 @@ export class UpdatePostComponent implements OnInit {
   userPromise: User | boolean;
 
   updatePost: FormGroup;
-  messages: object | boolean = {};
+  messages: object | boolean;
   // blogPosts;
 
   constructor(private router: Router,
     private route: ActivatedRoute,
     private loc: Location,
     private http: HttpService,
+    private msgSrv: MessagesService,
     private validator: ValidationService) { }
 
   ngOnInit() {
@@ -100,7 +102,7 @@ export class UpdatePostComponent implements OnInit {
       .subscribe(evt => {
 
         console.log(evt);
-        let msgs = this.validator.getMassages(evt);
+        let msgs = this.msgSrv.getMassages(evt);
         console.log(msgs);
         this.messages = msgs;
         this.resetMessages();
@@ -117,8 +119,8 @@ export class UpdatePostComponent implements OnInit {
   }
 
   async resetMessages() {
-    let response = await this.validator.resetMessages();
-    this.messages = await response;
+    let response = await this.msgSrv.resetMessages();
+    // this.messages = await response;
 
     /* await this.valForm.resetMessages().then(res => {
       this.messages = res;

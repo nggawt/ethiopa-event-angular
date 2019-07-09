@@ -2,9 +2,11 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 // import { NgxPopper } from 'angular-popper';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import {NgxPaginationModule} from 'ngx-pagination';
 /****************** Services ********************/
@@ -57,7 +59,8 @@ import { ErrorPageComponent } from './pages/error-page/error-page.component';
 
 /*************** modules **************/
 import { SharedModuleModule } from './shared/shared-module/shared-module.module';
-import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+import { QuillModule } from 'ngx-quill'
+// import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 /* import { SalonsModule } from './pages/customers/salons/salons.module';
 import { DjsModule } from './pages/customers/djs/djs.module';
 import { PhotographersModule } from './pages/customers/photographers/photographers.module';
@@ -118,6 +121,12 @@ import { CustomerCreateComponent } from './dashboard/customers-views/customer-cr
 import { UserCreateComponent } from './dashboard/users-views/user-create/user-create.component';
 import { EventCreateComponent } from './dashboard/events-views/event-create/event-create.component';
 import { PostCreateComponent } from './dashboard/posts-views/post-create/post-create.component';
+import { FillTextareaHeightPipe } from './shared/pipes-module/fill-textarea-height.pipe';
+import { CustomValidatorsDirective } from './shared/directives/custom-validators/custom-validators.directive';
+
+export function tokenGetter() {
+  return localStorage.getItem('token');
+}
 
 @NgModule({
   declarations: [
@@ -186,7 +195,10 @@ import { PostCreateComponent } from './dashboard/posts-views/post-create/post-cr
     CustomerCreateComponent,
     UserCreateComponent,
     EventCreateComponent,
-    PostCreateComponent
+    PostCreateComponent,
+    FillTextareaHeightPipe,
+    CustomValidatorsDirective,
+    // customValidatorFnFactory
     // ConcatFormComponent,
     // CustomerComponent
   ],
@@ -194,6 +206,7 @@ import { PostCreateComponent } from './dashboard/posts-views/post-create/post-cr
   imports: [
     BrowserModule,
     HttpClientModule,
+
 	  // NgxPopper,
     FormsModule,
     RouterModule,
@@ -214,9 +227,16 @@ import { PostCreateComponent } from './dashboard/posts-views/post-create/post-cr
     
     /***** modules imports end ****/
     PagesRoutingModule,
+    QuillModule,
     NgbModule.forRoot(),
-    FroalaEditorModule.forRoot(), 
-    FroalaViewModule.forRoot()
+    
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        whitelistedDomains: ['http://ethio:8080/api/'],
+        blacklistedRoutes: ['example.com/examplebadroute/']
+      }
+    })
   ],
   providers: [PagesService, CustomersDataService, CustomersResolver, CanDeactivateGuardService],//,HotelsResolver, PhotographersResolver//HallResolver
   bootstrap: [AppComponent]

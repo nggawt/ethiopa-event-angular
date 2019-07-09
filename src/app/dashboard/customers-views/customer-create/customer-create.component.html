@@ -1,12 +1,28 @@
 <h2 class="h4 text-right text-success">צור קליינט</h2>
 
-<form class="form-row p-3 border rounded" [formGroup]="createCustomer" (ngSubmit)="onSubmit()">
+<form *ngIf="itemsResources$ | async as users" class="form-row p-3 border rounded" [formGroup]="createCustomer"
+  (ngSubmit)="onSubmit()">
 
-  <div class="col-6">
+  <div class="co-sm-12 col-md-6">
+    <label for="company">משתמש או בעל העסק</label>
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+      <select name="owner" id="owner" class="w-100 bd-highlightpx-1 selectList" formControlName="owner" required #owner>
+        <option value="" selected disabled>בחר משתמש</option>
+        <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+      </select>
+
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+    </div>
+    <div *ngIf="f.owner.invalid && f.owner.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: owner, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="co-sm-12 col-md-6">
     <label for="company">סוג העסק</label>
-    <div class="inputTypeNumber my-2">
-      <select name="businessType" id="businessType" class="col-11 selectList" formControlName="businessType" required
-        #businessType>
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+      <select name="businessType" id="businessType" class="w-100 bd-highlightpx-1 selectList"
+        formControlName="businessType" required #businessType>
         <option value="" selected disabled>בחר תחום</option>
         <option value="halls-events">אולם אירועים</option>
         <option value="salons">סלון כלות</option>
@@ -21,7 +37,7 @@
         <option value="שונות">שונות</option>
       </select>
 
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
     <div *ngIf="f.businessType.invalid && f.businessType.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: businessType, itemMethod: formMethod}">
@@ -29,14 +45,14 @@
   </div>
 
 
-  <div class="col-sm-6">
+  <div class="col-sm-12 col-md-6">
 
     <label for="company">שם החברה</label>
-    <div class="inputTypeNumber my-2">
-      <input name="company" type="text" id="company" class="col-11" formControlName="company" placeholder="שם מלא" required
-        minlength="3" maxlength="50" #company/>
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+      <input name="company" type="text" id="company" class="w-100 bd-highlightpx-1" formControlName="company"
+        placeholder="שם מלא" required minlength="3" maxlength="50" #company />
 
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
     <div *ngIf="f.company.invalid && f.company.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: company, itemMethod: formMethod}">
@@ -44,141 +60,165 @@
   </div>
 
 
-  <div class="col-6">
+  <div class="co-sm-12 col-md-6">
 
     <label for="contact">אימייל</label>
-    <div class="inputTypeNumber my-2">
-      <input name="email" type="text" id="email" class="col-11" formControlName="email" placeholder="אימייל" [pattern]="emailPatt"
-        required #email/>
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+      <input name="email" type="text" id="email" class="w-100 bd-highlightpx-1" formControlName="email"
+        placeholder="אימייל" [pattern]="emailPatt" required #email />
 
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
     <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: email, itemMethod: formMethod}">
     </ng-container>
   </div>
 
-  <div class="col-6">
+  <div class="col-sm-12 col-md-6 col-lg-3">
     <label for="contact">איש קשר</label>
 
-    <div class="inputTypeNumber my-2">
-      <input class="col-11 px-1" type="text" name="contact" id="contact" formControlName="contact" required #contact />
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+      <input class="w-100 bd-highlightpx-1" type="text" name="contact" id="contact" formControlName="contact" required
+        #contact />
 
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
+    <div *ngIf="f.contact.invalid && f.contact.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: contact, itemMethod: formMethod}">
     </ng-container>
   </div>
 
-  <div class="col-6">
+  <div class="col-sm-12 col-md-6 col-lg-3">
     <label for="tel">פלאפון/טלפון</label>
 
-    <div class="inputTypeNumber my-2">
-      <input type="tel" id="tel" name="tel" class="col-11 px-1" formControlName="tel" [pattern]="phoneNum" required
-        #tel />
-
-      <span class="validity float-left"></span>
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+      <input type="tel" id="tel" name="tel" class="w-100 bd-highlightpx-1" formControlName="tel" [pattern]="phoneNum"
+        required #tel />
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
-
+    <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: tel, itemMethod: formMethod}">
     </ng-container>
   </div>
 
-  <div class="col-6">
+  <div class="co-sm-12 col-lg-6">
     <label for="address">כתובת</label>
 
-    <div class="inputTypeNumber my-2">
-      <input class="col-11 px-1" type="text" name="address" id="address" formControlName="address" required #address />
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+      <input class="w-100 bd-highlightpx-1" type="text" name="address" id="address" formControlName="address" required
+        #address />
 
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
+    <div *ngIf="f.address.invalid && f.address.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: address, itemMethod: formMethod}">
     </ng-container>
   </div>
 
-  <div class="col-6">
+  <div class="co-sm-12 col-lg-6">
     <label for="title">סלוגן החברה</label>
 
-    <div class="inputTypeNumber my-2 textarea">
-      <textarea class="col-11 px-1" type="text" name="title" id="title" formControlName="title" required minlength="12"
-        #title>
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+      <textarea class="w-100 bd-highlightpx-1" type="text" name="title" id="title" formControlName="title" required
+        minlength="12" #title>
         </textarea>
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
+    <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: title, itemMethod: formMethod}">
     </ng-container>
   </div>
 
-  <div class="col-6">
+  <div class="co-sm-12 col-lg-6">
 
     <label for="descriptions">אודות החברה</label>
-    <div class="inputTypeNumber my-2 textarea">
-      <textarea wrap="hard" class="col-11 px-1" type="text" name="descriptions" id="descriptions"
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+      <textarea wrap="hard" class="w-100 bd-highlightpx-1" type="text" name="descriptions" id="descriptions"
         formControlName="descriptions" minlength="6" required #descriptions>
 
       </textarea>
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
+    <div *ngIf="f.descriptions.invalid && f.descriptions.touched" class="invalid-feedback d-block">* שדה חובה</div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: descriptions, itemMethod: formMethod}">
     </ng-container>
   </div>
 
   <div class="col-12">
 
-    <label for="deals">אודות החברה</label>
-    <div class="inputTypeNumber my-2 textarea">
-      <textarea wrap="hard" class="col-11 px-1" type="text" name="deals" id="deals"
-        formControlName="deals" minlength="6" required #deals>
+    <label for="deals">מבצעים</label>
+    <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+      <textarea wrap="hard" class="w-100 bd-highlightpx-1" type="text" name="deals" id="deals" formControlName="deals"
+        minlength="6" required #deals>
 
       </textarea>
-      <span class="validity float-left"></span>
+      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
     </div>
     <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: deals, itemMethod: formMethod}">
     </ng-container>
   </div>
 
-  <div class="col-6">
+  <div class="col-12">
+
+      <div class="mb-2 custom-checkbox">
+        <input [id]="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox" [checked]="f.confirmed.value">
+
+        <label [for]="confirmed" class="custom-control-label">
+          סטטוס:
+          {{ f.confirmed.value? "סרב": "אשר" }}
+        </label>
+      </div>
+  </div>
+
+  <div class="co-sm-12 col-md-6">
     <p class="pb-2 m-0">לוגו החברה</p>
     <div class="form-group border bg-white clearfix">
       <span class="py-2 px-2 m-0 float-right">
-        בחר קובץ...
+        הוסף קובץ...
       </span>
       <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="loggo">
         <span>
-          בחר לוגו
+          הוסף לוגו
           <i class="fa fa-search text-success"></i>
         </span>
       </label>
       <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required
-        (change)="formFiles.selectedFiles($event,'loggo')" />
+        (change)="formFiles.selectedFiles($event, 'loggo')" />
     </div>
-    <div class="media-placeholder border bg-dark d-flex-row" #loggo>
 
-
+    <div *ngIf="f.loggo.value && f.loggo.value.length" FormArrayName="loggo" style="min-height: 90px;" class="bg-dark">
+      <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.loggo, id: 'loggo' }">
+      </ng-container>
     </div>
+
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.loggo, id: 'loggo', itemMethod: formMethod}">
+    </ng-container>
   </div>
 
-  <div class="col-6">
+  <div class="co-sm-12 col-md-6">
     <p class="pb-2 m-0">סרטון תדמיתי</p>
     <div class="form-group border bg-white clearfix">
 
-
       <span class="py-2 px-2 m-0 float-right">
-        בחר קובץ...
+        הוסף קובץ...
       </span>
       <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="video">
         <span>
-          בחר סרטון
+          הוסף סרטון
           <i class="fa fa-search text-success"></i>
         </span>
       </label>
 
       <input type="file" id="video" class="video" style="display: none;" accept="video/*"
-        (change)="formFiles.selectedFiles($event,'video')" required />
+        (change)="formFiles.selectedFiles($event,'video')" required /><!-- [formControlName]="video" -->
     </div>
-    <div class="media-placeholder border border-success bg-dark d-flex-row" #video>
-
+    <div *ngIf="f.video.value && f.video.value.length" FormArrayName="video" id="video-box" style="min-height: 90px;"
+      class="bg-dark">
+      <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.video, id: 'video'}">
+      </ng-container>
     </div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.video, id: 'video', itemMethod: formMethod}">
+    </ng-container>
   </div>
 
   <div class="col-12">
@@ -186,20 +226,26 @@
     <div class="form-group bg-white border clearfix">
 
       <span class="py-2 px-2 m-0 float-right">
-        בחר קובץ...
+        הוסף קובץ...
       </span>
-      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="gallery">
+      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="images">
         <span>
-          בחר תמונות
+          הוסף תמונות
           <i class="fa fa-search text-success"></i>
         </span>
       </label>
-      <input type="file" id="gallery" class="gallery" style="display: none;" accept="image/*" required multiple
-        (change)="formFiles.selectedFiles($event,'gallery')" />
+      <input type="file" id="images" class="gallery" style="display: none;" accept="image/*" required multiple
+        (change)="formFiles.selectedFiles($event,'images')">
     </div>
-    <div class="media-placeholder border border-success bg-dark d-flex-row" #gall>
 
+    <div *ngIf="f.images.value && f.images.value.length" FormArrayName="images" style="min-height: 90px;"
+      class="bg-dark">
+      <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.images, id: 'images'}">
+      </ng-container>
     </div>
+    <div *ngIf="f.images.invalid" class="invalid-feedback d-block">* הפרטים לא תקפים </div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.images, id: 'images', itemMethod: formMethod}">
+    </ng-container>
   </div>
 
   <div class="form-group col-12">
@@ -210,11 +256,35 @@
   </div>
 </form>
 
-<ng-template #clickedMethods let-elem="elem" let-itemValue="itemValue" let-itemMethod="itemMethod">
-  <div class="my-2">
+<ng-template #galleryTemp let-elems="elem" let-itemId="id">
 
-    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active"
-      (click)="update(elem)">
+  <div *ngFor="let item of elems.value, let idx = index " class="d-inline-block">
+    <div class="d-inline-block p-1 m-1 border border-info rounded bg-secondary" [id]="item.id">
+      <a [id]="item.id" data-target="{{ itemId }}" class="close bg-white px-1 text-danger">
+        <span aria-hidden="true" (click)="formFiles.unSelectFiles($event)">×</span>
+      </a>
+      <ng-container *ngTemplateOutlet="(itemId == 'video')? videosTemp: imagesTemp; context:{elem: item, id: itemId}">
+      </ng-container>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #videosTemp let-item="elem" let-itemId="id">
+
+  <video controls="true" height="90px">
+    <source [src]="item.src" [type]="item.type">
+  </video>
+</ng-template>
+
+<ng-template #imagesTemp let-item="elem" let-itemId="id">
+  <img [src]="item.src" height="90px" [title]="item.name" alt="image/jpeg">
+</ng-template>
+
+<ng-template #clickedMethods let-elem="elem" let-itemId="id" let-itemMethod="itemMethod">
+  <div class="mb-2">
+
+    <a *ngIf="itemMethod == 'update' && elem.value && elem.value.length"
+      class="ml-1 px-2 py-2 mb-2 border rounded text-center active" (click)="update(elem, itemId)">
       <span>
         עדכן
         <i class="material-icons text-success">
@@ -222,7 +292,8 @@
         </i>
       </span>
     </a>
-    <a *ngIf="elem.value" class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(elem)">
+    <a *ngIf="elem.value && elem.value.length" class="ml-1 px-2 py-2 mb-2 border rounded text-center active"
+      (click)="clear(elem, itemId)">
       <span>
         נקה
         <i class="material-icons text-warning">
@@ -230,8 +301,8 @@
         </i>
       </span>
     </a>
-    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active"
-      (click)="default(elem)">
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 mb-2 border rounded text-center active"
+      (click)="default(elem, itemId)">
       <span>
         מקור
         <i class="material-icons text-primary">
@@ -250,3 +321,4 @@
     </p>
   </div>
 </ng-template>
+<script>alert("hhhi im script");</script>

@@ -1,6 +1,5 @@
 
 import { Injectable } from '@angular/core';
-import { isArray } from 'util';
 import { MessagesService } from '../messages/messages.service';
 
 @Injectable({
@@ -35,6 +34,7 @@ export class ValidationService {
         this.messages.genMsgs(ii, "פרמטר אינו תקף.", 'errors');
         continue;
       }
+
       let arrayRules = this.rules[ii].split('|');
       arrayRules.forEach(rule => {
 
@@ -117,77 +117,5 @@ export class ValidationService {
     (new RegExp('\"').test(str))? str = str.replace(/"/g, "-"): ''; 
 
     return str.replace(/-/g, "");
-  }
-
-  getMassages(evt) {
-    let errors = evt['errors'];
-    let success = evt['success'];
-    let msgsErrors = this.handleMessages(errors, "errors");
-    let msgsSuccess = this.handleMessages(success, "success");
-
-    let errKeys = Object.keys(msgsErrors);
-    let succesKeys = Object.keys(msgsSuccess);
-    let msgsKeys = succesKeys.concat(errKeys);
-
-    let messages: any = {};
-    msgsKeys.forEach((msgKey) => {
-
-      let messgaeErr = msgsErrors[msgKey];
-      let messgae = msgsSuccess[msgKey];
-
-      if (msgsErrors[msgKey] && msgsSuccess[msgKey]) {
-        messages[msgKey] = [...messgaeErr, ...messgae];
-
-      } else {
-        let msgs = msgsSuccess[msgKey] ? msgsSuccess : msgsErrors[msgKey] ? msgsErrors : false;
-
-        (msgs && !messages[msgKey]) ? messages[msgKey] = msgs[msgKey] : [...messages[msgKey], ...msgs[msgKey]];
-      }
-
-    });
-
-    return messages;
-  }
-
-  /* for(let ii in msgsSuccess){
-      if(!msgsErrors[ii]) msgsErrors[ii] = [];
-      (msgsErrors[ii].length > 0)? [...msgsErrors[ii], ...msgsSuccess[ii]]: msgsErrors[ii] = msgsSuccess[ii];
-    } */
-
-  handleMessages(messages, type) {
-    let messageArray = {};
-
-    let ob = {};
-    for (let ii in messages) {//for in items
-
-      if (isArray(messages[ii]) && messages[ii].length > 0) {
-        messageArray[type] = [];
-        ob[ii] = {};
-
-        messages[ii].forEach(element => {//foreach items
-          let elem = {};
-          if (typeof element == "string") {
-            elem[ii] = element;
-          } else {
-            elem = element;
-          }
-          elem['type'] = (type === "success") ? type : "danger";
-
-          messageArray[type].push(elem);
-        });//end for each
-        ob[ii] = messageArray[type];
-      }
-    }//end for in
-    return ob;
-  }
-
-  resetMessages(time?) {
-
-    let promise = new Promise((res, rej) => {
-      setTimeout(() => {
-        return res({});
-      }, time || 8000);
-    });
-    return promise;
   }
 }

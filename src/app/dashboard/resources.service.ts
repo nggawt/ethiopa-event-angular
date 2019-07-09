@@ -23,9 +23,9 @@ export class ResourcesService {
     this.resources.next(resources);
   }
 
-  protected resourceCaller(urlIndicetor) {
-    
-      return this.http.getData(urlIndicetor).pipe(map(resources => this.checkHasKey(resources, 'status') ? false : this.mapItems(resources))).toPromise();
+  async resourceCaller(url) {
+      
+      return await this.http.getData(url).pipe(map(resources => this.checkHasKey(resources, 'status') ? false : this.mapItems(resources))).toPromise();
   }
 
   protected handleError(err){
@@ -51,6 +51,8 @@ export class ResourcesService {
     
     for await (let element of items){
       let itemsData = await this.resourceCaller(await element)
+      console.log(itemsData, element);
+      
       itemsData? this.itemResources[element] = await this.dataPaginated(element, itemsData): itemsData;
     }
     this.resources.next(this.itemResources);
@@ -79,7 +81,7 @@ export class ResourcesService {
     if (items['customers'] && typeof items['customers'] == "object") {
       
       let customers = this.getCustomersItems(items['customers']);
-      console.log(customers);
+      // console.log(customers);
       arr['activeated'] = customers.filter(item => item['customer'].confirmed || !this.checkHasKey(item['customer'], 'confirmed'))
       arr['pending'] = customers.filter(item => this.checkHasKey(item['customer'], 'confirmed') && item['customer'].confirmed === false)
 
@@ -91,7 +93,7 @@ export class ResourcesService {
   }
 
   findItem(id, itemType) {
-    console.log('id: ' + id, 'item type: ' + itemType);
+    // console.log('id: ' + id, 'item type: ' + itemType);
     return this.resourcesObsever.pipe(
       filter(items => items[itemType] && items[itemType].data),
       map(items => [...items[itemType].data, ...items[itemType].pending].find(item => this.checkTypeId(item).id == id)));//item? this.itemForm(item): ''

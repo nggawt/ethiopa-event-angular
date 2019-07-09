@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ValidationService } from 'src/app/services/validation/validation.service';
+import { MessagesService } from 'src/app/services/messages/messages.service';
 
 @Component({
   selector: 'app-contact',
@@ -14,7 +15,7 @@ export class ContactComponent implements OnInit {
   
   messages: object | boolean;
   formConcat: FormGroup;
-  constructor(private fmValidor: ValidationService,private http: HttpService) { }
+  constructor(private fmValidor: ValidationService,private http: HttpService, private msgSrv: MessagesService) { }
 
   ngOnInit() {
 
@@ -81,7 +82,7 @@ export class ContactComponent implements OnInit {
       .subscribe(evt => {
 
         console.log(evt);
-        let msgs = this.fmValidor.getMassages(evt);
+        let msgs = this.msgSrv.getMassages(evt);
         console.log(msgs);
         this.messages = msgs;
         //this.resetMessages();

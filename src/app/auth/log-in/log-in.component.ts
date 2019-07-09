@@ -3,8 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http-service/http.service';
-import { first } from 'rxjs/operators';
-import { Location } from '@angular/common';
+import { JwtHelperService } from '@auth0/angular-jwt';
 // import { of } from 'rxjs';
 // import { filter, tap, first } from 'rxjs/operators';
 declare let $: any;
@@ -26,7 +25,9 @@ export class LogInComponent implements OnInit {
 
   url:string;
 
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService, private loc:Location) { }
+  constructor(private router: Router, 
+    private route: ActivatedRoute, 
+    private http: HttpService, private jwt:JwtHelperService) { }
 
   ngOnInit() {
 
@@ -40,6 +41,7 @@ export class LogInComponent implements OnInit {
     //     }
     //   }
     // );
+    console.log(this.http.isAuth());
     
     this.initFormLogin();
     let thiz = this;
@@ -88,7 +90,8 @@ export class LogInComponent implements OnInit {
         subscribe(evt => {
 
           let IntendedUri = this.http.intendedUri ? this.http.intendedUri : "/";
-          console.log(evt);
+          console.log(this.jwt.decodeToken(evt['access_token']));
+          
           this.router.navigate([IntendedUri]);
           $('.close').click();
 

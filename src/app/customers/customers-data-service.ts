@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HallType } from './hall-type';
 import { BehaviorSubject, of, Subject, Observable, AsyncSubject, ReplaySubject } from 'rxjs';
 import { tap, single, map, find, filter, first, pluck, take } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable()
-export class CustomersDataService {
+export class CustomersDataService implements OnInit{
 
     /**** costmumer */
     private customers:Promise<any>;
@@ -18,19 +18,26 @@ export class CustomersDataService {
     private galleries: any;
     private emailPatteren: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
     public intendedUrl: string;
+    num:number =0;
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient) { this.initCustomers();}
 
+    ngOnInit(){}
+
+    initCustomers(){
         this.customers = this.http.get("http://ethio:8080/api/customers")
         .pipe(
             tap(res => {
+                this.num++;
+                console.log("Customers Called Num Times: ", this.num);
+                
                 this.costs = res['customers'];
                 this.galleries = res['galleries'];
             })
             
         ).toPromise().catch(this.handleError);
     }
-    
+
     public getCustomers(type?) {
         if(this.costs) return new Promise((accepted, rejected) => { return accepted(this.costs);});
 

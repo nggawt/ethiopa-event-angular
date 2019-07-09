@@ -7,6 +7,7 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { User } from 'src/app/types/user-type';
+import { MessagesService } from 'src/app/services/messages/messages.service';
 
 @Component({
   selector: 'app-create-post',
@@ -25,6 +26,7 @@ export class CreatePostComponent implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private http: HttpService,
+    private msgSrv: MessagesService,
     private validator: ValidationService) { }
 
   ngOnInit() {
@@ -69,7 +71,7 @@ export class CreatePostComponent implements OnInit {
       .subscribe(evt => {
 
         console.log(evt);
-        let msgs = this.validator.getMassages(evt);
+        let msgs = this.msgSrv.getMassages(evt);
         console.log(msgs);
         this.messages = msgs;
         this.resetMessages();
@@ -86,7 +88,7 @@ export class CreatePostComponent implements OnInit {
   }
 
   async resetMessages() {
-    let response = await this.validator.resetMessages();
+    let response = await this.msgSrv.resetMessages();
     this.messages = await response;
 
     /* await this.valForm.resetMessages().then(res => {

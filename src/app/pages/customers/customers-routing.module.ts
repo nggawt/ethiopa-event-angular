@@ -18,7 +18,7 @@ import { EventsEditComponent } from './customer/customer-edit/events-edit/events
 
 const customersRouting: Routes = [
 
-  { path: ":customers", component: CustomersComponent, resolve: { customers: CustomersResolver },
+  { path: "", component: CustomersComponent, resolve: { customers: CustomersResolver },
     children: [
       {
         path: ":id", component: CustomerComponent, children: [

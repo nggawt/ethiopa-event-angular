@@ -8,6 +8,7 @@ import { CreateDateTableService } from 'src/app/services/create-date-table/creat
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { User } from 'src/app/types/user-type';
+import { MessagesService } from 'src/app/services/messages/messages.service';
 
 declare var $;
 
@@ -57,6 +58,7 @@ export class ProfileComponent implements OnInit {
     private calendar: CalendarDatePickerService,
     private tableEvents: CreateDateTableService,
     private valForm: ValidationService,
+    private msgSrv: MessagesService,
     private router: Router) { }
 
   ngOnInit() {
@@ -288,7 +290,7 @@ export class ProfileComponent implements OnInit {
   }
 
   async resetMessages() {
-    let response = await this.valForm.resetMessages();
+    let response = await this.msgSrv.resetMessages();
     this.messages = await response;
 
     /* await this.valForm.resetMessages().then(res => {
@@ -429,7 +431,7 @@ export class ProfileComponent implements OnInit {
       console.log("im not validated");
       console.log(rules);
 
-      this.valForm.resetMessages(9000).then(res => {
+      this.msgSrv.resetMessages(9000).then(res => {
         // this.messages = res;
       }); */
     }
@@ -446,7 +448,7 @@ export class ProfileComponent implements OnInit {
     console.log("im not validated");
     console.log(rules);
 
-    this.valForm.resetMessages(9000).then(res => {
+    this.msgSrv.resetMessages(9000).then(res => {
       // this.messages = res;
     });
   }
@@ -573,7 +575,7 @@ export class ProfileComponent implements OnInit {
       .subscribe(evt => {
 
         console.log(evt);
-        let msgs = this.valForm.getMassages(evt);
+        let msgs = this.msgSrv.getMassages(evt);
         console.log(msgs);
         this.messages = msgs;
         //this.resetMessages();

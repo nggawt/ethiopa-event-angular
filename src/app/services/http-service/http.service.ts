@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { of, BehaviorSubject, Observable, AsyncSubject } from 'rxjs';
 import { tap, delay, map, find, filter, first } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from '../../types/user-type';
 
 @Injectable({
@@ -35,25 +36,35 @@ export class HttpService {
   public isLogedIn: Observable<boolean> = this.logged.asObservable();
   public userObs: Observable<User | boolean> = this.user.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {this.userPromise();}
+  constructor(private http: HttpClient, private jwt: JwtHelperService) {
+
+      if(this.isAuth()) this.userPromise();
+      let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
+      console.log(decoded);
+    }
+
+  isExpiredToken(){
+    return this.jwt.isTokenExpired(this.jwt.tokenGetter());
+  }
 
   public logIn(credential, path?) {
     path = path ? path : this.loginTo ? this.loginTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/login";
-    console.log(credential);
 
     let body = new HttpParams()
       .set('name', credential['name'])
       .set('email', credential['email'])
       .set('password', credential['password']);
-
+    // const jwt = new JwtHelperService()
     return this.http.post(theUrl, body, this.headersOpt)
       .pipe(
         first(),
         tap(res => {
+          console.log(res);
+          
           if (res && res['access_token']) {
             this.allowLogIn.next(false);
-            this.setUserProps(res);
+            this.setUserProps(res['user']);
             this.setApiKey(res);
             this.user.next(res['user'] ? res['user'] : false);
           }
@@ -72,9 +83,7 @@ export class HttpService {
         first(),
         tap(res => {
           if (res && res['access_token']) {
-            this.allowLogIn.next(false);
             this.setUserProps(res);
-            this.setApiKey(res);
           }
           console.log(res);
 
@@ -95,24 +104,19 @@ export class HttpService {
         first(),
         tap(res => {
           if (res && res['access_token']) {
-            this.allowLogIn.next(false);
             this.setUserProps(res);
-            this.setApiKey(res);
           }
           console.log(res);
-
         }));
   }
 
   store(theUrl, body) {
 
-    return this.http.post(theUrl, body, this.headersOpt)
+    return this.http.post(theUrl, body, this.getHttpOpt())
       .pipe(
         tap(user => {
           if (user['access_token']) {
-            this.allowLogIn.next(false);
             this.setUserProps(user);
-            this.setApiKey(user);
             console.log(user);
           }
         }));
@@ -127,7 +131,7 @@ export class HttpService {
   getData(url?, opt?) {
 
     url = url ? this.baseUrl + "/" + url : "http://ethio:8080/api/events";
-    return this.apiKey ? this.http.get(url, this.getHttpOpt()) : this.http.get(url);
+    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()) : this.http.get(url);
   }
 
   public logOut(urlParams?) {
@@ -148,14 +152,12 @@ export class HttpService {
   }
 
   userPromise(path?): Promise<User | any> {
-
+    console.log("userPromise");
+    
     path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
-    const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/auth-user";
+    const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/me";
 
-    let sSK = window.localStorage.getItem('user_key');
-    this.apiKey = this.apiKey ? this.apiKey : sSK;
-
-    let token = new HttpParams().set('token', this.apiKey);
+    let token = new HttpParams().set('token', this.jwt.tokenGetter());
 
     // console.log('url: ', theUrl, "token: ", this.apiKey);
 
@@ -163,18 +165,19 @@ export class HttpService {
       .pipe(
         first(),
         tap((resp) => {
-          console.log('response: ', resp);
+          console.log('url: ', theUrl, ' response: ', resp);
 
-          let user: User = resp['status'] && resp["user"] ? resp["user"] : false;
-          if (user) {
-            this.setUserProps(user);
-            this.setApiKey(resp);
-          } else {
+          let user: User = resp['status'] && resp["user"] ? resp["user"] : resp['id']? resp:false ;
+          if (user) this.setUserProps(user);
 
-            this.removePropsUser();
-            this.removeApiKey();
-            // return reject(user);
-          }
+          // if (user) {
+            // this.setUserProps(user);
+            // if(resp['access_token']) this.setApiKey(resp);
+          // } else {
+
+            // this.removePropsUser();
+            // this.removeApiKey();
+          // }
         })).toPromise().catch(this.handleError);
   }
 
@@ -185,6 +188,7 @@ export class HttpService {
   private removePropsUser() {
     this.logged.next(false);
     this.user.next(false);
+    this.allowLogIn.next(true);
   }
 
   private setUserProps(user) {
@@ -194,15 +198,20 @@ export class HttpService {
   }
 
   isAuth() {
-    return this.isLogedIn;
+    let exp = this.isExpiredToken();
+    if(exp) {
+      this.removePropsUser();
+      if(this.jwt.tokenGetter()) this.removeApiKey();
+      return !exp;
+    }
+    return ! exp;
   }
 
   setApiKey(user) {
-    user['authority'] ? window.localStorage.setItem("admin_key", "true") : "";
-
+    if(user['authority']) window.localStorage.setItem("admin_key", "true");
     if(user['access_token']){
       this.apiKey = user['access_token'];
-      window.localStorage.setItem('user_key', this.apiKey);
+      window.localStorage.setItem('token', this.apiKey);
     } 
   }
 
@@ -210,11 +219,6 @@ export class HttpService {
     console.log("tokken remove");
     window.localStorage.clear();
     this.apiKey = false;
-
-    // const userKey = "user_key";
-    // window.localStorage.removeItem(userKey);
-    // window.localStorage.getItem("admin_key")? window.localStorage.removeItem("admin_key"): '';
-
   }
 
   getApiKey() {
@@ -234,7 +238,7 @@ export class HttpService {
         // 'Content-Type': 'multipart/form-data',
         // 'Content-Type': 'application/x-www-form-urlencoded',
         // 'Accept': 'application/json',
-        'Authorization': 'Bearer ' + this.apiKey
+        'Authorization': 'Bearer ' + this.jwt.tokenGetter()
       })
     };
   }
