@@ -3,13 +3,13 @@ import { HallType } from './hall-type';
 import { BehaviorSubject, of, Subject, Observable, AsyncSubject, ReplaySubject } from 'rxjs';
 import { tap, single, map, find, filter, first, pluck, take } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { ResourcesService } from '../services/resources/resources.service';
 
 @Injectable()
 export class CustomersDataService implements OnInit{
 
     /**** costmumer */
     private customers:Promise<any>;
-    private costs: any = false;
 
     private customer: any = new BehaviorSubject(1);
     public customerObsever = this.customer.asObservable();
@@ -20,31 +20,19 @@ export class CustomersDataService implements OnInit{
     public intendedUrl: string;
     num:number =0;
 
-    constructor(private http: HttpClient) { this.initCustomers();}
+    constructor(private srv: ResourcesService) { this.initCustomers();}
 
     ngOnInit(){}
 
     initCustomers(){
-        this.customers = this.http.get("http://ethio:8080/api/customers")
-        .pipe(
-            tap(res => {
-                this.num++;
-                console.log("Customers Called Num Times: ", this.num);
-                
-                this.costs = res['customers'];
-                this.galleries = res['galleries'];
-            })
-            
-        ).toPromise().catch(this.handleError);
+        this.customers = this.srv.getResources("customers", false);
     }
 
     public getCustomers(type?) {
-        if(this.costs) return new Promise((accepted, rejected) => { return accepted(this.costs);});
 
         return this.customers.then(
             (res) => {
-                let data = res && res['customers']? res['customers']:[];
-                
+                let data = res && res['customers']? res['customers']: res?{['customers']: res}:[];
                 return (type && data && data[type])? data[type]:data;
             },
             (res) => {
@@ -79,15 +67,16 @@ export class CustomersDataService implements OnInit{
             console.log("WARNING! only string and numbers of data typs allowed to passed this func!");
             return false;
         }
-
+        
 
         return this.getCustomers().then((dataResponse) => {
             if(type == '/join'){
                 return this.joinPagAccessor(dataResponse, prop, customerName);
             }
+            console.log(dataResponse);
+            
             let customersData = dataResponse['customers']? dataResponse['customers']: dataResponse;
             let customer = customersData && customersData[type]? customersData[type]:false;
-            
             customer = customer?customer.find((items) => items['customer'][prop] == customerName):[];//{return items['customer'][prop] == customerName;})
             (typeof customer == "object")? this.customer.next(customer): this.customer.next(1);
             return customer;

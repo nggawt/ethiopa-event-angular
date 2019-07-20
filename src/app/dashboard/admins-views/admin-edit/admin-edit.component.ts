@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
-import { ResourcesService } from '../../resources.service';
+import { ResourcesService } from '../../../services/resources/resources.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { HttpService } from 'src/app/services/http-service/http.service';
@@ -25,7 +25,7 @@ export class AdminEditComponent implements OnInit {
     this.itemType = this.route.snapshot.data['itemType'];
 
     this.route.params.subscribe(routeId => {
-      this.itemForm$ = this.srv.findItem(+routeId.id, "admins").pipe(tap(item => item? this.itemForm(this.srv.checkTypeId(item)): ''));//item? this.itemForm(this.checkTypeId(item)): ''
+      this.itemForm$ = this.srv.findItem(+routeId.id, "admins").pipe(tap(item => item? this.itemForm(this.srv.checkTypeId(item, 'customer')): ''));//item? this.itemForm(this.checkTypeId(item)): ''
     });
   }
 

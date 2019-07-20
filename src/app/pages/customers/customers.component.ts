@@ -1,106 +1,90 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, RoutesRecognized, ActivatedRoute, Data } from '@angular/router';
+import { Router, RoutesRecognized, ActivatedRoute, Data, ParamMap } from '@angular/router';
 import { map, filter, tap } from 'rxjs/operators';
-import { CustomersDataService } from '../../customers/customers-data-service';
 import { HallType } from '../../customers/hall-type';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
+import { ResourcesService } from 'src/app/services/resources/resources.service';
 declare var $;
 @Component({
   selector: 'app-customers',
   templateUrl: './customers.component.html',
   styleUrls: ['./customers.component.css'],
-  providers:[]
+  providers: []
 })
 
 export class CustomersComponent implements OnInit, OnDestroy {
 
-  
+
   path: boolean = true;
-  showPath:boolean;
-  urlUnsubscribe: any;
+  showPath: boolean;
+  urlUnsubscribe: Subscription;
   hallsProps: Observable<HallType[]> | boolean;
   customerMessage: {};
-  
-  private address:string;
+
+  private address: string;
   private allawAddress = [
-    'halls-events','salons', 'app/salons', 'app/halls-events', "hotels", "app/hotels", "photographers", 
+    'halls-events', 'salons', 'app/salons', 'app/halls-events', "hotels", "app/hotels", "photographers",
     "app/photographers", "djs", "app/djs", , "kyses", "app/kyses", , "car-rents", "app/car-rents",
     "transportation", "app/transportation", , "printing", "app/printing", , "fireworks", "app/fireworks"
   ];
 
-  constructor(private router: Router, private route: ActivatedRoute,private halls: CustomersDataService ) {}
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
 
-    // let urSnapShut = this.route.snapshot.params['customers'];
-    let urSnapShut = (this.router.url.indexOf('customers') >= 0)? decodeURIComponent(this.router.url).split('customers/')[1] : this.router.url;
-        
-    let urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
-    
+    // let urSnapShut = this.route.snapshot.paramMap.get('name'), urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
 
-      this.urlUnsubscribe = this.router.events.pipe(
-        filter((evt) => evt instanceof RoutesRecognized),
-        map(_evt => decodeURIComponent(_evt["url"]).slice(1))).subscribe(evt => {
-          console.log(evt);
-          
-          urSnapShut = (evt.indexOf('customers') >= 0)?  evt.split('customers/')[1]: evt;
-          urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
+    this.urlUnsubscribe = this.route.paramMap.subscribe((routeName: ParamMap) => {
+      let urSnapShut = routeName.get('name'),
+      urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
+      (urlExist) ? this.getCustomerResources(urSnapShut) : this.timesNavigated();
+    });
 
-          if(urlExist){
-            this.getCustomerResources(urSnapShut);
-          }else{
-            (urSnapShut != 'join')? this.path = false: this.path = true;
-          }
-      });
-      (urlExist)? this.getCustomerResources(urSnapShut):this.timesNavigated();
+    // console.log(this.router.url, urlExist);
+    // (urlExist) ? this.getCustomerResources(urSnapShut) : this.timesNavigated();
   }
 
-  contactModel(paramCustomer){
+  contactModel(paramCustomer) {
     console.log(paramCustomer);
     this.customerMessage = paramCustomer;
     $('#customerMsgs').modal();
   }
 
-  private getCustomerResources(url){
-
-    let splitedUrl = (url.indexOf('/') >= 0)? url.split('/'): url;
-    let mailResourceUrl = (typeof splitedUrl == "object" && splitedUrl.length >= 2)? splitedUrl[0]: splitedUrl;
-      
-    if(this.allawAddress.indexOf(url) >= 0){
+  private getCustomerResources(url) {
     
-      this.route.data.subscribe(data => {
+    if (this.allawAddress.indexOf(url) >= 0) {
 
-        let addr = this.allawAddress.find(item => {return item == url;});
+      this.route.data.subscribe(data => {
+        let customerData = data['customers']? data['customers']: false;
+        let addr = this.allawAddress.find(item => { return item == url; });
         this.address = addr;
         console.log(data);
-        console.log(addr);
-        
-        this.hallsProps = data && data['customers'] && data['customers'][addr]? of(data['customers'][addr]):false;
-        
-        this.path = this.hallsProps ? true: this.timesNavigated();
-        console.log(this.path );
-        
-     });
-    }else{
+        // console.log(addr);
+
+        this.hallsProps = customerData && customerData[addr] ? of(customerData[addr]) : false;
+        this.path = this.hallsProps ? true : this.timesNavigated();
+
+      });
+    } else {
       this.path = false;
-      ! (this.allawAddress.indexOf(mailResourceUrl) >= 0)? this.timesNavigated('errors-page'):"";
+      this.timesNavigated('errors-page');
     }
   }
 
-  private timesNavigated(link?){
-    link = link? link: '/';
-    setTimeout(()=>{
+  private timesNavigated(link?) {
+    link = link ? link : '/';
+    // setTimeout(() => {
       this.router.navigate([link]);
-    }, 100);
+    // }, 100);
     return false;
   }
 
-  onSelectedLink(customer:HallType){
+  onSelectedLink(customer: HallType) {
     //this.halls.costumerEmit(customer);
   }
 
   ngOnDestroy() {
-    this.urlUnsubscribe? this.urlUnsubscribe.unsubscribe(): "";
+    this.urlUnsubscribe ? this.urlUnsubscribe.unsubscribe() : "";
   }
 
 }

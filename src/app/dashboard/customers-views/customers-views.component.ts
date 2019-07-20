@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, TemplateRef, ViewChild } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
-import { ResourcesService } from '../resources.service';
+import { ResourcesService } from '../../services/resources/resources.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 declare var $;
 
 @Component({
@@ -19,7 +20,7 @@ export class CustomersViewsComponent implements OnInit {
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
-  constructor(private http: HttpService, private resSrv: ResourcesService) { }
+  constructor(private http: HttpService, private resSrv: ResourcesService, private router: Router) { }
 
   ngOnInit() {
 
@@ -33,6 +34,11 @@ export class CustomersViewsComponent implements OnInit {
     this.http.postData(url, null).subscribe(response => {
       console.log(response);
     });
+  }
+  goTo(url, param){
+    console.log(url, param);
+    
+    this.router.navigate([url], { queryParams: { name: param} });
   }
   
 }

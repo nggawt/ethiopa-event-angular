@@ -1,5 +1,5 @@
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { HallType } from '../../../../customers/hall-type';
 import { CustomersDataService } from '../../../../customers/customers-data-service';
 import { Observable, of, Subscription } from 'rxjs';
@@ -17,20 +17,25 @@ export class CustomerMediaComponent implements OnInit, OnDestroy {
   snap: boolean = true;
   custSubscriber: Subscription;
 
-  constructor(private hall: CustomersDataService) { }
+  @Input() currentCustomer: Observable<{}>;
+  constructor() { }
 
   ngOnInit() {
-  
-    this.custSubscriber = this.hall.customerObsever.subscribe(data =>{
+    
+    // this.allowPage.emit(false);
+    
+    this.custSubscriber = this.currentCustomer.subscribe(data =>{
       let co = data['customer'];
       let gal = data['gallery'];
-      console.log(data);
+      // console.log(data);
       this.snap = true;
       this.customer = of(co);
-      this.galleries = gal['image'];
-      this.videos = gal['video'];
+      this.galleries = Array.isArray(gal['image'])? gal['image']: typeof gal['image'] == "object"? this.itemsToArray(gal['image']): [];
+      this.videos = Array.isArray(gal['video'])? gal['video']: typeof gal['video'] == "object"? this.itemsToArray(gal['video']): [];
       // let msgs = localStorage.getItem('msgs');
       // console.log(JSON.parse(msgs));
+      // console.log(this.allowPage);
+      
       
       this.carouselInit();
     });
@@ -40,6 +45,14 @@ export class CustomerMediaComponent implements OnInit, OnDestroy {
     setTimeout(() =>{
       $(".carousel").carousel();
     },1000)
+  }
+
+  itemsToArray(items: {}){
+    let arr = [];
+    for(let ii in items){
+      arr.push(items[ii]);
+    }
+    return arr;
   }
 
   galActiveItem(ii){

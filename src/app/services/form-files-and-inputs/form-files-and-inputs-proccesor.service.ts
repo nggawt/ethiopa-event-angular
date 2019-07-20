@@ -13,7 +13,7 @@ export class FormFilesAndInputsProccesorService {
   public galleries: any;
   public videos: any;
   formIns: FormGroup;
-  
+
   public guard = {};
   public arrayFlies: {} = {
     'images': [],
@@ -37,21 +37,30 @@ export class FormFilesAndInputsProccesorService {
     private filesValidator: FormValidationsService) { }
 
   initApp(customer, formIns, method: string) {
-
+    this.restIns();
     this.formIns = formIns;
     this.method = method;
 
     if (customer && customer['gallery']) {
       let gal = customer['gallery'];
       this.method = "update";
-      this.galleries =  typeof gal['image'] == "object"? Object.keys(gal['image']).map(item => gal['image'][item]): gal['image'];
+      this.galleries = typeof gal['image'] == "object" ? Object.keys(gal['image']).map(item => gal['image'][item]) : gal['image'];
       this.videos = gal['video'];
       this.customer = customer['customer'];
       this.galleryInit();
     }
   }
 
-  handleFilesBeforSend(){}
+  restIns(): void {
+    this.arrayFlies = { 'images': [], 'video': [], 'loggo': [] };
+    this.guard = {};
+    this.filesDl = this.arrayFlies;
+    this.messages = {};
+    this.galleries = {};
+    this.videos = {};
+  }
+
+  handleFilesBeforSend() { }
 
   async galleryInit() {
 
@@ -89,11 +98,11 @@ export class FormFilesAndInputsProccesorService {
   }
 
   extractDelFiles(delFiles?) {
-    let del = delFiles? delFiles: this.filesDl,
-        delFilesLink = {};
+    let del = delFiles ? delFiles : this.filesDl,
+      delFilesLink = {};
 
-    this.getFileObject(Object.keys(del),(item) => {
-      if(del[item].length ) delFilesLink[item]= del[item];
+    this.getFileObject(Object.keys(del), (item) => {
+      if (del[item].length) delFilesLink[item] = del[item];
     });
     return delFilesLink;
   }
@@ -171,10 +180,9 @@ export class FormFilesAndInputsProccesorService {
   }
 
   extractSendingFiles(filesOb) {
+
     let attrOb = {};
-
     for (let ii in filesOb) {
-
       attrOb[ii] = filesOb[ii].filter(elem => {
         return !elem.exisst;
       });
@@ -183,16 +191,14 @@ export class FormFilesAndInputsProccesorService {
   }
 
   rmFromGall(target, item: string) {
-
-    this.formIns.controls[target].value.forEach((element, idx) => {
-      if (element.id == item) (<FormArray>this.formIns.get(target)).removeAt(idx);
-    });
+    let targetElem = this.formIns.controls[target];
+    targetElem.value.forEach((element, idx) => (element.id == item)? (<FormArray>this.formIns.get(target)).removeAt(idx):'');
   }
 
   addToGall(target, item) {
     (<FormArray>this.formIns.get(target)).push(new FormControl(item));//, [this.validateSize.bind(this), this.validateType, this.validateExsst]
   }
-  
+
   allTodefault() {
 
     let controls = this.formIns.controls;
@@ -214,14 +220,14 @@ export class FormFilesAndInputsProccesorService {
 
   galReset(item?, type?) {
     console.log(item, type);
-    
+
     let input = (typeof item === "string") ? document.getElementById(item) : false;
     let elem = input ? input.parentElement.nextElementSibling : item;
     let childrens = elem.querySelectorAll('A');
     console.log(childrens);
-    
+
     for (let ii = 0, len = childrens.length; ii < len; ii++) {
-     if(childrens[ii] && childrens[ii].id) this.unSelectFiles(childrens[ii]);
+      if (childrens[ii] && childrens[ii].id) this.unSelectFiles(childrens[ii]);
       // this.filesDl[childrens[ii].getAttribute('data-target')] = [];
     }
     if (type) type.value = "";
@@ -259,14 +265,14 @@ export class FormFilesAndInputsProccesorService {
 
   buildSendingFiles(fUp, fDel, customer?) {
 
-    customer = customer? customer:this.customer;
-    
-    let fData: FormData = new FormData(), 
-        gal = fUp['gallery']? fUp['gallery']:[], 
-        inputs = fUp['inputs']? fUp['inputs']:[],
-        keys = Object.keys(gal),
-        extractTargetName: string,
-        isValid: boolean = true;
+    customer = customer ? customer : this.customer;
+
+    let fData: FormData = new FormData(),
+      gal = fUp['gallery'] ? fUp['gallery'] : [],
+      inputs = fUp['inputs'] ? fUp['inputs'] : [],
+      keys = Object.keys(gal),
+      extractTargetName: string,
+      isValid: boolean = true;
 
     if (keys.length && customer.company) {
       keys.forEach(key => {
@@ -276,17 +282,17 @@ export class FormFilesAndInputsProccesorService {
           let splUrl = this.getUrl(customer).split('/');
           extractTargetName = key + ":" + splUrl[0] + ':' + splUrl[1] + ":" + file.target + ":" + file.name.split('.')[0];
           console.log(extractTargetName);
-          
+
           fData.append('files[]', file, extractTargetName);
         });
       });
-    }else{
-      if(this.method == "post") isValid = false;
+    } else {
+      isValid = false;//if (this.method == "post") isValid = false;
     }
     if (Object.keys(inputs).length) fData.set('formInputs', JSON.stringify(inputs));
     if (fDel) fData.set('filesToDelete', JSON.stringify(fDel));
 
-    return isValid? fData: false;
+    return isValid ? fData : false;
   }
 
 
@@ -303,17 +309,17 @@ export class FormFilesAndInputsProccesorService {
       console.log(this.guard);
       return false;
     }
-    
-    if ((elemTarget != "images") && ! this.guard[elemTarget]) this.guard[elemTarget] = elemTarget;
+
+    if ((elemTarget != "images") && !this.guard[elemTarget]) this.guard[elemTarget] = elemTarget;
 
 
     for (let file of files) {// start for of loop
       let splitedName = file.name.split('.');
-      let elemName = splitedName[splitedName.length -1];
+      let elemName = splitedName[splitedName.length - 1];
       file.id = elemName + '_' + file.size;
       file.target = elemTarget;
 
-      if (! this.fileContains(this.arrayFlies[file.target], file)) {
+      if (!this.fileContains(this.arrayFlies[file.target], file)) {
 
         this.formFiles.filseReader(file).then(res => {
           // this.formFn(imgs, vid, loggo);
@@ -333,20 +339,20 @@ export class FormFilesAndInputsProccesorService {
     }//END for loop
   }
 
-  restInput(selectot: string){
+  restInput(selectot: string) {
     let input = <HTMLInputElement>document.getElementById(selectot);
     console.log(input.value);
     (input && input.value) ? input.value = "" : "";
   }
 
   unSelectFiles(evt) {
-    
-    let aTag = evt && evt.target ? (typeof evt.target == "string")? evt: evt.target.parentElement : evt,
-    div = aTag.parentElement,
-    parent = div.parentElement,
-    childrens = parent.children,
-    target = aTag.getAttribute('target'), 
-        targetIsVideoOrLoggo = (target == "loggo") || (target == "video");
+
+    let aTag = evt && evt.target ? (typeof evt.target == "string") ? evt : evt.target.parentElement : evt,
+      div = aTag.parentElement,
+      parent = div.parentElement,
+      childrens = parent.children,
+      target = aTag.getAttribute('target'),
+      targetIsVideoOrLoggo = (target == "loggo") || (target == "video");
 
     if (this.method == "update" && (targetIsVideoOrLoggo || target == "images")) {
       this.updateFileTodelete(target, aTag.id);
@@ -374,13 +380,13 @@ export class FormFilesAndInputsProccesorService {
   updateFileTodelete(target, id) {
     if ((target == "loggo") || (target == "video") && this.filesDl[target]) {
       let link = this.findElemLinks(id, target);
-      
+
       (link && link != this.filesDl[target][0]) ? this.filesDl[target].push(link) : "";
     }
 
     if (target == "images") {
       console.log(target, id);
-      
+
       let linnkName = this.findElemLinks(id, target);
       let galLinksExists = this.findItemInArrayFiles(target, this.filesDl[target]);
 
@@ -389,7 +395,7 @@ export class FormFilesAndInputsProccesorService {
   }
 
   private findElemLinks(id, target) {
-    
+
     let ob = this.arrayFlies[target].find(elem => elem['id'] == id);
 
     console.log(target, id, ob, this.arrayFlies);

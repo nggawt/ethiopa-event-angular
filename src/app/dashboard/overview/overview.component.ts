@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { ResourcesService } from '../resources.service';
+import { ResourcesService } from '../../services/resources/resources.service';
 import { ActivatedRoute } from '@angular/router';
 import { find, tap, map, filter } from 'rxjs/operators';
 import { Observable } from 'rxjs';

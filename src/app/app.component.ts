@@ -31,8 +31,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }))
     .subscribe((_evt:any) => {
       
-      let isLogged = this.http.isAuth();
-      console.log("user is logged: ", isLogged);
+      // let isLogged = this.http.isAuth();
+      // console.log("user is logged: ", isLogged);
       
       this.constHome = this.location.path() === '' ? true : false;
       if(_evt instanceof NavigationStart){

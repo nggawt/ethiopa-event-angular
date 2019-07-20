@@ -1,0 +1,41 @@
+<app-mail-menu-temp (messages)="msgs = $event">
+    <h1 class="h5">דואר נכנס</h1>
+    <div *ngIf="msgs as messages">
+        <div *ngFor="let message of messages" class="co-12">
+            <hr class="my-2">
+            <div class="row no-gutters">
+                <div class="col-md-2">
+                    <!-- <img src="..." class="card-img" alt="..."> -->
+
+                    <h5 class="border rounded p-2">
+                        {{ message.name }}
+                        <br>
+
+                    </h5>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            {{ message.date | dateHebraw:"full" }}
+                        </small>
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div *ngIf="(message.name+message.id) | rmWhiteSpace as collapseId" class="card-body">
+                        <p>
+                            <a data-toggle="collapse" [href]="'#'+collapseId" role="button"
+                            [attr.aria-expanded]="message.id == 1" aria-controls="collapseId">
+                                
+                                {{ (message.title.split(' ').length > 3)? message.title.slice(0, message.title.indexOf(" "+message.title.split(' ')[4])) :message.title  }}
+                            </a>
+                        </p>
+                        <div [ngClass]="message.id == 1? 'collapse show': 'collapse'" [id]="collapseId">
+                            <p class="card-text">{{ message.body }}</p>
+                        </div>
+                        <small class="text-muted">נשלח ב:
+                            {{ message.created_at | dateHebraw:"full" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</app-mail-menu-temp>

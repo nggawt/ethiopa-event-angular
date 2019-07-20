@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ResourcesService } from '../resources.service';
-import { Observable } from 'rxjs';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { ResourcesService } from '../../services/resources/resources.service';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-mail',
@@ -8,11 +9,15 @@ import { Observable } from 'rxjs';
   styleUrls: ['./mail.component.css']
 })
 export class MailComponent implements OnInit {
-  resources$: Observable<{}>;
 
+ /*  msgs: {};
+  @Output() messages: EventEmitter<{}> = new EventEmitter<{}>(); */
   constructor(private srv: ResourcesService) { }
 
   ngOnInit() {
-    this.resources$ = this.srv.resourcesObsever;
+    /* this.srv.getResources('messages', false).then(msgs => {
+      this.msgs = msgs;
+      this.messages.emit(msgs);
+    }); */
   }
 }

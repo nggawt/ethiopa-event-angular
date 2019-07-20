@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ResourcesService } from '../resources.service';
+import { ResourcesService } from '../../services/resources/resources.service';
 import { Observable, of } from 'rxjs';
 import { map, tap, filter, first } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service/http.service';

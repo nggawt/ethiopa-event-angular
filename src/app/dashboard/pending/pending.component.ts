@@ -12,6 +12,7 @@ export class PendingComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    
     let conf = {
       config: {
         currentPage: 1,
@@ -25,8 +26,8 @@ export class PendingComponent implements OnInit {
     // let copyConf = Object.assign({}, conf);
 
     this.itemsLists = Object.assign({}, conf);
+    // console.log(this.itemsLists);
     // Object.assign(this.itemsLists.config, {totalItems: this.itemsLists.pending.length})
-    console.log(this.itemsLists);
     
     // this.itemsLists.config.totalItems = this.itemsLists.pending.length
   }

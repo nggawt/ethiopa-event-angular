@@ -1,51 +1,36 @@
-<div class="clearfix">
-    <h5 class="shadow-sm py-2 text-black-50 h2">
-      <i class="fa fa-message text-secondary"></i>
-      דואר
-      <span class="btn btn-success btn-sm float-left m-1">שלח דואר חדש</span>
-    </h5>
-  </div>
-<nav>
-  <div class="nav nav-tabs shadow-sm" id="nav-tab" role="tablist">
-    <a class="nav-item nav-link active" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab"
-      aria-controls="nav-profile" aria-selected="true">
-      דואר נכנס
-    </a>
-    <a class="nav-item nav-link" id="nav-page-tab" data-toggle="tab" href="#nav-page" role="tab"
-      aria-controls="nav-page" aria-selected="false">
-      דואר יוצא
-    </a>
-    <a class="nav-item nav-link" id="nav-activity-tab" data-toggle="tab" href="#nav-activity" role="tab"
-      aria-controls="nav-activity" aria-selected="false">
-      לא נקרא
-    </a>
-    <a class="nav-item nav-link" id="nav-events-tab" data-toggle="tab" href="#nav-events" role="tab"
-      aria-controls="nav-events" aria-selected="false">
-      נקראו
-    </a>
-    <a class="nav-item nav-link" id="nav-messages-tab" data-toggle="tab" href="#nav-messages" role="tab"
-      aria-controls="nav-messages" aria-selected="false">
-      <span class="badge badge-primary">10</span>
-      <span class="sr-only">unread messages</span>
-      מועדפים
-    </a>
-    <a class="nav-item nav-link" id="nav-settings-tab" data-toggle="tab" href="#nav-settings" role="tab"
-      aria-controls="nav-settings" aria-selected="false">
-      הגדרות
-    </a>
-  </div>
-</nav>
+<app-mail-menu-temp (messages)="msgs = $event">
+    <nav *ngIf="msgs as messages">
+        <ul class="nav nav-tabs p-0" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" routerLink="inbox" id="nav-inbox-tab" data-toggle="tab" role="tab" aria-controls="nav-inbox" aria-selected="true">
+              <span class="badge badge-primary">{{messages.length}}</span>
+              דואר נכנס
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="outbox" id="nav-outbox-tab" data-toggle="tab" role="tab" aria-controls="nav-outbox" aria-selected="false">
+              דואר יוצא
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="trash" id="nav-trash-tab" data-toggle="tab" role="tab" aria-controls="nav-trash" aria-selected="false">
+              אשפה
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"  routerLink="favorites" id="nav-favorites-tab" data-toggle="tab" role="tab" aria-controls="nav-favorites" aria-selected="false"><!-- [state]="{data:messages }" -->
+              <span class="badge badge-primary">{{messages.length + 5}}</span>
+              <!-- <span class="sr-only">unread messages</span> -->
+              מועדפים
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="preferences" id="nav-preferences-tab" data-toggle="tab" role="tab" aria-controls="nav-preferences" aria-selected="false">
+              העדפות
+            </a>
+          </li>
+        </ul>
+      </nav>
+</app-mail-menu-temp>
 
-<div class="tab-content" id="nav-tabContent">
-  <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-    <h2 class="h4">דואר נכנס</h2>
-  </div>
-
-  <div class="tab-pane fade" id="nav-page" role="tabpanel" aria-labelledby="nav-page-tab">
-    <h2 class="h4">יוצא <span class="text-muted">סטטיסטיקה</span></h2>
-  </div>
-
-  <div class="tab-pane fade" id="nav-activity" role="tabpanel" aria-labelledby="nav-activity-tab">
-    <h2 class="h4">לא נקראו</h2>
-  </div>
-</div>
+<router-outlet></router-outlet>

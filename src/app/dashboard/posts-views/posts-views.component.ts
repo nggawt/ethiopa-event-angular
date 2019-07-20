@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, TemplateRef, ViewChild } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
-import { ResourcesService } from '../resources.service';
+import { ResourcesService } from '../../services/resources/resources.service';
 import { FormGroup, FormControl } from '@angular/forms';
 declare var $;
 

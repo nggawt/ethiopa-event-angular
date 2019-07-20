@@ -20,9 +20,7 @@ export class CustomerEditComponent implements OnInit {
 
   ngOnInit() {
     
-    this.halls.customerObsever.pipe(
-      find((val) =>  {return val['customer']['id']})
-      )
+    this.halls.customerObsever.pipe(find((val) =>  val['customer']['id']))
     .subscribe(
       (cost) => {
         let co = cost['customer'];

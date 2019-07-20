@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, ValidatorFn, AbstractControl } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
-import { ResourcesService } from '../../resources.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, Subscription, pipe } from 'rxjs';
+import { ResourcesService } from '../../../services/resources/resources.service';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import { tap, map } from 'rxjs/operators';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
@@ -27,7 +27,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
   customer: {} | boolean;
   editeCustomer: FormGroup;
   customerSubsripion: Subscription;
-
+  @Input() customerItem: {};
   formMethod: string = "update";
   savedId: { prevElemId: string | boolean } = { ['prevElemId']: false };
   messages: {};
@@ -93,31 +93,41 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     let serverErr = localStorage.getItem('errors_server');
     let serverSuccess = localStorage.getItem('success_server');
 
-    if(serverErr){
+    if (serverErr) {
       console.log(JSON.parse(serverErr));
       localStorage.removeItem('errors_server')
-    } 
-    if(serverSuccess){
+    }
+    if (serverSuccess) {
       console.log(JSON.parse(serverSuccess));
       localStorage.removeItem('success_server')
-    } 
+    }
+    console.log(this.customerItem);
     
-    this.route.params.subscribe(routeId => {
-      console.log(routeId);
-      this.customerSubsripion =
-        this.srv.findItem(+routeId.id, itemType)
-          .subscribe(customer => {
+    if (this.customerItem) {
+      this.formInt(this.customerItem);
+      this.formFiles.initApp(this.customerItem, this.editeCustomer, 'update');
+    } else {
+    }
+    /* let routeName = this.route.queryParamMap.subscribe(param => console.log(param));
 
-            if (customer) {
-              this.formInt(customer);
-              this.customer = customer;
-              this.formFiles.initApp(customer, this.editeCustomer, 'update');
-            } else {
-              this.customer = false;
-            }
+    this.route.queryParamMap.subscribe((params:ParamMap) => {
+      console.log("customer edit", params);
+      // params = params.;
+      //this.customerSubsripion =
+      this.srv.getItemResource(itemType, +params.get('id'), params.get('name'), false)
+        .then(customer => {
+          console.log(customer);
 
-          });
-    });
+          if (customer) {
+            this.formInt(customer);
+            this.customer = customer;
+            this.formFiles.initApp(customer, this.editeCustomer, 'update');
+          } else {
+            this.customer = false;
+          }
+
+        });
+    }); */
 
     /* this.httpCli.get('https://api.ipify.org?format=json')
       .pipe(tap(res => console.log(res)))
@@ -183,16 +193,16 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
   binValidators(formArray): null {
 
-    const currentControl = formArray.controls[formArray.controls.length -1];
-    if(! formArray.controls.length || !currentControl) return null;
+    const currentControl = formArray.controls[formArray.controls.length - 1];
+    if (!formArray.controls.length || !currentControl) return null;
 
     currentControl.setValidators([this.validateSize.bind(this), this.validateExsst, this.validateType]);
-    currentControl.updateValueAndValidity({onlySelf: true});
+    currentControl.updateValueAndValidity({ onlySelf: true });
     return null;
-      // formArray.controls.forEach((control: FormControl) => {
-      //   control.setValidators([this.validateSize.bind(this), this.validateExsst, this.validateType]);  //this.validateExsst(co)
-      // });
- }
+    // formArray.controls.forEach((control: FormControl) => {
+    //   control.setValidators([this.validateSize.bind(this), this.validateExsst, this.validateType]);  //this.validateExsst(co)
+    // });
+  }
 
   validateSize(control): { [key: string]: string } | null {//{ [key: string]: string } | null
     // { files_size: "file size " + this.formatBytes(control.value.size) + " to big." }
@@ -297,7 +307,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     /* get files to delete */
     let fDel = this.formFiles.extractDelFiles();
 
-    console.log("validate items: ", valItems, " del files: ", fDel , " form: ", this.editeCustomer);
+    console.log("validate items: ", valItems, " del files: ", fDel, " form: ", this.editeCustomer);
 
     /* get builded form data */
     let fData = this.formFiles.buildSendingFiles(valItems, fDel, this.editeCustomer.value);
@@ -324,9 +334,9 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
         console.log(msgs);
 
         this.formInputs.resetMessages().then(response => {
-        // let url = "/customers/"+ this.formFiles.getUrl(customer) + "/media";
+          // let url = "/customers/"+ this.formFiles.getUrl(customer) + "/media";
           this.messages = response;
-        // this.router.navigate([url]);
+          // this.router.navigate([url]);
         });
         // }else{
         // location.reload();
@@ -375,6 +385,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.customerSubsripion.unsubscribe();
+    // this.customerSubsripion.unsubscribe();
   }
 }

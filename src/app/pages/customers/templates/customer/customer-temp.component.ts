@@ -14,8 +14,7 @@ export class CustomerTempComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-  //  console.log("called customer"!);
-   
+  //  console.log(this.costumerProps);
   }
 
 }

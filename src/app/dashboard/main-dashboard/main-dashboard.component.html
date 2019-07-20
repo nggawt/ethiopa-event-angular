@@ -1,4 +1,4 @@
-<div class="row text-right">
+<div *ngIf="resources$ | async as resources" class="row text-right">
   <div class="col-12 mb-3">
     <div class="rounded-right-warning bg-light shadow-sm clearfix">
       <h5 class="p-2 text-black-50 h2 float-right">
@@ -46,7 +46,7 @@
       <li class="nav-item" routerLinkActive="active"><a routerLink="events-views">אירועים</a></li>
       <!-- (click)=setTemplateType(events) -->
       <li class="nav-item" routerLinkActive="active"><a routerLink="mail">דואר
-          <span class="badge badge-primary badge-pill">2</span>
+          <span *ngIf="resources['messages'] as messages" class="badge badge-primary badge-pill"> {{ messages.data.length }} </span>
         </a></li>
       <!--  (click)=setTemplateType(messages) -->
       <li class="nav-item" routerLinkActive="active"><a routerLink="role">ניהול הרשאות</a></li>
@@ -60,7 +60,7 @@
       <li class="nav-item" routerLinkActive="active"><a (click)=setTemplateType(security)>אבטחה</a></li>
     </ul>
   </div>
-  <div *ngIf="resources$ | async as resources" class="col-sm-10">
+  <div class="col-sm-10">
     <!-- <app-admin-panel [resources]="resources"></app-admin-panel> -->
     <!-- <ng-content *ngIf="resources"></ng-content> -->
     <!-- <ng-content></ng-content> -->

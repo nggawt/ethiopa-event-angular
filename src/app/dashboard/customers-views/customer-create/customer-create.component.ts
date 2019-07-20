@@ -6,7 +6,7 @@ import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
 import { HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { FormFilesAndInputsProccesorService } from 'src/app/services/form-files-and-inputs/form-files-and-inputs-proccesor.service';
-import { ResourcesService } from '../../resources.service';
+import { ResourcesService } from '../../../services/resources/resources.service';
 import { tap, map } from 'rxjs/operators';
 declare var $;
 
@@ -68,11 +68,6 @@ export class CustomerCreateComponent implements OnInit {
     let comp = customer['id'];
     console.log(this.createCustomer.controls);
     this.createCustomer.controls[comp].reset();
-  }
-
-  default(customer) {
-    let comp = customer.id;
-    this.customer && this.customer[comp] ? this.createCustomer.controls[comp].setValue(this.customer[comp]) : this.inputReset(customer)
   }
 
   canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
@@ -203,7 +198,7 @@ export class CustomerCreateComponent implements OnInit {
     this.send(fData);
 
     /* show messages success || errors */
-    return false;
+    // return false;
   }
 
 
@@ -239,7 +234,7 @@ export class CustomerCreateComponent implements OnInit {
 
           this.http.nextIslogged(false);
           // window.localStorage.removeItem('user_key');
-          window.location.reload();
+          // window.location.reload();
         }
       });
   }

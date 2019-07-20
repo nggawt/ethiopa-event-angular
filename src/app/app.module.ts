@@ -88,7 +88,6 @@ import { EventTypeToHebPipe } from './shared/pipes-module/event-type-to-heb.pipe
 /****************** Dashboard component ********************/
 import { UsersViewsComponent } from './dashboard/users-views/users-views.component';
 import { EventsViewsComponent } from './dashboard/events-views/events-views.component';
-import { MessagesComponent } from './dashboard/messages/messages.component';
 import { TasksComponent } from './dashboard/tasks/tasks.component';
 import { SecurityComponent } from './dashboard/security/security.component';
 import { PostsViewsComponent } from './dashboard/posts-views/posts-views.component';
@@ -123,6 +122,12 @@ import { EventCreateComponent } from './dashboard/events-views/event-create/even
 import { PostCreateComponent } from './dashboard/posts-views/post-create/post-create.component';
 import { FillTextareaHeightPipe } from './shared/pipes-module/fill-textarea-height.pipe';
 import { CustomValidatorsDirective } from './shared/directives/custom-validators/custom-validators.directive';
+import { OutboxComponent } from './dashboard/mail/outbox/outbox.component';
+import { FavoritesComponent } from './dashboard/mail/favorites/favorites.component';
+import { PreferencesComponent } from './dashboard/mail/preferences/preferences.component';
+import { TrashComponent } from './dashboard/mail/trash/trash.component';
+import { InboxComponent } from './dashboard/mail/inbox/inbox.component';
+import { MailMenuTempComponent } from './dashboard/mail/mail-menu-temp/mail-menu-temp.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -164,7 +169,6 @@ export function tokenGetter() {
     EventTypeToHebPipe,
     UsersViewsComponent,
     EventsViewsComponent,
-    MessagesComponent,
     TasksComponent,
     SecurityComponent,
     PostsViewsComponent,
@@ -198,6 +202,12 @@ export function tokenGetter() {
     PostCreateComponent,
     FillTextareaHeightPipe,
     CustomValidatorsDirective,
+    InboxComponent,
+    OutboxComponent,
+    FavoritesComponent,
+    PreferencesComponent,
+    TrashComponent,
+    MailMenuTempComponent,
     // customValidatorFnFactory
     // ConcatFormComponent,
     // CustomerComponent

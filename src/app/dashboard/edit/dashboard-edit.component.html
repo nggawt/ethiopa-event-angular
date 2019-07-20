@@ -1,5 +1,56 @@
-<div *ngIf="itemForm$ | async as formItems" class="col-12 text-right">
-    
-    <!-- <ng-container *ngTemplateOutlet="tempType; context:{elem: customers}"></ng-container> -->
-    <!-- <app-customer-edit [customer]="formItems"></app-customer-edit> -->
-</div>
+<div *ngIf="(itemResource$ | async ) as items" class="col-12 text-right">
+    <ng-container
+      [ngTemplateOutlet]="(itemType == 'customers')? cleint:(itemType == 'blog')? blog: (itemType == 'events')? events:(itemType == 'users')? users: (itemType == 'admins')? admins: default">
+    </ng-container>
+    <!-- <ng-container [ngTemplateOutlet]="cleint"></ng-container> -->
+    <!-- </div> -->
+    <div class="border rounded my-3 p-3">
+  
+      <div class="clearfix">
+        <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
+        <span class="border border-success rounded p-1 costum-btn costum-btn-success" routerLink="../">
+          <i class="material-icons"> chevron_right </i>
+          <i class="mt-icons"> חזור </i>
+        </span>
+  
+        <span class="border border-warning rounded mr-1 p-1 costum-btn costum-btn-warning" routerLink="edit">
+          <i class="mt-icons"> ערוך </i>
+          <i class="material-icons"> chevron_left </i>
+        </span>
+  
+        <span class="border border-danger rounded mr-1 p-1 costum-btn costum-btn-danger" routerLink="edit">
+          <i class="mt-icons">מחק</i>
+          <i class="material-icons"> delete_forever </i>
+        </span>
+      </div>
+    </div>
+  
+    <ng-template #default>
+      <div>default</div>
+    </ng-template>
+  
+    <ng-template #cleint>
+  
+      <app-customer-edit [customerItem]="items"></app-customer-edit>
+    </ng-template>
+  
+    <ng-template #blog>
+  
+      <post-preview [postItem]="items"></post-preview>
+    </ng-template>
+  
+    <ng-template #events>
+  
+      <event-preview [eventItem]="items"></event-preview>
+    </ng-template>
+  
+    <ng-template #users>
+  
+      <user-profile [usersItem]="items"></user-profile>
+    </ng-template>
+  
+    <ng-template #admins>
+  
+      <admin-profile [adminItem]="items"></admin-profile>
+    </ng-template>
+  </div>

@@ -32,6 +32,7 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
      * then check if customer recourse blong to user authenticated true else ->> rediract to recourse/customer/media 
      * then user is owner and return true
     ******/
+   console.log("responseUser");
 
     /** lets defined somes props **/
     this.intendedUrl = decodeURIComponent(state.url);
@@ -60,7 +61,7 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
         /*** attach auth user props ***/
         uEmail = ! uEmail && user ? user['email'] : uEmail;
         this.autUser = user ? responseUser : false;
-
+        
         /** if our uri is /join, lets check if auth user is already our customer member and let him access join page if false **/
         if (join >= 0 && responseUser['email']) {
           this.customers.intendedUrl = this.intendedUrl;

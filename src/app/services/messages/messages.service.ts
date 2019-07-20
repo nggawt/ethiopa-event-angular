@@ -22,6 +22,10 @@ export class MessagesService {
     email: 'אימייל',
     address: 'כתובת',
     location: 'מיקום',
+    city: 'עיר',
+    subject: 'נושא',
+    message: 'הודעה',
+    area: 'אזור',
     phone:'טלפון/פלאפון',
     description: "הודעה/תיאור",
     descriptions: "הודעה/תיאור"

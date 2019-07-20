@@ -1,4 +1,4 @@
-<form *ngIf="customer" class="form-row p-3 border rounded" [formGroup]="editeCustomer" (ngSubmit)="onSubmit()">
+<form *ngIf="customerItem" class="form-row p-3 border rounded" [formGroup]="editeCustomer" (ngSubmit)="onSubmit()">
   <div class="col-12 shadow-sm text-black-50 h2">
     <h2 class="h4 text-right text-success">ערוך קליינט</h2>
   </div>
@@ -245,17 +245,17 @@
 <ng-template #galleryTemp let-elems="elem" let-itemId="id">
 
   <div *ngFor="let item of elems.value, let idx = index " class="d-inline-block">
-    <div class="d-inline-block p-1 m-1 border border-info rounded bg-secondary" [id]="item.id">
-      <a [id]="item.id" data-target="{{ itemId }}" class="close bg-white px-1 text-danger">
+    <div class="d-inline-block p-1 m-1 border border-info rounded bg-secondary clearfix" [id]="item.id">
+      <a [id]="item.id" data-target="{{ itemId }}" class="close bg-white px-1 mx-1 text-danger">
         <span aria-hidden="true" (click)="formFiles.unSelectFiles($event)">×</span>
       </a>
-      <ng-container *ngTemplateOutlet="(itemId == 'video')? videosTemp: (itemId == 'images')? imagesTemp:false; context:{elem: item, id: itemId}"></ng-container>
+      <span class="float-left mx-1">{{item.name}}</span>
+      <ng-container *ngTemplateOutlet="(itemId == 'video')? videosTemp: (itemId == 'images')? imagesTemp:(itemId == 'loggo')? imagesTemp: false; context:{elem: item, id: itemId}"></ng-container>
     </div>
   </div>
 </ng-template>
 
 <ng-template #videosTemp let-item="elem" let-itemId="id">
-
   <video controls="true" height="90px">
     <source [src]="item.src" [type]="item.type">
   </video>

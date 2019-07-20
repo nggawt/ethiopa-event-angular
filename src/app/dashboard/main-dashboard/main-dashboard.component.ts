@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, TemplateRef, ViewChild,
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { skipWhile, map, filter, tap, first } from 'rxjs/operators';
 import { Subscription, Observable } from 'rxjs';
-import { ResourcesService } from '../resources.service';
+import { ResourcesService } from '../../services/resources/resources.service';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
 
 @Component({
@@ -36,7 +36,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.templateType = this.router['url'] == '/dashboard' ? this.default : null;
-    this.rsSrv.initResources(['users', 'customers', 'blog', 'events']);
+    this.rsSrv.initResources(['users', 'customers', 'blog', 'events', 'messages'], true);
     // this.rsSrv.initResources('admins');
     
     this.resources$ = this.rsSrv.resourcesObsever.pipe(first(item => typeof item == "object"));

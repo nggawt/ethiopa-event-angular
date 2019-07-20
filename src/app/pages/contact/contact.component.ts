@@ -13,9 +13,9 @@ export class ContactComponent implements OnInit {
 
   @Input() sendMessageTo;
   
-  messages: object | boolean;
   formConcat: FormGroup;
-  constructor(private fmValidor: ValidationService,private http: HttpService, private msgSrv: MessagesService) { }
+
+  constructor(private fmValidor: ValidationService,private http: HttpService, public messages: MessagesService) { }
 
   ngOnInit() {
 
@@ -30,7 +30,7 @@ export class ContactComponent implements OnInit {
       phone: new FormControl(null),
       city: new FormControl(null),
       area: new FormControl(null),
-      msg_subject: new FormControl(null, [Validators.required]),
+      subject: new FormControl(null, [Validators.required]),
       message: new FormControl(null, [Validators.required]),//, this.same
     }/* ,
     {
@@ -39,16 +39,8 @@ export class ContactComponent implements OnInit {
   }
 
   onSubmit(){
-    console.log(this.formConcat);
     let controls = this.formConcat.controls;
-
-    // const theUrl = "http://ethio:8080/api/contact/"+this.user["id"];
-    const theUrl = "http://ethio:8080/api/contact";
-
-    /* 
-      password: "required|string|min:6|max:30",
-      passwordConf: "required|string|password|same|min:6|max:30",
-    */
+    const theUrl = "contact";
 
     let rules: object = {
       name: "required|string|min:3|max:30",
@@ -56,14 +48,13 @@ export class ContactComponent implements OnInit {
       city: "required|string|min:3|max:30",
       area: "required|string|min:3|max:30",
       phone: "required",
-      msg_subject: "required|string|min:6|max:30",
+      subject: "required|string|min:6|max:30",
       message: "required|string|min:6|max:255",
     };
 
     let validatedItems =  this.fmValidor.validate(controls, rules);
-    console.log(validatedItems);
     if(validatedItems['status']) this.send(validatedItems['success'], false, theUrl);
-
+    console.log(this.messages);
   }
 
   getStl(input){
@@ -74,15 +65,15 @@ export class ContactComponent implements OnInit {
   }
 
   send(body, method?:string | boolean, urlArg?:string) {
+
     let url = urlArg? urlArg:"http://ethio:8080/api/events";
     let requestUrl = method ? urlArg+"?_method=" + method : url;// (! urlArg)? url + "/" + this.currentEvt["id"] + "?_method=" + method:
-    console.log(requestUrl);
     
     this.http.postData(requestUrl, body)
       .subscribe(evt => {
 
         console.log(evt);
-        let msgs = this.msgSrv.getMassages(evt);
+        let msgs = this.messages.getMassages(evt);
         console.log(msgs);
         this.messages = msgs;
         //this.resetMessages();

@@ -1,11 +1,11 @@
 <hr class="d-sm-none">
 
-<div *ngIf="(customer | async)?.company != null" class="row text-right">
+<div *ngIf="(customer | async)?.customer as cust" class="row text-right">
         <div class="col-xs-12 col-xl-4">
             <app-customer-temp [costumerProps]="customer" [ownerLogged]="canAccess"></app-customer-temp><!-- *ngFor="let co of customer"  -->
         </div>
         <div class="costum-query-datil col-xs-12 col-xl-8">
-                <app-customer-media *ngIf="accessPage"></app-customer-media>
+                <app-customer-media *ngIf="accessPage" [currentCustomer]="customer"></app-customer-media>
                 <router-outlet *ngIf="! accessPage"></router-outlet>
         </div>
 </div>

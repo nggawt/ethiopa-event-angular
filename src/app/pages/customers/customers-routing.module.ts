@@ -15,28 +15,25 @@ import { AllEditComponent } from './customer/customer-edit/all-edit/all-edit.com
 import { MediaEditComponent } from './customer/customer-edit/media-edit/media-edit.component';
 import { BasicEditComponent } from './customer/customer-edit/basic-edit/basic-edit.component';
 import { EventsEditComponent } from './customer/customer-edit/events-edit/events-edit.component';
+import { CustomerMediaComponent } from './customer/customer-media/customer-media.component';
 
 const customersRouting: Routes = [
 
-  { path: "", component: CustomersComponent, resolve: { customers: CustomersResolver },
+  {path: ":name", component: CustomersComponent, resolve: { customers: CustomersResolver }},
+  {// START route customer
+    path: ":name/:id", component: CustomerComponent,//, data : { itemType: "users"}
     children: [
-      {
-        path: ":id", component: CustomerComponent, children: [
-          // { path: "media", component: CustomerMediaComponent },
-          { path: 'about', component: CustomerAboutComponent },
-          
-        ]},
-        {
-          path: ":id/edit", component: CustomerEditComponent, canActivate: [RouteGuardService] ,
-          children: [
-           { path: "all", component: AllEditComponent, canDeactivate: [CanDeactivateGuardService] },
-           { path: "gallery", component: MediaEditComponent , canDeactivate: [CanDeactivateGuardService ] },
-           { path: "basic", component: BasicEditComponent , canDeactivate: [CanDeactivateGuardService]  },
-           { path: "events", component: EventsEditComponent , canDeactivate: [CanDeactivateGuardService]  }
-          ]
-       }
-    ],
-  }
+      // { path: "media", component: CustomerMediaComponent },
+      { path: 'about', component: CustomerAboutComponent },
+      { path: "edit", component: CustomerEditComponent, canActivate: [RouteGuardService],
+        children: [
+          { path: "all", component: AllEditComponent},//, canDeactivate: [CanDeactivateGuardService]
+          { path: "gallery", component: MediaEditComponent},//, canDeactivate: [CanDeactivateGuardService]
+          { path: "basic", component: BasicEditComponent},//, canDeactivate: [CanDeactivateGuardService]
+          { path: "events", component: EventsEditComponent}//, canDeactivate: [CanDeactivateGuardService]
+      ]}
+    ]
+  }// END route customer
 ];
 
 @NgModule({

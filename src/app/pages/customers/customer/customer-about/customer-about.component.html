@@ -1,4 +1,32 @@
+<hr class="d-xl-none">
+<div *ngIf="(customer$ | async) as customer" class="row  text-right">
+    <div class="col-sm-12">
+        <div class="p-3 border border-success">
+            <a class="close float-left" routerLink="../" type="button" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </a>
+            <div class="media">
 
+                <img height="50" [src]="customer?.loggo" [alt]="customer?.company">
 
+                <div class="media-body mr-3">
 
-<customer-about [customer]= "customer$"></customer-about>
+                    <h4>
+                        {{ customer?.title }}
+                    </h4>
+                    <p class="text-xl-right text-dar p-2">
+                        {{ customer?.descriptions }}
+                    </p>
+                    <hr>
+
+                    <p>
+                        <a routerLink="../" class="btn btn-outline-info font-weight-bold">
+                            <i class="fa fa-location-arrow"></i>
+                            חזור
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

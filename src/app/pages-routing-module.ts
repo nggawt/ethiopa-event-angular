@@ -46,6 +46,12 @@ import { CustomerCreateComponent } from './dashboard/customers-views/customer-cr
 import { UserCreateComponent } from './dashboard/users-views/user-create/user-create.component';
 import { PostCreateComponent } from './dashboard/posts-views/post-create/post-create.component';
 import { EventCreateComponent } from './dashboard/events-views/event-create/event-create.component';
+import { DashboardEditComponent } from './dashboard/edit/dashboard-edit.component';
+import { InboxComponent } from './dashboard/mail/inbox/inbox.component';
+import { OutboxComponent } from './dashboard/mail/outbox/outbox.component';
+import { TrashComponent } from './dashboard/mail/trash/trash.component';
+import { FavoritesComponent } from './dashboard/mail/favorites/favorites.component';
+import { PreferencesComponent } from './dashboard/mail/preferences/preferences.component';
 
 
 // import { NotificationsComponent } from './dashboard/notifications/notifications.component';
@@ -82,14 +88,31 @@ const routes: Routes = [
     { path: 'customers-views', component: CustomersViewsComponent },
     { path: 'customers-views/create', component: CustomerCreateComponent },
     { path: 'customers-views/:id', component: OverviewComponent, data : { itemType: "customers"} },
-    { path: 'customers-views/:id/edit', component: CustomerEditComponent, data : { itemType: "customers"} },
+    { path: 'customers-views/:id/edit', component: DashboardEditComponent, data : { itemType: "customers"} },
 
     { path: 'events-views', component: EventsViewsComponent },
     { path: 'events-views/create', component: EventCreateComponent },
     { path: 'events-views/:id', component: OverviewComponent, data : { itemType: "events"} },
     { path: 'events-views/:id/edit', component: EventEditComponent, data : { itemType: "events"} },
     // { path: 'notifications', component: NotificationsComponent },
-    { path: 'mail', component: MailComponent },
+
+    /****** mail ******/
+    { path: 'mail', component: MailComponent, children: [
+      { path: '', component: InboxComponent },
+      { path: 'favorites', component: FavoritesComponent },
+      { path: 'preferences', component: PreferencesComponent },
+      { path: 'trash', component: TrashComponent },
+      { path: 'inbox', component: InboxComponent },
+      { path: 'outbox', component: OutboxComponent }
+    ]},
+    /* 
+    { path: 'mail/favorites', component: FavoritesComponent },
+    { path: 'mail/preferences', component: PreferencesComponent },
+    { path: 'mail/trash', component: TrashComponent },
+    { path: 'mail/inbox', component: InboxComponent },
+    { path: 'mail/outbox', component: OutboxComponent },
+    */
+
     { path: 'task', component: TasksComponent },
     { path: 'role', component: RoleComponent },
     { path: 'quick-editor', component: QuickEditorComponent },
@@ -117,7 +140,7 @@ const routes: Routes = [
   { path: 'scedule-events', component: EventsSchedulComponent },
   { path: 'deals', component: DealsComponent },
   // { path: 'צור-קשר', component: ContactComponent },
-  { path: 'customers/:id', loadChildren:"./pages/customers/customers.module#CustomersModule"  },
+  { path: 'customers', loadChildren:"./pages/customers/customers.module#CustomersModule"  },
   
   // { path: "**", component: PageNotFoundComponent}
   { path: "errors-page", component: ErrorPageComponent, data: {errorMsg:"You have page ERRoR"}},
