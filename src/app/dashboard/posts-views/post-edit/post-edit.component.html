@@ -1,5 +1,4 @@
-<div *ngIf="itemForm$ | async as formItems" class="col-12 text-right">
-  <div class="border rounded p-3">
+<div *ngIf="itemData" class="col-12 text-right">
     <form class="form-row p-3 border rounded" [formGroup]="formGr" (ngSubmit)="onSubmit()">
       <div class="form-group col-sm-12">
         <h5 class="shadow-sm py-2 text-black-50 h4">
@@ -31,10 +30,11 @@
           תיאור\הודעה:
         </label>
         <!-- <textarea [froalaEditor]>sssss</textarea> -->
-        <textarea class="form-control" id="body"></textarea><!-- [froalaEditor] formControlName="body" type="text" rows="8" [(froalaModel)]="f.body.value" -->
-        <quill-editor  formControlName="body" #body></quill-editor>
+        <!-- <textarea class="form-control" id="body"></textarea>[froalaEditor] formControlName="body" type="text" rows="8" [(froalaModel)]="f.body.value" -->
+        <!-- <quill-editor  formControlName="body" #body></quill-editor> -->
+        <quill-editor [modules]="config" (onEditorCreated)="configEditor($event)" formControlName="body"
+        #body></quill-editor>
       </div>
-
       <div class="form-group col-2 custom-control custom-checkbox">
         <input [id]="confirmed" class="custom-control-input" type="checkbox" [checked]="f.confirmed.value">
 
@@ -44,15 +44,7 @@
         </label>
       </div>
       <div class="col-sm-12 clearfix">
-          <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
-          <span class="border border-success rounded p-1 costum-btn costum-btn-success" routerLink="../">
-              <i class="material-icons pr-1"> chevron_right </i>
-              <i class="mt-icons pl-2"> חזור </i>
-          </span>
-
-          <!-- </span> -->
           <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
       </div>
     </form>
-  </div>
 </div>

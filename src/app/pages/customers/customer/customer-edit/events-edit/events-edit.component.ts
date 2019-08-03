@@ -33,6 +33,7 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
   tableIncrement: number = 1;
   /* **************************** */
   formEvents: FormGroup;
+  datePicker: HTMLDivElement;
 
   eventsOb: Object = {};
 
@@ -85,8 +86,6 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
     });// END SUBSCRIBEr FN
   }
 
-
-
   delEvents(event) {
     console.log(event);
     let updaterUrl = "http://ethio:8080/api/events/" + event["id"] + "? _method=delete";
@@ -99,8 +98,8 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
 
   createEvents() {
     this.formEvents.reset();
-    this.calendar.calendarDisplay(false, "open", (el, hasClass) => {
-      hasClass ? this.calendar.toggleDisplay() : '';
+    this.calendarDisplay(false, "open", (el, hasClass) => {
+      hasClass ? this.toggleDisplay() : '';
     });
 
     this.formMethod = "create";
@@ -111,8 +110,8 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
 
     this.childInstans.formMethod = this.formMethod;
 
-    this.calendar.calendarDisplay(false, "open", (el, hasClass) => {
-      hasClass ? this.calendar.toggleDisplay() : '';
+    this.calendarDisplay(false, "open", (el, hasClass) => {
+      hasClass ? this.toggleDisplay() : '';
 
     });
     console.log(event['date']);
@@ -169,13 +168,74 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
   yearly() {
     this.showEvents(this.tableEvents.yearly());
   }
+  
   fire(input) {
 
     input = input ? input : document.getElementById("date");
+
     if (!this.fired && input) {
-      this.calendar.createHtms(input);
-      this.calendar.fire(this, this.formEvents);
+      // this.calendar.createHtms(input, {append: true});
+      this.datePicker = this.calendar.fire(this, this.formEvents, input);
+
+      input.parentElement.parentElement.appendChild(this.datePicker);
+      this.toggleDisplay();
+      this.setEvents(input);
       this.fired = true;
+    }
+  }
+
+  setEvents(input): void {
+    let thiz = this;
+
+    input.addEventListener('click', () => {
+      thiz.toggleDisplay();
+    }, false);
+
+    /* this.closeBtn.addEventListener('click', (e) => {
+
+      let spanEl: HTMLSpanElement = <HTMLSpanElement>e.target;
+      if (spanEl.tagName === "SPAN") {
+        //createCalendar.updateItems(e.target.innerHTML);
+        // thiz.divChild["style"].display = "none";
+        // thiz.toggleDisplay();
+      }
+    }, false); */
+  }
+
+  toggleDisplay() {
+    let divChildHasOpen = this.hasClass(this.datePicker, "open"),
+      divChildHasClose = this.hasClass(this.datePicker, "close"),
+      formDiv = $("#customGroup")[0],
+      formDivHassClassOpen = this.hasClass(formDiv, "open"),
+      formDivHassClassClose = this.hasClass(formDiv, "close");
+
+    if (divChildHasOpen) {
+      this.datePicker.classList.remove('open');
+      (divChildHasClose) ? "" : this.datePicker.classList.add('close');
+
+      if (formDivHassClassClose) formDiv.classList.remove('close');
+      (formDivHassClassOpen) ? "" : formDiv.classList.add('open');
+    } else {
+      this.datePicker.classList.add('open');
+      if (divChildHasClose) this.datePicker.classList.remove('close');
+
+      (formDivHassClassClose) ? "" : formDiv.classList.add('close');
+      if (formDivHassClassOpen) formDiv.classList.remove('open');
+    }
+  }
+
+  hasClass(elem: HTMLElement, className: string): boolean {
+    return elem.classList.contains(className);
+  }
+
+  calendarDisplay(elem?: HTMLElement | boolean, className?: string, cBFn?) {
+    elem = elem ? elem : this.datePicker;
+    className = className ? className : "open";
+
+    if (cBFn && typeof elem == "object") {
+      cBFn(elem, this.hasClass(elem, className));
+    } else {
+      return (typeof elem == "object") ? this.hasClass(elem, className) : "Error";
     }
   }
 

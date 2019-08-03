@@ -12,7 +12,7 @@ declare var $: any;
 @Component({
     selector: 'app-events-schedul',
     templateUrl: './events-schedul.component.html',
-    styleUrls: ['./events-schedul.component.css'],
+    styleUrls: ['./events-schedul.component.css', '../../styles/date-picker.component.css'],
     encapsulation: ViewEncapsulation.None
 })
 
@@ -34,10 +34,12 @@ export class EventsSchedulComponent implements OnInit {
         description: "required|string|min:12",
         other: "required|string|min:3",
     };
+
     formEvents: FormGroup;
 
-    messages: object | boolean = {};
+    messages: any = {};
     private date: Date = new Date();
+    private datePicker: HTMLDivElement;
 
     fired: boolean = false;
     dayOfYear: number = 0;
@@ -62,7 +64,6 @@ export class EventsSchedulComponent implements OnInit {
     ngOnInit() {
         this.formInt();
         this.initEvents();
-
     }
 
     get f() { return this.formEvents.controls; }
@@ -72,13 +73,72 @@ export class EventsSchedulComponent implements OnInit {
         input = input ? input : document.getElementById("date");
 
         if (!this.fired && input) {
-            this.calendar.createHtms(input);
-            this.calendar.fire(this, this.formEvents);
+            // this.calendar.createHtms(input, {append: true});
+            this.datePicker = this.calendar.fire(this, this.formEvents, input);
+
+            input.parentElement.parentElement.appendChild(this.datePicker);
+            this.toggleDisplay();
+            this.setEvents(input);
             this.fired = true;
         }
     }
 
-    itemsMaper(item){
+    setEvents(input): void {
+        let thiz = this;
+
+        input.addEventListener('click', () => {
+            thiz.toggleDisplay();
+        }, false);
+
+        /* this.closeBtn.addEventListener('click', (e) => {
+    
+          let spanEl: HTMLSpanElement = <HTMLSpanElement>e.target;
+          if (spanEl.tagName === "SPAN") {
+            //createCalendar.updateItems(e.target.innerHTML);
+            // thiz.divChild["style"].display = "none";
+            // thiz.toggleDisplay();
+          }
+        }, false); */
+    }
+
+    toggleDisplay() {
+        let divChildHasOpen = this.hasClass(this.datePicker, "open"),
+            divChildHasClose = this.hasClass(this.datePicker, "close"),
+            formDiv = $("#customGroup")[0],
+            formDivHassClassOpen = this.hasClass(formDiv, "open"),
+            formDivHassClassClose = this.hasClass(formDiv, "close");
+
+        if (divChildHasOpen) {
+            this.datePicker.classList.remove('open');
+            (divChildHasClose) ? "" : this.datePicker.classList.add('close');
+
+            if (formDivHassClassClose) formDiv.classList.remove('close');
+            (formDivHassClassOpen) ? "" : formDiv.classList.add('open');
+        } else {
+            this.datePicker.classList.add('open');
+            if (divChildHasClose) this.datePicker.classList.remove('close');
+
+            (formDivHassClassClose) ? "" : formDiv.classList.add('close');
+            if (formDivHassClassOpen) formDiv.classList.remove('open');
+        }
+    }
+
+    hasClass(elem: HTMLElement, className: string): boolean {
+        return elem.classList.contains(className);
+    }
+
+    calendarDisplay(elem?: HTMLElement | boolean, className?: string, cBFn?) {
+        elem = elem ? elem : this.datePicker;
+        className = className ? className : "open";
+
+        if (cBFn && typeof elem == "object") {
+            cBFn(elem, this.hasClass(elem, className));
+        } else {
+            return (typeof elem == "object") ? this.hasClass(elem, className) : "Error";
+        }
+    }
+
+    dateMaper(item) {
         item['date'] = new Date(item['date']);
         return item;
     }
@@ -86,13 +146,13 @@ export class EventsSchedulComponent implements OnInit {
     initEvents() {
 
         this.http.getData("events").pipe(
-            map(items => Array.prototype.map.call(items, this.itemsMaper).filter(item => item['date'] >= this.date).sort((itemA, itemB) => itemA['date'] - itemB['date'])),
+            map(items => Array.prototype.map.call(items, this.dateMaper).filter(item => item['date'] >= this.date).sort((itemA, itemB) => itemA['date'] - itemB['date'])),
             // sort(items => items['date'] > this.date),.some(item => item['date'] >= this.date)
             tap(items => console.log(items))
-            ).subscribe((eventsList: Array<{}>) => {
+        ).subscribe((eventsList: Array<{}>) => {
             if (eventsList) {
                 let tablesEvents = this.tableEvents.initEvents(eventsList, this, "default");
-                
+
                 this.eventsOb['events'] = tablesEvents;
 
                 setTimeout(() => {
@@ -107,7 +167,6 @@ export class EventsSchedulComponent implements OnInit {
     toggleHidden(itemCller, targetInput) {
 
         if (itemCller.tagName == "SELECT" && itemCller.value == "other") {
-            console.log("called");
 
             itemCller.parentElement.classList.remove('d-block');
             itemCller.parentElement.classList.add('d-none');
@@ -115,7 +174,6 @@ export class EventsSchedulComponent implements OnInit {
             // this.formEvents.controls['eventType'].setValue('');
             this.formEvents.controls['other'].setValue('');
         } else if (itemCller.tagName == "INPUT") {
-            console.log("called");
 
             targetInput.parentElement.classList.remove('d-none');
             targetInput.parentElement.classList.add('d-block');
@@ -203,16 +261,15 @@ export class EventsSchedulComponent implements OnInit {
 
     createEvents() {
         this.formEvents.reset();
-        this.calendar.calendarDisplay(false, "open", (el, hasClass) => {
-            hasClass ? this.calendar.toggleDisplay() : '';
+        this.calendarDisplay(false, "open", (el, hasClass) => {
+            hasClass ? this.toggleDisplay() : '';
         });
     }
 
     addEvents(event) {
 
-        this.calendar.calendarDisplay(false, "open", (el, hasClass) => {
-            hasClass ? this.calendar.toggleDisplay() : '';
-
+        this.calendarDisplay(false, "open", (el, hasClass) => {
+            hasClass ? this.toggleDisplay() : '';
         });
         // console.log(event['date']);
         // let eventCopy = Object.assign(event, {date: this.tableEvents.dateToStr(event['date'])});

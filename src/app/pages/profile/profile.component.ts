@@ -23,7 +23,7 @@ export class ProfileComponent implements OnInit {
   emailPatteren: string = '^[a-z]+[a-zA-Z_\\d\\.]*@[A-Za-z]{2,10}\\.[A-Za-z]{2,3}(?:\\.?[a-z]{2})?$';
   // emailPatteren: RegExp = /^[a-z]+[a-zA-Z_\d\.]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$/;
   datePattern: RegExp = /^\b((?=0)0[1-9]|(?=[1-9])[1-9]|(?=[1-2])[1-2][0-9]|(?=3)3[0-1])\-((?=0)0[1-9]|(?=[1-9])[1-9]|(?=1)1[0-2]?)\-20((?=1)19|(?=2)2[0-5])$/;//\d{2}\-\d{2}\-\d{4}
-  timePattern: RegExp =/^\b((?=0)0[0-9]|(?=1)1[0-9]|(?=2)2[0-3])\:((?=0)0[0-9]|(?=1)1[0-9]|(?=[0-5])[0-5][0-9])$/;
+  timePattern: RegExp = /^\b((?=0)0[0-9]|(?=1)1[0-9]|(?=2)2[0-3])\:((?=0)0[0-9]|(?=1)1[0-9]|(?=[0-5])[0-5][0-9])$/;
   /***************  ********************/
 
   user: User | boolean;
@@ -32,6 +32,7 @@ export class ProfileComponent implements OnInit {
   eventsOb: Object = {};
   currentEvt;
   date: Date = new Date();
+  datePicker: HTMLDivElement;
 
   private itemsRule: object = {
     name: "required|string|min:3|max:30",
@@ -53,7 +54,7 @@ export class ProfileComponent implements OnInit {
   allowFormSetting: Observable<boolean> = of(false);
   formMethod: string = this.eventsOb['hasEvents'] && this.eventsOb['hasEvents']() ? "update" : 'create';
   hasClassShow = false;
-  
+
   constructor(private http: HttpService,
     private calendar: CalendarDatePickerService,
     private tableEvents: CreateDateTableService,
@@ -62,21 +63,11 @@ export class ProfileComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    let thiz = this;
-    /* $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-      //e.target // newly activated tab
-      //e.relatedTarget // previous active tab
-      console.log(e.target);
-      console.log(e.relatedTarget);
-      // thiz.show = false;
-      // e.preventDefault();
-    }); */
 
-    
     this.getUser();
   }
-  
-  logItem(item){
+
+  logItem(item) {
     console.log(item);
   }
 
@@ -85,10 +76,10 @@ export class ProfileComponent implements OnInit {
       first((user) => user['id'])
     ).subscribe((user) => {
       console.log(user);
-      this.user = typeof user == "number"? false: user;// typeof user == "number"? of(false): of(user);
+      this.user = typeof user == "number" ? false : user;// typeof user == "number"? of(false): of(user);
       // this.initApp();
-      
-      this.initEvents();
+
+      if (this.user['events']) this.initEvents();
 
       this.formInt();
       this.initFormSetting();
@@ -101,7 +92,7 @@ export class ProfileComponent implements OnInit {
       let tablesEvents = this.tableEvents.initEvents(this.user['events'], this, "advanced");
       this.eventsOb['events'] = tablesEvents;
       console.log(this.user['events']);
-      
+
       setTimeout(() => {
         // this.showEvents();
         this.fire(document.getElementById('date'));
@@ -113,13 +104,13 @@ export class ProfileComponent implements OnInit {
           console.log(e.target.id == 'nav-settings-tab');
           // thiz.allowFormSetting = of(e.target.id == 'nav-settings-tab');
           // console.log(thiz);
-            
+
           thiz.hasClassShow = (e.target.id == 'nav-settings-tab');
         });
       }, 1000);
     }
   }
-  
+
   get f() { return this.formEvents.controls; }
 
   // hasShowClass(divTag: HTMLDivElement) {
@@ -129,17 +120,77 @@ export class ProfileComponent implements OnInit {
   fire(input) {
 
     input = input ? input : document.getElementById("date");
+
     if (!this.fired && input) {
-      this.calendar.createHtms(input);
-      this.calendar.fire(this, this.formEvents);
+      // this.calendar.createHtms(input, {append: true});
+      this.datePicker = this.calendar.fire(this, this.formEvents, input);
+
+      input.parentElement.parentElement.appendChild(this.datePicker);
+      this.toggleDisplay();
+      this.setEvents(input);
       this.fired = true;
+    }
+  }
+
+  setEvents(input): void {
+    let thiz = this;
+
+    input.addEventListener('click', () => {
+      thiz.toggleDisplay();
+    }, false);
+
+    /* this.closeBtn.addEventListener('click', (e) => {
+
+      let spanEl: HTMLSpanElement = <HTMLSpanElement>e.target;
+      if (spanEl.tagName === "SPAN") {
+        //createCalendar.updateItems(e.target.innerHTML);
+        // thiz.divChild["style"].display = "none";
+        // thiz.toggleDisplay();
+      }
+    }, false); */
+  }
+
+  toggleDisplay() {
+    let divChildHasOpen = this.hasClass(this.datePicker, "open"),
+      divChildHasClose = this.hasClass(this.datePicker, "close"),
+      formDiv = $("#customGroup")[0],
+      formDivHassClassOpen = this.hasClass(formDiv, "open"),
+      formDivHassClassClose = this.hasClass(formDiv, "close");
+
+    if (divChildHasOpen) {
+      this.datePicker.classList.remove('open');
+      (divChildHasClose) ? "" : this.datePicker.classList.add('close');
+
+      if (formDivHassClassClose) formDiv.classList.remove('close');
+      (formDivHassClassOpen) ? "" : formDiv.classList.add('open');
+    } else {
+      this.datePicker.classList.add('open');
+      if (divChildHasClose) this.datePicker.classList.remove('close');
+
+      (formDivHassClassClose) ? "" : formDiv.classList.add('close');
+      if (formDivHassClassOpen) formDiv.classList.remove('open');
+    }
+  }
+
+  hasClass(elem: HTMLElement, className: string): boolean {
+    return elem.classList.contains(className);
+  }
+
+  calendarDisplay(elem?: HTMLElement | boolean, className?: string, cBFn?) {
+    elem = elem ? elem : this.datePicker;
+    className = className ? className : "open";
+
+    if (cBFn && typeof elem == "object") {
+      cBFn(elem, this.hasClass(elem, className));
+    } else {
+      return (typeof elem == "object") ? this.hasClass(elem, className) : "Error";
     }
   }
 
   createEvents() {
     this.formEvents.reset();
-    this.calendar.calendarDisplay(false, "open", (el, hasClass) => {
-      hasClass ? this.calendar.toggleDisplay() : '';
+    this.calendarDisplay(false, "open", (el, hasClass) => {
+      hasClass ? this.toggleDisplay() : '';
     });
 
     this.formMethod = "create";
@@ -147,22 +198,22 @@ export class ProfileComponent implements OnInit {
 
   addEvents(event) {
 
-    this.calendar.calendarDisplay(false, "open", (el, hasClass) => {
-      hasClass ? this.calendar.toggleDisplay() : '';
+    this.calendarDisplay(false, "open", (el, hasClass) => {
+      hasClass ? this.toggleDisplay() : '';
 
     });
 
-    let hours = event['date'].getHours().toString().length < 2? 
-        "0"+event['date'].getHours().toString(): event['date'].getHours().toString(),
-        minutes = event['date'].getMinutes().toString().length < 2? event['date'].getMinutes() > 6? 
-        "0"+event['date'].getMinutes().toString(): event['date'].getMinutes().toString()+"0": event['date'].getMinutes().toString(),
-        eventCopy = Object.assign({}, event),
-        dt = { date: this.tableEvents.dateToStr(event['date']), time: hours+":"+ minutes },
-        eventAdded = Object.assign(eventCopy, dt);
-    
+    let hours = event['date'].getHours().toString().length < 2 ?
+      "0" + event['date'].getHours().toString() : event['date'].getHours().toString(),
+      minutes = event['date'].getMinutes().toString().length < 2 ? event['date'].getMinutes() > 6 ?
+        "0" + event['date'].getMinutes().toString() : event['date'].getMinutes().toString() + "0" : event['date'].getMinutes().toString(),
+      eventCopy = Object.assign({}, event),
+      dt = { date: this.tableEvents.dateToStr(event['date']), time: hours + ":" + minutes },
+      eventAdded = Object.assign(eventCopy, dt);
+
     this.formMethod = "update";
     this.formEvents.reset();
-    (this.messages && Object.keys(this.messages).length)? this.messages = {} : '';
+    (this.messages && Object.keys(this.messages).length) ? this.messages = {} : '';
     for (let ii in this.formEvents.controls) {
       (eventAdded[ii]) ? this.formEvents.controls[ii].setValue(eventAdded[ii]) : '';
     }
@@ -238,7 +289,7 @@ export class ProfileComponent implements OnInit {
     // });
   }
 
-  initFormSetting(){
+  initFormSetting() {
 
     this.formSetting = new FormGroup({
       'changePassword': new FormGroup({
@@ -259,10 +310,10 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  displayMessages(item){
-    
-    let joinedKeys: RegExp = new RegExp(Object.keys(this.formSetting.controls[item.id].value).join('|'),"g");
-    return this.messages? (joinedKeys.test(Object.keys(this.messages).join()))?true:false: false;
+  displayMessages(item) {
+
+    let joinedKeys: RegExp = new RegExp(Object.keys(this.formSetting.controls[item.id].value).join('|'), "g");
+    return this.messages ? (joinedKeys.test(Object.keys(this.messages).join())) ? true : false : false;
   }
 
   inputReset(event) {
@@ -339,9 +390,9 @@ export class ProfileComponent implements OnInit {
     console.log(Object.keys(rules).length);
     console.log(rules);
     console.log(items);
-    
-    (this.messages && Object.keys(this.messages).length)? this.messages = false : '';
-    
+
+    (this.messages && Object.keys(this.messages).length) ? this.messages = false : '';
+
     if (rules['errors']) {
       this.messages = rules['errors'];
       return false;
@@ -356,7 +407,7 @@ export class ProfileComponent implements OnInit {
     } else {
       // this.messages = items['errors'];
       this.setMsgs(items, rules);
-      
+
       /* 
       this.valForm.resetMessages().then(res => {
     
@@ -383,7 +434,7 @@ export class ProfileComponent implements OnInit {
 
     let controls = this.formEvents.controls;
     (this.formEvents.controls['eventType'].value == "other") ? this.formEvents.controls['eventType'].setValue(this.formEvents.controls['other'].value) : '';
-    (this.messages && Object.keys(this.messages).length)? this.messages = false : '';
+    (this.messages && Object.keys(this.messages).length) ? this.messages = false : '';
 
     /* form method is equal create */
     // all fields require
@@ -391,7 +442,7 @@ export class ProfileComponent implements OnInit {
 
     // let controlCopy = Object.assign(controls, {name:["buzz"]});
     let rules: object = (this.formMethod == "update") ? this.getUpdateItemsRule(controls) : this.itemsRule;
-    let itemRules = rules['items']? rules['items']:rules;
+    let itemRules = rules['items'] ? rules['items'] : rules;
     console.log(this.formEvents);
     /* form method is equal update */
     // only current fields must pass vlidation
@@ -404,9 +455,9 @@ export class ProfileComponent implements OnInit {
     }
 
     let items = this.valForm.validate(controls, itemRules, this.currentEvt);
-      console.log(items);
-      console.log(controls);
-      //if(items['status'] === false) this.messages.push(items['errors']);
+    console.log(items);
+    console.log(controls);
+    //if(items['status'] === false) this.messages.push(items['errors']);
     let status = items['status'];
 
     if (clllback && typeof clllback == 'object') return clllback(items);
@@ -414,12 +465,12 @@ export class ProfileComponent implements OnInit {
 
     if (status && Object.keys(success).length) {
       console.log("sending to server basic media comp");
-      if(success['date'] || success['time']) success['date'] = this.strDateReverse(controls['date'].value)+ " "+ controls['time'].value;
+      if (success['date'] || success['time']) success['date'] = this.strDateReverse(controls['date'].value) + " " + controls['time'].value;
       // items['success']['buzzi'] = "ngga";
-      if(success['time']) delete success['time'];
+      if (success['time']) delete success['time'];
       console.log(success);
-      
-      let method = (this.formMethod == "update")? "PUT": false;
+
+      let method = (this.formMethod == "update") ? "PUT" : false;
       this.send(success, method);
     } else {//if (/* ! items['status'] &&  */!status) 
       this.setMsgs(items, rules);
@@ -437,14 +488,14 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  setMsgs(items, rules?){
+  setMsgs(items, rules?) {
 
-    if(items['errors'] && rules && rules['warning']) Object.keys(rules['warning']).forEach((item)=> {
-      items['errors'][item]? items['errors'][item].pus(rules['warning'][item]): items['errors'][item] = rules['warning'][item];
+    if (items['errors'] && rules && rules['warning']) Object.keys(rules['warning']).forEach((item) => {
+      items['errors'][item] ? items['errors'][item].pus(rules['warning'][item]) : items['errors'][item] = rules['warning'][item];
     });
     console.log(items);
 
-    this.messages = items['errors']? items['errors']: rules && rules['warning']? rules['warning']:items['warning']? items['warning']:false;
+    this.messages = items['errors'] ? items['errors'] : rules && rules['warning'] ? rules['warning'] : items['warning'] ? items['warning'] : false;
     console.log("im not validated");
     console.log(rules);
 
@@ -453,12 +504,12 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  formSt(formGroups){
-    
-    const theUrl = "http://ethio:8080/api/users/"+this.user["id"];
-    const act:string | boolean = (formGroups.id == "changeEmail")? "change_email":(formGroups.id == "changePassword")? "change_password": false;
-    let url = act? theUrl +"/"+ act:theUrl;
-    let method = act? 'PATCH':(formGroups.id == "deleteAccount")? "DELETE":false;
+  formSt(formGroups) {
+
+    const theUrl = "http://ethio:8080/api/users/" + this.user["id"];
+    const act: string | boolean = (formGroups.id == "changeEmail") ? "change_email" : (formGroups.id == "changePassword") ? "change_password" : false;
+    let url = act ? theUrl + "/" + act : theUrl;
+    let method = act ? 'PATCH' : (formGroups.id == "deleteAccount") ? "DELETE" : false;
 
     let rules: object = {
       email: "required",
@@ -466,32 +517,32 @@ export class ProfileComponent implements OnInit {
       passwordConf: "required|string|password|same|min:6|max:30",
       feedback: "string|min:6|max:30"
     };
-    
+
     // console.log(this.formSetting.controls[formGroups.id]['controls']);
     let itemsGroup = this.formSetting.controls[formGroups.id];
     let items = itemsGroup['controls'];
     let bindedItemsRules = this.bindItemsRules(items, rules);
     console.log(bindedItemsRules);
-    
+
     // let bindedItemsRules = (formGroups.id != "deleteAccount")? this.bindItemsRules(items, rules): false;
-    let validatedItems =  this.valForm.validate(items, bindedItemsRules);
+    let validatedItems = this.valForm.validate(items, bindedItemsRules);
     console.log(validatedItems);
-    
-    if(itemsGroup.valid && validatedItems && validatedItems['status']){
+
+    if (itemsGroup.valid && validatedItems && validatedItems['status']) {
       let itemsToSend = itemsGroup.value;
       console.log(itemsToSend);
-      if(formGroups.id == "changePassword") itemsToSend['email'] = this.user['email'];
+      if (formGroups.id == "changePassword") itemsToSend['email'] = this.user['email'];
       this.send(itemsToSend, method, url);
-    }else{
+    } else {
       this.setMsgs(validatedItems);
     }
   }
 
-  bindItemsRules(items, rules){
+  bindItemsRules(items, rules) {
 
     let itemsRules: {} = {};
-    Object.keys(items).forEach((itemName) =>{
-      
+    Object.keys(items).forEach((itemName) => {
+
       switch (itemName) {
         case "currentPassword":
           itemsRules[itemName] = rules['password'];
@@ -528,20 +579,20 @@ export class ProfileComponent implements OnInit {
     return itemsRules;
   }
 
-  private strDateReverse(strDate:string){
-    let str:string;
+  private strDateReverse(strDate: string) {
+    let str: string;
     let strSlipt = strDate.split('-').reverse();
 
-    (strSlipt.length)? strSlipt.forEach(spStr => {
-      str = str? str +="-"+spStr: spStr;
-    }): str = strDate;
+    (strSlipt.length) ? strSlipt.forEach(spStr => {
+      str = str ? str += "-" + spStr : spStr;
+    }) : str = strDate;
     return str;
   }
 
   getUpdateItemsRule(controls) {
     let itemsObj: {} = {
       items: {}
-    },  msg;
+    }, msg;
 
     for (let ii in controls) {
       if (!this.itemsRule[ii]) {
@@ -551,10 +602,10 @@ export class ProfileComponent implements OnInit {
         itemsObj['errors'].violation.push({ [ii]: msg, type: 'danger' });
         break;
       } else {//(controls[ii].valid && controls[ii].dirty) || 
-        if(controls[ii].valid && controls[ii].dirty && controls[ii].value == this.currentEvt[ii]){
+        if (controls[ii].valid && controls[ii].dirty && controls[ii].value == this.currentEvt[ii]) {
           msg = "לא ביצעת שינויים כל שהם.";
-          if(! itemsObj['warning']) itemsObj['warning'] = {};
-          if(! itemsObj['warning'][ii]) itemsObj['warning'][ii] = [];
+          if (!itemsObj['warning']) itemsObj['warning'] = {};
+          if (!itemsObj['warning'][ii]) itemsObj['warning'][ii] = [];
           itemsObj['warning'][ii].push({
             [ii]: msg,
             type: 'warning'
@@ -566,11 +617,11 @@ export class ProfileComponent implements OnInit {
     return itemsObj;
   }
 
-  send(body, method?:string | boolean, urlArg?:string) {
-    let url = urlArg? urlArg:"http://ethio:8080/api/events";
-    let requestUrl = method ? (! urlArg)? url + "/" + this.currentEvt["id"] + "?_method=" + method: urlArg+"?_method=" + method : url;
+  send(body, method?: string | boolean, urlArg?: string) {
+    let url = urlArg ? urlArg : "http://ethio:8080/api/events";
+    let requestUrl = method ? (!urlArg) ? url + "/" + this.currentEvt["id"] + "?_method=" + method : urlArg + "?_method=" + method : url;
     console.log(requestUrl);
-    
+
     this.http.postData(requestUrl, body)
       .subscribe(evt => {
 

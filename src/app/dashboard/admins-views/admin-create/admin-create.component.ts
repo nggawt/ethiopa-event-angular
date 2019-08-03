@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, Input } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -19,6 +19,13 @@ export class AdminCreateComponent implements OnInit {
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
 
+  mdProps = {
+    id: 'create_admin',
+    modalSize: "modal-md",
+    name: "אדמין",
+    emailTo: "",
+    title: 'צור אדמין'
+  };
   
   constructor(private router: Router, 
     private http: HttpService, 
@@ -34,6 +41,7 @@ export class AdminCreateComponent implements OnInit {
     ); */
     this.formInit();
   }
+
   onSubmit(){
 
     if(this.regiter.valid){
@@ -85,13 +93,6 @@ export class AdminCreateComponent implements OnInit {
       'password': new FormControl(null),
       'passwordConfirm': new FormControl(null),
       'admin_type': new FormControl(""),
-    });
-    $('#forgotPassword').modal();
-
-    let thiz = this;
-    $(document).on('hidden.bs.modal','.modal', function () {
-      /// TODO EVENTS
-      thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate(['../'], {relativeTo: this.route});
     });
   }
 }

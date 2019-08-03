@@ -14,10 +14,8 @@
                     <h4>
                         {{ customer?.title }}
                     </h4>
-                    <p class="text-xl-right text-dar p-2">
-                        {{ customer?.descriptions }}
-                    </p>
-                    <hr>
+                    <div [innerHTML]="customer?.content | keepHtml"></div>
+                    <!-- <quill-view-html [content]="customer?.content" theme="snow"></quill-view-html> -->
 
                     <p>
                         <a routerLink="../" class="btn btn-outline-info font-weight-bold">

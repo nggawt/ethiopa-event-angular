@@ -44,6 +44,8 @@ import { AboutComponent } from './templates/customer/about/about.component';
 import { EventsEditComponent } from './customer/customer-edit/events-edit/events-edit.component';
 import { EditEventsTempComponent } from './templates/customer/edit/edit-events/edit-events-temp.component';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
+import { KeepHtmlPipe } from 'src/app/shared/pipes-module/keep-html.pipe';
+// import { KeepHtmlPipe } from './shared/pipes-module/keep-html.pipe';
 
 /* halls */
 
@@ -85,6 +87,7 @@ import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.m
     EditBasicTempComponent,
     EditMediaTempComponent,
     EditEventsTempComponent,
+    KeepHtmlPipe,
   ],
   exports: [
     CustomerTempComponent,

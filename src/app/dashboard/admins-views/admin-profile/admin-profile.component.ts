@@ -1,15 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'admin-profile',
+  selector: 'app-admin-profile',
   templateUrl: './admin-profile.component.html',
   styleUrls: ['./admin-profile.component.css']
 })
 export class AdminProfileComponent implements OnInit {
-  @Input() adminItem:{};
+  @Input() itemData: {};
   constructor() { }
 
   ngOnInit() {
+    console.log(this.itemData);
+    
   }
 
 }

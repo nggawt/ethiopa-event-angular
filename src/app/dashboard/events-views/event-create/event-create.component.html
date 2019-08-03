@@ -1,106 +1,153 @@
-<model-template>
-    <div class="px-3">
-      <h2 class="h4 text-right text-success">צור משתמש</h2>
+<!-- <dashboard-model [modelId]="modelId"> -->
+  
+
+  <!--  -->
+<form [formGroup]="eventCreate" class="form-row p-3 border rounded" (ngSubmit)="onSubmit(formMethod)">
+    <h2 class="h4 text-right text-success">צור אירוע</h2>
+  <div class="form-group col-md-12">
+    <div class="input">
+      <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)"
+        (keyup)="(f.date.valid)?daily(date.value):''" placeholder="בחר תאריך" [pattern]="datePattern" #date>
+
+      <label class="m-0 p-1 float-left" for="date">
+        <i class="material-icons">date_range</i>
+      </label>
     </div>
-  
-    <form class="p-3 form-row" [formGroup]="userCreate" (ngSubmit)="onSubmit()">
-  
-      <div class="col-6 pb-3">
-  
-        <div class="inputTypeNumber">
-          <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם מלא" required minlength="3" maxlength="50" />
-  
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.name.invalid && f.name.touched" class="invalid-feedback d-block">* שדה חובה</div>
-      </div>
-  
-      <div class="col-6 pb-3">
-  
-        <div class="inputTypeNumber">
-          <input name="city" type="text" class="col-11" formControlName="city" placeholder="עיר מגורים" required minlength="3" maxlength="50" />
-  
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.city.invalid && f.city.touched" class="invalid-feedback d-block">* שדה חובה</div>
-      </div>
-  
-  
-      <div class="col-6 pb-3">
-  
-        <div class="inputTypeNumber">
-          <input name="email" type="text" class="col-11" formControlName="email" placeholder="אימייל" [pattern]="emailPatt" required
-          />
-  
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
-      </div>
-  
-      <div class="col-6 pb-3">
-  
-        <div class="inputTypeNumber">
-          <input name="password" type="password" class="col-11" formControlName="password" placeholder="סיסמה" [pattern]="passwordPatt"
-            autocomplete required />
-  
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.password.invalid && f.password.touched" class="invalid-feedback d-block">* שדה חובה</div>
-      </div>
-  
-      <div class="col-6 pb-3">
-  
-        <div class="inputTypeNumber">
-          <input name="passwordConfirm" type="password" class="col-11" formControlName="passwordConfirm" placeholder="אשר סיסמה" [pattern]="passwordPatt"
-            autocomplete required />
-  
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.passwordConfirm.invalid && f.passwordConfirm.touched" class="invalid-feedback d-block">* שדה חובה</div>
-      </div>
-  
-      <div class="col-6 pb-3">
-  
-        <div class="inputTypeNumber">
-          <select id="area" class="col-11" formControlName="area" required>
-            <option value="" selected disabled>אזור</option>
-            <option value="צפון">צפון</option>
-            <option value="מרכז והשפלה">מרכז והשפלה</option>
-            <option value="דרום">דרום</option>
-          </select>
-  
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.area.invalid && f.area.touched" class="invalid-feedback d-block">* בחר אזור מתוך הרשימה </div>
-      </div>
-  
-      <div class="col-6 pb-3">
-  
-        <div class="inputTypeNumber">
-          <input name="tel" type="text" class="col-11" formControlName="tel" placeholder="טלפון/פלאפון" [pattern]="phoneNum" required
-          />
-  
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* שדה חובה</div>
-      </div>
-  
-  
-      <div class="col-12 pb-3">
-  
-        <div class="inputTypeNumber textarea">
-          <textarea class="col-11" type="text" name="title" id="about" formControlName="about" required minlength="12" placeholder="הוסף הודעה">
-              
-              </textarea>
-          <span class="validity float-left"></span>
-        </div>
-        <div *ngIf="f.about.invalid && f.about.touched" class="invalid-feedback d-block">* שדה חובה</div>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn btn-success btn-sm">
-          <i class="fa fa-envelope"></i>
-          שלח
-        </button>
-      </div>
-    </form>
-  </model-template>
+
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: date, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+  <div class="form-group col-md-6">
+    <label for="name">שם</label>
+    <input type="text" id="name" class="form-control" formControlName="name" #name>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: name, itemMethod: formMethod}">
+    </ng-container>
+
+    <div *ngIf="f.name.invalid && f.name.touched" class="invalid-feedback d-block">* שדה חובה</div>
+  </div>
+  <div class="form-group d-block col-md-6">
+    <!-- (change)="selectedText(select)" -->
+    <label for="eventType">אירוע</label>
+    <select name="eventType" id="eventType" formControlName="eventType" class="form-control"
+      (change)="toggleHidden(select, other)" #select>
+
+      <option value="" [selected]="true" disabled>סוג האירוע</option>
+      <option value="wedding">חתונה</option>
+      <option value="bar-mitzvah">בר/בת מצווה</option>
+      <option value="hina">חינה</option>
+      <option value="other">אחר</option>
+    </select>
+    <!-- <span class="validity float-left"></span> -->
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: select, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="form-group col-md-6 d-none">
+    <label for="other" [ngClass]="other.hidden? 'd-none':'d-block'">סוג
+      אירוע אחר
+      <span class="btn btn-link btn-sm text-success" (click)="toggleHidden(other, select)">בחר
+        מרשימה</span>
+    </label>
+    <input type="text" id="other" formControlName="other" hidden class="form-control" #other>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: other, itemMethod: formMethod }">
+    </ng-container>
+  </div>
+
+  <div class="form-group col-md-6">
+    <label for="location">עיר/מיקום</label>
+    <input type="text" id="location" class="form-control" formControlName="location" #location>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: location, itemMethod: formMethod }">
+    </ng-container>
+  </div>
+
+  <div class="form-group col-md-6">
+    <label for="address">כתובת</label>
+    <input type="text" id="address" class="form-control" formControlName="address" #address>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: address, itemMethod: formMethod }">
+    </ng-container>
+  </div>
+  <div class="form-group col-md-6">
+    <label for="email">אימייל</label>
+    <input type="email" id="email" class="form-control" formControlName="email" [pattern]="emailPatteren" #email>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: email, itemMethod: formMethod }">
+    </ng-container>
+  </div>
+
+  <div class="form-group col-md-6">
+    <label for="phone" class="col-form-label ">טלפון/פלאפון</label>
+    <input type="tel" id="phone" class="form-control" formControlName="phone" [pattern]="phoneNum" #phone>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: phone, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div class="form-group col-md-12">
+    <textarea class="form-control" id="description" formControlName="description" rows="3" placeholder="הוסף הודעה"
+      #description></textarea>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: description, itemMethod: formMethod}">
+    </ng-container>
+  </div>
+
+  <div *ngIf="messages && messages['violation']" class="bg-light p-1 ml-1">
+    <div *ngFor="let message of messages['violation']; let idx = index" class="bg-light p-1 m-1 d-block">
+
+      <p *ngFor="let item of messages['violation'][idx] | keyvalue; let key = index">
+        <b [ngClass]="'text-danger'">*
+          {{ item.key+': ' }}
+        </b>
+        {{ item.value }}
+      </p>
+    </div>
+  </div>
+
+  <div class="form-group col-sm-12 text-light bg-light">
+    <button class="btn btn-success btn-sm" type="submit">{{ formMethod == 'update'? 'עדכן הכל':'צור אירוע'}}
+    </button>
+    <a class="btn btn-warning btn-sm" (click)="reset()">אפס</a>
+    <a class="btn btn-danger btn-sm" (click)="close()">בטל וסגור</a>
+    <a *ngIf="formMethod == 'update'" class="btn btn-info btn-sm" (click)="allTodefault()">שחזר ברירת
+      מחדל</a>
+  </div>
+</form>
+
+<!-- </dashboard-model> -->
+
+<ng-template #clickedMethods let-elem="elem" let-itemValue="itemValue" let-itemMethod="itemMethod">
+
+  <div class="mt-1">
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active"
+      (click)="update(elem)">
+      <span>
+        עדכן
+        <i class="material-icons text-success">
+          update
+        </i>
+      </span>
+    </a>
+    <a *ngIf="elem.value" class="ml-1 px-2 py-2 my-2 border rounded text-center active" (click)="inputReset(elem)">
+      <span>
+        נקה
+        <i class="material-icons text-warning">
+          clear
+        </i>
+      </span>
+    </a>
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 my-2 border rounded text-center active"
+      (click)="default(elem)">
+      <span>
+        מקור
+        <i class="material-icons text-primary">
+          redo
+        </i>
+      </span>
+    </a>
+  </div>
+
+  <div *ngIf="messages && messages[elem.id]" class="bg-light p-1 ml-1">
+    <p *ngFor="let message of messages[elem.id]" class="bg-light p-1 m-1 d-block">
+      <span *ngIf="message['message']">
+        <b [ngClass]="message['type']? 'text-danger': 'text-warning'">*</b>
+        {{ message['message']  }}
+      </span>
+    </p>
+  </div>
+</ng-template>

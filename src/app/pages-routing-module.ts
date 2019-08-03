@@ -4,7 +4,6 @@ import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.
 // import { LogInComponent } from './auth/log-in/log-in.component';
 import { RegistrationComponent } from './auth/registration/registration.component';
 import { ResetPasswordComponent } from './auth/rest-password/reset-password.component';
-import { AdminPanelComponent } from './dashboard/admin-panel/admin-panel.component';
 import { AdminsViewsComponent } from './dashboard/admins-views/admins-views.component';
 import { CustomerEditComponent } from './dashboard/customers-views/customer-edit/customer-edit.component';
 import { CustomersViewsComponent } from './dashboard/customers-views/customers-views.component';
@@ -16,7 +15,6 @@ import { OverviewComponent } from './dashboard/overview/overview.component';
 import { PostEditComponent } from './dashboard/posts-views/post-edit/post-edit.component';
 import { PostsViewsComponent } from './dashboard/posts-views/posts-views.component';
 import { QuickEditorComponent } from './dashboard/quick-editor/quick-editor.component';
-import { RoleComponent } from './dashboard/role/role.component';
 import { TasksComponent } from './dashboard/tasks/tasks.component';
 import { UserEditComponent } from './dashboard/users-views/user-edit/user-edit.component';
 import { UsersViewsComponent } from './dashboard/users-views/users-views.component';
@@ -39,14 +37,10 @@ import { CanDeactivateGuardService } from './services/can-deactivate-guard/can-d
 import { RouteGuardService } from './services/route-guard/route-guard.service';
 import { AdminCreateComponent } from './dashboard/admins-views/admin-create/admin-create.component';
 import { LogInComponent } from './auth/log-in/log-in.component';
-import { ModelTemplateComponent } from './dashboard/model-template/model-template.component';
-import { OverviewTemplateComponent } from './dashboard/overview-template/overview-template.component';
-import { AdminEditComponent } from './dashboard/admins-views/admin-edit/admin-edit.component';
 import { CustomerCreateComponent } from './dashboard/customers-views/customer-create/customer-create.component';
 import { UserCreateComponent } from './dashboard/users-views/user-create/user-create.component';
 import { PostCreateComponent } from './dashboard/posts-views/post-create/post-create.component';
 import { EventCreateComponent } from './dashboard/events-views/event-create/event-create.component';
-import { DashboardEditComponent } from './dashboard/edit/dashboard-edit.component';
 import { InboxComponent } from './dashboard/mail/inbox/inbox.component';
 import { OutboxComponent } from './dashboard/mail/outbox/outbox.component';
 import { TrashComponent } from './dashboard/mail/trash/trash.component';
@@ -60,65 +54,68 @@ import { PreferencesComponent } from './dashboard/mail/preferences/preferences.c
 const routes: Routes = [
   { path: '', component: WellcomeComponent },
   { path: 'users/:id', component: ProfileComponent },
-  { path: 'dashboard', component: MainDashboardComponent, children: [
-    
-    { path: 'admins-views', component: AdminsViewsComponent, children: [
-      { path: 'admin-profile', component: AdminPanelComponent },
-      { path: 'create', component: AdminCreateComponent },
-      { path: ':id/edit', component: AdminEditComponent },
-    ] },
-    { path: 'admins-views/:id', component: OverviewComponent, data : { itemType: "admins"} },
-    // { path: 'admins-views/:id/edit', component: AdminEditComponent, data : { itemType: "admins"} },
+  {
+    path: 'dashboard', component: MainDashboardComponent, children: [
+      // START dashboard childrens
+      { path: 'admins-views', component: AdminsViewsComponent, children: []},
+      { path: 'admins-views/create', component: OverviewComponent, data: { itemType: "admins", comp: 'create' } },
+      { path: 'admins-views/:id', component: OverviewComponent, data: { itemType: "admins", comp: 'preview' } },
+      { path: 'admins-views/:id/edit', component: OverviewComponent, data: { itemType: "admins", comp: 'edit' } },
+      // { path: 'admins-views/:id/edit', component: AdminEditComponent, data : { itemType: "admins"} },
 
-    { path: 'users-views', component: UsersViewsComponent, children: [
-      { path: 'create', component: UserCreateComponent },
-    ]},
+      {
+        path: 'users-views', component: UsersViewsComponent, children: [
+          { path: 'create', component:  OverviewComponent, data: { itemType: "users", comp: 'create' } },
+        ]
+      },
 
-    { path: 'users-views/:id', component: OverviewComponent, data : { itemType: "users"} },
-    { path: 'users-views/:id/edit', component: UserEditComponent, data : { itemType: "users"} },
+      { path: 'users-views/:id', component: OverviewComponent, data: { itemType: "users", comp: 'preview' } },
+      { path: 'users-views/:id/edit', component: OverviewComponent, data: { itemType: "users", comp: 'edit' } },
 
-    { path: 'blog-views', component: PostsViewsComponent, children: [
-      { path: 'create', component: PostCreateComponent },
-    ]},
+      {
+        path: 'blog-views', component: PostsViewsComponent, children: [
+          { path: 'create', component: PostCreateComponent },
+        ]
+      },
 
-    // { path: 'blog-views/create', component: PostCreateComponent, data : { itemType: "blog"} },
-    { path: 'blog-views/:id', component: OverviewComponent, data : { itemType: "blog"} },
-    { path: 'blog-views/:id/edit', component: PostEditComponent, data : { itemType: "blog"} },
+      // { path: 'blog-views/create', component: PostCreateComponent, data : { itemType: "blog"} },
+      { path: 'blog-views/:id', component: OverviewComponent, data: { itemType: "blog", comp: 'preview' } },
+      { path: 'blog-views/:id/edit', component: OverviewComponent, data: { itemType: "blog", comp: 'edit' } },
 
-    { path: 'customers-views', component: CustomersViewsComponent },
-    { path: 'customers-views/create', component: CustomerCreateComponent },
-    { path: 'customers-views/:id', component: OverviewComponent, data : { itemType: "customers"} },
-    { path: 'customers-views/:id/edit', component: DashboardEditComponent, data : { itemType: "customers"} },
+      { path: 'customers-views', component: CustomersViewsComponent },
+      { path: 'customers-views/create', component:  OverviewComponent, data: { itemType: "customers", comp: 'create' } },
+      { path: 'customers-views/:id', component: OverviewComponent, data: { itemType: "customers", comp: 'preview' } },
+      { path: 'customers-views/:id/edit', component: OverviewComponent, data: { itemType: "customers", comp: 'edit' } },
 
-    { path: 'events-views', component: EventsViewsComponent },
-    { path: 'events-views/create', component: EventCreateComponent },
-    { path: 'events-views/:id', component: OverviewComponent, data : { itemType: "events"} },
-    { path: 'events-views/:id/edit', component: EventEditComponent, data : { itemType: "events"} },
-    // { path: 'notifications', component: NotificationsComponent },
+      { path: 'events-views', component: EventsViewsComponent },
+      { path: 'events-views/create', component: OverviewComponent, data: { itemType: "events", comp: 'create' } },
+      { path: 'events-views/:id', component: OverviewComponent, data: { itemType: "events", comp: 'preview' } },
+      { path: 'events-views/:id/edit', component: OverviewComponent, data: { itemType: "events", comp: 'edit' } },
+      // { path: 'notifications', component: NotificationsComponent },
 
-    /****** mail ******/
-    { path: 'mail', component: MailComponent, children: [
-      { path: '', component: InboxComponent },
-      { path: 'favorites', component: FavoritesComponent },
-      { path: 'preferences', component: PreferencesComponent },
-      { path: 'trash', component: TrashComponent },
-      { path: 'inbox', component: InboxComponent },
-      { path: 'outbox', component: OutboxComponent }
-    ]},
-    /* 
-    { path: 'mail/favorites', component: FavoritesComponent },
-    { path: 'mail/preferences', component: PreferencesComponent },
-    { path: 'mail/trash', component: TrashComponent },
-    { path: 'mail/inbox', component: InboxComponent },
-    { path: 'mail/outbox', component: OutboxComponent },
-    */
+      /****** mail ******/
+      {
+        path: 'mail', component: MailComponent, children: [
+          { path: '',   redirectTo: 'inbox', pathMatch: 'full' },
+          { path: 'favorites', component: FavoritesComponent },
+          { path: 'preferences', component: PreferencesComponent },
+          { path: 'trash', component: TrashComponent },
+          { path: 'inbox', component: InboxComponent },
+          { path: 'outbox', component: OutboxComponent }
+        ]
+      },
+      
+      /* { path: 'mail/favorites', component: FavoritesComponent },
+      { path: 'mail/preferences', component: PreferencesComponent },
+      { path: 'mail/trash', component: TrashComponent },
+      { path: 'mail/inbox', component: InboxComponent },
+      { path: 'mail/outbox', component: OutboxComponent }, */
+     
 
-    { path: 'task', component: TasksComponent },
-    { path: 'role', component: RoleComponent },
-    { path: 'quick-editor', component: QuickEditorComponent },
-    // { path: 'notification', component: AdminPanelComponent },
-  ] },
-  // { path: 'dashboard/admin', component: AdminPanelComponent },
+      { path: 'task', component: TasksComponent },
+      { path: 'quick-editor', component: QuickEditorComponent }
+    ]// END dashboard childrens
+  },
   { path: 'אודות', component: AboutComponent },
   { path: 'login', component: LogInComponent },
   // { path: 'logout', component: LogOutComponent },
@@ -129,30 +126,31 @@ const routes: Routes = [
 
   // { path: 'יומן-אירועים', component: clande },
   { path: 'מטרת-האתר', component: GoalComponent },
-  { path: 'join', component: JoinComponent,
-    canActivate: [RouteGuardService], 
+  {
+    path: 'join', component: JoinComponent,
+    canActivate: [RouteGuardService],
     canDeactivate: [CanDeactivateGuardService]
-   },
-  { path: 'blog', component: BlogComponent},
+  },
+  { path: 'blog', component: BlogComponent },
   { path: 'blog/:id', component: ShowPostComponent },
   { path: 'blog/:id/create', component: CreatePostComponent },
   { path: 'blog/:id/update', component: UpdatePostComponent },
   { path: 'scedule-events', component: EventsSchedulComponent },
   { path: 'deals', component: DealsComponent },
   // { path: 'צור-קשר', component: ContactComponent },
-  { path: 'customers', loadChildren:"./pages/customers/customers.module#CustomersModule"  },
-  
+  { path: 'customers', loadChildren: "./pages/customers/customers.module#CustomersModule" },
+
   // { path: "**", component: PageNotFoundComponent}
-  { path: "errors-page", component: ErrorPageComponent, data: {errorMsg:"You have page ERRoR"}},
-  { path: "**",  redirectTo: "/errors-page"}
-  
+  { path: "errors-page", component: ErrorPageComponent, data: { errorMsg: "You have page ERRoR" } },
+  { path: "**", redirectTo: "/errors-page" }
+
 ];
-  
+
 
 @NgModule({
   imports: [
-      RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules}) // prioload startigy// , { preloadingStrategy: PreloadAllModules}
-    ],
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }) // prioload startigy// , { preloadingStrategy: PreloadAllModules}
+  ],
   exports: [RouterModule]
 })
-export class PagesRoutingModule{}
+export class PagesRoutingModule { }

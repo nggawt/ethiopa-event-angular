@@ -1,4 +1,4 @@
-<div *ngIf="itemForm$ | async as formItems" class="col-12 text-right">
+<div *ngIf="itemData" class="col-12 text-right">
   <div class="border rounded p-3">
     <form class="form-row p-3 border rounded" [formGroup]="formGr" (ngSubmit)="onSubmit()">
       <div class="form-group col-sm-12">
@@ -56,13 +56,6 @@
       </div>
 
       <div class="col-sm-12 clearfix">
-          <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
-          <span class="border border-success rounded p-1 costum-btn costum-btn-success" routerLink="../">
-              <i class="material-icons"> chevron_right </i>
-              <i class="mt-icons"> חזור </i>
-          </span>
-
-          <!-- </span> -->
           <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
       </div>
     </form>

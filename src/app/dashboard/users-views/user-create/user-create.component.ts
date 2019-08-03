@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
@@ -19,6 +19,13 @@ export class UserCreateComponent implements OnInit {
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
 
+  mdProps = {
+    id: 'create_user',
+    modalSize: "modal-md",
+    name: "משתמש",
+    emailTo: "",
+    title: 'צור משתמש'
+  };
   
   constructor(private router: Router, 
     private http: HttpService, 
@@ -32,9 +39,28 @@ export class UserCreateComponent implements OnInit {
       }
     ); */
     console.log("create user");
-    
     this.formInit();
   }
+
+  /* ngAfterViewInit(){
+    let model = $('#'+this.modelProps.id).modal();
+    let thiz = this;
+    $(document).on('hidden.bs.modal', model, function (e) {
+
+      /// TODO EVENTS
+      if (this.mailProps && this.mailProps.id) {
+        console.log("requestUrl: ", thiz.http.requestUrl, 'element: ', e.target, 'id: ', this.mailProps.id);
+        thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) :
+          thiz.router.navigate(['../'], { relativeTo: thiz.route });
+        // console.log(thiz.http.requestUrl);
+        if ($(model).is(':hidden')) {
+          thiz.http.requestUrl = false;
+          $(document).off('hidden.bs.modal');
+          return e.preventDefault()
+        }
+      }
+    });
+  } */
 
   onSubmit(){
     console.log("create user");
@@ -94,13 +120,6 @@ export class UserCreateComponent implements OnInit {
       'area': new FormControl(null),
       'tel': new FormControl(null),
       'about': new FormControl(null),
-    });
-
-    $('#forgotPassword').modal();
-    let thiz = this;
-    $(document).on('hidden.bs.modal','.modal', function () {
-      /// TODO EVENTS
-      thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate(['../'], {relativeTo: this.route});
     });
   }
 }

@@ -77,11 +77,12 @@
       <td [ngClass]="customer.customer.confirmed? 'text-success':'text-danger'">
         {{customer.customer.confirmed? "פעיל":  "ממתין"}}
       </td>
-      <td><a class="btn btn-primary btn-sm" [routerLink]="customer.customer.id">הצג</a>
+      <td><a class="btn btn-primary btn-sm" [queryParams]="{name:  customer.customer.businessType}" [routerLink]="customer.customer.id">הצג</a>
       </td>
-      <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+customer.customer.user_id">משתמש</a> <!-- goTo('/dashboard/users-views/'+customer.customer.user_id, customer.customer.businessType) -->
+      <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+customer.customer.user_id">משתמש</a> 
+        <!-- goTo('/dashboard/users-views/'+customer.customer.user_id, customer.customer.businessType) -->
       </td>
-      <td><a class="btn btn-outline-danger btn-sm" [queryParams]="{name:  customer.customer.businessType, id: customer.customer.id}" [routerLink]="customer.customer.id+'/edit'">ערוך</a></td>
+      <td><a class="btn btn-outline-danger btn-sm" [queryParams]="{name:  customer.customer.businessType}" [routerLink]="customer.customer.id+'/edit'">ערוך</a></td>
       <td><a class="btn btn-danger btn-sm" (click)="destroy(customer.customer)">מחק</a></td>
     </tr>
   </tbody>

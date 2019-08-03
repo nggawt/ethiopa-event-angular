@@ -70,13 +70,13 @@ export class ResourcesService {
   
     if(Object.keys(this.pagintedResources).length && paginate){
       this.emmitResources(this.pagintedResources);
-      console.log("name: paginated ", items);
+      // console.log("name: paginated ", items);
     } 
   }
 
   protected setResourcesData(res:string, data: any){
 
-    this.itemResources[res] =  data[res]?  data[res]:  data;
+    this.itemResources[res] =  data && data[res]?  data[res]:  data;
     // console.log("data current: ", data, "name: ", res, "rsources: ", this.itemResources);
   }
 
@@ -122,6 +122,14 @@ export class ResourcesService {
     };
   }
 
+  objectToArray(items){
+    let arr = [];
+    for(let item of items){
+      arr.push(item);
+    }
+    return arr;
+  }
+
   protected getCustomersItems(customers) {
     let customersArray = [];
     Object.keys(customers).forEach(customersType => customers[customersType].forEach(item => {
@@ -159,7 +167,7 @@ export class ResourcesService {
     
     paginate? paginate: false;
 
-    console.log(this.inProcces[items]);
+    // console.log(this.inProcces[items]);
     if(this.itemResources[items] && this.inProcces[items]){ 
       return await this.itemResources[items];
     }else{
@@ -190,5 +198,22 @@ export class ResourcesService {
   protected getItem(data, id, resource){
     console.log(data);
     return data[resource].find(item => this.checkTypeId(item, 'customer').id == id);
+  }
+
+  public block(message){
+    
+    let url = 'messages/'+ message.id+'/block';
+    console.log(message);
+    let date = new Date();
+    let nextTwoWeeks = new Date(date.setDate(date.getDate() + 14)),
+        dt = nextTwoWeeks.getFullYear()+"-"+nextTwoWeeks.getMonth()+"-"+nextTwoWeeks.getDate()+" "+
+        nextTwoWeeks.getHours()+":"+nextTwoWeeks.getMinutes();//+":"+nextTwoWeeks.getMilliseconds();
+    
+    let hardcodedUrl = 'users/3?_method=patch';
+    console.log(dt);
+    
+    this.http.postData(url, { banned_until: dt, city: 'יבנה'}).subscribe(response =>{
+      console.log(response);
+    });
   }
 }

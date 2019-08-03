@@ -1,4 +1,4 @@
-<div class="card">
+<div *ngIf="itemData" class="card">
     <div class="row no-gutters">
       <div class="card-header">
         <div>
@@ -7,36 +7,36 @@
       </div>
       <div class="col">
         <div class="card-body">
-          <h5 class="card-title"> {{ usersItem.name }}</h5>
+          <h5 class="card-title"> {{ itemData.name }}</h5>
           <ul class="list-group p-0">
             <li class="list-group-item">
-              שם: {{ usersItem.name }}
+              שם: {{ itemData.name }}
             </li>
             <li class="list-group-item">
-              אימייל: {{ usersItem.email }}
+              אימייל: {{ itemData.email }}
             </li>
             <li class="list-group-item">
-              טל: {{ usersItem.tel }}
+              טל: {{ itemData.tel }}
             </li>
             <li class="list-group-item">
-               אזור: {{ usersItem.area }}
+               אזור: {{ itemData.area }}
               </li>
             <li class="list-group-item">
-              כתובת: {{ usersItem.city }}
+              כתובת: {{ itemData.city }}
             </li>
             
-            <li *ngIf="usersItem.created_at as userDt" class="list-group-item">
+            <li *ngIf="itemData.created_at as userDt" class="list-group-item">
               נוצר בתאריך:
               <p>{{ userDt | dateHebraw:"full" }}</p>
             </li>
             <li class="list-group-item">
               אודות:
               <p>
-                {{ usersItem.about }}
+                {{ itemData.about }}
               </p>
             </li>
             <li class="list-group-item">
-                סטטוס: {{ usersItem.confirmed? "מאושר" : "ממתין" }}
+                סטטוס: {{ itemData.confirmed? "מאושר" : "ממתין" }}
               </li>
           </ul>
         </div>

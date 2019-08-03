@@ -3,8 +3,9 @@ import { Router, RoutesRecognized, ActivatedRoute, Data, ParamMap } from '@angul
 import { map, filter, tap } from 'rxjs/operators';
 import { HallType } from '../../customers/hall-type';
 import { Observable, of, Subscription } from 'rxjs';
-import { ResourcesService } from 'src/app/services/resources/resources.service';
-declare var $;
+import { HttpService } from 'src/app/services/http-service/http.service';
+
+declare var $: any;
 @Component({
   selector: 'app-customers',
   templateUrl: './customers.component.html',
@@ -19,7 +20,14 @@ export class CustomersComponent implements OnInit, OnDestroy {
   showPath: boolean;
   urlUnsubscribe: Subscription;
   hallsProps: Observable<HallType[]> | boolean;
-  customerMessage: {};
+  
+  customerMessage: {} = {
+    id:'contact_customer', 
+    modalSize: "modal-lg", 
+    nameTo: false, 
+    emailTo: false,
+    title: 'שלח הודעה'
+  };
 
   private address: string;
   private allawAddress = [
@@ -28,7 +36,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
     "transportation", "app/transportation", , "printing", "app/printing", , "fireworks", "app/fireworks"
   ];
 
-  constructor(private router: Router, private route: ActivatedRoute) { }
+  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService) { }
 
   ngOnInit() {
 
@@ -46,9 +54,14 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
   contactModel(paramCustomer) {
     console.log(paramCustomer);
-    this.customerMessage = paramCustomer;
-    $('#customerMsgs').modal();
-  }
+    this.http.requestUrl = location.pathname;
+    this.customerMessage = {
+      id:'contact_customer', 
+      modalSize: "modal-lg", 
+      nameTo: paramCustomer.company, 
+      emailTo: paramCustomer.email, 
+      title: 'שלח הודעה'};
+  };
 
   private getCustomerResources(url) {
     
@@ -58,7 +71,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
         let customerData = data['customers']? data['customers']: false;
         let addr = this.allawAddress.find(item => { return item == url; });
         this.address = addr;
-        console.log(data);
+        // console.log(data);
         // console.log(addr);
 
         this.hallsProps = customerData && customerData[addr] ? of(customerData[addr]) : false;

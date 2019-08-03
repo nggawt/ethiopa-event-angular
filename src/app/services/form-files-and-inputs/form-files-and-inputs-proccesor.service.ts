@@ -287,15 +287,13 @@ export class FormFilesAndInputsProccesorService {
         });
       });
     } else {
-      isValid = false;//if (this.method == "post") isValid = false;
+      if (this.method == "post") isValid = false;
     }
     if (Object.keys(inputs).length) fData.set('formInputs', JSON.stringify(inputs));
     if (fDel) fData.set('filesToDelete', JSON.stringify(fDel));
-
+    
     return isValid ? fData : false;
   }
-
-
 
   selectedFiles(event, elemTarget) {
 

@@ -7,21 +7,21 @@
       </div>
       <div class="col">
         <div class="card-body">
-          <h5 class="card-title"> {{ adminItem.name }}</h5>
+          <h5 class="card-title"> {{ itemData.name }}</h5>
           <ul class="list-group p-0">
             <li class="list-group-item">
-              שם: {{ adminItem.name }}
+              שם: {{ itemData.name }}
             </li>
             <li class="list-group-item">
-              אימייל: {{ adminItem.email }}
+              אימייל: {{ itemData.email }}
             </li>
-            <li *ngIf="adminItem.created_at as userDt" class="list-group-item">
+            <li *ngIf="itemData.created_at as userDt" class="list-group-item">
               נוצר בתאריך:
               <p>{{ userDt | dateHebraw:"full" }}</p>
             </li>
             <li class="list-group-item">
               הרשאה:
-                {{ adminItem.authority?.slug }}
+                {{ itemData.authority?.slug }}
             </li>
           </ul>
         </div>

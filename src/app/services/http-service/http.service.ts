@@ -26,9 +26,13 @@ export class HttpService {
   public allowLogIn = new BehaviorSubject(false);
 
   public intendedUri: string;
-  public requestUrl: string;
+  public requestUrl: string | boolean;
   public loginTo: string;
   public sendTo: string;
+
+  public outRequests = {
+    toatl: 0
+  }
 
   public authUser: User;
   private baseUrl: string = "http://ethio:8080/api";
@@ -38,13 +42,28 @@ export class HttpService {
 
   constructor(private http: HttpClient, private jwt: JwtHelperService) {
 
-      if(this.isAuth()) this.userPromise();
-      let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
-      console.log(decoded);
-    }
+    if (this.isAuth()) this.userPromise();
+    let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
+    console.log(decoded);
+    // this.getData('customers').subscribe(item => console.log(item));
+    // this.logNumRequsts();
+  }
 
-  isExpiredToken(){
+  isExpiredToken() {
     return this.jwt.isTokenExpired(this.jwt.tokenGetter());
+  }
+
+  protected logNumRequsts(){
+
+    let timeOut = setTimeout(() => {
+      console.log(this.outRequests);
+      clearTimeout(timeOut);
+    }, 7000);
+  }
+
+  protected setOutRequests(url) {
+    this.outRequests.toatl++;
+    this.outRequests[url] = (this.outRequests[url] && this.outRequests[url] > 0) ? this.outRequests[url] = (this.outRequests[url] + 1) : this.outRequests[url] = 1;
   }
 
   public logIn(credential, path?) {
@@ -56,12 +75,13 @@ export class HttpService {
       .set('email', credential['email'])
       .set('password', credential['password']);
     // const jwt = new JwtHelperService()
+    this.setOutRequests(theUrl);
     return this.http.post(theUrl, body, this.headersOpt)
       .pipe(
         first(),
         tap(res => {
           console.log(res);
-          
+
           if (res && res['access_token']) {
             this.allowLogIn.next(false);
             this.setUserProps(res['user']);
@@ -72,12 +92,14 @@ export class HttpService {
   }
 
   public sendResetPassword(credential) {
+
     //password/email  
     const theUrl = "http://ethio:8080/api/password/email";
     let body = new HttpParams()
       .set('name', credential['userName'])
       .set('email', credential['logInEmail']);
 
+    this.setOutRequests(theUrl);
     return this.http.post(theUrl, body, this.headersOpt)
       .pipe(
         first(),
@@ -91,6 +113,7 @@ export class HttpService {
   }
 
   public resetPassword(credential) {
+
     //password/email  
     const theUrl = "http://ethio:8080/api/password/reset";
     let body = new HttpParams()
@@ -99,6 +122,7 @@ export class HttpService {
       .set('password_confirmation', credential['password_conf'])
       .set('token', credential['token']);
 
+    this.setOutRequests(theUrl);
     return this.http.post(theUrl, body, this.headersOpt)
       .pipe(
         first(),
@@ -112,7 +136,8 @@ export class HttpService {
 
   store(theUrl, body) {
 
-    return this.http.post(theUrl, body, this.getHttpOpt())
+    this.setOutRequests(theUrl);
+    return this.http.post(theUrl, (body || {}), this.getHttpOpt())
       .pipe(
         tap(user => {
           if (user['access_token']) {
@@ -122,23 +147,26 @@ export class HttpService {
         }));
   }
 
-  postData(postUrl, body, opt?) {
-    postUrl = postUrl ? this.baseUrl + "/" + postUrl: false;
+  postData(postUrl, body?, opt?) {
+
+    postUrl = postUrl ? this.baseUrl + "/" + postUrl : false;
     if (!opt) opt = this.getHttpOpt();
-    return this.http.post(postUrl, body, opt);
+    this.setOutRequests(postUrl);
+    return this.http.post(postUrl, (body || {}), opt);
   }
 
   getData(url?, opt?) {
 
     url = url ? this.baseUrl + "/" + url : "http://ethio:8080/api/events";
-    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()) : this.http.get(url);
+    //this.setOutRequests(url);
+    return !this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap(item => this.setOutRequests(url)), first()) : this.http.get(url).pipe(tap(item => this.setOutRequests(url)), first());
   }
 
   public logOut(urlParams?) {
-
     urlParams = urlParams ? this.baseUrl + "/" + urlParams : this.baseUrl + "/logout";
     let token = new HttpParams().set('token', this.apiKey);
     console.log('token', this.apiKey);
+
 
     return this.http.post(urlParams, token, this.getHttpOpt())
       .pipe(
@@ -153,30 +181,29 @@ export class HttpService {
 
   userPromise(path?): Promise<User | any> {
     console.log("userPromise");
-    
-    path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
-    const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/me";
 
+    path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
+    const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/auth-user";//me
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
 
     // console.log('url: ', theUrl, "token: ", this.apiKey);
-
+    this.setOutRequests(theUrl);
     return this.http.post(theUrl, token, this.headersOpt)
       .pipe(
         first(),
         tap((resp) => {
           console.log('url: ', theUrl, ' response: ', resp);
 
-          let user: User = resp['status'] && resp["user"] ? resp["user"] : resp['id']? resp:false ;
+          let user: User = resp['status'] && resp["user"] ? resp["user"] : resp['id'] ? resp : false;
           if (user) this.setUserProps(user);
 
           // if (user) {
-            // this.setUserProps(user);
-            // if(resp['access_token']) this.setApiKey(resp);
+          // this.setUserProps(user);
+          // if(resp['access_token']) this.setApiKey(resp);
           // } else {
 
-            // this.removePropsUser();
-            // this.removeApiKey();
+          // this.removePropsUser();
+          // this.removeApiKey();
           // }
         })).toPromise().catch(this.handleError);
   }
@@ -199,20 +226,20 @@ export class HttpService {
 
   isAuth() {
     let exp = this.isExpiredToken();
-    if(exp) {
+    if (exp) {
       this.removePropsUser();
-      if(this.jwt.tokenGetter()) this.removeApiKey();
+      if (this.jwt.tokenGetter()) this.removeApiKey();
       return !exp;
     }
-    return ! exp;
+    return !exp;
   }
 
   setApiKey(user) {
-    if(user['authority']) window.localStorage.setItem("admin_key", "true");
-    if(user['access_token']){
+    if (user['authority']) window.localStorage.setItem("admin_key", "true");
+    if (user['access_token']) {
       this.apiKey = user['access_token'];
       window.localStorage.setItem('token', this.apiKey);
-    } 
+    }
   }
 
   removeApiKey() {

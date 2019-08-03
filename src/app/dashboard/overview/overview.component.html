@@ -1,56 +1,35 @@
-<div *ngIf="(itemResource$ | async ) as items" class="col-12 text-right">
+<ng-template add-component></ng-template>
+
+<div *ngIf="itemResource" class="col-12 text-right">
   <ng-container
     [ngTemplateOutlet]="(itemType == 'customers')? cleint:(itemType == 'blog')? blog: (itemType == 'events')? events:(itemType == 'users')? users: (itemType == 'admins')? admins: default">
   </ng-container>
+
+  <!-- <ng-template add-component></ng-template> -->
   <!-- <ng-container [ngTemplateOutlet]="cleint"></ng-container> -->
   <!-- </div> -->
-  <div class="border rounded my-3 p-3">
+  <div *ngIf="(itemResource.customer || itemResource) as resource" class="border rounded my-3 p-3">
 
     <div class="clearfix">
       <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
-      <span class="border border-success rounded p-1 costum-btn costum-btn-success" routerLink="../">
-        <i class="material-icons"> chevron_right </i>
-        <i class="mt-icons"> חזור </i>
-      </span>
+      <a [queryParams]="resource.businessType? {name:  resource.businessType}: undefined" routerLink="../">
+        <span class="border border-success rounded p-1 costum-btn costum-btn-success">
 
-      <span class="border border-warning rounded mr-1 p-1 costum-btn costum-btn-warning" routerLink="edit">
-        <i class="mt-icons"> ערוך </i>
-        <i class="material-icons"> chevron_left </i>
-      </span>
+          <i class="material-icons"> chevron_right </i>
+          <i class="mt-icons"> חזור </i>
+        </span>
+      </a>
 
-      <span class="border border-danger rounded mr-1 p-1 costum-btn costum-btn-danger" routerLink="edit">
+      <a  *ngIf="comp != 'edit'" [queryParams]="resource.businessType? {name:  resource.businessType}: undefined" [routerLink]="'edit'">
+        <span class="border border-warning rounded mr-1 p-1 costum-btn costum-btn-warning">
+          <i class="mt-icons"> ערוך </i>
+          <i class="material-icons"> chevron_left </i>
+        </span>
+      </a>
+
+      <span *ngIf="comp == 'edit'" class="border border-danger rounded mr-1 p-1 costum-btn costum-btn-danger" (click)="destroy(resource)">
         <i class="mt-icons">מחק</i>
         <i class="material-icons"> delete_forever </i>
       </span>
     </div>
   </div>
-
-  <ng-template #default>
-    <div>default</div>
-  </ng-template>
-
-  <ng-template #cleint>
-
-    <customer-preview [customerItem]="items"></customer-preview>
-  </ng-template>
-
-  <ng-template #blog>
-
-    <post-preview [postItem]="items"></post-preview>
-  </ng-template>
-
-  <ng-template #events>
-
-    <event-preview [eventItem]="items"></event-preview>
-  </ng-template>
-
-  <ng-template #users>
-
-    <user-profile [usersItem]="items"></user-profile>
-  </ng-template>
-
-  <ng-template #admins>
-
-    <admin-profile [adminItem]="items"></admin-profile>
-  </ng-template>
-</div>

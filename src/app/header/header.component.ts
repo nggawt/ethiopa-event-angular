@@ -17,7 +17,19 @@ declare let $:any;
 export class HeaderComponent implements OnInit {
  
   private url:string;
-  msgTo;
+  eeMessage: {
+    id:string, 
+    modalSize: string, 
+    nameTo: string | boolean, 
+    emailTo: string | boolean, 
+    title: string
+  } = {
+    id:'contact_ee', 
+    modalSize: "modal-lg", 
+    nameTo: 'ethiopia-events', 
+    emailTo: false, 
+    title: 'שלח הודעה'
+  };
 
   user$: Observable<User| boolean>;
   private customersSrc: {}[];
@@ -40,20 +52,20 @@ export class HeaderComponent implements OnInit {
     
     
     this.url = decodeURIComponent(location.pathname);
-    // this.http.isAuthenticeted();
-    // this.auth = this.http.isAuthenticeted();
-    this.msgTo ={
-      name: "אתיופיה אירועים"
-    };
-    // let auth = this.http.isAuth();
-    // console.log(auth);
-    
-    
     this.user$ = this.http.userObs.pipe(filter(item => typeof item == "object"));
   }
 
   contactModel(param){
-    $('#contactModel').modal();
+    this.http.requestUrl = decodeURIComponent(location.pathname);
+    console.log(this.http.requestUrl);
+    this.eeMessage = {
+      id:'contact_ee', 
+      modalSize: "modal-lg", 
+      nameTo: 'אתיופיה אירועים', 
+      emailTo: "ethiopia-events@gmail.com", 
+      title: 'שלח הודעה'
+    };
+    // $('#forgotPassword').modal();
   }
 
   async searchItems(evt){
@@ -244,7 +256,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logIn(){
-    this.http.requestUrl = location.pathname;
+    this.http.requestUrl = decodeURIComponent(location.pathname);
     console.log(location.pathname);
     
     this.router.navigate(['/login']);
@@ -252,7 +264,9 @@ export class HeaderComponent implements OnInit {
   
   register(path){
     // $('.close').click(); 
-    this.http.requestUrl = location.pathname;
+    this.http.requestUrl = decodeURIComponent(location.pathname);
+    console.log(this.http.requestUrl);
+    
     this.router.navigate([path]);
   }
 

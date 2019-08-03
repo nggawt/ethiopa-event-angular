@@ -12,7 +12,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class AdminsViewsComponent implements OnInit {
 
-  usersType$: Observable<{}>;
+  admins: {};
   loginTemp: boolean;
 
   constructor(private rSrv: ResourcesService, private http: HttpService, private router:Router, private route: ActivatedRoute) { }
@@ -24,9 +24,8 @@ export class AdminsViewsComponent implements OnInit {
 
   initAdmins(){
     // this.rSrv.initResources('admins');
-    this.rSrv.initResources('admins').then(items => {
-      console.log(items);
-      this.usersType$ = of({admins: items})
+    this.rSrv.getResources('admins', false).then(items => {
+      this.admins = items;
     });
     
     // this.usersType$  = this.rSrv.resourcesObsever.pipe(first(item => typeof item == "object"));
@@ -44,8 +43,7 @@ export class AdminsViewsComponent implements OnInit {
   }
 
   create(path){
-    // console.log("create");
-    
+    console.log(path);
     this.http.requestUrl = location.pathname;
     this.router.navigate([path]);
   }

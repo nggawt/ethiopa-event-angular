@@ -40,7 +40,8 @@ export class CustomerCreateComponent implements OnInit {
     public formFiles: FormFilesAndInputsProccesorService) { }
 
   ngOnInit() {
-    this.itemsResources$ = this.srv.resourcesObsever.pipe(map(items => this.getUsers(items)));
+        console.log("called");
+        this.itemsResources$ = this.srv.resourcesObsever.pipe(map(items => this.getUsers(items)));
 
     this.http.isLogedIn.subscribe((isLogged) => {
 

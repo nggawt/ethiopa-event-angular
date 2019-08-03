@@ -36,11 +36,16 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.templateType = this.router['url'] == '/dashboard' ? this.default : null;
-    this.rsSrv.initResources(['users', 'customers', 'blog', 'events', 'messages'], true);
+    this.rsSrv.initResources(['users', 'customers', 'blog', 'events'], true);
     // this.rsSrv.initResources('admins');
     
     this.resources$ = this.rsSrv.resourcesObsever.pipe(first(item => typeof item == "object"));
   }
+
+  getOuterRquests(){
+    console.log(this.http.outRequests);
+  }
+
 
   setTemplateType(tempType) {
     this.templateType = tempType;
@@ -62,8 +67,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   login(path){
     // console.log(loginTemplete);
     // this.loginTemp = true;
-    this.http.requestUrl = location.pathname;
-    this.http.intendedUri = "/dashboard";
+    this.http.requestUrl = decodeURIComponent(location.pathname);
+    this.http.intendedUri = this.http.requestUrl
     this.http.loginTo = "admin-login";
 
     this.router.navigate([path]);
@@ -75,7 +80,11 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-
+  create(path){
+    this.http.requestUrl = decodeURIComponent(location.pathname);
+    console.log('url: ', path, ' location: ', this.http.requestUrl);
+    this.router.navigate([path]);
+  }
 
   ngOnDestroy() {
     /* this.usersSubsription.unsubscribe();
@@ -86,9 +95,6 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     // this.resources$.unsubscribe();
   }
 
-  create(path){
-    this.http.requestUrl = location.pathname;
-    this.router.navigate([path]);
-  }
+
 
 }

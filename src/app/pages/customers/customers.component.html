@@ -31,9 +31,11 @@
                     <h4 class="bg-succes text-success">
                         {{ hallsProp.customer.title }}
                     </h4>
+                    
                     <p class="card-text p-1 d-block">
                         {{ (hallsProp.customer.descriptions.length > 90)? hallsProp.customer.descriptions.replace(hallsProp.customer.descriptions.slice(hallsProp.customer.descriptions.slice(0, 120).lastIndexOf(',')), '...'):(hallsProp.customer.descriptions) }}
-                    </p>
+                    </p> 
+                
                     <a (click)="onSelectedLink(hallsProp.customer)" routerLink="{{ hallsProp.customer.id }}/about"
                         class="text-info font-weight-bold">
                         המשך לקרוא
@@ -78,14 +80,9 @@
     </div>
 </div>
 
-<div id="customerMsgs" class="modal fade container" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg text-right">
 
-        <div class="modal-content border col-sm-10 mx-auto">
-            <app-contact *ngIf="customerMessage" [sendMessageTo]="customerMessage"></app-contact>
-        </div>
-    </div>
-</div>
+<app-contact [mailProps]="customerMessage"></app-contact>
+        
 <!--Contact Modal -->
 <!-- form model -->
 <!-- 

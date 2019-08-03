@@ -1,65 +1,68 @@
-<div *ngIf="sendMessageTo" class="p-3">
-    <h2 class="text-right text-success">
-            {{ sendMessageTo.company? sendMessageTo.company: sendMessageTo.name? sendMessageTo.name:sendMessageTo }}
-        
-    </h2>
-    <h1 class="h4">
-            צור קשר
-    </h1>
-    <p>
-        לקוחות יקרים, מלאו את הפרטים בשדות הבאים ונחזור אליכם תוך זמן קצר
-        <span class="text-danger d-block">
+<model-template *ngIf="mailProps" [mailProps]="mailProps">
+    <form class="form-row p-3" [formGroup]="formConcat" (ngSubmit)="onSubmit()">
 
-            צוות: 
-            {{ sendMessageTo.company? sendMessageTo.company: sendMessageTo.name? sendMessageTo.name:sendMessageTo }}
-        </span>
-    </p>
-    <form [formGroup]="formConcat" class="p-3" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-            <input type="text" formControlName="name" class="form-control" id="name" placeholder="השם שלך" >
-            <!-- [ngClass]="getStl(formConcat.controls['name'])" -->
+        <div class="form-group col-md-6">
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <input type="text" formControlName="name" class="w-100 bd-highlightpx-1" id="name"
+                    placeholder="השם שלך">
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
         </div>
-        <div class="form-group">
-            <input type="city" formControlName="city" class="form-control" id="city" placeholder="עיר מגורים">
-        </div>
-        <div class="form-group">
-
-            <select id="rigion" formControlName="area" class="form-control">
-                <option selected>אזור</option>
-                <option value="north">צפון</option>
-                <option value="center">מרכז והשפלה</option>
-                <option value="south">דרום</option>
-            </select>
+        <div class="form-group col-md-6">
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <input class="w-100 bd-highlightpx-1" type="text" formControlName="city" id="city"
+                    placeholder="עיר מגורים">
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
         </div>
 
-        <div class="form-group">
-            <input type="tel" formControlName="phone" class="form-control" id="phone" placeholder="טלפון/פלאפון">
+        <div class="form-group col-md-6">
+
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <select id="rigion" formControlName="area" class="w-100 bd-highlightpx-1">
+                    <option selected>אזור</option>
+                    <option value="north">צפון</option>
+                    <option value="center">מרכז והשפלה</option>
+                    <option value="south">דרום</option>
+                </select>
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
+
         </div>
-        <div class="form-group">
-            <input type="email" formControlName="email" class="form-control" id="email" placeholder="אימייל">
+
+        <div class="form-group col-md-6">
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <input type="tel" formControlName="phone" class="w-100 bd-highlightpx-1" id="phone"
+                    [pattern]="phonePatteren" placeholder="טלפון/פלאפון">
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
+
         </div>
-        <div class="form-group">
-            <input type="text" formControlName="subject" class="form-control" id="input" placeholder="נושא הפניה">
+        <div class="form-group col-md-6">
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <input type="email" formControlName="email" class="w-100 bd-highlightpx-1" id="email"
+                    [pattern]="emailPatteren" placeholder="אימייל">
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
+
         </div>
-        <div class="form-group">
-            <textarea formControlName="message" class="form-control" id="textarea" rows="3"
-                placeholder="הוסף הודעה"></textarea>
+        <div class="form-group col-md-6">
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <input type="text" formControlName="subject" class="w-100 bd-highlightpx-1" id="input"
+                    placeholder="נושא הפניה">
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
+
+        </div>
+        <div class="form-group col-md-12">
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <textarea formControlName="message" class="w-100 bd-highlightpx-1" id="textarea" rows="8"
+                    placeholder="הוסף הודעה">
+            </textarea>
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
         </div>
         <button type="submit" class="btn btn-success">שלח</button>
     </form>
 
-    <div *ngIf="((messages['messages'] && messages['messages']['errors']) || messages['errors'] || messages['success']) as messages" class="col-sm-9 col-lg-10 float-left">
-
-        <div *ngFor="let msg of messages | keyvalue; let idx = index" class="row">
-
-            <p *ngFor="let item of messages[msg.key] | keyvalue; let idxKey = index" class="col-6 p-1 mb-1 bg-light">
-                <b [ngClass]="{'text-danger': item.value.type == 'errors',
-                                'text-success': item.value.type == 'success'}" (click)="logItem(item)">
-                    *
-                    {{ msg.key }}
-                </b>
-                : {{ item.value['message'] }}
-            </p>
-        </div>
-    </div>
-</div>
+</model-template>

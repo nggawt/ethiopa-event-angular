@@ -155,8 +155,8 @@ export class MessagesService {
     let msgsKeys = succesKeys.concat(errKeys);
 
     let messages: any = {};
+    
     msgsKeys.forEach((msgKey) => {
-
       let messgaeErr = msgsErrors[msgKey];
       let messgae = msgsSuccess[msgKey];
 
@@ -168,9 +168,7 @@ export class MessagesService {
 
         (msgs && !messages[msgKey]) ? messages[msgKey] = msgs[msgKey] : [...messages[msgKey], ...msgs[msgKey]];
       }
-
     });
-
     return messages;
   }
 

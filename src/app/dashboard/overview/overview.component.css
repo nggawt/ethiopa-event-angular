@@ -22,3 +22,7 @@
     background: #F02B2B;
     color: white;
 }
+
+a:hover {
+    text-decoration: none !important;
+}

@@ -24,28 +24,15 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
   passwordPatt: string = '^\\w{6,}$';
   phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
 
-  customer: {} | boolean;
   editeCustomer: FormGroup;
   customerSubsripion: Subscription;
-  @Input() customerItem: {};
+  @Input() itemData: {};
   formMethod: string = "update";
   savedId: { prevElemId: string | boolean } = { ['prevElemId']: false };
   messages: {};
+  quill: {};
 
-  private FormRolse: Object = {
-    company: "required|string|min:3|max:30",
-    businessType: "required|string|min:3|max:30",
-    title: "required|string|min:3|max:30",
-    contact: "required|string|min:3|max:30",
-    tel: "required|string|min:3|max:30",
-    email: "required|string|min:3|max:30",
-    address: "required|string|min:3|max:30",
-    descriptions: "required|string|min:3|max:30",
-    deals: "required|string|min:3|max:30",
-    loggo: "required|file_type|min:3|max:30",
-    video: "required|file_type|min:3|max:30",
-    images: "required|file_type|min:3|max:30",
-  };
+
 
   toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -88,8 +75,23 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     private validator: ValidationService) { }
 
   ngOnInit() {
-    let itemType = this.route.snapshot.data['itemType'];
 
+    
+    console.log(this.itemData);
+    
+    if (this.itemData) {
+      this.formInt(this.itemData);
+      this.formFiles.initApp(this.itemData, this.editeCustomer, 'update');
+    } 
+    
+    this.localStorageTest();
+
+    /* this.httpCli.get('https://api.ipify.org?format=json')
+      .pipe(tap(res => console.log(res)))
+      .toPromise().catch(this.handleError); */
+  }
+
+  localStorageTest(){
     let serverErr = localStorage.getItem('errors_server');
     let serverSuccess = localStorage.getItem('success_server');
 
@@ -101,44 +103,11 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
       console.log(JSON.parse(serverSuccess));
       localStorage.removeItem('success_server')
     }
-    console.log(this.customerItem);
-    
-    if (this.customerItem) {
-      this.formInt(this.customerItem);
-      this.formFiles.initApp(this.customerItem, this.editeCustomer, 'update');
-    } else {
-    }
-    /* let routeName = this.route.queryParamMap.subscribe(param => console.log(param));
-
-    this.route.queryParamMap.subscribe((params:ParamMap) => {
-      console.log("customer edit", params);
-      // params = params.;
-      //this.customerSubsripion =
-      this.srv.getItemResource(itemType, +params.get('id'), params.get('name'), false)
-        .then(customer => {
-          console.log(customer);
-
-          if (customer) {
-            this.formInt(customer);
-            this.customer = customer;
-            this.formFiles.initApp(customer, this.editeCustomer, 'update');
-          } else {
-            this.customer = false;
-          }
-
-        });
-    }); */
-
-    /* this.httpCli.get('https://api.ipify.org?format=json')
-      .pipe(tap(res => console.log(res)))
-      .toPromise().catch(this.handleError); */
   }
-
   private handleError(error: HttpErrorResponse) {
     //Log error in the browser console
     console.error('observable error: ', error);
 
-    // return Observable.throw(error);
   }
   /* 
     updateChange(evt, el){
@@ -151,7 +120,8 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
   private formInt(items) {
 
     let customer = items['customer'];
-
+    console.log(customer);
+    
     /*
     let formItems = {};
       Object.keys(customer).forEach(item => {
@@ -170,8 +140,9 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
       'email': new FormControl(customer.email, [Validators.required, this.unchange.bind(this, customer.email)]),
       'address': new FormControl(customer.address, [Validators.required, this.unchange.bind(this, customer.address)]),
       'descriptions': new FormControl(customer.descriptions, [Validators.required, this.unchange.bind(this, customer.descriptions)]),
+      'content': new FormControl(customer.content, [Validators.required, this.unchange.bind(this, customer.content)]),
       'deals': new FormControl(customer.deals, [Validators.required, this.unchange.bind(this, customer.deals)]),
-      'confirmed': new FormControl(null, [Validators.required]),
+      'confirmed': new FormControl(customer.confirmed, [Validators.required, this.unchange.bind(this, customer.confirmed)]),
       'loggo': new FormArray([], [this.valLen.bind(this, 'loggo'), this.binValidators.bind(this)]),
       'video': new FormArray([], [this.valLen.bind(this, 'video'), this.binValidators.bind(this)]),
       'images': new FormArray([], [this.valLen.bind(this, 'images'), this.binValidators.bind(this)]),
@@ -179,12 +150,11 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
   }
 
   unchange(iteVal: string, control: FormGroup) {
-    return (control.value == iteVal) ? { ['unchane']: true } : null;
+    return (control.value === iteVal) ? { ['unchane']: true } : null;
   }
 
   public getLengthCustomValidator(value: string) {
     // console.log(value);
-
     return new CustomValidator(
       () => value != "buzzi",
       'buzzi'
@@ -248,18 +218,19 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
   }
 
   default(formItem: FormGroup, itemId) {
-    (this.galItems().indexOf(itemId) >= 0) ? this.formFiles.galDefault(itemId) : formItem.setValue(this.customer['customer'][itemId]);
+    (this.galItems().indexOf(itemId) >= 0) ? this.formFiles.galDefault(itemId) : formItem.setValue(this.itemData['customer'][itemId]);
   }
 
   configEditor(evt) {
     console.log(evt);
     // evt.theme.modules.toobar
+    this.quill = evt;
     evt.format('direction', 'rtl');
     evt.format('align', 'right', 'user');
     evt.format('size', 'normal', 'user');
     evt.format('header', 3, 'user');
 
-    var toolbar = evt.getModule('toolbar');
+    // var toolbar = evt.getModule('toolbar');
     // console.log(toolbar);
 
   }
@@ -280,6 +251,14 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     return (<FormArray>this.editeCustomer.get(keyName)).controls.filter(item => item.valid).map(item => item.value);
   }
 
+  protected setContent(formItem, itemId){
+    let text = this.quill['getText'](0, 70);
+    return {
+      [itemId]: formItem.value,
+      ['descriptions']: text
+    };
+  }
+
   update(formItem: FormGroup, itemId) {
 
     let valItems: {} = { gallery: {}, inputs: {} }, fDel;
@@ -289,10 +268,10 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
       valItems = { ['gallery']: { [itemId]: this.mapValidated(itemId) } };
       fDel = { [itemId]: this.formFiles.filesDl[itemId] };
     } else {/* input items */
-      valItems['inputs'][itemId] = formItem.value;
+      valItems['inputs'] = itemId == 'content'? this.setContent(formItem, itemId): {[itemId]: formItem.value};
     }
-    console.log(valItems, fDel);
-
+    console.log(itemId, valItems);
+    
     /* get builded form data */
     let fData = this.formFiles.buildSendingFiles(valItems, fDel, this.editeCustomer.value);
     /* send files to server */
@@ -322,7 +301,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
   send(body, method?: string) {
 
-    let url = "customers/" + this.customer['customer'].id + "? _method=" + (method || "PUT");
+    let url = "customers/" + this.itemData['customer'].id + "? _method=" + (method || "PUT");
     //return false;
     this.http.postData(url, body)
       .subscribe(evt => {

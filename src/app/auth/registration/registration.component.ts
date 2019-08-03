@@ -15,7 +15,14 @@ declare let $: any;
 })
 export class RegistrationComponent implements OnInit {
 
-  logInform: FormGroup;
+  regiter: FormGroup;
+
+  params = {
+    id: 'rgister',
+    modelSize: 'modal-lg',
+    title: "הרשמה"
+  };
+
   phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
@@ -28,24 +35,24 @@ export class RegistrationComponent implements OnInit {
         (logged) ? this.router.navigate(['/']) : this.formInit();
       }
     );
-
-
   }
 
   onSubmit() {
-    if (this.logInform.valid) {
+    console.log("register");
+    
+    if (this.regiter.valid) {
       /****** handel form inputs *****/
-      let formInputes = this.logInform;
+      let formInputes = this.regiter;
       let details = formInputes.value;
 
-      /* let formInputes = this.logInform;
+      /* let formInputes = this.regiter;
       let controls = formInputes.controls;
       
       
       let items = this.valForm.validate(controls, formInputes.value);
       let success = items['status'] ? items['success'] : false; */
       const theUrl = "http://ethio:8080/api/users";
-      if (this.logInform.valid) {
+      if (this.regiter.valid) {
         const body = new HttpParams()
           .set('name', details['name'])
           .set('email', details['email'])
@@ -74,10 +81,10 @@ export class RegistrationComponent implements OnInit {
     }
   }
 
-  get f() { return this.logInform.controls; }
+  get f() { return this.regiter.controls; }
 
   private formInit() {
-    this.logInform = new FormGroup({
+    this.regiter = new FormGroup({
       "name": new FormControl(null),
       'email': new FormControl(null),
       'password': new FormControl(null),
@@ -88,14 +95,7 @@ export class RegistrationComponent implements OnInit {
       'about': new FormControl(null),
     });
 
-    $('#forgotPassword').modal();
-    let thiz = this;
-    $(document).on('hidden.bs.modal', '.modal', function () {
-
-      /// TODO EVENTS
-      console.log(thiz.http.requestUrl);
-      thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) : thiz.router.navigate(['../'], { relativeTo: this.route });
-    });
+    
     /* 
          let md = $('#forgotPassword').modal();
         let thiz = this;

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
@@ -14,7 +14,14 @@ declare var $:any;
 
 export class PostCreateComponent implements OnInit {
 
-  userCreate: FormGroup;
+  postCreate: FormGroup;
+  mdProps = {
+    id: 'create_post',
+    modalSize: "modal-lg",
+    name: "פוסט",
+    emailTo: "",
+    title: 'צור פוסט'
+  };
 
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
@@ -38,20 +45,20 @@ export class PostCreateComponent implements OnInit {
 
   onSubmit(){
     console.log("create user");
-    if(this.userCreate.valid){
+    if(this.postCreate.valid){
       /****** handel form inputs *****/
-      let formInputes = this.userCreate;
+      let formInputes = this.postCreate;
       let details = formInputes.value;
-      console.log(this.userCreate.valid);
+      console.log(this.postCreate.valid);
       
-      /* let formInputes = this.userCreate;
+      /* let formInputes = this.postCreate;
       let controls = formInputes.controls;
       
       
       let items = this.valForm.validate(controls, formInputes.value);
       let success = items['status'] ? items['success'] : false; */
       const theUrl = "http://ethio:8080/api/users";
-      if(this.userCreate.valid){
+      if(this.postCreate.valid){
         const body = new HttpParams()
           .set('name', details['name'])
           .set('email', details['email'])
@@ -82,25 +89,19 @@ export class PostCreateComponent implements OnInit {
     }
   }
 
-  get f() { return this.userCreate.controls; }
+  get f() { return this.postCreate.controls; }
 
   private formInit(){
-    this.userCreate = new FormGroup({
-      "name": new FormControl(null),
-      'email': new FormControl(null),
-      'password': new FormControl(null),
-      'passwordConfirm': new FormControl(null),
-      "city": new FormControl(null),
-      'area': new FormControl(null),
-      'tel': new FormControl(null),
-      'about': new FormControl(null),
+    this.postCreate = new FormGroup({
+      title: new FormControl(null, [Validators.required]),
+      body: new FormControl(null, [Validators.required]),
     });
 
-    $('#forgotPassword').modal();
+    /* $('#forgotPassword').modal();
     let thiz = this;
     $(document).on('hidden.bs.modal','.modal', function () {
       /// TODO EVENTS
       thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate(['../'], {relativeTo: this.route});
-    });
+    }); */
   }
 }

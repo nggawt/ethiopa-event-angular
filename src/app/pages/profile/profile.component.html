@@ -86,7 +86,7 @@
                                 <small>{{user.customer['title']}}</small></li>
                             <li><span class="font-weight-bold">סוג העסק</span> :{{ user.customer['businessType'] }}</li>
                             <li><span class="font-weight-bold">איש קשר</span> :{{ user.customer['contact'] }}</li>
-                            <li><span class="font-weight-bold"> תיאור</span> :{{ (user.customer['descriptions'].length > 150)? user.customer['descriptions'].replace(user.customer['descriptions'].slice(user.customer['descriptions'].slice(0, 150).lastIndexOf(',')),
+                            <li><span class="font-weight-bold"> תיאור</span> :{{ (user.customer['descriptions']?.length > 150)? user.customer['descriptions'].replace(user.customer['descriptions'].slice(user.customer['descriptions'].slice(0, 150).lastIndexOf(',')),
                                 '...'): user.customer['descriptions'] }}
                             </li>
                             <!-- (user.customer['descriptions'].length > 120)? (user.customer['descriptions'] | slice:0:120) + '...': user.customer['descriptions']  -->

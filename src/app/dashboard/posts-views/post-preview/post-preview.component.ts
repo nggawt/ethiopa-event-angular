@@ -1,13 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'post-preview',
+  selector: 'app-post-preview',
   templateUrl: './post-preview.component.html',
   styleUrls: ['./post-preview.component.css']
 })
 export class PostPreviewComponent implements OnInit {
 
-  @Input() postItem: {};
+  @Input() itemData: {};
   constructor() { }
 
   ngOnInit() {

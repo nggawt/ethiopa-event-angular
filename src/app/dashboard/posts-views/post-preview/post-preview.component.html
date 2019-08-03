@@ -7,23 +7,23 @@
       </div>
       <div class="col">
         <div class="card-body">
-          <h5 class="card-title">{{ postItem.title }}</h5>
+          <h5 class="card-title">{{ itemData.title }}</h5>
           <ul class="list-group p-0">
             <li class="list-group-item">
-              שם: {{ postItem.name }}
+              שם: {{ itemData.name }}
             </li>
             <li class="list-group-item">
               פורסם בתאריך:
-              <p>{{ postItem.date | dateHebraw:"full" }}</p>
+              <p>{{ itemData.date | dateHebraw:"full" }}</p>
             </li>
             <li class="list-group-item">
               אודות:
               <p>
-                {{ postItem.body }}
+                {{ itemData.body }}
               </p>
             </li>
             <li class="list-group-item">
-              סטטוס: {{ postItem.confirmed? "מאושר" : "ממתין" }}
+              סטטוס: {{ itemData.confirmed? "מאושר" : "ממתין" }}
             </li>
           </ul>
         </div>

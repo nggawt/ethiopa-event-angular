@@ -1,2 +1,69 @@
+<div class="accordion" id="parent_accord">
+        
+        <div *ngIf="message" class="row no-gutters border mb-1">
+            <div class="col-md-2  bg-light p-3 rounded">
+                <!-- <img src="..." class="card-img" alt="..."> -->
+                <h5> {{ message.name }} </h5>
+                <!-- <div class="border rounded-circle p-2" style="height: 75px; width:75px;">
+                 </div> -->
+                <p class="card-text">
+                    <small class="text-muted">
+                        {{ message.date | dateHebraw:"full" }}
+                    </small>
+                </p>
+            </div>
+            <div *ngIf="(message.name+message.id) | rmWhiteSpace as collapseId" class="col-md-10 p-3 rounded">
 
-<ng-content></ng-content>
+                <!-- card DIV Removed-->
+                <div [id]="'headingOne'+collapseId" class="pr-2">
+                    <!-- card-title -->
+                    <h5 class="mb-0">
+                        <a data-toggle="collapse" [href]="'#'+collapseId" role="button" class="dropdown-toggle"
+                            [attr.aria-expanded]="(idx + 1) == 1" [attr.aria-controls]="collapseId">
+                            <!-- {{ (message.title.split(' ').length > 3)? message.title.slice(0, message.title.indexOf(" "+message.title.split(' ')[4])) :message.title  }} -->
+                            {{ message.title }}
+                        </a>
+                        <small class="text-muted">
+                            {{ (message.body.split(' ').length > 15)? message.body.slice(0, message.body.indexOf(" "+message.body.split(' ')[16])) +'...' :message.body  }}
+                        </small>
+                    </h5>
+                    <small class="text-muted">
+                        {{ message.date | dateHebraw:"full" }}
+                    </small>
+
+                </div>
+                <div [ngClass]="(idx + 1) == 1? 'collapse mb-0 show': 'collapse mb-0'" [id]="collapseId"
+                    [attr.data-parent]="'#parent_accord'" [attr.aria-labelledby]="'headingOne'+collapseId">
+                    <div class="card-body">
+                        <p class="card-title">{{ message.body }}</p>
+                        <p class="card-text">
+                            לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית מוסן מנת. להאמית קרהשק סכעיט
+                            דז מא, מנכם למטכין נשואי מנורך. קולהע צופעט למרקוח איבן איף, ברומץ כלרשט
+                            מיחוצים. קלאצי צש בליא, מנסוטו צמלח לביקו ננבי, צמוקו בלוקריה שיצמה ברורק. קולהע
+                            צופעט למרקוח איבן איף, ברומץ כלרשט מיחוצים. קלאצי סחטיר בלובק. תצטנפל בלינדו
+                            למרקל אס לכימפו, דול, צוט ומעיוט - לפתיעם ברשג - ולתיעם גדדיש. קוויז דומור
+                            ליאמום בלינך רוגצה. לפמעט
+                        </p>
+                        <ng-content></ng-content>
+                    </div>
+                </div>
+
+                <div class="collapse mb-0" [id]="collapseId+'replay'" [attr.aria-labelledby]="'headingOne'+collapseId"
+                    [attr.data-parent]="'#parent_accord'">
+                    <div class="card-body clearfix">
+                        <textarea name="replay" class="form-control" id="replay" cols="30" rows="3" placeholder="השב.."
+                            #msg></textarea>
+
+                        <a data-toggle="collapse" [href]="'#'+collapseId" role="button"
+                            class="badge badge-primary badge-pill page-link mt-2" [attr.aria-expanded]="message.id == 1"
+                            [attr.aria-controls]="collapseId">
+                            חזור
+                            <i class="fa fa-caret-up"></i>
+                        </a>
+                        <a (click)="replay(msg, message)" class="btn btn-outline-success btn-sm float-left mt-2">שלח</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- </div> -->
+    <!-- <ng-content ></ng-content> -->

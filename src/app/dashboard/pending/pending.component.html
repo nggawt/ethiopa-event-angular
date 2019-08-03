@@ -9,28 +9,32 @@
 
     <div *ngFor="let list of lists | paginate: itemsLists.config" class="col-sm-12 col-md-6 col-xl-4">
 
-      <div class="p-1">
+      <div *ngIf="(list.customer || list) as itemList" class="p-1">
         <div class="border rounded p-3">
           <h3 class="h6">
-            {{ list.customer? list.customer.company: list.name }}
+            {{ itemList.company? itemList.company: itemList.name }}
             <br />
-            <small *ngIf="list.date || list.customer.created_at as dt" class="text-muted">
+            <small *ngIf="itemList.date || itemList.created_at as dt" class="text-muted">
               {{ dt | dateHebraw:"full" }}
             </small>
           </h3>
           <p>
-            {{ list.customer? list.customer.title: list.title? list.title: list.about? list.about:list.description? list.description:'' }}
+            {{ itemList.title? itemList.title: itemList.about? itemList.about:itemList.description? list.description:'' }}
           </p>
           <a class="badge badge-primary badge-pill page-link"
-            [routerLink]="list.customer? list.customer.id: list.id">הצג
-            תוכן
+            [queryParams]="itemList.businessType? {name:  itemList.businessType, id: itemList.id}: undefined"
+            [routerLink]="itemList.id">
+            הצג תוכן
           </a>
           <a class="badge badge-primary badge-pill page-link"
-            [routerLink]="(list.customer && list.customer.user_id)? '/dashboard/users-views/'+list.customer.user_id: list.user_id? '/dashboard/users-views/'+list.user_id:'./'">הצג
+            [routerLink]="'/dashboard/users-views/'+itemList.user_id">
+            הצג
             משתמש</a>
           <a class="badge badge-warning badge-pill page-link"
-            [queryParams]="{name:  list.customer? list.customer.businessType: list.businessType, id: list.customer? list.customer.id: list.id}"
-            [routerLink]="list.customer? list.customer.id+'/edit':list.id+'/edit'">ערוך תוכן</a>
+            [queryParams]="itemList.businessType? {name:  itemList.businessType, id: itemList.id}: undefined"
+            [routerLink]="itemList.id+'/edit'">
+            ערוך תוכן
+          </a>
           <a class="badge badge-danger badge-pill page-link">חסום</a>
           <a class="badge badge-danger badge-pill page-link">מחק</a>
         </div>

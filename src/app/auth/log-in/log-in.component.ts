@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewChecked, AfterContentChecked } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -14,43 +14,39 @@ declare let $: any;
   templateUrl: './log-in.component.html',
   styleUrls: ['./log-in.component.css']
 })
-export class LogInComponent implements OnInit {
+export class LogInComponent implements OnInit, AfterContentChecked {
 
   logInform: FormGroup;
   phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
-  isTrue = true;
-  md;
 
-  url:string;
+  url: string;
 
-  constructor(private router: Router, 
-    private route: ActivatedRoute, 
-    private http: HttpService, private jwt:JwtHelperService) { }
+  params = {
+    id: 'login',
+    modelSize: 'modal-md',
+    title: "כניסה"
+  };
+
+  constructor(private router: Router,
+    private route: ActivatedRoute,
+    private http: HttpService, private jwt: JwtHelperService) { }
 
   ngOnInit() {
 
-    // this.http.isAuthenticeted().pipe(first()).subscribe(
-    //   (res) => {
-    //     if(!res){
-    //       this.model = $('#myFormModel').modal();
-    //       this.formInit();
-    //     }else{
-    //       this.router.navigate(['/halls_events']);
-    //     }
-    //   }
-    // );
-    console.log(this.http.isAuth());
-    
+    this.url = decodeURIComponent(location.pathname);
+    /* if (! this.http.isAuth()) {
+      this.params = {
+        id: 'login',
+        modelSize: 'modal-md',
+        title: "כניסה"
+      };
+    } */
     this.initFormLogin();
-    let thiz = this;
-
-    $(document).on('hidden.bs.modal','.modal', function () {
-
-      /// TODO EVENTS
-      thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate(['../'], {relativeTo: this.route});
-    });
+  }
+  ngAfterContentChecked (){
+    // if(this.http.isAuth()) this.redirect();
   }
 
   private initFormLogin() {
@@ -60,13 +56,12 @@ export class LogInComponent implements OnInit {
       'email': new FormControl(null, [Validators.required]),
       'password': new FormControl(null, [Validators.required])
     });
-    $('#forgotPassword').modal();
+    // $('#login').modal();
   }
 
-  logOut(){
-    this.url = decodeURIComponent(location.pathname);
+  logOut() {
 
-    this.http.logOut().subscribe(evt =>{
+    this.http.logOut().subscribe(evt => {
       console.log(evt);
       // location.reload();
     });
@@ -74,10 +69,10 @@ export class LogInComponent implements OnInit {
     this.redirect();
   }
 
-  redirect(){
-    let splitUrl:any = ( this.url.indexOf('halls-events') >= 0)?  this.url.split("/"): false;
-        splitUrl = (splitUrl && (splitUrl[1] && splitUrl[2])) ?  splitUrl[1]+"/"+splitUrl[2] :(splitUrl && splitUrl[1])? splitUrl[1]: "/";
-        this.router.navigate([splitUrl], { relativeTo: this.route });
+  redirect() {
+    let splitUrl: any = (this.url.indexOf('halls-events') >= 0) ? this.url.split("/") : false;
+    splitUrl = (splitUrl && (splitUrl[1] && splitUrl[2])) ? splitUrl[1] + "/" + splitUrl[2] : (splitUrl && splitUrl[1]) ? splitUrl[1] : "/";
+    this.router.navigate([splitUrl], { relativeTo: this.route });
   }
 
   onSubmit() {
@@ -85,13 +80,13 @@ export class LogInComponent implements OnInit {
     if (this.logInform.valid) {
       // this.isTrue = false;
       console.log(this.logInform.value);
-      
+
       this.http.logIn(this.logInform.value).
         subscribe(evt => {
 
           let IntendedUri = this.http.intendedUri ? this.http.intendedUri : "/";
           console.log(this.jwt.decodeToken(evt['access_token']));
-          
+
           this.router.navigate([IntendedUri]);
           $('.close').click();
 
@@ -108,7 +103,7 @@ export class LogInComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  sendEmail(path){
+  sendEmail(path) {
     $('.close').click();
     // this.md.modal('hide');
     this.router.navigate([path]);

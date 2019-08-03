@@ -35,9 +35,9 @@ export class CustomersViewsComponent implements OnInit {
       console.log(response);
     });
   }
+
   goTo(url, param){
     console.log(url, param);
-    
     this.router.navigate([url], { queryParams: { name: param} });
   }
   

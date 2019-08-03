@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ResourcesService } from '../../../services/resources/resources.service';
@@ -12,19 +12,13 @@ import { tap } from 'rxjs/operators';
 })
 export class EventEditComponent implements OnInit {
 
-  
-  itemForm$: Observable<{}>;
   formGr: FormGroup;
-  itemType:string;
-  constructor(private srv: ResourcesService, private route: ActivatedRoute) { }
+  @Input() itemData: {};
+
+  constructor() { }
 
   ngOnInit() {
-    this.itemType = this.route.snapshot.data['itemType'];
-    console.log(this.itemType );
-    this.route.params.subscribe(routeId => {
-      console.log(routeId);
-      this.itemForm$ = this.srv.findItem(+routeId.id, this.itemType).pipe(tap(item => item? this.itemForm(this.srv.checkTypeId(item, 'customer')): ''));//item? this.itemForm(this.checkTypeId(item)): ''
-    });
+    if(this.itemData) this.itemForm(this.itemData);
   }
 
   get f() : {} {

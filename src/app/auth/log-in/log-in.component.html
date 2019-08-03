@@ -1,6 +1,6 @@
-<app-auth>
-    <form class="p-3" [formGroup]="logInform" (ngSubmit)="onSubmit()">
+<app-auth *ngIf="params" [params]="params">
 
+    <form class="p-3" [formGroup]="logInform" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <div class="inputTypeNumber">
             <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם" required />

@@ -17,6 +17,7 @@
         <button class="btn btn-link m-1" type="button" (click)="create('dashboard/events-views/create')"> צור אירוע</button>
         <a class="btn btn-outline-success m-1" (click)="login('/login')"> התחבר</a>
         <a class="btn btn-outline-danger m-1" (click)="logout()"> התנתק</a>
+        <a class="btn btn-outline-danger m-1" (click)="getOuterRquests()">GetOuterRquests</a>
       </div>
     </div>
   </div>
@@ -31,7 +32,8 @@
           דשבורד
         </a>
       </li>
-      <li class="nav-item" routerLinkActive="active"><a routerLink="admin-profile">פרופיל</a></li>
+      <li class="nav-item" routerLinkActive="active"><a routerLink="admins-views">מנהלים</a></li>
+      <!-- <li class="nav-item" routerLinkActive="active"><a routerLink="admin-profile">פרופיל</a></li> -->
       <!-- (click)=setTemplateType(adminProfile) -->
       <li class="nav-item" routerLinkActive="active">
         <a routerLink="users-views">
@@ -49,15 +51,13 @@
           <span *ngIf="resources['messages'] as messages" class="badge badge-primary badge-pill"> {{ messages.data.length }} </span>
         </a></li>
       <!--  (click)=setTemplateType(messages) -->
-      <li class="nav-item" routerLinkActive="active"><a routerLink="role">ניהול הרשאות</a></li>
-      <li class="nav-item" routerLinkActive="active"><a>Table</a></li>
-      <li class="nav-item" routerLinkActive="active"><a>דפים</a></li>
-      <li class="nav-item" routerLinkActive="active"><a routerLink="task">משימות</a></li>
+      <!-- <li class="nav-item" routerLinkActive="active"><a routerLink="role">ניהול הרשאות</a></li> -->
       <!-- (click)=setTemplateType(tasks) -->
-      <li class="nav-item" routerLinkActive="active"><a routerLink="quick-editor">עורך תוכן מהיר</a></li>
+      <li class="nav-item" routerLinkActive="active"><a routerLink="quick-editor">Tables</a></li>
+      <li class="nav-item" routerLinkActive="active"><a routerLink="task">משימות</a></li>
+      <li class="nav-item" routerLinkActive="active"><a>דפים</a></li>
       <!--  (click)=setTemplateType(quickEdit) -->
-      <li class="nav-item" routerLinkActive="active"><a routerLink="admins-views">מנהלים</a></li>
-      <li class="nav-item" routerLinkActive="active"><a (click)=setTemplateType(security)>אבטחה</a></li>
+      <!-- <li class="nav-item" routerLinkActive="active"><a (click)=setTemplateType(security)>אבטחה</a></li> -->
     </ul>
   </div>
   <div class="col-sm-10">

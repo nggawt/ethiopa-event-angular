@@ -1,47 +1,70 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, OnInit, Input, ComponentFactoryResolver, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
 import { ResourcesService } from '../../services/resources/resources.service';
-import { ActivatedRoute } from '@angular/router';
-import { find, tap, map, filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { CompLists } from './comp-lists';
+import { AddComponentDirective } from 'src/app/shared/directives/add-component.directive';
 
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.css']
+  styleUrls: ['./overview.component.css'],
+  providers: [CompLists]
 })
-export class OverviewComponent implements OnInit {
-  itemResource$: Observable<{}>;
-  formGr: FormGroup;
+export class OverviewComponent implements OnInit, OnDestroy {
+  itemResource: {};
   itemType:string;
-  constructor(private srv: ResourcesService, private route: ActivatedRoute) { }
+  comp:string;
+  componentRef: any;
+
+  // @ViewChild(AddComponentDirective, {static: true}) entry: AddComponentDirective;
+  // @ViewChild('placeholder', {static: true}) adHost: ViewContainerRef;
+  @ViewChild(AddComponentDirective, {read: AddComponentDirective, static: false }) compItem: AddComponentDirective;
+  constructor(
+    private comlist: CompLists, 
+    private srv: ResourcesService, 
+    private route: ActivatedRoute, 
+    private resolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
 
-    this.srv.initResources(['admins']);
+    let itemId = this.route.snapshot.paramMap.get('id');
     this.itemType = this.route.snapshot.data['itemType'];
-    // console.log(this.itemType );
-    this.route.params.subscribe(routeId => {
-      // console.log(routeId);
-      this.itemResource$ = this.srv.findItem(+routeId.id, this.itemType);
-      //this.itemForm$ = this.srv.findItem(+routeId.id, this.itemType).pipe(tap(item => item? this.itemForm(this.srv.checkTypeId(item)): ''));
+    this.comp = this.route.snapshot.data['comp'];
+
+    this.srv.getResources(this.itemType, false)
+    .then(resource => {
+
+      (this.itemType == 'customers')? this.route.queryParamMap.subscribe((params: ParamMap) => {
+        let routeName = params.get('name');
+        Array.isArray(resource[routeName])? this.setItemResource(resource[routeName], itemId): '';
+      }): Array.isArray(resource)? this.setItemResource(resource, itemId): '';
+      this.loadComponent();
     });
   }
 
-  get f() : {} {
-    return this.formGr.controls;
+  setItemResource(resource, itemId){
+    let item = resource.find(item => this.srv.checkTypeId(item, 'customer').id == itemId);
+    this.itemResource = item;
+  }
+  
+  loadComponent() {
+
+    const component = this.comlist.getComp(this.itemType, this.comp);
+    const factory = this.resolver.resolveComponentFactory(component);
+
+    this.compItem.viewCont.clear();
+
+    this.componentRef = this.compItem.viewCont.createComponent(factory);
+    this.componentRef.instance.itemData = this.itemResource;
+    // console.log(this.itemType, this.comp, this.componentRef);
   }
 
-  onSubmit(){
-    console.log("submited");
+  destroy(param){
+    console.log('delete: ', param);
+    
   }
 
-  itemForm(items){
-    let formItems = {};
-    Object.keys(items).forEach(item => {
-      formItems[item] = new FormControl(items[item]);
-    })
-    this.formGr = new FormGroup(formItems);
-    console.log(this.formGr);
+  ngOnDestroy(){
+    this.componentRef.destroy();
   }
 }

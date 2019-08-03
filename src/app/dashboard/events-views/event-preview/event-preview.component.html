@@ -7,35 +7,35 @@
       </div>
       <div class="col">
         <div class="card-body">
-          <h5 class="card-title">אירוע {{ eventItem.eventType | eventType}}</h5>
+          <h5 class="card-title">אירוע {{ itemData.eventType | eventType}}</h5>
           <ul class="list-group p-0">
             <li class="list-group-item">
-              שם: {{ eventItem.name }}
+              שם: {{ itemData.name }}
             </li>
             <li class="list-group-item">
-              אימייל: {{ eventItem.email }}
+              אימייל: {{ itemData.email }}
             </li>
             <li class="list-group-item">
-              טל: {{ eventItem.phone }}
+              טל: {{ itemData.phone }}
             </li>
             <li class="list-group-item">
-              כתובת: {{ eventItem.address }}
+              כתובת: {{ itemData.address }}
             </li>
             <li class="list-group-item">
-              סוג האירוע: {{ eventItem.eventType | eventType }}
+              סוג האירוע: {{ itemData.eventType | eventType }}
             </li>
             <li class="list-group-item">
               תאריך האירוע:
-              <p>{{ eventItem.date | dateHebraw:"full" }}</p>
+              <p>{{ itemData.date | dateHebraw:"full" }}</p>
             </li>
             <li class="list-group-item">
               אודות:
               <p>
-                {{ eventItem.description }}
+                {{ itemData.description }}
               </p>
             </li>
             <li class="list-group-item">
-              סטטוס: {{ eventItem.confirmed? "מאושר" : "ממתין" }}
+              סטטוס: {{ itemData.confirmed? "מאושר" : "ממתין" }}
             </li>
           </ul>
         </div>

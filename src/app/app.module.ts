@@ -22,7 +22,6 @@ import { HeaderComponent } from './header/header.component';
 import { WellcomeComponent } from './pages/wellcome/wellcome.component';
 import { AsideComponent } from './pages/aside/aside.component';
 import { AboutComponent } from './pages/about/about.component';
-// import { ContactComponent } from './pages/contact/contact.component';
 import { GoalComponent } from './pages/goal/goal.component';
 import { FooterComponent } from './pages/footer/footer.component';
 import { JoinComponent } from './join/join.component';
@@ -42,9 +41,7 @@ import { BlogTemplateComponent } from './pages/blog/blog-template/blog-template.
 
 
 /****************** auth Component ********************/
-// import { LogInComponent } from './auth/log-in/log-in.component';
 import { RegistrationComponent } from './auth/registration/registration.component';
-// import { LogOutComponent } from './auth/log-out/log-out.component';
 import { ResetPasswordComponent } from './auth/rest-password/reset-password.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 
@@ -72,7 +69,6 @@ import { PrintsgModule } from './pages/customers/printing/prints.module';
 import { TransportsModule } from './pages/customers/transportation/transports.module'; */
 // import { PhotographersResolver } from './pages/customers/photographers/photographers-resolver.service';
 // import { CustomersModule } from './pages/customers/customers.module';
-// import { RemoveWhiteSpacePipe } from './shared/pipes-module/remove-white-space.pipe';
 // import { HotelsResolver } from './pages/customers/hotels/hotels-resolver.service';
 // import { ConcatFormComponent } from './pages/customers/templates/html-modals/concat-form/concat-form.component';
 // import { CustomerComponent } from './pages/customers/templates/customer/customer.component';
@@ -81,7 +77,6 @@ import { TransportsModule } from './pages/customers/transportation/transports.mo
 import { TextToParagraphPipe } from './shared/pipes-module/text-to-paragraph.pipe';
 import { DateHebrawPipe } from './shared/pipes-module/date-hebraw.pipe';
 import { MainDashboardComponent } from './dashboard/main-dashboard/main-dashboard.component';
-import { AdminPanelComponent } from './dashboard/admin-panel/admin-panel.component';
 import { RmWhiteSpacePipe } from './shared/pipes-module/rm-white-space.pipe';
 import { EventTypeToHebPipe } from './shared/pipes-module/event-type-to-heb.pipe';
 
@@ -97,10 +92,8 @@ import { NotificationsComponent } from './dashboard/notifications/notifications.
 import { AdminsViewsComponent } from './dashboard/admins-views/admins-views.component';
 import { QuickEditorComponent } from './dashboard/quick-editor/quick-editor.component';
 import { MailComponent } from './dashboard/mail/mail.component';
-import { RoleComponent } from './dashboard/role/role.component';
 import { OverviewComponent } from './dashboard/overview/overview.component';
 import { PendingComponent } from './dashboard/pending/pending.component';
-import { DashboardEditComponent } from './dashboard/edit/dashboard-edit.component';
 import { PostEditComponent } from './dashboard/posts-views/post-edit/post-edit.component';
 import { CustomerEditComponent } from './dashboard/customers-views/customer-edit/customer-edit.component';
 import { EventEditComponent } from './dashboard/events-views/event-edit/event-edit.component';
@@ -109,8 +102,6 @@ import { UserEditComponent } from './dashboard/users-views/user-edit/user-edit.c
 import { AdminCreateComponent } from './dashboard/admins-views/admin-create/admin-create.component';
 import { LogInComponent } from './auth/log-in/log-in.component';
 import { AuthComponent } from './auth/auth/auth.component';
-import { OverviewTemplateComponent } from './dashboard/overview-template/overview-template.component';
-import { ModelTemplateComponent } from './dashboard/model-template/model-template.component';
 import { AdminEditComponent } from './dashboard/admins-views/admin-edit/admin-edit.component';
 import { UserProfileComponent } from './dashboard/users-views/user-profile/user-profile.component';
 import { EventPreviewComponent } from './dashboard/events-views/event-preview/event-preview.component';
@@ -128,6 +119,10 @@ import { PreferencesComponent } from './dashboard/mail/preferences/preferences.c
 import { TrashComponent } from './dashboard/mail/trash/trash.component';
 import { InboxComponent } from './dashboard/mail/inbox/inbox.component';
 import { MailMenuTempComponent } from './dashboard/mail/mail-menu-temp/mail-menu-temp.component';
+import { CompLists } from './dashboard/overview/comp-lists';
+import { AddComponentDirective } from './shared/directives/add-component.directive';
+import { DashboardModelComponent } from './dashboard/dashboard-model/dashboard-model.component';
+import { MailCreateComponent } from './dashboard/mail/mail-create/mail-create.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -140,7 +135,6 @@ export function tokenGetter() {
     WellcomeComponent,
     HeaderComponent,
     AboutComponent,
-    // ContactComponent,
     BlogComponent,
     AsideComponent,  
     FooterComponent,
@@ -148,9 +142,7 @@ export function tokenGetter() {
     PageNotFoundComponent,
     ErrorPageComponent,
     JoinComponent,
-    // LogInComponent,
     RegistrationComponent,
-    // LogOutComponent,
     EventsSchedulComponent,
     ProfileComponent,
     ResetPasswordComponent,
@@ -159,12 +151,10 @@ export function tokenGetter() {
     CreatePostComponent,
     ShowPostComponent,
     DateHebrawPipe,
-    // RemoveWhiteSpacePipe,
     UpdatePostComponent,
     BlogTemplateComponent,
     DealsComponent,
     MainDashboardComponent,
-    AdminPanelComponent,
     RmWhiteSpacePipe,
     EventTypeToHebPipe,
     UsersViewsComponent,
@@ -178,10 +168,8 @@ export function tokenGetter() {
     AdminsViewsComponent,
     QuickEditorComponent,
     MailComponent,
-    RoleComponent,
     OverviewComponent,
     PendingComponent,
-    DashboardEditComponent,
     PostEditComponent,
     CustomerEditComponent,
     EventEditComponent,
@@ -189,8 +177,6 @@ export function tokenGetter() {
     UserEditComponent,
     AdminCreateComponent,
     AuthComponent,
-    OverviewTemplateComponent,
-    ModelTemplateComponent,
     AdminEditComponent,
     UserProfileComponent,
     EventPreviewComponent,
@@ -208,6 +194,9 @@ export function tokenGetter() {
     PreferencesComponent,
     TrashComponent,
     MailMenuTempComponent,
+    AddComponentDirective,
+    DashboardModelComponent,
+    MailCreateComponent,
     // customValidatorFnFactory
     // ConcatFormComponent,
     // CustomerComponent
@@ -249,6 +238,12 @@ export function tokenGetter() {
     })
   ],
   providers: [PagesService, CustomersDataService, CustomersResolver, CanDeactivateGuardService],//,HotelsResolver, PhotographersResolver//HallResolver
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [ CustomerPreviewComponent, CustomerEditComponent, CustomerCreateComponent, 
+                      EventPreviewComponent, EventEditComponent, EventCreateComponent, 
+                      PostCreateComponent, PostPreviewComponent, PostEditComponent, 
+                      AdminProfileComponent, AdminEditComponent, AdminCreateComponent,
+                      UserProfileComponent, UserEditComponent, UserCreateComponent
+                    ]
 })
 export class AppModule { }

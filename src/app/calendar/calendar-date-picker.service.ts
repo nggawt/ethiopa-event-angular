@@ -54,7 +54,7 @@ export class CalendarDatePickerService {
     return this.currentDate;
   }
 
-  createHtms(elem: HTMLInputElement) {
+  createHtms(elem: HTMLInputElement, append?) {
 
     this.input = elem;
     let divMonth: HTMLDivElement = <HTMLDivElement>this.createElem("DIV"),
@@ -102,7 +102,7 @@ export class CalendarDatePickerService {
     this.closeBtn = <HTMLSpanElement>this.createElem("span");
 
     this.divChild.className = "datepickr-calendar clearfix forPageDiv";
-
+    this.divChild.id = "datepicker";
 
     divNav.className = "col-sm-12 datepickr-year clearfix";
     divNav.id = "myDropdown";
@@ -143,10 +143,70 @@ export class CalendarDatePickerService {
     this.divChild.appendChild(this.table);
     this.divChild.appendChild(this.closeBtn);
 
-    elem.parentElement.parentElement.appendChild(this.divChild);
-
-    this.toggleDisplay();
+    if (append && append.append) {
+      elem.parentElement.parentElement.appendChild(this.divChild);
+      // this.toggleDisplay();
+    }
   }
+
+  fire(callerIns, formEvents, input?: HTMLInputElement) {//theYear,len,theMonth
+    let theYear = this.date.getFullYear(),
+      theMonth = this.date.getMonth(),
+      len = this.monthStr.length;
+
+    callerIns ? this.callerInstans = callerIns : '';
+    formEvents ? this.formEvents = formEvents : '';
+
+    if (true) {// ! this.fired
+      input ? this.createHtms(input) : '';
+      this.getYearlyDates(theYear, len, theMonth);
+      this.looper(0, this.weekStr, this.appendThead);
+      this.looper(0, 10, this.navYears, () => { });
+      this.looper(0, this.monthStr.length - 1, this.navMonth, () => { });
+
+      this.setEvents();
+
+      this.fired = true;
+      return this.divChild;
+    }
+  }
+
+
+  setEvents(): void {
+    let thiz = this;
+
+    this.spanPrev.addEventListener('click', () => {
+      thiz.prevMonth();
+    }, false);
+
+    this.spanNext.addEventListener('click', () => {
+      thiz.nextMonth();
+    }, false);
+
+    /* this.input.addEventListener('click', () => {
+      thiz.toggleDisplay();
+    }, false); */
+
+    this.spanNextYear.addEventListener('click', () => {
+      thiz.nextYear();
+    }, false);
+
+    this.spanPrevYear.addEventListener('click', () => {
+      thiz.prevYear();
+    }, false);
+
+
+    this.closeBtn.addEventListener('click', (e) => {
+
+      let spanEl: HTMLSpanElement = <HTMLSpanElement>e.target;
+      if (spanEl.tagName === "SPAN") {
+        //createCalendar.updateItems(e.target.innerHTML);
+        // thiz.divChild["style"].display = "none";
+        // thiz.toggleDisplay();
+      }
+    }, false);
+  }
+
 
   appendThead(arg: any) {
 
@@ -158,99 +218,12 @@ export class CalendarDatePickerService {
       th.innerHTML = arg;
       this.tableTr.appendChild(th);
     }
-
   }
 
   appendCh(parent, child) {
     parent.appendChild(child);
   }
 
-  toggleDisplay() {
-    let divHasClassOpen = this.hasClass(this.divChild, "open"),
-      divHasClassClose = this.hasClass(this.divChild, "close"),
-      formDiv = $("#customGroup")[0],
-      formDivHassClassOpen = this.hasClass(formDiv, "open"),
-      formDivHassClassClose = this.hasClass(formDiv, "close");
-
-    if (divHasClassOpen) {
-      this.divChild.classList.remove('open');
-      (divHasClassClose) ? "" : this.divChild.classList.add('close');
-
-      if (formDivHassClassClose) formDiv.classList.remove('close');
-      (formDivHassClassOpen) ? "" : formDiv.classList.add('open');
-    } else {
-      this.divChild.classList.add('open');
-      if (divHasClassClose) this.divChild.classList.remove('close');
-
-      formDivHassClassClose ? "" : formDiv.classList.add('close');
-      if (formDivHassClassOpen) formDiv.classList.remove('open');
-    }
-  }
-
-  hasClass(elem: HTMLElement, className: string): boolean {
-    return elem.classList.contains(className);
-  }
-
-  calendarDisplay(elem?: HTMLElement | boolean, className?: string, cBFn?) {
-    elem = elem ? elem : this.divChild;
-    className = className ? className : "open";
-
-    if (cBFn && typeof elem == "object") {
-      cBFn(elem, this.hasClass(elem, className));
-    } else {
-      return (typeof elem == "object") ? this.hasClass(elem, className) : "Error";
-    }
-  }
-
-  fire(callerIns, formEvents) {//theYear,len,theMonth
-    let theYear = this.date.getFullYear(),
-      theMonth = this.date.getMonth(),
-      len = this.monthStr.length;
-
-    callerIns ? this.callerInstans = callerIns : '';
-    formEvents ? this.formEvents = formEvents : '';
-    if (true) {
-      this.getYearlyDates(theYear, len, theMonth);
-      this.looper(0, this.weekStr, this.appendThead);
-      this.looper(0, 10, this.navYears, () => { });
-      this.looper(0, this.monthStr.length - 1, this.navMonth, () => { });
-
-      let thiz = this;
-
-      this.spanPrev.addEventListener('click', () => {
-        thiz.prevMonth();
-      }, false);
-
-      this.spanNext.addEventListener('click', () => {
-        thiz.nextMonth();
-      }, false);
-
-      this.input.addEventListener('click', () => {
-        thiz.toggleDisplay();
-      }, false);
-
-      this.spanNextYear.addEventListener('click', () => {
-        thiz.nextYear();
-      }, false);
-
-      this.spanPrevYear.addEventListener('click', () => {
-        thiz.prevYear();
-      }, false);
-
-
-      this.closeBtn.addEventListener('click', (e) => {
-
-        let spanEl: HTMLSpanElement = <HTMLSpanElement>e.target;
-        if (spanEl.tagName === "SPAN") {
-          //createCalendar.updateItems(e.target.innerHTML);
-          // thiz.divChild["style"].display = "none";
-          thiz.toggleDisplay();
-        }
-      }, false);
-
-      this.fired = true;
-    }
-  }
 
   getYearlyDates(theYear: number, len?: number | boolean, month?: number) {
 
@@ -314,7 +287,7 @@ export class CalendarDatePickerService {
     });
     console.log(day);
     let fullDates: string = day + "-" + (this.currentDate.getMonth() + 1) + "-" + this.currentDate.getFullYear();
-    this.callerInstans.daily(fullDates);
+    if (this.callerInstans) this.callerInstans.daily(fullDates);
     this.currentDate.setDate(day);
     this.updateItems();
   }
@@ -453,12 +426,12 @@ export class CalendarDatePickerService {
   looper(index, lenOb, fn, param1?) {
 
     let number = (typeof lenOb === "number") ? lenOb : null,
-      arr = (Array.isArray(lenOb)) ? lenOb.length  -1: null,
+      arr = (Array.isArray(lenOb)) ? lenOb.length - 1 : null,
       lent = number || arr;
 
     for (index; index <= lent; index++) {
       if (typeof param1 == 'function') {
-        
+
         fn.call(this, index);
       } else {
         fn.call(this, lenOb[index]);
@@ -535,14 +508,14 @@ export class CalendarDatePickerService {
     inc = inc ? inc : 1;
     this.getYearlyDates(this.currentDate.getFullYear() + inc, null);
     this.removeTable();
-    this.callerInstans.showEvents();
+    if (this.callerInstans) this.callerInstans.showEvents();
   }
 
   prevYear(inc?) {
     inc = inc ? inc : 1;
     this.getYearlyDates(this.currentDate.getFullYear() - inc, null);
     this.removeTable();
-    this.callerInstans.showEvents();
+    if (this.callerInstans) this.callerInstans.showEvents();
   }
 
   removeTable() {
@@ -561,13 +534,13 @@ export class CalendarDatePickerService {
       // this.spanCurrentMonth.innerHTML = this.monthStr[this.monthCounter] + " " + this.currentDate.getFullYear();
       this.removeTable();
       // this.updateItems();
-      this.callerInstans.showEvents();
+      if (this.callerInstans) this.callerInstans.showEvents();
       return;
     }
     this.updateDate(null, this.monthCounter, null);
     this.table.appendChild(this.months[this.monthCounter]);
     this.removeTable();
-    this.callerInstans.showEvents();
+    if (this.callerInstans) this.callerInstans.showEvents();
     // this.updateItems();
   }
 
@@ -583,13 +556,13 @@ export class CalendarDatePickerService {
       // this.spanCurrentMonth.innerHTML = this.monthStr[this.monthCounter] + " " + this.currentDate.getFullYear();
       this.removeTable();
       // this.updateItems();
-      this.callerInstans.showEvents();
+      if (this.callerInstans) this.callerInstans.showEvents();
       return;
     }
     this.table.appendChild(this.months[this.monthCounter]);
     this.updateDate(null, this.monthCounter, null);
     this.removeTable();
-    this.callerInstans.showEvents();
+    if (this.callerInstans) this.callerInstans.showEvents();
     // this.updateItems();
   }
 }

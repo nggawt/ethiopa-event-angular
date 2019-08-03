@@ -1,5 +1,5 @@
 <!-- header edite -->
-<div *ngIf="usersType$ | async as users" class="row">
+<div *ngIf="admins" class="row">
   <div class="col-sm-12">
     <div class="shadow-sm text-right">
 
@@ -14,7 +14,7 @@
         <a routerLinkActive="active" routerLink="gallery"
           class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
           <span>
-            מדיה
+              אבטחה
 
             <i class="material-icons">perm_media</i>
           </span>
@@ -23,7 +23,7 @@
         <a routerLinkActive="active" routerLink="all"
           class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
           <span>
-            ערוך הכל
+            פרופיל
             <i class="material-icons">select_all</i>
           </span>
         </a>
@@ -31,11 +31,11 @@
         <a routerLinkActive="active" routerLink="events"
           class="googleFont ml-1 px-2 p-2 border rounded text-center float-right">
           <span>
-            יומן אירועים
+            ניהול הרשאות
             <i class="material-icons">add</i>
           </span>
         </a>
-        
+
         <a routerLinkActive="active" (click)="destroy()"
           class="googleFont px-2 p-2 border rounded text-center float-left">
           <span>
@@ -58,46 +58,44 @@
       </div>
     </div>
   </div>
-  <div *ngFor="let userTp of users | keyvalue" class="col-sm-12">
-    <div *ngIf="userTp.value && userTp.value.data as usersData" class="border p-3 rounded">
-      <h2 class="h4">{{ userTp.key == "customers"? "קליינטים": "משתמשים" }}</h2>
+  <div class="col-sm-12">
+    <h2 class="h4">Admins</h2>
 
-      <table class="table">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">שם</th>
-            <th scope="col">תאריך</th>
-            <th scope="col">מחק</th>
-            <th scope="col">ערוך</th>
-            <th scope="col">הצג</th>
-            <th scope="col">סמכות</th>
-          </tr>
-        </thead>
-        <tbody *ngFor="let user of usersData; let idx = index">
-          <tr>
-            <th scope="row">{{ idx }}</th>
-            <td>
-              {{ user.name? user.name: user.customer? user.customer.company:user.name }}
-            </td>
+    <table class="table">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">שם</th>
+          <th scope="col">תאריך</th>
+          <th scope="col">מחק</th>
+          <th scope="col">ערוך</th>
+          <th scope="col">הצג</th>
+          <th scope="col">סמכות</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let admin of admins">
+        <tr>
+          <th scope="row">{{ idx }}</th>
+          <td>
+            {{ admin.name }}
+          </td>
 
-            <td>
-              <small *ngIf="user.created_at || (user.customer && user.customer.created_at) as dt" class="text-muted">
-                {{ dt | dateHebraw:'full' }}
-              </small>
-            </td>
-            <td><a class="btn btn-outline-primary btn-sm" (click)="show('/dashboard/admins-views/'+user.id)">הצג</a>
-            </td>
-            <td><a class="btn btn-outline-warning btn-sm"
-                (click)="edit('/dashboard/admins-views/'+user.id+'/edit')">ערוך</a></td>
-            <td><a class="btn btn-outline-danger btn-sm">מחק</a></td>
-            <td>
-              {{ user.authority?.slug }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          <td>
+            <small *ngIf="admin.created_at as dt" class="text-muted">
+              {{ dt | dateHebraw:'full' }}
+            </small>
+          </td>
+          <td><a class="btn btn-outline-primary btn-sm" (click)="show('/dashboard/admins-views/'+admin.id)">הצג</a>
+          </td>
+          <td><a class="btn btn-outline-warning btn-sm"
+              (click)="edit('/dashboard/admins-views/'+admin.id+'/edit')">ערוך</a></td>
+          <td><a class="btn btn-outline-danger btn-sm">מחק</a></td>
+          <td>
+            {{ admin.authority?.slug }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 <router-outlet></router-outlet>

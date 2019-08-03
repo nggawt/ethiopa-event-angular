@@ -7,6 +7,20 @@ import { MessagesService } from '../messages/messages.service';
 })
 export class ValidationService {
 
+  private customersRulse: Object = {
+    company: "required|string|min:3|max:30",
+    businessType: "required|string|min:3|max:30",
+    title: "required|string|min:3|max:30",
+    contact: "required|string|min:3|max:30",
+    tel: "required|string|min:3|max:30",
+    email: "required|string|min:3|max:30",
+    address: "required|string|min:3|max:30",
+    descriptions: "required|string|min:3|max:30",
+    deals: "required|string|min:3|max:30",
+    loggo: "required|file_type|min:3|max:30",
+    video: "required|file_type|min:3|max:30",
+    images: "required|file_type|min:3|max:30",
+  };
   // private messages:Array<{}>;
   private rules: {} = {};
   

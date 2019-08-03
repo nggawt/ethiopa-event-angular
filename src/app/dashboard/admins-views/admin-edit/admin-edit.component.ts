@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ResourcesService } from '../../../services/resources/resources.service';
@@ -14,26 +14,26 @@ declare var $;
 })
 export class AdminEditComponent implements OnInit {
   
-  itemForm$: Observable<{}>;
   formGr: FormGroup;
-  itemType:string;
+  mdProps = {
+    id: 'edit_admin',
+    modalSize: "modal-lg",
+    name: "אדמין",
+    emailTo: "",
+    title: 'ערוך אדמין'
+  };
+  @Input() itemData: {};
+  
   constructor(private srv: ResourcesService, private router: Router, private route: ActivatedRoute, private http: HttpService) { }
 
   ngOnInit() {
-
-    this.srv.initResources(['admins']);
-    this.itemType = this.route.snapshot.data['itemType'];
-
-    this.route.params.subscribe(routeId => {
-      this.itemForm$ = this.srv.findItem(+routeId.id, "admins").pipe(tap(item => item? this.itemForm(this.srv.checkTypeId(item, 'customer')): ''));//item? this.itemForm(this.checkTypeId(item)): ''
-    });
+    if(this.itemData) this.itemForm(this.itemData);
   }
 
   get f() : {} {
     return this.formGr.controls;
   }
   
-
   onSubmit(){
     console.log("submited");
   }
@@ -46,14 +46,10 @@ export class AdminEditComponent implements OnInit {
     })
     this.formGr = new FormGroup(formItems);
 
-    $('#forgotPassword').modal();
-    let thiz = this;
-    $(document).on('hidden.bs.modal','.modal', function () {
-      /// TODO EVENTS
-      thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate(['/dashboard/admins-views'], {relativeTo: this.route});
-    });
+    
   }
+  
   back(){
-    $('#forgotPassword').click();
+    $('#'+this.mdProps.id).click();
   }
 }

@@ -1,38 +1,8 @@
-<app-mail-menu-temp (messages)="msgs = $event">
-        <h1 class="h5">אשפה</h1>
-        <div *ngIf="msgs as messages">
-            <div *ngFor="let message of messages" class="co-12">
-                <hr class="my-2">
-                <div class="row no-gutters">
-                    <div class="col-md-2">
-                        <!-- <img src="..." class="card-img" alt="..."> -->
-    
-                        <h5 class="border rounded p-2">
-                            {{ message.name }}
-                            <br>
-    
-                        </h5>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                {{ message.date | dateHebraw:"full" }}
-                            </small>
-                        </p>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h5 class="card-title">
-    
-                                {{ message.title }}
-                            </h5>
-                            <p class="card-text">{{ message.body }}</p>
-                            <p class="card-text">
-                                <small class="text-muted">נשלח ב:
-                                    {{ message.created_at | dateHebraw:"full" }}
-                                </small>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </app-mail-menu-temp>
+
+<h1 class="h5 my-3">אשפה</h1>
+<app-mail-menu-temp *ngFor="let message of messageItems; let idx = index" [message]="message">
+
+    <a class="badge badge-primary badge-pill page-link" (click)="restoreTrashed(message)">שחזר</a>
+    <a class="badge badge-warning badge-pill page-link"  (click)="srv.block(message)">חסום משתמש</a>
+    <a class="badge badge-danger badge-pill page-link" (click)="trash(message)">מחק לצמיתות</a>
+</app-mail-menu-temp>

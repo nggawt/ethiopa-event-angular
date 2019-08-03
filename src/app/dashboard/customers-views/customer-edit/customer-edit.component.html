@@ -1,4 +1,4 @@
-<form *ngIf="customerItem" class="form-row p-3 border rounded" [formGroup]="editeCustomer" (ngSubmit)="onSubmit()">
+<form *ngIf="itemData" class="form-row p-3 border rounded" [formGroup]="editeCustomer" (ngSubmit)="onSubmit()">
   <div class="col-12 shadow-sm text-black-50 h2">
     <h2 class="h4 text-right text-success">ערוך קליינט</h2>
   </div>
@@ -103,10 +103,9 @@
   <div class="col-12">
     <label for="title">סלוגן החברה</label>
 
-    <div class="mb-2 d-flex bd-highlight textarea">
-      <textarea class="w-100 bd-highlightpx-1" type="text" class="form-control" name="title" id="title"
+    <div class="mb-2 d-flex bd-highlight">
+      <input class="w-100 bd-highlightpx-1" type="text" class="form-control" name="title" id="title"
         formControlName="title" required minlength="3" #title>
-        </textarea>
       <!-- <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span> -->
     </div>
     <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
@@ -114,20 +113,32 @@
     </ng-container>
   </div>
 
+  <div class="col-12">
+    <label for="descriptions">תיאור החברה</label>
+
+    <div class="mb-2 d-flex textArea">
+      <textarea class="w-100 bd-highlightpx-1" type="text" class="form-control" rows="3" name="descriptions" id="descriptions"
+        formControlName="descriptions" required minlength="3" #descriptions></textarea>
+      <!-- <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span> -->
+    </div>
+    <div *ngIf="f.descriptions.invalid && f.descriptions.touched" class="invalid-feedback d-block">* שדה חובה</div>
+    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.descriptions,id: 'descriptions', itemMethod: formMethod}">
+    </ng-container>
+  </div>
   <div class="col-12 position-relative">
 
-    <label for="descriptions">אודות החברה</label>
+    <label for="content">אודות החברה</label>
     <div class="mb-2 clearfix">
-      <!-- <textarea class="w-100 bd-highlightpx-1" type="text" name="descriptions" id="descriptions"
-        formControlName="descriptions" minlength="6" required #descriptions>
+      <!-- <textarea class="w-100 bd-highlightpx-1" type="text" name="content" id="content"
+        formControlName="content" minlength="6" required #content>
 
       </textarea> -->
-      <quill-editor [modules]="config" (onEditorCreated)="configEditor($event)" formControlName="descriptions"
-        #descriptions></quill-editor>
+      <quill-editor [modules]="config" (onEditorCreated)="configEditor($event)" formControlName="content"
+        #content></quill-editor>
     </div>
-    <!-- <div *ngIf="f.descriptions.invalid && f.descriptions.touched" class="invalid-feedback d-block">* שדה חובה</div> -->
+    <!-- <div *ngIf="f.content.invalid && f.content.touched" class="invalid-feedback d-block">* שדה חובה</div> -->
     <ng-container
-      *ngTemplateOutlet="clickedMethods; context:{elem: f.descriptions, id:'descriptions', itemMethod: formMethod}">
+      *ngTemplateOutlet="clickedMethods; context:{elem: f.content, id:'content', itemMethod: formMethod}">
     </ng-container>
   </div>
   <div class="col-12">
@@ -147,12 +158,13 @@
 
       <div class="mb-2 custom-checkbox">
         <input [id]="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox" [checked]="f.confirmed.value">
-
         <label [for]="confirmed" class="custom-control-label">
           סטטוס:
           {{ f.confirmed.value? "סרב": "אשר" }}
         </label>
       </div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.confirmed, id: 'confirmed', itemMethod: formMethod}">
+      </ng-container>
   </div>
 
   <div class="co-sm-12 col-md-6">
@@ -268,7 +280,7 @@
 <ng-template #clickedMethods let-elem="elem" let-itemId="id" let-itemMethod="itemMethod">
   <div class="mb-2">
 
-    <a *ngIf="itemMethod == 'update' && elem.value && elem.value.length"
+    <a *ngIf="itemMethod == 'update' && (elem.valid || itemId == 'images')"
       class="ml-1 px-2 py-2 mb-2 border rounded text-center active"
       (click)="update(elem, itemId)">
       <span>
@@ -287,7 +299,7 @@
         </i>
       </span>
     </a>
-    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 mb-2 border rounded text-center active"
+    <a *ngIf="itemMethod == 'update' && (elem.dirty || itemId == 'images' || itemId == 'loggo' || itemId == 'video')" class="ml-1 px-2 py-2 mb-2 border rounded text-center active"
       (click)="default(elem, itemId)">
       <span>
         מקור
