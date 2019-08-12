@@ -15,7 +15,7 @@
             <div *ngIf="(message.name+message.id) | rmWhiteSpace as collapseId" class="col-md-10 p-3 rounded">
 
                 <!-- card DIV Removed-->
-                <div [id]="'headingOne'+collapseId" class="pr-2">
+                <div [id]="'headingOne'+collapseId" class="p-2 bg-light">
                     <!-- card-title -->
                     <h5 class="mb-0">
                         <a data-toggle="collapse" [href]="'#'+collapseId" role="button" class="dropdown-toggle"
@@ -24,7 +24,7 @@
                             {{ message.title }}
                         </a>
                         <small class="text-muted">
-                            {{ (message.body.split(' ').length > 15)? message.body.slice(0, message.body.indexOf(" "+message.body.split(' ')[16])) +'...' :message.body  }}
+                            {{ (message.body.split(' ').length > 9)? message.body.slice(0, message.body.indexOf(" "+message.body.split(' ')[10])) +'...' :message.body  }}
                         </small>
                     </h5>
                     <small class="text-muted">
@@ -36,14 +36,14 @@
                     [attr.data-parent]="'#parent_accord'" [attr.aria-labelledby]="'headingOne'+collapseId">
                     <div class="card-body">
                         <p class="card-title">{{ message.body }}</p>
-                        <p class="card-text">
+                        <!-- <p class="card-text">
                             לורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית מוסן מנת. להאמית קרהשק סכעיט
                             דז מא, מנכם למטכין נשואי מנורך. קולהע צופעט למרקוח איבן איף, ברומץ כלרשט
                             מיחוצים. קלאצי צש בליא, מנסוטו צמלח לביקו ננבי, צמוקו בלוקריה שיצמה ברורק. קולהע
                             צופעט למרקוח איבן איף, ברומץ כלרשט מיחוצים. קלאצי סחטיר בלובק. תצטנפל בלינדו
                             למרקל אס לכימפו, דול, צוט ומעיוט - לפתיעם ברשג - ולתיעם גדדיש. קוויז דומור
                             ליאמום בלינך רוגצה. לפמעט
-                        </p>
+                        </p> -->
                         <ng-content></ng-content>
                     </div>
                 </div>

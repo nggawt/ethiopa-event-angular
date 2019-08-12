@@ -54,7 +54,7 @@ export class FormFilesAndInputsProccesorService {
   restIns(): void {
     this.arrayFlies = { 'images': [], 'video': [], 'loggo': [] };
     this.guard = {};
-    this.filesDl = this.arrayFlies;
+    this.filesDl = { 'loggo': [],'video': [],'images': []};
     this.messages = {};
     this.galleries = {};
     this.videos = {};
@@ -295,6 +295,24 @@ export class FormFilesAndInputsProccesorService {
     return isValid ? fData : false;
   }
 
+  getValidatedItems(formItems: FormGroup) {
+    let controls = formItems.controls,
+      valItems = { gallery: {}, inputs: {} },
+      galleryKeys = ['images', 'video', 'loggo'];
+
+    Object.keys(controls).forEach(keyName => {
+      /* if galleries set gallery items else set valid inputs items */
+      let galObj = (galleryKeys.indexOf(keyName) >= 0) ? this.mapValidated(keyName, formItems) : [];
+
+      (galObj.length) ? valItems['gallery'][keyName] = galObj : controls[keyName].valid ? valItems['inputs'][keyName] = controls[keyName].value : '';
+    });
+    return valItems;
+  }
+
+  protected mapValidated(keyName, formItems: FormGroup) {
+    return (<FormArray>formItems.get(keyName)).controls.filter(item => item.valid).map(item => item.value);
+  }
+
   selectedFiles(event, elemTarget) {
 
     let files = event.target;
@@ -339,7 +357,6 @@ export class FormFilesAndInputsProccesorService {
 
   restInput(selectot: string) {
     let input = <HTMLInputElement>document.getElementById(selectot);
-    console.log(input.value);
     (input && input.value) ? input.value = "" : "";
   }
 
@@ -354,8 +371,9 @@ export class FormFilesAndInputsProccesorService {
 
     if (this.method == "update" && (targetIsVideoOrLoggo || target == "images")) {
       this.updateFileTodelete(target, aTag.id);
-      this.rmFromGall(target, aTag.id);
     }
+    this.rmFromGall(target, aTag.id);
+
     this.restInput(target);
     if (targetIsVideoOrLoggo) this.guard[target] = false;
     for (let ii = 0, len = childrens.length; ii < len; ii++) {
@@ -366,28 +384,23 @@ export class FormFilesAndInputsProccesorService {
         break;
       }
     }
-
     this.toggleHiddenMediaBox(parent, childrens);
   }
 
   toggleHiddenMediaBox(parent, ch) {
-    // console.log("hidden: ", $(parent).is(":hidden"),"visible: ", $(parent).is(":visible"));
     ch.length && $(parent).is(":hidden") ? $(parent).show() : !ch.length && $(parent).is(":visible") ? $(parent).hide() : '';
   }
 
   updateFileTodelete(target, id) {
+
     if ((target == "loggo") || (target == "video") && this.filesDl[target]) {
       let link = this.findElemLinks(id, target);
-
       (link && link != this.filesDl[target][0]) ? this.filesDl[target].push(link) : "";
     }
 
     if (target == "images") {
-      console.log(target, id);
-
       let linnkName = this.findElemLinks(id, target);
       let galLinksExists = this.findItemInArrayFiles(target, this.filesDl[target]);
-
       (linnkName && !galLinksExists) ? this.filesDl['images'].push(linnkName) : "";
     }
   }

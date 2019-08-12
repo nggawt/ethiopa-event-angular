@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
+import { NotificationService } from 'src/app/services/messages/notification.service';
 declare var $: any;
 
 @Component({
@@ -23,9 +24,8 @@ export class EventCreateComponent implements OnInit {
   fired = false;
   datePicker: HTMLDivElement;
 
-  constructor(private router: Router,
-    private http: HttpService,
-    private valForm: FormProccesorService,
+  constructor(private http: HttpService,
+    private msgNotify: NotificationService,
     private calendar: CalendarDatePickerService,
     private route: ActivatedRoute) { }
 
@@ -40,52 +40,6 @@ export class EventCreateComponent implements OnInit {
     this.formInit();
   }
 
-  onSubmit() {
-    console.log("create user");
-    if (this.eventCreate.valid) {
-      /****** handel form inputs *****/
-      let formInputes = this.eventCreate;
-      let details = formInputes.value;
-      console.log(this.eventCreate.valid);
-
-      /* let formInputes = this.eventCreate;
-      let controls = formInputes.controls;
-      
-      
-      let items = this.valForm.validate(controls, formInputes.value);
-      let success = items['status'] ? items['success'] : false; */
-      const theUrl = "http://ethio:8080/api/users";
-      if (this.eventCreate.valid) {
-        const body = new HttpParams()
-          .set('name', details['name'])
-          .set('email', details['email'])
-          .set('password', details['password'])
-          .set('passwordConfirm', details['passwordConfirm'])
-          .set('city', details['city'])
-          .set('area', details['area'])
-          .set('tel', details['tel'])
-          .set('about', details['about']);
-
-        this.http.store(theUrl, body).
-          subscribe(evt => {
-            console.log(evt);
-
-            if (evt['access_token']) {
-              this.http.nextIslogged(true);
-              $(".close").click();
-              // location.reload();
-              // this.router.navigate(['/']);
-            }
-
-          }, (err) => console.log(err));
-      } else {
-        /* messages errors */
-        // console.log(items['errors']);
-
-      }
-    }
-  }
-
   get f() { return this.eventCreate.controls; }
 
   private formInit() {
@@ -93,30 +47,54 @@ export class EventCreateComponent implements OnInit {
       'date': new FormControl(null, [Validators.required]),
       'name': new FormControl(null, [Validators.required]),
       'eventType': new FormControl(null, [Validators.required]),
-      'other': new FormControl(null, [Validators.required]),
+      'other': new FormControl(null),
       'email': new FormControl(null, [Validators.required]),
       'location': new FormControl(null, [Validators.required]),
       'address': new FormControl(null, [Validators.required]),
       'phone': new FormControl(null, [Validators.required]),
-      'description': new FormControl(null, [Validators.required])
+      'descriptions': new FormControl(null, [Validators.required])
     });
+  }
 
-    /* $('#forgotPassword').modal();
-    let thiz = this;
-    $(document).on('hidden.bs.modal','.modal', function () {
-      /// TODO EVENTS
-      thiz.http.requestUrl? thiz.router.navigate([thiz.http.requestUrl]): thiz.router.navigate(['../'], {relativeTo: this.route});
-    }); */
+
+  onSubmit() {
+    console.log(this.eventCreate);
+
+    if (true) {
+      /****** handel form inputs *****/
+      this.send(this.eventCreate.value);
+    }
+  }
+
+  send(body) {
+
+    let url = "events";
+    console.log(body);
+    this.http.postData(url, body)
+      .subscribe(response => {
+        console.log(response);
+        this.msgNotify.showSuccess('אירוע', "אירוע נוצר בהצלחה", { positionClass: "toast-top-left" });
+      }, (err) => {
+        localStorage.setItem('errors_server', JSON.stringify(err));
+        this.msgNotify.showErrors('אירוע', "פרטים שגויים!", { positionClass: "toast-top-left" });
+        if (err["status"] === 401) {
+          // console.log(err['status']);
+
+          // this.http.nextIslogged(false);
+          // window.localStorage.removeItem('user_key');
+          // window.location.reload();
+        }
+      });
   }
 
   fire(input: HTMLInputElement) {
 
     input = input ? input : <HTMLInputElement>document.getElementById("date");
 
-    if (! this.fired && input) {
+    if (!this.fired && input) {
       this.datePicker = <HTMLDivElement>this.calendar.fire(false, this.eventCreate, input);
       input.parentElement.style.position = "relative";
-      
+
       this.setStyles(this.datePicker);
       this.confCalendar(this.datePicker);
 
@@ -125,68 +103,68 @@ export class EventCreateComponent implements OnInit {
     }
   }
 
-  setStyles(elem){
+  setStyles(elem) {
     elem.classList.add('position-absolute');
-    elem.style.right = 50+"%";
+    elem.style.right = 50 + "%";
     elem.classList.add('w-50');
   }
 
-  confCalendar(calendar: HTMLDivElement){
+  confCalendar(calendar: HTMLDivElement) {
 
-    $(document).on("click", (e) => {  
-      if(calendar.contains(e.target) || e.target.id == "date"){
-        if(e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
+    $(document).on("click", (e) => {
+      if (calendar.contains(e.target) || e.target.id == "date") {
+        if (e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
         e.stopPropagation();
-        return false;  
+        return false;
       }
-      
-      if($(calendar).is(':visible')){
+
+      if ($(calendar).is(':visible')) {
         this.toggleDisplay(calendar);
-      } 
+      }
     });
-    this.toggleDisplay(calendar); 
+    this.toggleDisplay(calendar);
   }
 
-  toggleDisplay(calendar?: HTMLDivElement){
-    calendar = calendar? calendar: this.datePicker;
-    (calendar.classList.toggle('open'))? calendar.style.zIndex = '99': calendar.style.zIndex = '0';
+  toggleDisplay(calendar?: HTMLDivElement) {
+    calendar = calendar ? calendar : this.datePicker;
+    (calendar.classList.toggle('open')) ? calendar.style.zIndex = '99' : calendar.style.zIndex = '0';
   }
 
   toggleHidden(itemCller, targetInput) {
 
     if (itemCller.tagName == "SELECT" && itemCller.value == "other") {
 
-        itemCller.parentElement.classList.remove('d-block');
-        itemCller.parentElement.classList.add('d-none');
-        targetInput.parentElement.classList.remove('d-none');
-        targetInput.parentElement.classList.add('d-block');
-        // this.eventCreate.controls['eventType'].setValue('');
+      itemCller.parentElement.classList.remove('d-block');
+      itemCller.parentElement.classList.add('d-none');
+      targetInput.parentElement.classList.remove('d-none');
+      targetInput.parentElement.classList.add('d-block');
+      // this.eventCreate.controls['eventType'].setValue('');
 
-        targetInput.hidden = ! targetInput.hidden;
-        this.eventCreate.controls['other'].setValue('');
+      targetInput.hidden = !targetInput.hidden;
+      this.eventCreate.controls['other'].setValue('');
     } else if (itemCller.tagName == "INPUT") {
-        
-        itemCller.parentElement.classList.remove('d-block');
-        itemCller.parentElement.classList.add('d-none');
-        targetInput.parentElement.classList.remove('d-none');
-        targetInput.parentElement.classList.add('d-block');
 
-        itemCller.hidden = ! itemCller.hidden;
-        this.eventCreate.controls['eventType'].setValue('');
-        this.eventCreate.controls['other'].setValue(null);
+      itemCller.parentElement.classList.remove('d-block');
+      itemCller.parentElement.classList.add('d-none');
+      targetInput.parentElement.classList.remove('d-none');
+      targetInput.parentElement.classList.add('d-block');
+
+      itemCller.hidden = !itemCller.hidden;
+      this.eventCreate.controls['eventType'].setValue('');
+      this.eventCreate.controls['other'].setValue(null);
     }
-}
-
-calendarDisplay(elem?: HTMLElement | boolean, className?: string, cBFn?) {
-  elem = elem ? elem : this.datePicker;
-  className = className ? className : "open";
-
-  if (cBFn && typeof elem == "object") {
-    cBFn(elem, this.hasClass(elem, className));
-  } else {
-    return (typeof elem == "object") ? this.hasClass(elem, className) : "Error";
   }
-}
+
+  calendarDisplay(elem?: HTMLElement | boolean, className?: string, cBFn?) {
+    elem = elem ? elem : this.datePicker;
+    className = className ? className : "open";
+
+    if (cBFn && typeof elem == "object") {
+      cBFn(elem, this.hasClass(elem, className));
+    } else {
+      return (typeof elem == "object") ? this.hasClass(elem, className) : "Error";
+    }
+  }
 
   hasClass(elem: HTMLElement, className: string): boolean {
     return elem.classList.contains(className);

@@ -20,9 +20,9 @@ caption {
  
 .page-number.current{
     /* background: #ffffff!important; */
-    /* background: #F6DC2F; */
+    background: #F6DC2F !important;
     border-radius: 5px;
-    border: 1px solid #F6DC2F !important;;
+    /* border: 1px solid #F6DC2F !important;; */
 }
  
 .page-number span, .pagination-previous i,.pagination-next i{

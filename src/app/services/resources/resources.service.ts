@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, filter } from 'rxjs/operators';
 import { HttpService } from '../http-service/http.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -167,16 +168,13 @@ export class ResourcesService {
     
     paginate? paginate: false;
 
-    // console.log(this.inProcces[items]);
-    if(this.itemResources[items] && this.inProcces[items]){ 
-      return await this.itemResources[items];
+    if(await this.itemResources[items]){ 
+      return this.itemResources[items];
     }else{
-      this.inProcces[items] = true;
       await this.initResources(items, paginate);
       return await this.itemResources[items];
     }
   }
-
 
   getItemResource(itemType, id,  resource, paginate){
     
@@ -207,13 +205,13 @@ export class ResourcesService {
     let date = new Date();
     let nextTwoWeeks = new Date(date.setDate(date.getDate() + 14)),
         dt = nextTwoWeeks.getFullYear()+"-"+nextTwoWeeks.getMonth()+"-"+nextTwoWeeks.getDate()+" "+
-        nextTwoWeeks.getHours()+":"+nextTwoWeeks.getMinutes();//+":"+nextTwoWeeks.getMilliseconds();
+        nextTwoWeeks.getHours()+":"+nextTwoWeeks.getMinutes()+":"+nextTwoWeeks.getSeconds();//+":"+nextTwoWeeks.getMilliseconds();
     
     let hardcodedUrl = 'users/3?_method=patch';
     console.log(dt);
     
     this.http.postData(url, { banned_until: dt, city: 'יבנה'}).subscribe(response =>{
-      console.log(response);
+      console.log('response: ', response);
     });
   }
 }

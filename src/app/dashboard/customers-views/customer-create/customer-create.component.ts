@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
@@ -8,6 +8,9 @@ import { Observable, of } from 'rxjs';
 import { FormFilesAndInputsProccesorService } from 'src/app/services/form-files-and-inputs/form-files-and-inputs-proccesor.service';
 import { ResourcesService } from '../../../services/resources/resources.service';
 import { tap, map } from 'rxjs/operators';
+import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
+import { MessagesService } from 'src/app/services/messages/messages.service';
+import { NotificationService } from 'src/app/services/messages/notification.service';
 declare var $;
 
 @Component({
@@ -23,46 +26,65 @@ export class CustomerCreateComponent implements OnInit {
   phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
 
   itemsResources$: Observable<{}>;
-
+  @Input() itemData: {};
   /* **************************** */
   createCustomer: FormGroup;
-  allowdeactivate: boolean = true;
-  customer;
-  formMethod: string ="post";
-
+  formMethod: string = "post";
   messages: {};
+
+  quill: {};
+  formats: ["align", "right"]//{align: 'right', background: "blue"}];
 
   constructor(
     private router: Router,
     private http: HttpService,
     private srv: ResourcesService,
-    private formInputs: FormProccesorService,
+    private ngVal: NgValidateSrvService,
+    public msgsBag: MessagesService,
+    public msgNotify: NotificationService,
     public formFiles: FormFilesAndInputsProccesorService) { }
 
   ngOnInit() {
-        console.log("called");
-        this.itemsResources$ = this.srv.resourcesObsever.pipe(map(items => this.getUsers(items)));
+    this.itemsResources$ = this.srv.resourcesObsever.pipe(map(items => this.getUsers(items)));
 
     this.http.isLogedIn.subscribe((isLogged) => {
 
-        this.formInt();
-        this.formFiles.initApp(false, this.createCustomer, "post");
-        $('.media-placeholder').hide();
-        
-        if (!isLogged) {
+      this.formInt();
+      this.formFiles.initApp(false, this.createCustomer, "post");
+      $('.media-placeholder').hide();
 
-          // this.formInt();
-        } else {
+      if (!isLogged) {
 
-          // this.router.navigate(['/']);
-        }
-      });
+        // this.formInt();
+      } else {
+
+        // this.router.navigate(['/']);
+      }
+    });
   }
 
-  protected getUsers(items){
-    let users = items['users'] && items['users'].data? [items['users'].data, ...items['users'].pending][0]: false;
+  setOwnerUser(userId, users){
+    let user = users.find(user => user.id == (+userId));
+    console.log(user);
+    // this.createCustomer.patchValue
+    user? this.createCustomer.patchValue({
+      email: user.email,
+      contact: user.name,
+      tel: user.tel,
+    }, {onlySelf: true}): '';
+  }
+
+  protected getUsers(items) {
+    let users = items['users'] && items['users'].data ? [...items['users'].data, ...items['users'].pending] : false;
     console.log(users);
+    
+    let customers = items['customers'] && items['customers'].data ? [...items['customers'].data, ...items['customers'].pending] : false;
+    users = users ? users.filter(user => this.userIsCustomer(user, customers)) : false;
     return users;
+  }
+
+  userIsCustomer(user: any, customers: any) {
+    return customers.every(customer => customer['customer'].user_id != user.id);
   }
 
   inputReset(customer) {
@@ -76,17 +98,12 @@ export class CustomerCreateComponent implements OnInit {
     let arrFl = this.formFiles.arrayFlies;
 
     let filesLoggo = arrFl['loggo'].length >= 1;
-    let filesGallery = arrFl['gallery'].length >= 1;
+    let filesGallery = arrFl['images'].length >= 1;
     let filesVideo = arrFl['video'].length >= 1;
 
     let haveFiles = filesGallery || filesLoggo || filesVideo;
 
-    /* if (haveFiles) {
-      return true;
-    } else {
-      return false;
-    } */
-    if ((this.createCustomer.dirty || this.createCustomer.touched || haveFiles) && this.allowdeactivate) {
+    if ((this.createCustomer.dirty || this.createCustomer.touched || haveFiles)) {
       return confirm("לא שמרתה את הפרטים. תרצה לעזוב דף זה בכל זאת?")
     } else {
       return true;
@@ -98,99 +115,66 @@ export class CustomerCreateComponent implements OnInit {
   private formInt() {
 
     this.createCustomer = new FormGroup({
-      'owner': new FormControl("", [Validators.required]),
-      'company': new FormControl(null, [Validators.required]),
-      'businessType': new FormControl("", [Validators.required]),
-      'title': new FormControl(null, [Validators.required]),
-      'contact': new FormControl(null, [Validators.required]),
-      'tel': new FormControl(null, [Validators.required]),
-      'email': new FormControl(null, [Validators.required]),
-      'address': new FormControl(null, [Validators.required]),
-      'descriptions': new FormControl(null, [Validators.required]),
-      'deals': new FormControl(null, [Validators.required]),
-      'confirmed': new FormControl(null, [Validators.required]),
-      'loggo': new FormArray([], [this.valLen.bind(this, 'loggo'), this.binValidators.bind(this)]),
-      'video': new FormArray([], [this.valLen.bind(this, 'video'), this.binValidators.bind(this)]),
-      'images': new FormArray([], [this.valLen.bind(this, 'images'), this.binValidators.bind(this)]),
+      'owner': new FormControl("", [Validators.minLength(3)]),
+      'company': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'businessType': new FormControl("", [Validators.required, Validators.minLength(3)]),
+      'title': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'contact': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'tel': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'email': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'address': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'descriptions': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'content': new FormControl(null, [Validators.required]),
+      'deals': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'confirmed': new FormControl(false),
+      'loggo': new FormArray([], [Validators.required, this.ngVal.valLen.bind(this, 'loggo'), this.binValidators.bind(this)]),
+      'video': new FormArray([], [Validators.required, this.ngVal.valLen.bind(this, 'video'), this.binValidators.bind(this)]),
+      'images': new FormArray([], [Validators.required, this.ngVal.valLen.bind(this, 'images'), this.binValidators.bind(this)]),
     });
   }
 
   binValidators(formArray): null {
 
-    const currentControl = formArray.controls[formArray.controls.length -1];
-    if(! formArray.controls.length || !currentControl) return null;
+    const currentControl = formArray.controls[formArray.controls.length - 1];
+    if (!formArray.controls.length || !currentControl) return null;
 
-    currentControl.setValidators([this.validateSize.bind(this), this.validateExsst, this.validateType]);
-    currentControl.updateValueAndValidity({onlySelf: true});
+    currentControl.setValidators([this.ngVal.validateSize.bind(this), this.ngVal.validateExisst, this.ngVal.validateType]);
+    currentControl.updateValueAndValidity({ onlySelf: true });
     return null;
-      // formArray.controls.forEach((control: FormControl) => {
-      //   control.setValidators([this.validateSize.bind(this), this.validateExsst, this.validateType]);  //this.validateExsst(co)
-      // });
- }
-
-  validateSize(control): { [key: string]: string } | null {//{ [key: string]: string } | null
-    // { files_size: "file size " + this.formatBytes(control.value.size) + " to big." }
-    // console.log(control);
-    return (Math.round(control.value.size / Math.pow(1024, 2)) > 6) ? { files_size: "file size " + this.formatBytes(control.value.size) + " to big." } : null;
   }
 
-  validateExsst(control): { [key: string]: string } | null {
-    return control.value.exisst ? { files_exisst: "file exisst in our system." } : null;
-  }
+  configEditor(evt) {
+    // evt.theme.modules.toobar
+    this.quill = evt;
+    evt.format('direction', 'rtl');
+    evt.format('align', 'right', 'user');
+    evt.format('size', 'normal', 'user');
+    evt.format('header', 3, 'user');
+    console.log(evt);
 
-  formatBytes(a) {
-    if (0 === a) return "0 Bytes";
-    var
-      c = 1024,
-      d = 2,
-      e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-      f = Math.floor(Math.log(a) / Math.log(c));
-    return parseFloat((a / Math.pow(c, f)).toFixed(d)) + e[f];
-  }
-
-  validateType(control): { [key: string]: string } | null {
-    let videoType = ['video/3gpp', 'video/H261', 'video/H263', 'video/H264', 'video/JPEG', 'video/mp4', 'video/mpeg'];
-    let imageType = ['image/jpeg', 'image/png', 'image/gif'];
-
-    let typeName = control.value.type.split('/')[0];
-    let typeVal = (typeName == "image") ? imageType.indexOf(control.value.type) :
-      (typeName == "video") ? videoType.indexOf(control.value.type) : false;
-    let trueOrFalse: boolean = (typeVal == -1);
-    let msg: string = "סוג הקובץ לא תקף " + control.value.name + " " + control.value.type;
-    return trueOrFalse ? { file_type: msg } : null;
-  }
-
-  valLen(target, control): { [key: string]: {} } {
-    const validLen = (target == "images") ? (control.value.length >= 3 && control.value.length < 12) : (control.value.length == 1);
-    return !validLen ? { 'invalidLength': control.value.length + " length of " + target + " items is invalid" } : null;
-  }
-
-
-  getValidatedItems() {
-    let controls = this.createCustomer.controls,
-      valItems = { gallery: {}, inputs: {} },
-      galleryKeys = ['images', 'video', 'loggo'];
-
-    Object.keys(controls).forEach(keyName => {
-      let galObj = (galleryKeys.indexOf(keyName) >= 0) ? this.mapValidated(keyName) : [];
-      (galObj.length) ? valItems['gallery'][keyName] = galObj : controls[keyName].valid ? valItems['inputs'][keyName] = controls[keyName].value : '';
-    });
-    return valItems;
-  }
-
-  protected mapValidated(keyName) {
-    return (<FormArray>this.createCustomer.get(keyName)).controls.filter(item => item.valid).map(item => item.value);
+    // var toolbar = evt.getModule('toolbar');
+    // console.log(toolbar);
   }
 
   onSubmit() {
 
+    if (!this.createCustomer.valid) {
+      let msgBag = this.msgsBag.initMessages(this.createCustomer);
+      this.messages = {
+        errors: msgBag['errors'],
+        success: msgBag['success']
+      };
+      this.msgNotify.showErrors('נא לתקן את השגיאות', "פרטים שגויים", {positionClass: "toast-center-center"});
+      console.log("messages: ", this.messages, " form not validated: ", this.createCustomer);
+      return;
+    }
     /* get validated items */
-    let valItems = this.getValidatedItems();
+    let valItems = this.formFiles.getValidatedItems(this.createCustomer);
 
     /* get files to delete */
     let fDel = this.formFiles.extractDelFiles();
 
-    console.log("validate items: ", valItems, " del files: ", fDel , " form: ", this.createCustomer);
+    console.log("validate items: ", valItems, " del files: ", fDel, " form: ", this.createCustomer);
 
     /* get builded form data */
     let fData = this.formFiles.buildSendingFiles(valItems, fDel, this.createCustomer.value);
@@ -202,42 +186,61 @@ export class CustomerCreateComponent implements OnInit {
     // return false;
   }
 
-
+  logIt(msg){
+    console.log(msg);
+    
+  }
   send(body, customer?) {
 
-    let updaterUrl = "customers";
+    let url = "customers";
 
-    this.http.postData(updaterUrl, body)
-      .subscribe(evt => {
+    this.http.postData(url, body)
+      .subscribe(response => {
+        localStorage.setItem('success_server', JSON.stringify(response));
+        this.sync(body, response);
+        this.msgs(body, response);
+        // if(response['errors']){
+        console.log(response);
 
-        // if(evt['errors']){
-        console.log(evt);
-        let msgs = this.formInputs.getMassages(evt);
-        this.messages = msgs;
-        console.log(msgs);
-        this.allowdeactivate = false;
-
-        this.formInputs.resetMessages().then(response => {
-          // let url = "/customers/"+ this.formFiles.getUrl(customer) + "/media";
-          this.messages = response;
-          // this.router.navigate([url]);
-        });
-        // }else{
-        // location.reload();
-        // }
         /**** send new customer to his own page *****/
 
       }, (err) => {
-
+        localStorage.setItem('errors_server', JSON.stringify(err));
         console.log(err);
         if (err["status"] === 401) {
-          console.log(err['status']);
+          // console.log(err['status']);
 
-          this.http.nextIslogged(false);
+          // this.http.nextIslogged(false);
           // window.localStorage.removeItem('user_key');
           // window.location.reload();
         }
       });
+  }
+
+  sync(items, response?) {
+
+    Object.keys(items).forEach(item => {
+      this.itemData[item] = items[item];
+    });
+    this.msgNotify.showSuccess('קליינט', "חשבון קליינט נוצר בהצלחה", {positionClass: "toast-bottom-center"});
+  }
+
+  msgs(body, response) {
+
+    /* this.message = "קליינט עודכן בהצלחה";// "אדמין עודכן בהצלחה"; //response.messages.success.update[0];
+        setTimeout(() => {
+          $('#' + this.id).click();
+          this.message = false;
+        }, 3000) */
+  }
+
+  private galItems() {
+    return ['loggo', 'video', 'images'];
+  }
+
+  clear(item, itemId) {
+    console.log(item, itemId);
+    (this.galItems().indexOf(itemId) >= 0) ? this.formFiles.galReset(itemId) : item.reset();
   }
 
   close() {

@@ -1,19 +1,19 @@
 import { OnDestroy } from '@angular/core';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from "rxjs";
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, map, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Injectable()
 
-export class PagesService implements OnDestroy {
+export class PagesService {
 
     // public data = new BehaviorSubject<{}>({});
 
     private previousUrl: any = undefined;
     private currentUrl: any = undefined;
-    private evtObj: any;
+
+    public pagesSubscription: Subscription;
     
     constructor(private router: Router) {
 
@@ -22,7 +22,7 @@ export class PagesService implements OnDestroy {
             prevUrl: this.router["url"]
         };
 
-        this.evtObj = router.events.pipe(
+        this.pagesSubscription = router.events.pipe(
             filter(event => event instanceof NavigationEnd)
         )
         .subscribe(evt => {
@@ -38,12 +38,9 @@ export class PagesService implements OnDestroy {
     public getPreviousUrl() {
         return this.previousUrl;
     }
+    
     public getCurrentUrl() {
         return this.currentUrl;
-    }
-
-    ngOnDestroy(){
-       this.evtObj.unsubscribe();
     }
 }
 

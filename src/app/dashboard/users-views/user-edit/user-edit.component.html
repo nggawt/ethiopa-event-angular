@@ -1,63 +1,82 @@
-<div *ngIf="itemData" class="col-12 text-right">
-  <div class="border rounded p-3">
-    <form class="form-row p-3 border rounded" [formGroup]="formGr" (ngSubmit)="onSubmit()">
-      <div class="form-group col-sm-12">
-        <h5 class="shadow-sm py-2 text-black-50 h4">
+<dashboard-model [modelProps]="mdProps">
 
-          <i class="fa fa-message text-secondary"></i>
-          ערוך משתמשים
-        </h5>
-      </div>
+<div *ngIf="itemData" class="col-12 text-right">
+
+    <form class="form-row p-3 border rounded  bg-white" [formGroup]="formGr" (ngSubmit)="onSubmit()">
+      
       <div class="form-group col-md-6">
         <label for="name" class="form-control-label">
           שם:
         </label>
-        <input class="form-control" formControlName="name" type="text">
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+
+          <input class="w-100 bd-highlightpx-1" formControlName="name" type="text">
+          <span class="validity float-left"></span>
+        </div>
       </div>
       <div class="form-group col-md-6">
         <label for="email" class="form-control-label">
           אימייל:
         </label>
-        <input class="form-control" id="email" formControlName="email" type="text">
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+
+          <input class="w-100 bd-highlightpx-1" id="email" formControlName="email" type="text">
+          <span class="validity float-left"></span>
+        </div>
       </div>
       <div class="form-group col-md-6">
         <label for="city" class="form-control-label">
           עיר:
         </label>
-        <input class="form-control" id="city" formControlName="city" type="text">
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+
+          <input class="w-100 bd-highlightpx-1" id="city" formControlName="city" type="text">
+          <span class="validity float-left"></span>
+        </div>
       </div>
 
       <div class="form-group col-md-6">
         <label for="tel" class="form-control-label">
           טל:
         </label>
-        <input class="form-control" id="tel" formControlName="tel" type="text">
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+
+          <input class="w-100 bd-highlightpx-1" id="tel" formControlName="tel" type="text">
+          <span class="validity float-left"></span>
+        </div>
       </div>
 
       <div class="form-group col-md-12">
         <label for="area" class="form-control-label">
           אזור:
         </label>
-        <select id="area" class="form-control" formControlName="area">
-          <!-- [value]="f.area.value" -->
-          <option disabled>אזור</option>
-          <option [selected]="f.area.value"> {{ f.area.value }}</option>
-          <option value="צפון">צפון</option>
-          <option value="מרכז">מרכז והשפלה</option>
-          <option value="דרום">דרום</option>
-        </select>
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+
+          <select id="area" class="w-100 bd-highlightpx-1" formControlName="area">
+            <option [selected]="f.area.value" disabled> {{ f.area.value }}</option>
+            <option *ngIf="f.area.value != 'צפון'" value="צפון">צפון</option>
+            <option *ngIf="f.area.value != 'מרכז'" value="מרכז והשפלה">מרכז והשפלה</option>
+            <option *ngIf="f.area.value != 'דרום'" value="דרום">דרום</option>
+          </select>
+          <span class="validity float-left"></span>
+        </div>
       </div>
 
       <div class="form-group col-md-12">
         <label for="about" class="form-control-label">
           תיאור\אודות:
         </label>
-        <textarea class="form-control" id="about" formControlName="about" type="text" rows="8"></textarea>
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+
+          <textarea class="w-100 bd-highlightpx-1" id="about" formControlName="about" type="text" (keyup)="posElem(textArea)" #textArea></textarea>
+          <span class="validity float-left"></span>
+        </div>
       </div>
 
       <div class="col-sm-12 clearfix">
           <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
       </div>
     </form>
-  </div>
+    <h2 *ngIf="mdProps.message" class="h4 text-center text-success"> {{mdProps.message}} </h2>
 </div>
+</dashboard-model>

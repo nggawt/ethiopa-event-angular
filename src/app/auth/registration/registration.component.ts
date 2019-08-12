@@ -51,7 +51,7 @@ export class RegistrationComponent implements OnInit {
       
       let items = this.valForm.validate(controls, formInputes.value);
       let success = items['status'] ? items['success'] : false; */
-      const theUrl = "http://ethio:8080/api/users";
+      const theUrl = "http://ethio:8080/api/register";
       if (this.regiter.valid) {
         const body = new HttpParams()
           .set('name', details['name'])
@@ -65,7 +65,8 @@ export class RegistrationComponent implements OnInit {
 
         this.http.store(theUrl, body).
           subscribe(evt => {
-
+            console.log(evt);
+            
             if (evt['access_token']) {
               this.http.nextIslogged(true);
               // location.reload();

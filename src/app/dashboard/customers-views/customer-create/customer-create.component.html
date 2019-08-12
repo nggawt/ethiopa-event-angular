@@ -1,259 +1,286 @@
-<h2 class="h4 text-right text-success">צור קליינט</h2>
-
-<form *ngIf="itemsResources$ | async as users" class="form-row p-3 border rounded" [formGroup]="createCustomer"
+<div class="shadow-sm p-1 mb-3">
+  <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
+    צור קליינט
+  </div>
+</div>
+<form *ngIf="itemsResources$ | async as users" class="p-3 border rounded" [formGroup]="createCustomer"
   (ngSubmit)="onSubmit()">
+  <div class="form-row">
+    <div class="co-sm-12 col-md-6">
+      <label for="company">משתמש או בעל העסק</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <select name="owner" id="owner" class="w-100 bd-highlightpx-1 selectList" formControlName="owner" required
+          #owner (change)="setOwnerUser(owner.value, users)">
+          <option value="" selected disabled>בחר משתמש</option>
+          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+        </select>
 
-  <div class="co-sm-12 col-md-6">
-    <label for="company">משתמש או בעל העסק</label>
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-      <select name="owner" id="owner" class="w-100 bd-highlightpx-1 selectList" formControlName="owner" required #owner>
-        <option value="" selected disabled>בחר משתמש</option>
-        <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
-      </select>
-
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.owner.invalid && f.owner.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.owner, id:'owner', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.owner.invalid && f.owner.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: owner, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="co-sm-12 col-md-6">
-    <label for="company">סוג העסק</label>
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-      <select name="businessType" id="businessType" class="w-100 bd-highlightpx-1 selectList"
-        formControlName="businessType" required #businessType>
-        <option value="" selected disabled>בחר תחום</option>
-        <option value="halls-events">אולם אירועים</option>
-        <option value="salons">סלון כלות</option>
-        <option value="photographers">צלמים</option>
-        <option value="djs">די-ג'י</option>
-        <option value="printing">בתי דפוס</option>
-        <option value="fireworks">זיקוקים ואטרקציות</option>
-        <option value="transportation">הסעות</option>
-        <option value="car-rental">השכרת רכב</option>
-        <option value="hotels">צמרים ובתי מלון</option>
-        <option value="kyses">קייסים/רבנות</option>
-        <option value="שונות">שונות</option>
-      </select>
+    <div class="co-sm-12 col-md-6">
+      <label for="company">סוג העסק</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <select name="businessType" id="businessType" class="w-100 bd-highlightpx-1 selectList"
+          formControlName="businessType" required #businessType>
+          <option value="" selected disabled>בחר תחום</option>
+          <option value="halls-events">אולם אירועים</option>
+          <option value="salons">סלון כלות</option>
+          <option value="photographers">צלמים</option>
+          <option value="djs">די-ג'י</option>
+          <option value="printing">בתי דפוס</option>
+          <option value="fireworks">זיקוקים ואטרקציות</option>
+          <option value="transportation">הסעות</option>
+          <option value="car-rental">השכרת רכב</option>
+          <option value="hotels">צמרים ובתי מלון</option>
+          <option value="kyses">קייסים/רבנות</option>
+          <option value="שונות">שונות</option>
+        </select>
 
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.businessType.invalid && f.businessType.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.businessType, id:'businessType', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.businessType.invalid && f.businessType.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: businessType, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
 
-  <div class="col-sm-12 col-md-6">
+    <div class="col-sm-12 col-md-6">
 
-    <label for="company">שם החברה</label>
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-      <input name="company" type="text" id="company" class="w-100 bd-highlightpx-1" formControlName="company"
-        placeholder="שם מלא" required minlength="3" maxlength="50" #company />
+      <label for="company">שם החברה</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="company" type="text" id="company" class="w-100 bd-highlightpx-1" formControlName="company"
+          placeholder="שם מלא" required minlength="3" maxlength="50" #company />
 
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.company.invalid && f.company.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.company, id:'company', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.company.invalid && f.company.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: company, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
 
-  <div class="co-sm-12 col-md-6">
+    <div class="co-sm-12 col-md-6">
 
-    <label for="contact">אימייל</label>
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-      <input name="email" type="text" id="email" class="w-100 bd-highlightpx-1" formControlName="email"
-        placeholder="אימייל" [pattern]="emailPatt" required #email />
+      <label for="contact">אימייל</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="email" type="text" id="email" class="w-100 bd-highlightpx-1" formControlName="email"
+          placeholder="אימייל" [pattern]="emailPatt" required #email />
 
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.email, id:'email', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.email.invalid && f.email.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: email, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="col-sm-12 col-md-6 col-lg-3">
-    <label for="contact">איש קשר</label>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <label for="contact">איש קשר</label>
 
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-      <input class="w-100 bd-highlightpx-1" type="text" name="contact" id="contact" formControlName="contact" required
-        #contact />
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input class="w-100 bd-highlightpx-1" type="text" name="contact" id="contact" formControlName="contact" required
+          #contact />
 
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.contact.invalid && f.contact.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.contact, id: 'contact', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.contact.invalid && f.contact.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: contact, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="col-sm-12 col-md-6 col-lg-3">
-    <label for="tel">פלאפון/טלפון</label>
+    <div class="col-sm-12 col-md-6 col-lg-3">
+      <label for="tel">פלאפון/טלפון</label>
 
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-      <input type="tel" id="tel" name="tel" class="w-100 bd-highlightpx-1" formControlName="tel" [pattern]="phoneNum"
-        required #tel />
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input type="tel" id="tel" name="tel" class="w-100 bd-highlightpx-1" formControlName="tel" [pattern]="phoneNum"
+          required #tel />
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.tel, id:'tel', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.tel.invalid && f.tel.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: tel, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="co-sm-12 col-lg-6">
-    <label for="address">כתובת</label>
+    <div class="co-sm-12 col-lg-6">
+      <label for="address">כתובת</label>
 
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-      <input class="w-100 bd-highlightpx-1" type="text" name="address" id="address" formControlName="address" required
-        #address />
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input class="w-100 bd-highlightpx-1" type="text" name="address" id="address" formControlName="address" required
+          #address />
 
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.address.invalid && f.address.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.address, id: 'address', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.address.invalid && f.address.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: address, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="co-sm-12 col-lg-6">
-    <label for="title">סלוגן החברה</label>
+    <div class="co-sm-12 col-lg-6">
+      <label for="title">סלוגן החברה</label>
 
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
-      <textarea class="w-100 bd-highlightpx-1" type="text" name="title" id="title" formControlName="title" required
-        minlength="12" #title>
-        </textarea>
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+        <textarea class="w-100 bd-highlightpx-1" type="text" name="title" id="title" formControlName="title" required
+          minlength="12" #title>
+              </textarea>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.title, id: 'title', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.title.invalid && f.title.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: title, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="co-sm-12 col-lg-6">
+    <div class="co-sm-12 col-lg-6">
 
-    <label for="descriptions">אודות החברה</label>
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
-      <textarea wrap="hard" class="w-100 bd-highlightpx-1" type="text" name="descriptions" id="descriptions"
-        formControlName="descriptions" minlength="6" required #descriptions>
+      <label for="descriptions">תיאור החברה</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+        <textarea wrap="hard" class="w-100 bd-highlightpx-1" type="text" name="descriptions" id="descriptions"
+          formControlName="descriptions" minlength="6" required #descriptions>
 
-      </textarea>
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </textarea>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <div *ngIf="f.descriptions.invalid && f.descriptions.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <ng-container
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.descriptions, id: 'descriptions', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div *ngIf="f.descriptions.invalid && f.descriptions.touched" class="invalid-feedback d-block">* שדה חובה</div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: descriptions, itemMethod: formMethod}">
-    </ng-container>
-  </div>
+    <div class="col-12 position-relative">
 
-  <div class="col-12">
-
-    <label for="deals">מבצעים</label>
-    <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
-      <textarea wrap="hard" class="w-100 bd-highlightpx-1" type="text" name="deals" id="deals" formControlName="deals"
-        minlength="6" required #deals>
-
-      </textarea>
-      <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      <label for="content">אודות החברה</label>
+      <div class="mb-2 clearfix">
+        <!-- <textarea class="w-100 bd-highlightpx-1" type="text" name="content" id="content"
+                formControlName="content" minlength="6" required #content>
+        
+              </textarea> -->
+        <quill-editor (onEditorCreated)="configEditor($event)" formControlName="content" #content></quill-editor>
+      </div>
+      <!-- <div *ngIf="f.content.invalid && f.content.touched" class="invalid-feedback d-block">* שדה חובה</div> -->
+      <ng-container
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.content, id: 'content', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: deals, itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="col-12">
+    <div class="col-12">
+
+      <label for="deals">מבצעים</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+        <textarea wrap="hard" class="w-100 bd-highlightpx-1" type="text" name="deals" id="deals" formControlName="deals"
+          minlength="6" required #deals>
+
+            </textarea>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.deals, id: 'deals', itemMethod: formMethod}">
+      </ng-container>
+    </div>
+
+    <div class="col-12">
 
       <div class="mb-2 custom-checkbox">
-        <input [id]="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox" [checked]="f.confirmed.value">
+        <input [id]="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox"
+          [checked]="f.confirmed.value">
 
         <label [for]="confirmed" class="custom-control-label">
           סטטוס:
           {{ f.confirmed.value? "סרב": "אשר" }}
         </label>
       </div>
-  </div>
-
-  <div class="co-sm-12 col-md-6">
-    <p class="pb-2 m-0">לוגו החברה</p>
-    <div class="form-group border bg-white clearfix">
-      <span class="py-2 px-2 m-0 float-right">
-        הוסף קובץ...
-      </span>
-      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="loggo">
-        <span>
-          הוסף לוגו
-          <i class="fa fa-search text-success"></i>
-        </span>
-      </label>
-      <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required
-        (change)="formFiles.selectedFiles($event, 'loggo')" />
     </div>
 
-    <div *ngIf="f.loggo.value && f.loggo.value.length" FormArrayName="loggo" style="min-height: 90px;" class="bg-dark">
-      <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.loggo, id: 'loggo' }">
+    <div class="co-sm-12 col-md-6">
+      <p class="pb-2 m-0">לוגו החברה</p>
+      <div class="form-group border bg-white clearfix">
+        <span class="py-2 px-2 m-0 float-right">
+          הוסף קובץ...
+        </span>
+        <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="loggo">
+          <span>
+            הוסף לוגו
+            <i class="fa fa-search text-success"></i>
+          </span>
+        </label>
+        <input type="file" id="loggo" class="loggo" style="display: none;" accept="image/*" required
+          (change)="formFiles.selectedFiles($event, 'loggo')" />
+      </div>
+
+      <div *ngIf="f.loggo.value && f.loggo.value.length" FormArrayName="loggo" style="min-height: 90px;"
+        class="bg-dark">
+        <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.loggo, id: 'loggo' }">
+        </ng-container>
+      </div>
+
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.loggo, id: 'loggo', itemMethod: formMethod}">
       </ng-container>
     </div>
 
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.loggo, id: 'loggo', itemMethod: formMethod}">
-    </ng-container>
-  </div>
+    <div class="co-sm-12 col-md-6">
+      <p class="pb-2 m-0">סרטון תדמיתי</p>
+      <div class="form-group border bg-white clearfix">
 
-  <div class="co-sm-12 col-md-6">
-    <p class="pb-2 m-0">סרטון תדמיתי</p>
-    <div class="form-group border bg-white clearfix">
-
-      <span class="py-2 px-2 m-0 float-right">
-        הוסף קובץ...
-      </span>
-      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="video">
-        <span>
-          הוסף סרטון
-          <i class="fa fa-search text-success"></i>
+        <span class="py-2 px-2 m-0 float-right">
+          הוסף קובץ...
         </span>
-      </label>
+        <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="video">
+          <span>
+            הוסף סרטון
+            <i class="fa fa-search text-success"></i>
+          </span>
+        </label>
 
-      <input type="file" id="video" class="video" style="display: none;" accept="video/*"
-        (change)="formFiles.selectedFiles($event,'video')" required /><!-- [formControlName]="video" -->
-    </div>
-    <div *ngIf="f.video.value && f.video.value.length" FormArrayName="video" id="video-box" style="min-height: 90px;"
-      class="bg-dark">
-      <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.video, id: 'video'}">
+        <input type="file" id="video" class="video" style="display: none;" accept="video/*"
+          (change)="formFiles.selectedFiles($event,'video')" required /><!-- [formControlName]="video" -->
+      </div>
+      <div *ngIf="f.video.value && f.video.value.length" FormArrayName="video" id="video-box" style="min-height: 90px;"
+        class="bg-dark">
+        <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.video, id: 'video'}">
+        </ng-container>
+      </div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.video, id: 'video', itemMethod: formMethod}">
       </ng-container>
     </div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.video, id: 'video', itemMethod: formMethod}">
-    </ng-container>
-  </div>
 
-  <div class="col-12">
-    <p class="pb-2 m-0">גלרית תמונות</p>
-    <div class="form-group bg-white border clearfix">
+    <div class="col-12">
+      <p class="pb-2 m-0">גלרית תמונות</p>
+      <div class="form-group bg-white border clearfix">
 
-      <span class="py-2 px-2 m-0 float-right">
-        הוסף קובץ...
-      </span>
-      <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="images">
-        <span>
-          הוסף תמונות
-          <i class="fa fa-search text-success"></i>
+        <span class="py-2 px-2 m-0 float-right">
+          הוסף קובץ...
         </span>
-      </label>
-      <input type="file" id="images" class="gallery" style="display: none;" accept="image/*" required multiple
-        (change)="formFiles.selectedFiles($event,'images')">
-    </div>
+        <label class="border border-primary py-2 px-2 m-0 float-left text-center" for="images">
+          <span>
+            הוסף תמונות
+            <i class="fa fa-search text-success"></i>
+          </span>
+        </label>
+        <input type="file" id="images" class="gallery" style="display: none;" accept="image/*" required multiple
+          (change)="formFiles.selectedFiles($event,'images')">
+      </div>
 
-    <div *ngIf="f.images.value && f.images.value.length" FormArrayName="images" style="min-height: 90px;"
-      class="bg-dark">
-      <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.images, id: 'images'}">
+      <div *ngIf="f.images.value && f.images.value.length" FormArrayName="images" style="min-height: 90px;"
+        class="bg-dark">
+        <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.images, id: 'images'}">
+        </ng-container>
+      </div>
+      <div *ngIf="f.images.invalid" class="invalid-feedback d-block">* הפרטים לא תקפים </div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.images, id: 'images', itemMethod: formMethod}">
       </ng-container>
     </div>
-    <div *ngIf="f.images.invalid" class="invalid-feedback d-block">* הפרטים לא תקפים </div>
-    <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.images, id: 'images', itemMethod: formMethod}">
-    </ng-container>
+
+    <div class="form-group col-12">
+      <button type="submit" class="btn btn-success">
+        <i class="fa fa-envelope"></i>
+        שלח
+      </button>
+    </div>
   </div>
 
-  <div class="form-group col-12">
-    <button type="submit" class="btn btn-success">
-      <i class="fa fa-envelope"></i>
-      שלח
-    </button>
-  </div>
 </form>
 
 <ng-template #galleryTemp let-elems="elem" let-itemId="id">
@@ -283,7 +310,7 @@
 <ng-template #clickedMethods let-elem="elem" let-itemId="id" let-itemMethod="itemMethod">
   <div class="mb-2">
 
-    <a *ngIf="itemMethod == 'update' && elem.value && elem.value.length"
+    <a *ngIf="itemMethod == 'update' && (elem.valid || itemId == 'images')"
       class="ml-1 px-2 py-2 mb-2 border rounded text-center active" (click)="update(elem, itemId)">
       <span>
         עדכן
@@ -311,14 +338,27 @@
       </span>
     </a>
   </div>
-  <div *ngIf="messages && messages[elem.id]" class="bg-light p-1 ml-1">
-    <p *ngFor="let message of messages[elem.id]" class="bg-light p-1 m-1 d-block">
-      <span *ngIf="message[elem.id] || message['message']"
+  <div *ngIf="messages && (messages['success'] || messages['errors'])" class="bg-light p-1 ml-1">
+
+    <div *ngFor="let message of messages | keyvalue" class="d-block">
+      <div *ngIf="message.value && message.value[itemId] as items">
+        <div *ngFor="let messageItems of items">
+
+          <span *ngIf="(messageItems[itemId] || messageItems['message']) as itemMessage"
+            [ngClass]="messageItems['type'] == 'errors'? 'text-danger': 'text-'+messageItems['type'] ">
+            <b># </b>
+            {{ itemMessage }}
+          </span>
+        </div>
+      </div>
+
+    </div>
+    <!-- <p *ngFor="let message of msgs[itemId]" class="bg-light p-1 m-1 d-block">
+      <span *ngIf="(message[itemId] || message['message']) as itemMessage"
         [ngClass]="message['type'] == 'errors'? 'text-danger': 'text-'+message['type'] ">
         <b>#</b>
-        {{ message[elem.id] || message['message'] }}
+        {{ itemMessage }}
       </span>
-    </p>
+    </p> -->
   </div>
 </ng-template>
-<script>alert("hhhi im script");</script>

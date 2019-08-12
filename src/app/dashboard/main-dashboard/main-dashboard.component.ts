@@ -15,7 +15,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   resources$: Observable<{}>;
   templateType;
 
-  @ViewChild('default', {static: true}) default: TemplateRef<any>;
+  @ViewChild('main', { static: true }) main: TemplateRef<any>;
 
   /* Subscription */
   // usersSubsription: Subscription;
@@ -27,22 +27,22 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private http: HttpService, private rsSrv: ResourcesService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private http: HttpService, private srv: ResourcesService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    
+
     this.routerSubscrition = this.router.events.pipe(filter(obType => obType instanceof NavigationStart)).subscribe(routeUrl => {/*  || obType instanceof NavigationEnd */
-      this.templateType = routeUrl['url'] == '/dashboard' ? this.default : null;
+      this.templateType = routeUrl['url'] == '/dashboard' ? this.main : null;
     });
 
-    this.templateType = this.router['url'] == '/dashboard' ? this.default : null;
-    this.rsSrv.initResources(['users', 'customers', 'blog', 'events'], true);
-    // this.rsSrv.initResources('admins');
-    
-    this.resources$ = this.rsSrv.resourcesObsever.pipe(first(item => typeof item == "object"));
+    this.templateType = this.router['url'] == '/dashboard' ? this.main : null;
+    this.srv.initResources(['users', 'customers', 'blog', 'events'], true);
+    // this.srv.initResources('admins');
+
+    this.resources$ = this.srv.resourcesObsever.pipe(first(item => typeof item == "object"));
   }
 
-  getOuterRquests(){
+  getOuterRquests() {
     console.log(this.http.outRequests);
   }
 
@@ -52,19 +52,19 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   }
 
   getCustomers(customers) {
-    return Object.keys(customers).map(customersType => customers[customersType].map(item => { 
-      return {customer: item['customer'], gallery: item['gallery']};
+    return Object.keys(customers).map(customersType => customers[customersType].map(item => {
+      return { customer: item['customer'], gallery: item['gallery'] };
     }));
   }
 
- 
+
 
   checkHasKey(item, key) {
     return (key in item) ? true : false;
   }
 
 
-  login(path){
+  login(path) {
     // console.log(loginTemplete);
     // this.loginTemp = true;
     this.http.requestUrl = decodeURIComponent(location.pathname);
@@ -74,13 +74,13 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.router.navigate([path]);
   }
 
-  logout(){
+  logout() {
     this.http.logOut('admin-logout').subscribe(res => {
       console.log(res);
     });
   }
 
-  create(path){
+  create(path) {
     this.http.requestUrl = decodeURIComponent(location.pathname);
     console.log('url: ', path, ' location: ', this.http.requestUrl);
     this.router.navigate([path]);

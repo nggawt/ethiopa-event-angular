@@ -254,3 +254,18 @@ a.googleFont {
     }
 }
 /* end spinner */
+
+
+/* div.spinner-border{
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: text-bottom;
+    border: .25em solid #F6DC2F;
+    border-right-color: #f00;
+    border-left-color: #47BD35;
+    border-radius: 50%;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
+} */
+

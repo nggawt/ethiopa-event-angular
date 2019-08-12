@@ -15,7 +15,7 @@ export class AdminsViewsComponent implements OnInit {
   admins: {};
   loginTemp: boolean;
 
-  constructor(private rSrv: ResourcesService, private http: HttpService, private router:Router, private route: ActivatedRoute) { }
+  constructor(private srv: ResourcesService, private http: HttpService, private router:Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
     // let url = "http://ethio:8080/api/admins";
@@ -23,12 +23,12 @@ export class AdminsViewsComponent implements OnInit {
   }
 
   initAdmins(){
-    // this.rSrv.initResources('admins');
-    this.rSrv.getResources('admins', false).then(items => {
+    // this.srv.initResources('admins');
+    this.srv.getResources('admins', false).then(items => {
       this.admins = items;
     });
     
-    // this.usersType$  = this.rSrv.resourcesObsever.pipe(first(item => typeof item == "object"));
+    // this.usersType$  = this.srv.resourcesObsever.pipe(first(item => typeof item == "object"));
   }
 
   getUserTypes(items){
@@ -37,19 +37,28 @@ export class AdminsViewsComponent implements OnInit {
   }
 
   edit(path){
-    // console.log("create");
     this.http.requestUrl = location.pathname;
+    console.log(this.http.requestUrl);
     this.router.navigate([path]);
   }
 
   create(path){
-    console.log(path);
     this.http.requestUrl = location.pathname;
+    console.log(this.http.requestUrl);
     this.router.navigate([path]);
   }
 
   show(path){
     this.http.requestUrl = location.pathname;
     this.router.navigate([path]);
+  }
+
+  destroy(path:string, items: any):void{
+    console.log('path: ', path);
+
+    let url = path+'/'+ items.id+'?_method=delete';
+    this.http.postData(url, items).subscribe(response =>{
+      console.log('response: ', response);
+    });
   }
 }

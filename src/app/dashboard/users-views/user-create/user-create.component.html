@@ -1,14 +1,11 @@
 <dashboard-model [modelProps]="mdProps">
-  <div class="px-3">
-    <h2 class="h4 text-right text-success">צור משתמש</h2>
-  </div>
 
   <form class="p-3 form-row" [formGroup]="userCreate" (ngSubmit)="onSubmit()">
 
     <div class="col-6 pb-3">
 
-      <div class="inputTypeNumber">
-        <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם מלא" required minlength="3" maxlength="50" />
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="name" type="text" class="w-100 bd-highlightpx-1" formControlName="name" placeholder="שם מלא" required minlength="3" maxlength="50" />
 
         <span class="validity float-left"></span>
       </div>
@@ -17,8 +14,8 @@
 
     <div class="col-6 pb-3">
 
-      <div class="inputTypeNumber">
-        <input name="city" type="text" class="col-11" formControlName="city" placeholder="עיר מגורים" required minlength="3" maxlength="50" />
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="city" type="text" class="w-100 bd-highlightpx-1" formControlName="city" placeholder="עיר מגורים" required minlength="3" maxlength="50" />
 
         <span class="validity float-left"></span>
       </div>
@@ -28,8 +25,8 @@
 
     <div class="col-6 pb-3">
 
-      <div class="inputTypeNumber">
-        <input name="email" type="text" class="col-11" formControlName="email" placeholder="אימייל" [pattern]="emailPatt" required
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="email" type="text" class="w-100 bd-highlightpx-1" formControlName="email" placeholder="אימייל" [pattern]="emailPatt" required
         />
 
         <span class="validity float-left"></span>
@@ -39,8 +36,8 @@
 
     <div class="col-6 pb-3">
 
-      <div class="inputTypeNumber">
-        <input name="password" type="password" class="col-11" formControlName="password" placeholder="סיסמה" [pattern]="passwordPatt"
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="password" type="password" class="w-100 bd-highlightpx-1" formControlName="password" placeholder="סיסמה" [pattern]="passwordPatt"
           autocomplete required />
 
         <span class="validity float-left"></span>
@@ -50,8 +47,8 @@
 
     <div class="col-6 pb-3">
 
-      <div class="inputTypeNumber">
-        <input name="passwordConfirm" type="password" class="col-11" formControlName="passwordConfirm" placeholder="אשר סיסמה" [pattern]="passwordPatt"
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="passwordConfirm" type="password" class="w-100 bd-highlightpx-1" formControlName="passwordConfirm" placeholder="אשר סיסמה" [pattern]="passwordPatt"
           autocomplete required />
 
         <span class="validity float-left"></span>
@@ -61,8 +58,8 @@
 
     <div class="col-6 pb-3">
 
-      <div class="inputTypeNumber">
-        <select id="area" class="col-11" formControlName="area" required>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <select id="area" class="w-100 bd-highlightpx-1" formControlName="area" required>
           <option value="" selected disabled>אזור</option>
           <option value="צפון">צפון</option>
           <option value="מרכז והשפלה">מרכז והשפלה</option>
@@ -76,8 +73,8 @@
 
     <div class="col-6 pb-3">
 
-      <div class="inputTypeNumber">
-        <input name="tel" type="text" class="col-11" formControlName="tel" placeholder="טלפון/פלאפון" [pattern]="phoneNum" required
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input name="tel" type="text" class="w-100 bd-highlightpx-1" formControlName="tel" placeholder="טלפון/פלאפון" [pattern]="phoneNum" required
         />
 
         <span class="validity float-left"></span>
@@ -88,8 +85,8 @@
 
     <div class="col-12 pb-3">
 
-      <div class="inputTypeNumber textarea">
-        <textarea class="col-11" type="text" name="title" id="about" formControlName="about" required minlength="12" placeholder="הוסף הודעה">
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+        <textarea class="w-100 bd-highlightpx-1" type="text" name="title" id="about" formControlName="about" required minlength="12" placeholder="הוסף הודעה">
             
             </textarea>
         <span class="validity float-left"></span>

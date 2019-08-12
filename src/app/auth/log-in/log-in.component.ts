@@ -78,9 +78,7 @@ export class LogInComponent implements OnInit, AfterContentChecked {
   onSubmit() {
 
     if (this.logInform.valid) {
-      // this.isTrue = false;
       console.log(this.logInform.value);
-
       this.http.logIn(this.logInform.value).
         subscribe(evt => {
 

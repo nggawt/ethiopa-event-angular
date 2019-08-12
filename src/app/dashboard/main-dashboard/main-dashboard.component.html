@@ -1,13 +1,14 @@
+<!-- <app-admin-registration *ngIf="isRegistered"></app-admin-registration> -->
+
 <div *ngIf="resources$ | async as resources" class="row text-right">
   <div class="col-12 mb-3">
     <div class="rounded-right-warning bg-light shadow-sm clearfix">
       <h5 class="p-2 text-black-50 h2 float-right">
           <a routerLink="/dashboard">
-            <!-- (click)=setTemplateType(default) -->
+            <!-- (click)=setTemplateType(main) -->
             <i class="material-icons">dashboard</i>
           </a>
           דשבורד
-        
       </h5>
       <div class="float-left m-1">
         <button class="btn btn-link m-1" type="button" (click)="create('dashboard/admins-views/create')"> צור אדמין</button>
@@ -17,6 +18,7 @@
         <button class="btn btn-link m-1" type="button" (click)="create('dashboard/events-views/create')"> צור אירוע</button>
         <a class="btn btn-outline-success m-1" (click)="login('/login')"> התחבר</a>
         <a class="btn btn-outline-danger m-1" (click)="logout()"> התנתק</a>
+        <!-- <a class="btn btn-outline-warning m-1" (click)="register()">admin register</a> -->
         <a class="btn btn-outline-danger m-1" (click)="getOuterRquests()">GetOuterRquests</a>
       </div>
     </div>
@@ -27,7 +29,7 @@
       class="navbar-nav rounded-right-warning list-unstyled text-secondary d-flex bd-highlight flex-wrap d-md-block pr-3">
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <a routerLink="/dashboard">
-          <!-- (click)=setTemplateType(default) -->
+          <!-- (click)=setTemplateType(main) -->
           <i class="material-icons">dashboard</i>
           דשבורד
         </a>
@@ -80,7 +82,7 @@
   </div>
 </ng-template>
 
-<ng-template #default let-res="elem">
+<ng-template #main let-res="elem">
   <div *ngIf="res" class="row">
 
     <div *ngIf="res['users'] && res['users'].data as users; else loading" class="col-sm-3">

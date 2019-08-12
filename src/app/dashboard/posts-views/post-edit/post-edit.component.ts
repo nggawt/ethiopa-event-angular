@@ -1,11 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ResourcesService } from '../../../services/resources/resources.service';
 import { ActivatedRoute } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { QuillEditorComponent, QuillFormat } from 'ngx-quill';
 import { QuillViewComponent } from 'ngx-quill/src/quill-view.component';
+import { NotificationService } from 'src/app/services/messages/notification.service';
+import { HttpService } from 'src/app/services/http-service/http.service';
 
 @Component({
   selector: 'app-post-edit',
@@ -14,47 +16,18 @@ import { QuillViewComponent } from 'ngx-quill/src/quill-view.component';
 })
 export class PostEditComponent implements OnInit {
 
-  formGr: FormGroup;
-  @Input() itemData: {};
+  postUpdate: FormGroup;
+  @Input() itemData: {id: number, name: string, title: string, body: string, date: string};
   quill: {};
 
-  toolbarOptions = [
-    ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-    ['blockquote', 'code-block'],
-
-    // [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
-    [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-    [{ 'direction': 'rtl' }],                         // text direction
-
-    // [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
-    [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-    [{ 'font': [] }],
-    [{ 'align': [] }],
-
-    ['clean']                                         // remove formatting button
-  ];
-
-  config = {
-    toolbar: this.toolbarOptions,
-    // handlers: {
-    //   'text-right': (arg) => console.log(arg),
-    // }
-    // placeholder: 'Compose an epic...',
-    // readOnly: true,
-    // theme: 'bubble'
-  };
-  constructor() { }
+  constructor(private msgNotify: NotificationService, private http: HttpService) { }
 
   ngOnInit() {
     if(this.itemData) this.itemForm(this.itemData);
   }
 
   get f() : {} {
-    return this.formGr.controls;
+    return this.postUpdate.controls;
   }
   
   configEditor(evt: any) {
@@ -73,17 +46,54 @@ export class PostEditComponent implements OnInit {
     // console.log(toolbar);
   }
 
-  onSubmit(){
-    console.log("submited");
+  itemForm(items){
+    console.log(items);
+    
+    this.postUpdate = new FormGroup({
+      name: new FormControl(items.name, [Validators.required]),
+      title: new FormControl(items.title, [Validators.required]),
+      body: new FormControl(items.body, [Validators.required]),
+      date: new FormControl(items.date, [Validators.required]),
+      confirmed: new FormControl(items.confirmed, [Validators.required]),
+    });
   }
 
-  itemForm(items){
+  onSubmit(){
+    console.log(this.postUpdate);
     
-    let formItems = {};
-    Object.keys(items).forEach(item => {
-      formItems[item] = new FormControl(items[item]);
-    })
-    this.formGr = new FormGroup(formItems);
-    // console.log(this.formGr);
+    if(this.postUpdate.valid){
+      this.send(this.postUpdate.value);
+    }
+  }
+
+  send(body, customer?) {
+
+    let url = "blog/"+this.itemData.id+"?_method=PUT";
+    body['buzi'] ="me";
+    console.log(body);
+    
+    this.http.postData(url, body)
+      .subscribe(response => {
+        localStorage.setItem('success_server', JSON.stringify(response));
+        // this.sync(body, response);
+        // this.msgs(body, response);
+        // if(response['errors']){
+        console.log(response);
+        this.msgNotify.showSuccess('פוסט\\מאמר', "פוסט\\מאמר  עודכן בהצלחה", {positionClass: "toast-top-left"});
+        /**** send new customer to his own page *****/
+
+      }, (err) => {
+        localStorage.setItem('errors_server', JSON.stringify(err));
+        console.log(err);
+        this.msgNotify.showErrors('פוסט\\מאמר', "פרטים שגויים!", {positionClass: "toast-top-left"});
+
+        if (err["status"] === 401) {
+          // console.log(err['status']);
+
+          // this.http.nextIslogged(false);
+          // window.localStorage.removeItem('user_key');
+          // window.location.reload();
+        }
+      });
   }
 }

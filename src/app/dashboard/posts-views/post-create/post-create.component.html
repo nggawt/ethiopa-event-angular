@@ -1,26 +1,55 @@
-<!-- <router-outlet></router-outlet> -->
-
-<dashboard-model [modelProps]='mdProps'>
-  <div class="px-3">
-    <h2 class="h4 text-right text-success">צור פוסט</h2>
+<div class="shadow-sm p-1 mb-3">
+  <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
+    צור מאמר\פוסט
   </div>
+</div>
 
+<form *ngIf="postCreate" class="p-3 border rounded" [formGroup]="postCreate" (ngSubmit)="onSubmit()">
+  <div class="form-row">
 
-  <form *ngIf="postCreate" class="p-3 form-row border rounded" [formGroup]="postCreate" (ngSubmit)="onSubmit()">
     <div class="form-group col-md-12">
+      <div class="input">
+        <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)"
+          (keyup)="(f.date.valid)? daily(date.value):''" placeholder="בחר תאריך" [pattern]="datePattern" #date>
+
+        <label class="m-0 p-1 float-left" for="date">
+          <i class="material-icons">date_range</i>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="title" class="form-control-label">
+        שם:
+      </label>
+      <input class="form-control" formControlName="name" minlength="3" type="text">
+    </div>
+    <div class="form-group col-md-6">
       <label for="title" class="form-control-label">
         נושא:
       </label>
-      <input class="form-control" formControlName="title" type="text">
+      <input class="form-control" formControlName="title" minlength="3" type="text">
     </div>
     <div class="form-group col-md-12">
       <label for="subject" class="form-control-label">
         תוכן:
       </label>
-      <textarea class="form-control" formControlName="body" type="text" rows="8"></textarea>
+      <div class="mb-2 clearfix">
+        <quill-editor (onEditorCreated)="configEditor($event)" minlength="12" formControlName="body"></quill-editor>
+      </div>
     </div>
-    <div class="form-group col-md-12">
-      <button class="btn btn-success btn-sm" type="submit">שלח</button>
+    <div class="form-group col-2 custom-control custom-checkbox">
+      <input [id]="confirmed" class="custom-control-input" type="checkbox" formControlName="confirmed"
+        [checked]="f.confirmed.value"><!--  (click)="confirmed(f.confirmed.value)" -->
+
+      <label [for]="confirmed" class="custom-control-label">
+        סטטוס:
+        {{ f.confirmed.value? "סרב": "אשר" }}
+      </label>
     </div>
-  </form>
-</dashboard-model>
+    <div class="form-group col-md-12 clearfix">
+      <button class="btn btn-success btn-sm float-left" type="submit">שלח</button>
+    </div>
+  </div>
+</form>
+<!-- </dashboard-model> -->

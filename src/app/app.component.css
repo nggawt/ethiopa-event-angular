@@ -19,3 +19,11 @@ ul.navbar-nav li:hover> a {
     color: #47BD35;
     /* color: #F6DC2F; */
 }
+
+.fb-share{
+    z-index: 99;
+    left: 0px;
+    margin-left: 0px;
+    height: 50%; 
+    /* background: #47BD35; */
+}

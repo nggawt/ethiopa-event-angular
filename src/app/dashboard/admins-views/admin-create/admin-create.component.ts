@@ -11,7 +11,7 @@ declare var $;
 @Component({
   selector: 'app-admin-create',
   templateUrl: './admin-create.component.html',
-  styleUrls: ['./admin-create.component.css']
+  styleUrls: ['./admin-create.component.css', '../../../styles/validate.css']
 })
 export class AdminCreateComponent implements OnInit {
 
@@ -55,14 +55,15 @@ export class AdminCreateComponent implements OnInit {
       
       let items = this.valForm.validate(controls, formInputes.value);
       let success = items['status'] ? items['success'] : false; */
-      const theUrl = "http://ethio:8080/api/admin-register";
+      // const theUrl = "http://ethio:8080/api/admin-register";
+      const theUrl = "http://ethio:8080/api/admins";
       if(this.regiter.valid){
         const body = new HttpParams()
           .set('name', details['name'])
           .set('email', details['email'])
           .set('password', details['password'])
           .set('passwordConfirm', details['passwordConfirm'])
-          .set('admin_type', details['admin_type']);
+          .set('authority', details['authority']);
 
         this.http.store(theUrl, body).
           subscribe(evt => {
@@ -92,7 +93,7 @@ export class AdminCreateComponent implements OnInit {
       'email': new FormControl(null),
       'password': new FormControl(null),
       'passwordConfirm': new FormControl(null),
-      'admin_type': new FormControl(""),
+      'authority': new FormControl(""),
     });
   }
 }

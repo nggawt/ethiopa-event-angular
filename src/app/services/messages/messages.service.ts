@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 // import { messagesProps, MessegesKInterface } from '../customers/messages-interface';
 
 @Injectable({
@@ -8,47 +9,43 @@ export class MessagesService {
   private messages: {
     errors: {} |  boolean,// {kk:{}[]}
     status: boolean,
-    success?: {},
+    success?: {} |  boolean,
   } = {
     errors: false, 
     status: true,
-    success: {},
+    success: false,
   };
   private conHeb: object = {
-    name:'שם',
-    date: 'תאריך',
-    time: 'שעה',
-    eventType: 'סוג אירוע',
-    email: 'אימייל',
-    address: 'כתובת',
-    location: 'מיקום',
-    city: 'עיר',
-    subject: 'נושא',
-    message: 'הודעה',
-    area: 'אזור',
-    phone:'טלפון/פלאפון',
-    description: "הודעה/תיאור",
-    descriptions: "הודעה/תיאור"
-  }
+    name:'שם', date: 'תאריך', time: 'שעה', eventType: 'סוג אירוע', email: 'אימייל', location: 'מיקום',
+    city: 'עיר', subject: 'נושא', message: 'הודעה', area: 'אזור', phone:'טלפון/פלאפון', description: "הודעה/תיאור",
+    descriptions: "הודעה/תיאור", deals: 'מבצעים'
+  };
+  
   public messagesAttribute = {
-    required: "פרמטר חובה.",
-    min: "פרמטר חייב להכיל לפחות ",
-    max: "פרמטר חייב להכיל מקסימום ",
-    string: "פרמטר שגוי.",
-    password: "שגיאת סיסמה",
-    email: "פרמטר חייב להכיל תבנית המתאימה לאימייל",
-    same: "פרמטר חייב להיות תואם לפרמטר סיסמה"
+    required: "פרמטר חובה.", min: "פרמטר חייב להכיל לפחות ",  max: "פרמטר חייב להכיל מקסימום ", string: "פרמטר שגוי.",
+    password: "שגיאת סיסמה", email: "פרמטר חייב להכיל תבנית המתאימה לאימייל", same: "פרמטר חייב להיות תואם לפרמטר סיסמה"
   };
 
   constructor() {
     // this.messages.errors = {kk:[{type:""},{message:"2"}]};
    }
 
+
+   initMessages(items: FormGroup){
+    this.reset();
+    let formControls = items.controls;
+     for(let ii in formControls){
+      let msg = "פרמטר לא תקף.";
+      (formControls[ii].invalid)? this.genMsgs(ii, msg, 'errors'): this.genMsgs(ii, 'פרמטר תקף', 'success');
+     }
+     return this.getMessges();
+   }
+
    reset(){
     this.messages = {
       errors: false,
       status: true,
-      success: {}
+      success: false
     };
    }
 
@@ -58,7 +55,7 @@ export class MessagesService {
     let attribute = Object.keys(msgs)[0];
     let typeDefualt = type? type: "errors";
 
-    (this.messages['errors'] && this.messages['errors'] > 0)? this.messages['errors'][attribute]? this.messages['errors'][attribute] = msgs[attribute]:
+    (this.messages['errors'] && Object.keys(this.messages['errors']).length > 0)? (! this.messages['errors'][attribute])? this.messages['errors'][attribute] = msgs[attribute]:
       this.messages['errors'][attribute].push(msgs[attribute][0]): 
       ! this.messages[typeDefualt]? this.messages[typeDefualt] = msgs: ! this.messages[typeDefualt][attribute]? this.messages[typeDefualt][attribute] = msgs[attribute]:
       this.messages[typeDefualt][attribute].push(msgs[attribute][0]);
@@ -81,7 +78,7 @@ export class MessagesService {
       message: this.conHeb[attribute]? this.conHeb[attribute]+": "+ message:  message
     }]};
     this.setMessages(msg, msgType, status);
-    return this;
+    // return this;
   }
 
   proccesMessages(evt) {

@@ -1,6 +1,6 @@
 <ng-template add-component></ng-template>
 
-<div *ngIf="itemResource" class="col-12 text-right">
+<div *ngIf="itemResource" class="text-right">
   <ng-container
     [ngTemplateOutlet]="(itemType == 'customers')? cleint:(itemType == 'blog')? blog: (itemType == 'events')? events:(itemType == 'users')? users: (itemType == 'admins')? admins: default">
   </ng-container>
@@ -8,9 +8,9 @@
   <!-- <ng-template add-component></ng-template> -->
   <!-- <ng-container [ngTemplateOutlet]="cleint"></ng-container> -->
   <!-- </div> -->
-  <div *ngIf="(itemResource.customer || itemResource) as resource" class="border rounded my-3 p-3">
+  <div *ngIf="(itemResource.customer || itemResource) as resource" >
 
-    <div class="clearfix">
+    <div class="clearfix border rounded my-3 p-3">
       <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
       <a [queryParams]="resource.businessType? {name:  resource.businessType}: undefined" routerLink="../">
         <span class="border border-success rounded p-1 costum-btn costum-btn-success">

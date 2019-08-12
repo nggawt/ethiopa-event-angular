@@ -10,6 +10,8 @@ import { FormFilesAndInputsProccesorService } from 'src/app/services/form-files-
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { CustomValidator } from 'src/app/shared/directives/custom-validators/custom-validators-fn-factory';
+import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
+import { NotificationService } from 'src/app/services/messages/notification.service';
 
 declare var $: any;
 @Component({
@@ -66,18 +68,13 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
     private http: HttpService,
-    private httpCli: HttpClient,
-    private srv: ResourcesService,
-    private formInputs: FormProccesorService,
+    private msgNotify: NotificationService,
     public formFiles: FormFilesAndInputsProccesorService,
-    private validator: ValidationService) { }
+    private ngVal: NgValidateSrvService) { }
 
   ngOnInit() {
 
-    
-    console.log(this.itemData);
     
     if (this.itemData) {
       this.formInt(this.itemData);
@@ -132,25 +129,21 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
 
     this.editeCustomer = new FormGroup({
-      'company': new FormControl(customer.company, [Validators.required, this.unchange.bind(this, customer.company)]),
-      'businessType': new FormControl(customer.businessType, [Validators.required, this.unchange.bind(this, customer.businessType)]),
-      'title': new FormControl(customer.title, [Validators.required, this.unchange.bind(this, customer.title)]),
-      'contact': new FormControl(customer.contact, [Validators.required, this.unchange.bind(this, customer.contact)]),
-      'tel': new FormControl(customer.tel, [Validators.required, this.unchange.bind(this, customer.tel)]),
-      'email': new FormControl(customer.email, [Validators.required, this.unchange.bind(this, customer.email)]),
-      'address': new FormControl(customer.address, [Validators.required, this.unchange.bind(this, customer.address)]),
-      'descriptions': new FormControl(customer.descriptions, [Validators.required, this.unchange.bind(this, customer.descriptions)]),
-      'content': new FormControl(customer.content, [Validators.required, this.unchange.bind(this, customer.content)]),
-      'deals': new FormControl(customer.deals, [Validators.required, this.unchange.bind(this, customer.deals)]),
-      'confirmed': new FormControl(customer.confirmed, [Validators.required, this.unchange.bind(this, customer.confirmed)]),
-      'loggo': new FormArray([], [this.valLen.bind(this, 'loggo'), this.binValidators.bind(this)]),
-      'video': new FormArray([], [this.valLen.bind(this, 'video'), this.binValidators.bind(this)]),
-      'images': new FormArray([], [this.valLen.bind(this, 'images'), this.binValidators.bind(this)]),
+      'company': new FormControl(customer.company, [Validators.required, this.ngVal.unchange.bind(this, customer.company)]),
+      'businessType': new FormControl(customer.businessType, [Validators.required, this.ngVal.unchange.bind(this, customer.businessType)]),
+      'title': new FormControl(customer.title, [Validators.required, this.ngVal.unchange.bind(this, customer.title)]),
+      'contact': new FormControl(customer.contact, [Validators.required, this.ngVal.unchange.bind(this, customer.contact)]),
+      'tel': new FormControl(customer.tel, [Validators.required, this.ngVal.unchange.bind(this, customer.tel)]),
+      'email': new FormControl(customer.email, [Validators.required, this.ngVal.unchange.bind(this, customer.email)]),
+      'address': new FormControl(customer.address, [Validators.required, this.ngVal.unchange.bind(this, customer.address)]),
+      'descriptions': new FormControl(customer.descriptions, [Validators.required, this.ngVal.unchange.bind(this, customer.descriptions)]),
+      'content': new FormControl(customer.content, [Validators.required, this.ngVal.unchange.bind(this, customer.content)]),
+      'deals': new FormControl(customer.deals, [Validators.required, this.ngVal.unchange.bind(this, customer.deals)]),
+      'confirmed': new FormControl(customer.confirmed, [Validators.required, this.ngVal.unchange.bind(this, customer.confirmed)]),
+      'loggo': new FormArray([], [this.ngVal.valLen.bind(this, 'loggo'), this.binValidators.bind(this)]),
+      'video': new FormArray([], [this.ngVal.valLen.bind(this, 'video'), this.binValidators.bind(this)]),
+      'images': new FormArray([], [this.ngVal.valLen.bind(this, 'images'), this.binValidators.bind(this)]),
     });
-  }
-
-  unchange(iteVal: string, control: FormGroup) {
-    return (control.value === iteVal) ? { ['unchane']: true } : null;
   }
 
   public getLengthCustomValidator(value: string) {
@@ -166,49 +159,12 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     const currentControl = formArray.controls[formArray.controls.length - 1];
     if (!formArray.controls.length || !currentControl) return null;
 
-    currentControl.setValidators([this.validateSize.bind(this), this.validateExsst, this.validateType]);
+    currentControl.setValidators([this.ngVal.validateSize.bind(this), this.ngVal.validateExisst, this.ngVal.validateType]);
     currentControl.updateValueAndValidity({ onlySelf: true });
     return null;
     // formArray.controls.forEach((control: FormControl) => {
-    //   control.setValidators([this.validateSize.bind(this), this.validateExsst, this.validateType]);  //this.validateExsst(co)
+    //   control.setValidators([this.validateSize.bind(this), this.validateExisst, this.validateType]);  //this.validateExisst(co)
     // });
-  }
-
-  validateSize(control): { [key: string]: string } | null {//{ [key: string]: string } | null
-    // { files_size: "file size " + this.formatBytes(control.value.size) + " to big." }
-    // console.log(control);
-    return (Math.round(control.value.size / Math.pow(1024, 2)) > 6) ? { files_size: "file size " + this.formatBytes(control.value.size) + " to big." } : null;
-  }
-
-  validateExsst(control): { [key: string]: string } | null {
-    return control.value.exisst ? { files_exisst: "file exisst in our system." } : null;
-  }
-
-  formatBytes(a) {
-    if (0 === a) return "0 Bytes";
-    var
-      c = 1024,
-      d = 2,
-      e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"],
-      f = Math.floor(Math.log(a) / Math.log(c));
-    return parseFloat((a / Math.pow(c, f)).toFixed(d)) + e[f];
-  }
-
-  validateType(control): { [key: string]: string } | null {
-    let videoType = ['video/3gpp', 'video/H261', 'video/H263', 'video/H264', 'video/JPEG', 'video/mp4', 'video/mpeg'];
-    let imageType = ['image/jpeg', 'image/png', 'image/gif'];
-
-    let typeName = control.value.type.split('/')[0];
-    let typeVal = (typeName == "image") ? imageType.indexOf(control.value.type) :
-      (typeName == "video") ? videoType.indexOf(control.value.type) : false;
-    let trueOrFalse: boolean = (typeVal == -1);
-    let msg: string = "סוג הקובץ לא תקף " + control.value.name + " " + control.value.type;
-    return trueOrFalse ? { file_type: msg } : null;
-  }
-
-  valLen(target, control): { [key: string]: {} } {
-    const validLen = (target == "images") ? (control.value.length >= 3 && control.value.length < 12) : (control.value.length == 1);
-    return !validLen ? { 'invalidLength': control.value.length + " length of " + target + " items is invalid" } : null;
   }
 
   inputReset(customer, id) {
@@ -232,7 +188,6 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
     // var toolbar = evt.getModule('toolbar');
     // console.log(toolbar);
-
   }
 
   getValidatedItems() {
@@ -242,6 +197,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
 
     Object.keys(controls).forEach(keyName => {
       let galObj = (galleryKeys.indexOf(keyName) >= 0) ? this.mapValidated(keyName) : [];
+      
       (galObj.length) ? valItems['gallery'][keyName] = galObj : controls[keyName].valid ? valItems['inputs'][keyName] = controls[keyName].value : '';
     });
     return valItems;
@@ -270,10 +226,11 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     } else {/* input items */
       valItems['inputs'] = itemId == 'content'? this.setContent(formItem, itemId): {[itemId]: formItem.value};
     }
-    console.log(itemId, valItems);
+    console.log('item id: ', itemId,' del file: ', fDel,' validate items to send: ', valItems);
     
     /* get builded form data */
     let fData = this.formFiles.buildSendingFiles(valItems, fDel, this.editeCustomer.value);
+
     /* send files to server */
     this.send(fData, "PATCH");
   }
@@ -281,7 +238,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
   onSubmit() {
 
     /* get validated items */
-    let valItems = this.getValidatedItems();
+    let valItems = this.formFiles.getValidatedItems(this.editeCustomer);
 
     /* get files to delete */
     let fDel = this.formFiles.extractDelFiles();
@@ -295,46 +252,47 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     this.send(fData, "PUT");
 
     /* show messages success || errors */
-    return false;
+    //return false;
   }
-
 
   send(body, method?: string) {
 
     let url = "customers/" + this.itemData['customer'].id + "? _method=" + (method || "PUT");
     //return false;
     this.http.postData(url, body)
-      .subscribe(evt => {
-        localStorage.setItem('success_server', JSON.stringify(evt));
-        // if(evt['errors']){
-        console.log(evt);
-        let msgs = this.formInputs.getMassages(evt);
-        this.messages = msgs;
-        console.log(msgs);
-
-        this.formInputs.resetMessages().then(response => {
-          // let url = "/customers/"+ this.formFiles.getUrl(customer) + "/media";
-          this.messages = response;
-          // this.router.navigate([url]);
-        });
-        // }else{
-        // location.reload();
-        // }
+      .subscribe(response => {
+        localStorage.setItem('success_server', JSON.stringify(response));
+        this.sync(body, response);
+        // if(response['errors']){
+        console.log(response);
+        
         /**** send new customer to his own page *****/
 
       }, (err) => {
         localStorage.setItem('errors_server', JSON.stringify(err));
         console.log(err);
         if (err["status"] === 401) {
-          //console.log(err['status']);
+          // console.log(err['status']);
 
-          //this.http.nextIslogged(false);
+          // this.http.nextIslogged(false);
           // window.localStorage.removeItem('user_key');
-          //window.location.reload();
+          // window.location.reload();
         }
       });
   }
 
+  sync(items, response?) {
+
+    Object.keys(items).forEach(item => {
+      this.itemData[item] = items[item];
+    });
+    this.msgNotify.showSuccess(response.message, "קליינט");
+    /* this.message = "קליינט עודכן בהצלחה";// "אדמין עודכן בהצלחה"; //response.messages.success.update[0];
+    setTimeout(() => {
+      $('#' + this.id).click();
+      this.message = false;
+    }, 3000) */
+  }
   close() {
     this.router.navigate(['../']);
   }

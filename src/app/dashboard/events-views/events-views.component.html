@@ -2,56 +2,60 @@
   Loading...
 </ng-template>
 
-<div class="text-right" *ngIf="(itemsResources$  | async )?.events as events">
-  <div class="clearfix">
-    <h5 class="shadow-sm py-2 text-black-50 h2">
-      <i class="fa fa-message text-secondary"></i>
-      אירועים
-      <!-- <span class="btn btn-success btn-sm float-left m-1">צור אירוע חדש</span> -->
-      <span class="btn btn-success btn-sm float-left m-1" routerLink="create">צור אירוע חדש</span>
-    </h5>
-  </div>
-  <div *ngIf="events && events.pending.length">
-    <app-pending [itemsLists]="events"></app-pending>
+<div class="row text-right" *ngIf="(itemsResources$  | async )?.events as events">
+  <div class="col-sm-12 mb-3">
+    <div class="shadow-sm p-1">
+      <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
+        אירועים
+        <!-- <span class="btn btn-success btn-sm float-left m-1">צור אירוע חדש</span> -->
+        <span class="btn btn-success btn-sm mr-auto p-2 bd-highlight" routerLink="create">צור אירוע חדש</span>
+      </div>
+    </div>
   </div>
 
-  <ng-container *ngTemplateOutlet="tempType; context:{elem: events}"></ng-container>
+  <div class="col-sm-12">
+    <ng-container *ngTemplateOutlet="tempType; context:{elem: events}"></ng-container>
+  </div>
+
+  <div *ngIf="events && events.pending.length" class="col-sm-12 my-3">
+    <app-pending [itemsLists]="events"></app-pending>
+  </div>
 </div>
 <router-outlet></router-outlet>
 
 <ng-template #tableEvents let-resource="elem">
-  <!-- <div class="table-responsive"> -->
-  <table class="table">
-    <ng-container [ngTemplateOutlet]="eventsTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
-  </table>
-  <!-- </div> -->
+  <div class="border p-3">
+    <table class="table">
+      <ng-container [ngTemplateOutlet]="eventsTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
+    </table>
+    <hr>
+    <div class="text-center mt-3 bg-light p-2 border rounded clearfix">
+      <pagination-template #p="paginationApi" [id]="resource.config.id"
+        (pageChange)="resource.config.currentPage = $event">
 
-  <div class="text-center clearfix py-3">
-    <pagination-template #p="paginationApi" [id]="resource.config.id"
-      (pageChange)="resource.config.currentPage = $event">
-
-      <div class="custom-pagination float-right">
-        <div class="pagination-previous" [class.disabled]="p.isFirstPage()">
-          <i *ngIf="!p.isFirstPage()" (click)="p.previous()" class="fa fa-angle-double-right"></i>
-        </div>
-        <div class="page-number border" *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
-          <span (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</span>
-          <div *ngIf="p.getCurrent() === page.value">
-            <span>{{ page.label }}</span>
+        <div class="custom-pagination float-right">
+          <div class="pagination-previous" [class.disabled]="p.isFirstPage()">
+            <i *ngIf="!p.isFirstPage()" (click)="p.previous()" class="fa fa-angle-double-right"></i>
+          </div>
+          <div class="page-number  bg-white border" *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
+            <span (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}</span>
+            <div *ngIf="p.getCurrent() === page.value">
+              <span>{{ page.label }}</span>
+            </div>
+          </div>
+          <div class="pagination-next" [class.disabled]="p.isLastPage()">
+            <i *ngIf="!p.isLastPage()" (click)="p.next()" class="fa fa-angle-double-left"></i>
           </div>
         </div>
-        <div class="pagination-next" [class.disabled]="p.isLastPage()">
-          <i *ngIf="!p.isLastPage()" (click)="p.next()" class="fa fa-angle-double-left"></i>
-        </div>
-      </div>
-    </pagination-template>
+      </pagination-template>
+    </div>
   </div>
 </ng-template>
 
 <!-- events Table -->
 <ng-template #eventsTable let-eventsData="res">
 
-  <thead class="thead-light text-right">
+  <thead class="thead-dark">
     <tr>
       <th scope="col">שם</th>
       <th scope="col">סוג האירוע</th>

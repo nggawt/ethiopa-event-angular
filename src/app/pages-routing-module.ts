@@ -73,14 +73,11 @@ const routes: Routes = [
       { path: 'users-views/:id/edit', component: OverviewComponent, data: { itemType: "users", comp: 'edit' } },
 
       {
-        path: 'blog-views', component: PostsViewsComponent, children: [
-          { path: 'create', component: PostCreateComponent },
-        ]
-      },
-
+        path: 'blog-views', component: PostsViewsComponent },
       // { path: 'blog-views/create', component: PostCreateComponent, data : { itemType: "blog"} },
-      { path: 'blog-views/:id', component: OverviewComponent, data: { itemType: "blog", comp: 'preview' } },
+      { path: 'blog-views/create', component: OverviewComponent, data: { itemType: "blog", comp: 'create' } },
       { path: 'blog-views/:id/edit', component: OverviewComponent, data: { itemType: "blog", comp: 'edit' } },
+      { path: 'blog-views/:id', component: OverviewComponent, data: { itemType: "blog", comp: 'preview' } },
 
       { path: 'customers-views', component: CustomersViewsComponent },
       { path: 'customers-views/create', component:  OverviewComponent, data: { itemType: "customers", comp: 'create' } },

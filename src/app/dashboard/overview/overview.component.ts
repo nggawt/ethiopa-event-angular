@@ -56,7 +56,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
     this.componentRef = this.compItem.viewCont.createComponent(factory);
     this.componentRef.instance.itemData = this.itemResource;
-    // console.log(this.itemType, this.comp, this.componentRef);
+    // console.log(this.itemType, this.comp, this.componentRef, this.itemResource);
   }
 
   destroy(param){

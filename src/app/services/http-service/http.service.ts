@@ -31,7 +31,7 @@ export class HttpService {
   public sendTo: string;
 
   public outRequests = {
-    toatl: 0
+    total: 0
   }
 
   public authUser: User;
@@ -42,9 +42,9 @@ export class HttpService {
 
   constructor(private http: HttpClient, private jwt: JwtHelperService) {
 
+    console.log('is Authonticated: ', this.isAuth());
     if (this.isAuth()) this.userPromise();
     let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
-    console.log(decoded);
     // this.getData('customers').subscribe(item => console.log(item));
     // this.logNumRequsts();
   }
@@ -62,7 +62,7 @@ export class HttpService {
   }
 
   protected setOutRequests(url) {
-    this.outRequests.toatl++;
+    this.outRequests.total++;
     this.outRequests[url] = (this.outRequests[url] && this.outRequests[url] > 0) ? this.outRequests[url] = (this.outRequests[url] + 1) : this.outRequests[url] = 1;
   }
 
@@ -186,7 +186,6 @@ export class HttpService {
     const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/auth-user";//me
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
 
-    // console.log('url: ', theUrl, "token: ", this.apiKey);
     this.setOutRequests(theUrl);
     return this.http.post(theUrl, token, this.headersOpt)
       .pipe(

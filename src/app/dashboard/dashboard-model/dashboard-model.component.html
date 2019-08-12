@@ -16,6 +16,7 @@
     </div>
 </div> -->
 
+    
 <div *ngIf="modelProps" [id]="modelProps.id" class="modal fade" tabindex="-1" role="dialog" [attr.aria-labelledby]="modelProps.id"
     aria-hidden="true">
 
@@ -23,7 +24,7 @@
       <div class="modal-content bg-light">
         
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">{{ modelProps.title }} ל: <small class="text-success"> {{ modelProps.nameTo}} </small></h5>
+            <h3 class="modal-title text-success" id="exampleModalLabel">{{ modelProps.title }}  <small class="text-success"> {{ modelProps.nameTo}} </small></h3>
             <button type="button" class="close m-0 float-left" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>

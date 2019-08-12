@@ -29,14 +29,17 @@ export class UsersViewsComponent implements OnInit {
   get f() : {} {
     return this.formGr.controls;
   }
-  
+
   create(path){
-    // console.log("create");
-    
     this.http.requestUrl = location.pathname;
     this.router.navigate([path]);
   }
-  
+
+  edit(path){
+    this.http.requestUrl = location.pathname;
+    this.router.navigate([path]);
+  }
+
   initForm(customer, temp){
     this.tempType =  temp;
     if(customer) this.customersForm(customer);

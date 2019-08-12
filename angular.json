@@ -29,7 +29,8 @@
               "./node_modules/quill/dist/quill.core.css",
               "./node_modules/quill/dist/quill.snow.css",
               "./node_modules/quill/dist/quill.bubble.css",
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
               "./node_modules/jquery/dist/jquery.min.js",
@@ -63,6 +64,9 @@
                   "maximumError": "5mb"
                 }
               ]
+            },
+            "es5": {
+              "tsConfig": "./tsconfig-es5.app.json"
             }
           }
         },
@@ -74,6 +78,9 @@
           "configurations": {
             "production": {
               "browserTarget": "angular-ee:build:production"
+            },
+            "es5": {
+              "browserTarget": "angular-ee:build:es5"
             }
           }
         },
@@ -126,6 +133,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "angular-ee"
 }

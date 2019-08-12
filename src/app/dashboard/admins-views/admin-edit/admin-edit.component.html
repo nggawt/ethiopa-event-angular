@@ -1,43 +1,54 @@
 <dashboard-model [modelProps]='mdProps'>
   <div *ngIf="itemData" class="border p-3 rounded">
-    <h2 class="h4 text-right text-success">ערוך אדמין</h2>
 
     <form class="form-row" [formGroup]="formGr" (ngSubmit)="onSubmit()">
+      <!-- (ngSubmit)="srv.update('admins', itemData, formGr, 'PUT')" -->
       <div class="form-group col-md-6">
         <label for="name" class="form-control-label">
           שם:
         </label>
-        <input class="form-control" formControlName="name" type="text">
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+          <input class="w-100 bd-highlightpx-1" formControlName="name" type="text">
+          <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        </div>
       </div>
       <div class="form-group col-md-6">
         <label for="email" class="form-control-label">
           אימייל:
         </label>
-        <input class="form-control" id="email" formControlName="email" type="email">
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+          <input class="w-100 bd-highlightpx-1" id="email" formControlName="email" type="email">
+          <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        </div>
       </div>
 
       <div class="form-group col-md-6">
-        <label for="admin_type" class="form-control-label">
+        <label for="authority" class="form-control-label">
           הרשאות :
         </label>
-        <select id="admin_type" class="form-control" required>
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+          <select *ngIf="itemData.authority?.id as authId" id="authority" [value]="authId" formControlName="authority"
+            class="w-100 bd-highlightpx-1" required>
 
-          <option [value]="itemData.authority?.id" disabled>{{ itemData.authority?.name }}</option>
-          <option *ngIf="itemData.authority?.slug != 'admin'" [value]="itemData.authority?.id">Admin</option>
-          <option *ngIf="itemData.authority?.slug != 'author'" [value]="itemData.authority?.id">Author</option>
-          <option *ngIf="itemData.authority?.slug != 'editor'" [value]="itemData.authority?.id">Editor</option>
-        </select>
+            <option [value]="authId" selected disabled>{{ itemData.authority?.name }}</option>
+            <option *ngIf="itemData.authority?.slug != 'admin'" [value]="3">Admin</option>
+            <option *ngIf="itemData.authority?.slug != 'author'" [value]="1">Author</option>
+            <option *ngIf="itemData.authority?.slug != 'editor'" [value]="2">Editor</option>
+          </select>
+          <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+        </div>
       </div>
 
       <div class="col-sm-12 clearfix">
         <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
-        <span class="border border-success rounded p-1 costum-btn costum-btn-success" (click)="back()">
-          <i class="material-icons"> chevron_right </i>
+        <span class="border border-success rounded p-1 costum-btn costum-btn-success">
+          <i class="material-icons">chevron_right </i>
           <i class="mt-icons"> חזור </i>
         </span>
         <!-- </span> -->
         <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
       </div>
     </form>
+    <h2 *ngIf="mdProps.message" class="h4 text-center text-success">{{mdProps.message}}</h2>
   </div>
 </dashboard-model>
