@@ -14,16 +14,17 @@ export class PostsViewsComponent implements OnInit {
   formGr: FormGroup;
 
   @ViewChild('default', {static: true}) tempType: TemplateRef<any>;
-  @ViewChild('tableblog', {static: true}) tableblog: TemplateRef<any>;
+  @ViewChild('tablearticles', {static: true}) tablearticles: TemplateRef<any>;
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
-  constructor(private http: HttpService, private resSrv: ResourcesService) { }
+  constructor(private http: HttpService, private rsrv: ResourcesService) { }
 
   ngOnInit() {
 
-    this.itemsResources$ = this.resSrv.resourcesObsever;
-    this.tempType =  this.tableblog;
+    this.itemsResources$ = this.rsrv.resourcesObsever;
+    this.tempType =  this.tablearticles;
+    
   }
   
   get f() : {} {

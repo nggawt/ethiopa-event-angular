@@ -71,7 +71,7 @@ export class CreatePostComponent implements OnInit {
       .subscribe(evt => {
 
         console.log(evt);
-        let msgs = this.msgSrv.getMassages(evt);
+        let msgs = this.msgSrv.proccesMessages(evt);
         console.log(msgs);
         this.messages = msgs;
         this.resetMessages();

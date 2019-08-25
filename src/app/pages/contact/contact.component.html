@@ -1,4 +1,4 @@
-<model-template *ngIf="mailProps" [mailProps]="mailProps">
+<model-template [mailProps]="mailProps">
     <form class="form-row p-3" [formGroup]="formConcat" (ngSubmit)="onSubmit()">
 
         <div class="form-group col-md-6">
@@ -55,7 +55,7 @@
 
         </div>
         <div class="form-group col-md-12">
-            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
                 <textarea formControlName="message" class="w-100 bd-highlightpx-1" id="textarea" rows="8"
                     placeholder="הוסף הודעה">
             </textarea>

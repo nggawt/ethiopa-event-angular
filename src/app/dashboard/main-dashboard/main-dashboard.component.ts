@@ -36,7 +36,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.templateType = this.router['url'] == '/dashboard' ? this.main : null;
-    this.srv.initResources(['users', 'customers', 'blog', 'events'], true);
+    this.srv.initResources(['users', 'customers', 'articles', 'events'], true);
     // this.srv.initResources('admins');
 
     this.resources$ = this.srv.resourcesObsever.pipe(first(item => typeof item == "object"));
@@ -68,7 +68,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     // console.log(loginTemplete);
     // this.loginTemp = true;
     this.http.requestUrl = decodeURIComponent(location.pathname);
-    this.http.intendedUri = this.http.requestUrl
+    // this.http.intendedUri = this.http.requestUrl
     this.http.loginTo = "admin-login";
 
     this.router.navigate([path]);

@@ -3,40 +3,74 @@
 </div>
 <form [formGroup]="eventCreate" class="p-3 border rounded" (ngSubmit)="onSubmit()">
   <div class="form-row">
-    <div class="form-group col-md-12">
-      <div class="input">
-        <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)"
-          (keyup)="(f.date.valid)?daily(date.value):''" placeholder="בחר תאריך" [pattern]="datePattern" #date>
 
-        <label class="m-0 p-1 float-left" for="date">
-          <i class="material-icons">date_range</i>
+    <div class="form-group col-md-6">
+      <label for="company">משתמש או בעל העסק</label>
+
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <select name="owner" id="owner" class="chosen w-100 bd-highlightpx-1 selectList" formControlName="owner">
+          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+        </select>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+    </div>
+
+    <div class="form-group col-md-6 custom-control custom-checkbox">
+      <label for="confirmed" class="form-control-label">
+        סטטוס:
+      </label>
+      <div class="inputTypeNumber mb-2">
+        <input id="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox"
+          [checked]="f.confirmed.value">
+
+        <!-- <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight float-left"></span> -->
+        <label for="confirmed" class="custom-control-label">
+          {{ f.confirmed.value? "פעיל": "ממתין" }}
         </label>
       </div>
+    </div>
 
+    <div class="form-group col-md-12">
+      <label for="date">בתאריך:</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)" class="w-100 bd-highlightpx-1"
+          (keyup)="(f.date.valid)?daily(date.value):''" placeholder="בחר תאריך" [pattern]="datePattern" #date>
+
+        <!-- <span class="flex-shrink-1 bd-highlight" for="date">
+          <i class="material-icons">date_range</i>
+        </span> -->
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: date, itemMethod: formMethod}">
       </ng-container>
     </div>
     <div class="form-group col-md-6">
       <label for="name">שם</label>
-      <input type="text" id="name" class="form-control" formControlName="name" #name>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input type="text" id="name" class="w-100 bd-highlightpx-1" formControlName="name" minlength="3" #name>
+
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: name, itemMethod: formMethod}">
       </ng-container>
-
-      <div *ngIf="f.name.invalid && f.name.touched" class="invalid-feedback d-block">* שדה חובה</div>
+      <!-- <div *ngIf="f.name.invalid && f.name.touched" class="invalid-feedback d-block">* שדה חובה</div> -->
     </div>
     <div class="form-group d-block col-md-6">
       <!-- (change)="selectedText(select)" -->
       <label for="eventType">אירוע</label>
-      <select name="eventType" id="eventType" formControlName="eventType" class="form-control"
-        (change)="toggleHidden(select, other)" #select>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <select name="eventType" id="eventType" formControlName="eventType" class="w-100 bd-highlightpx-1 selectList"
+          (change)="toggleHidden(select, other)" #select>
 
-        <option value="" [selected]="true" disabled>סוג האירוע</option>
-        <option value="wedding">חתונה</option>
-        <option value="bar-mitzvah">בר/בת מצווה</option>
-        <option value="hina">חינה</option>
-        <option value="other">אחר</option>
-      </select>
-      <!-- <span class="validity float-left"></span> -->
+          <option value="" [selected]="true" disabled>סוג האירוע</option>
+          <option value="wedding">חתונה</option>
+          <option value="bar-mitzvah">בר/בת מצווה</option>
+          <option value="hina">חינה</option>
+          <option value="other">אחר</option>
+        </select>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: select, itemMethod: formMethod}">
       </ng-container>
     </div>
@@ -44,44 +78,64 @@
     <div class="form-group col-md-6 d-none">
       <label for="other" [ngClass]="other.hidden? 'd-none':'d-block'">סוג
         אירוע אחר
-        <span class="btn btn-link btn-sm text-success" (click)="toggleHidden(other, select)">בחר
+        <span class="text-success" (click)="toggleHidden(other, select)">בחר
           מרשימה</span>
       </label>
-      <input type="text" id="other" formControlName="other" hidden class="form-control" #other>
+      <div class="inputTypeNumber d-flex bd-highlight">
+        <input type="text" id="other" formControlName="other" hidden class="w-100 bd-highlightpx-1" required #other>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: other, itemMethod: formMethod }">
       </ng-container>
     </div>
 
     <div class="form-group col-md-6">
       <label for="location">עיר/מיקום</label>
-      <input type="text" id="location" class="form-control" formControlName="location" #location>
+      <div class="inputTypeNumber d-flex bd-highlight">
+        <input type="text" id="location" class="w-100 bd-highlightpx-1" formControlName="location" #location>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: location, itemMethod: formMethod }">
       </ng-container>
     </div>
 
     <div class="form-group col-md-6">
       <label for="address">כתובת</label>
-      <input type="text" id="address" class="form-control" formControlName="address" #address>
+      <div class="inputTypeNumber d-flex bd-highlight">
+        <input type="text" id="address" class="w-100 bd-highlightpx-1" formControlName="address" #address>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: address, itemMethod: formMethod }">
       </ng-container>
     </div>
     <div class="form-group col-md-6">
       <label for="email">אימייל</label>
-      <input type="email" id="email" class="form-control" formControlName="email" [pattern]="emailPatteren" #email>
+      <div class="inputTypeNumber d-flex bd-highlight">
+        <input type="email" id="email" class="w-100 bd-highlightpx-1" formControlName="email" [pattern]="emailPatteren"
+          #email>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{ elem: email, itemMethod: formMethod }">
       </ng-container>
     </div>
 
     <div class="form-group col-md-6">
       <label for="phone">טלפון/פלאפון</label>
-      <input type="tel" id="phone" class="form-control" formControlName="phone" [pattern]="phoneNum" #phone>
+      <div class="inputTypeNumber d-flex bd-highlight">
+        <input type="tel" id="phone" class="w-100 bd-highlightpx-1" formControlName="phone" [pattern]="phoneNum" #phone>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: phone, itemMethod: formMethod}">
       </ng-container>
     </div>
 
     <div class="form-group col-md-12">
-      <textarea class="form-control" id="descriptions" formControlName="descriptions" rows="3" placeholder="הוסף הודעה"
-        #descriptions></textarea>
+      <label for="phone">הוסף הודעה</label>
+      <div class="inputTypeNumber d-flex bd-highlight textarea">
+        <textarea class="w-100 bd-highlightpx-1" id="descriptions" formControlName="descriptions" rows="3"
+          placeholder="הוסף הודעה" #descriptions></textarea>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: descriptions, itemMethod: formMethod}">
       </ng-container>
     </div>

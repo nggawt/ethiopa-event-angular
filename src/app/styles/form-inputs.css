@@ -1,0 +1,84 @@
+
+
+.inputTypeNumber {
+    height: calc(2.25rem + 2px);
+    padding: .375rem .25rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    position: relative;
+}
+
+.inputTypeNumber input,
+.inputTypeNumber select {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding-right: 3px;
+}
+
+.inputTypeNumber textarea {
+    border: none;
+    outline: none;
+    resize: none;
+    /* width: 100%; */
+    /* height: 100%; */
+}
+
+div.inputTypeNumber.textarea{
+
+    min-height: 100px;
+}
+
+textarea.note {
+    text-align: right;
+    text-indent: 0px;
+    /* color: #26b72b; */
+    /* word-break: break-all; */
+    /* overflow: hidden; */
+    white-space: wrap;
+    box-sizing: border-box;
+    min-height: 40%;
+    direction: rtl;
+    display: inline;
+    min-height: 30%;
+    line-height: 1.5;
+    padding: 15px 15px 30px;
+    border-radius: 3px;
+    border: 1px solid #F7E98D;
+    font: 13px Tahoma, cursive;
+    transition: box-shadow 0.5s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* font-smoothing: subpixel-antialiased; */
+    background: linear-gradient(#F9EFAF, #F7E98D);
+    background: -o-linear-gradient(#F9EFAF, #F7E98D);
+    background: -ms-linear-gradient(#F9EFAF, #F7E98D);
+    background: -moz-linear-gradient(#F9EFAF, #F7E98D);
+    background: -webkit-linear-gradient(#F9EFAF, #F7E98D);
+}
+
+
+/* form validaty */
+
+input.ng-valid+span:after,
+select.ng-valid+span:after,
+textarea.ng-valid+span:after,
+input:valid+small:after {
+    content: '✓';
+    color: #26b72b;
+    padding-left: 5px;
+}
+
+input.ng-invalid+span:after,
+select.ng-invalid+span:after,
+textarea.ng-invalid+span:after,
+input:invalid+small:after {
+    content: '✖';
+    color: #f00;
+    padding-left: 5px;
+}
+

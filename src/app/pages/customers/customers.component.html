@@ -1,3 +1,9 @@
+<!-- <app-contact [mailProps]="customerMessage"></app-contact> -->
+
+<div *ngIf="(sendingMail | async) as allowMesage">
+    <ng-template *ngIf="allowMesage && allowMesage[customerMessage.id]" [appSendMessageDirective]="customerMessage"></ng-template>
+</div>
+
 <router-outlet *ngIf="! path"></router-outlet>
 <hr class="d-sm-none">
 <div *ngIf="path" class="row text-right">
@@ -31,11 +37,11 @@
                     <h4 class="bg-succes text-success">
                         {{ hallsProp.customer.title }}
                     </h4>
-                    
-                    <p class="card-text p-1 d-block">
-                        {{ (hallsProp.customer.descriptions.length > 90)? hallsProp.customer.descriptions.replace(hallsProp.customer.descriptions.slice(hallsProp.customer.descriptions.slice(0, 120).lastIndexOf(',')), '...'):(hallsProp.customer.descriptions) }}
-                    </p> 
-                
+
+                    <!-- <p class="card-text p-1 d-block">
+                        {{ (hallsProp.customer.content.length > 90)? hallsProp.customer.content.replace(hallsProp.customer.content.slice(hallsProp.customer.content.slice(0, 120).lastIndexOf(',')), '...'):(hallsProp.customer.content) }}
+                    </p> -->
+                    <div [innerHTML]="customer?.content | keepHtml"></div>
                     <a (click)="onSelectedLink(hallsProp.customer)" routerLink="{{ hallsProp.customer.id }}/about"
                         class="text-info font-weight-bold">
                         המשך לקרוא
@@ -81,8 +87,8 @@
 </div>
 
 
-<app-contact [mailProps]="customerMessage"></app-contact>
-        
+
+
 <!--Contact Modal -->
 <!-- form model -->
 <!-- 

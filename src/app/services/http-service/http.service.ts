@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { of, BehaviorSubject, Observable, AsyncSubject } from 'rxjs';
-import { tap, delay, map, find, filter, first } from 'rxjs/operators';
+import { of, BehaviorSubject, Observable, AsyncSubject, throwError } from 'rxjs';
+import { tap, delay, map, find, filter, first, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from '../../types/user-type';
+import { ErrorsHandler } from '../errors-exeption/errors-handler.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,10 +25,11 @@ export class HttpService {
   private user: BehaviorSubject<User | boolean> = new BehaviorSubject(false);
 
   public allowLogIn = new BehaviorSubject(false);
+  public sendingMail: BehaviorSubject<{ [key: string]: boolean } | boolean> = new BehaviorSubject(false);
 
   public intendedUri: string;
   public requestUrl: string | boolean;
-  public loginTo: string;
+  public loginTo: string | boolean;
   public sendTo: string;
 
   public outRequests = {
@@ -40,7 +42,7 @@ export class HttpService {
   public isLogedIn: Observable<boolean> = this.logged.asObservable();
   public userObs: Observable<User | boolean> = this.user.asObservable();
 
-  constructor(private http: HttpClient, private jwt: JwtHelperService) {
+  constructor(private http: HttpClient, private jwt: JwtHelperService, private esrv: ErrorsHandler) {
 
     console.log('is Authonticated: ', this.isAuth());
     if (this.isAuth()) this.userPromise();
@@ -53,7 +55,7 @@ export class HttpService {
     return this.jwt.isTokenExpired(this.jwt.tokenGetter());
   }
 
-  protected logNumRequsts(){
+  protected logNumRequsts() {
 
     let timeOut = setTimeout(() => {
       console.log(this.outRequests);
@@ -67,9 +69,11 @@ export class HttpService {
   }
 
   public logIn(credential, path?) {
+
     path = path ? path : this.loginTo ? this.loginTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/login";
 
+    console.log("URL: ", theUrl);
     let body = new HttpParams()
       .set('name', credential['name'])
       .set('email', credential['email'])
@@ -152,7 +156,12 @@ export class HttpService {
     postUrl = postUrl ? this.baseUrl + "/" + postUrl : false;
     if (!opt) opt = this.getHttpOpt();
     this.setOutRequests(postUrl);
-    return this.http.post(postUrl, (body || {}), opt);
+    return this.http.post(postUrl, (body || {}), opt).pipe(catchError(err => {
+      // this.esrv.handleError(err);
+      // console.error(err.message);
+      console.log("Error is handled");
+      return throwError("Error thrown from catchError");
+    }));
   }
 
   getData(url?, opt?) {
@@ -204,12 +213,12 @@ export class HttpService {
           // this.removePropsUser();
           // this.removeApiKey();
           // }
-        })).toPromise().catch(this.handleError);
+        })).toPromise().catch(this.esrv.handleError);
   }
 
-  handleError(errors) {
-    console.log(errors);
-  }
+  // handleError(errors) {
+  //   console.log(errors);
+  // }
 
   private removePropsUser() {
     this.logged.next(false);

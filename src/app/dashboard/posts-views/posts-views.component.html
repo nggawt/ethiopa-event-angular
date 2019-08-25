@@ -1,7 +1,7 @@
 <ng-template #default>
   Loading...
 </ng-template>
-<div class="row text-right" *ngIf="(itemsResources$  | async )?.blog as blog">
+<div class="row text-right" *ngIf="(itemsResources$  | async )?.articles as articles">
   <div class="col-sm-12 mb-3">
     <div class="shadow-sm p-1">
       <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
@@ -13,20 +13,20 @@
   </div>
 
   <div class="col-sm-12">
-    <ng-container *ngTemplateOutlet="tempType; context:{elem: blog}"></ng-container>
+    <ng-container *ngTemplateOutlet="tempType; context:{elem: articles}"></ng-container>
   </div>
-  <div *ngIf="blog && blog.pending.length" class="col-sm-12 my-3">
-    <app-pending [itemsLists]="blog"></app-pending>
+  <div *ngIf="articles && articles.pending.length" class="col-sm-12 my-3">
+    <app-pending [itemsLists]="articles"></app-pending>
   </div>
 </div>
 
 <router-outlet></router-outlet>
 
-<ng-template #tableblog let-resource="elem">
+<ng-template #tablearticles let-resource="elem">
 
   <div class="border p-3">
     <table class="table">
-      <ng-container [ngTemplateOutlet]="blogTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
+      <ng-container [ngTemplateOutlet]="articlesTable" [ngTemplateOutletContext]="{res:resource}"></ng-container>
     </table>
     <hr>
     <div class="text-center mt-3 bg-light p-2 border rounded clearfix">
@@ -54,8 +54,8 @@
 
 </ng-template>
 
-<!-- blog Table -->
-<ng-template #blogTable let-blogData="res">
+<!-- articles Table -->
+<ng-template #articlesTable let-articlesData="res">
 
   <thead class="thead-dark text-right">
     <tr>
@@ -69,7 +69,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let article of blogData.data | paginate: blogData.config; let idx = index">
+    <tr *ngFor="let article of articlesData.data | paginate: articlesData.config; let idx = index">
       <th scope="row">{{article.name}}</th>
       <td>
         <small class="text-muted">
@@ -111,7 +111,7 @@
     </textarea>
 </ng-template>
 
-<ng-template #blogForm>
+<ng-template #articlesForm>
 
   <form class="form-row p-3 border rounded" [formGroup]="formGr" (ngSubmit)="onSubmit()">
     <div class="form-group col-sm-12">
@@ -155,7 +155,7 @@
       </label>
     </div>
     <div class="form-group col-sm-12 clearfix">
-      <a class="btn btn-link" (click)="initForm(false, tableblog)">
+      <a class="btn btn-link" (click)="initForm(false, tablearticles)">
         חזור
       </a>
       <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>

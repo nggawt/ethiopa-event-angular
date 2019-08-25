@@ -25,7 +25,7 @@ export class CompLists {
             edit: CustomerEditComponent,
             create: CustomerCreateComponent
         },
-        blog: {
+        articles: {
             preview: PostPreviewComponent,
             edit: PostEditComponent,
             create: PostCreateComponent

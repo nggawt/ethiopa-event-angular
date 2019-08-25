@@ -14,7 +14,7 @@
         <button class="btn btn-link m-1" type="button" (click)="create('dashboard/admins-views/create')"> צור אדמין</button>
         <button class="btn btn-link m-1" type="button" (click)="create('dashboard/users-views/create')"> צור משתמש</button>
         <button class="btn btn-link m-1" type="button" (click)="create('dashboard/customers-views/create')"> צור קליינט</button>
-        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/blog-views/create')"> צור פוסט</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/articles-views/create')"> צור פוסט</button>
         <button class="btn btn-link m-1" type="button" (click)="create('dashboard/events-views/create')"> צור אירוע</button>
         <a class="btn btn-outline-success m-1" (click)="login('/login')"> התחבר</a>
         <a class="btn btn-outline-danger m-1" (click)="logout()"> התנתק</a>
@@ -26,7 +26,7 @@
   <div class="col-sm-2">
 
     <ul
-      class="navbar-nav rounded-right-warning list-unstyled text-secondary d-flex bd-highlight flex-wrap d-md-block pr-3">
+      class="navbar-nav rounded-right-warning list-unstyled text-secondary">
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <a routerLink="/dashboard">
           <!-- (click)=setTemplateType(main) -->
@@ -45,7 +45,7 @@
       </li>
       <li class="nav-item" routerLinkActive="active"><a routerLink="customers-views">קליינטים</a></li>
       <!--  (click)=setTemplateType(customersView) -->
-      <li class="nav-item" routerLinkActive="active"><a routerLink="blog-views">פוסטים</a></li>
+      <li class="nav-item" routerLinkActive="active"><a routerLink="articles-views">פוסטים</a></li>
       <!-- (click)=setTemplateType(posts) -->
       <li class="nav-item" routerLinkActive="active"><a routerLink="events-views">אירועים</a></li>
       <!-- (click)=setTemplateType(events) -->
@@ -132,7 +132,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="res['blog'] && res['blog'].data as blog" class="col-sm-3">
+    <div *ngIf="res['articles'] && res['articles'].data as articles" class="col-sm-3">
       <div class="p-3 border rounded">
         <div class="header">
           <!-- <i class="fa fa-users" style="font-size: 1.5rem;"></i> -->
@@ -144,7 +144,7 @@
             סהכ:
           </span>
           <div class="circle text-center">
-            <span class="total p-3">{{ blog.length }}</span>
+            <span class="total p-3">{{ articles.length }}</span>
           </div>
         </div>
         <div class="footer p-1">
@@ -200,7 +200,7 @@
             <!-- <app-pending [itemsLists]="resource.value"></app-pending> -->
             <a class="py-2 d-flex justify-content-between align-items-center" [routerLink]="resource.key+'-views'">
               <h3 class="h6">
-                {{ (resource.key == 'customers')? 'קליינטים':(resource.key == 'users')? 'משתמשים': (resource.key == 'blog')? 'מאמרים\\פוסטים':'אירועים' }}
+                {{ (resource.key == 'customers')? 'קליינטים':(resource.key == 'users')? 'משתמשים': (resource.key == 'articles')? 'מאמרים\\פוסטים':'אירועים' }}
 
                 <small
                   *ngIf="(pend[0] && pend[0].created_at) || (pend[0] && pend[0].customer && pend[0].customer.created_at) as dt; else dateTxt"
@@ -304,7 +304,7 @@
     <app-messages [itemsResources]="res"></app-messages>
 </ng-template>
 
-<ng-template #posts let-res="elem['blog']">
+<ng-template #posts let-res="elem['articles']">
     <app-posts-views [itemsResources]="res"></app-posts-views>
 </ng-template>
 

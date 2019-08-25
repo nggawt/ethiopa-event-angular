@@ -44,7 +44,7 @@ export class FormFilesAndInputsProccesorService {
     if (customer && customer['gallery']) {
       let gal = customer['gallery'];
       this.method = "update";
-      this.galleries = typeof gal['image'] == "object" ? Object.keys(gal['image']).map(item => gal['image'][item]) : gal['image'];
+      this.galleries = typeof gal['images'] == "object" ? Object.keys(gal['images']).map(item => gal['images'][item]) : gal['images'];
       this.videos = gal['video'];
       this.customer = customer['customer'];
       this.galleryInit();
@@ -139,7 +139,7 @@ export class FormFilesAndInputsProccesorService {
     aTag.appendChild(span);
     div.appendChild(aTag);
 
-    if (elemType === "image") {
+    if (elemType === "images") {
 
       let img = new Image();
       img.src = elem.src;
@@ -281,8 +281,7 @@ export class FormFilesAndInputsProccesorService {
 
           let splUrl = this.getUrl(customer).split('/');
           extractTargetName = key + ":" + splUrl[0] + ':' + splUrl[1] + ":" + file.target + ":" + file.name.split('.')[0];
-          console.log(extractTargetName);
-
+          // console.log(extractTargetName);
           fData.append('files[]', file, extractTargetName);
         });
       });
@@ -296,15 +295,15 @@ export class FormFilesAndInputsProccesorService {
   }
 
   getValidatedItems(formItems: FormGroup) {
-    let controls = formItems.controls,
+    let cnt = formItems.controls,
       valItems = { gallery: {}, inputs: {} },
       galleryKeys = ['images', 'video', 'loggo'];
 
-    Object.keys(controls).forEach(keyName => {
+    Object.keys(cnt).forEach(keyName => {
       /* if galleries set gallery items else set valid inputs items */
       let galObj = (galleryKeys.indexOf(keyName) >= 0) ? this.mapValidated(keyName, formItems) : [];
 
-      (galObj.length) ? valItems['gallery'][keyName] = galObj : controls[keyName].valid ? valItems['inputs'][keyName] = controls[keyName].value : '';
+      (galObj.length) ? valItems['gallery'][keyName] = galObj : cnt[keyName].valid ? valItems['inputs'][keyName] = cnt[keyName].value : '';
     });
     return valItems;
   }

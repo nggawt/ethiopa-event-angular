@@ -3,17 +3,20 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { NotificationService } from 'src/app/services/messages/notification.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
+import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
 
 declare var $: any;
 @Component({
   selector: 'app-event-edit',
   templateUrl: './event-edit.component.html',
-  styleUrls: ['./event-edit.component.css', '../../../styles/date-picker.component.css'],
+  styleUrls: ['./event-edit.component.css', '../../../styles/date-picker.component.css', '../../../styles/form-inputs.css'],
   encapsulation: ViewEncapsulation.None
 })
 export class EventEditComponent implements OnInit {
 
   eventEdit: FormGroup;
+  formMethod: string = "update";
+
   @Input() itemData: {
     id: number, eventType: string, name: string, date: string, 
     email: string, other: string, location: string, address: string, 
@@ -28,7 +31,8 @@ export class EventEditComponent implements OnInit {
 
   constructor(private http: HttpService,
     private msgNotify: NotificationService,
-    private calendar: CalendarDatePickerService) { }
+    private calendar: CalendarDatePickerService,
+    private ngVal: NgValidateSrvService) { }
 
   ngOnInit() {
     if(this.itemData) this.itemForm();
@@ -40,17 +44,42 @@ export class EventEditComponent implements OnInit {
   
   itemForm(){
     this.eventEdit = new FormGroup({
-      'date': new FormControl(this.itemData.date, [Validators.required]),
-      'name': new FormControl(this.itemData.name, [Validators.required]),
-      'eventType': new FormControl(this.itemData.eventType, [Validators.required]),
-      'other': new FormControl(this.itemData.other),
-      'email': new FormControl(this.itemData.email, [Validators.required]),
-      'location': new FormControl(this.itemData.location, [Validators.required]),
-      'address': new FormControl(this.itemData.address, [Validators.required]),
-      'phone': new FormControl(this.itemData.phone, [Validators.required]),
-      'confirmed': new FormControl(this.itemData.confirmed, [Validators.required]),
-      'descriptions': new FormControl(this.itemData.descriptions, [Validators.required])
+      'date': new FormControl(this.reverseDate(this.itemData.date), [Validators.required, this.ngVal.unchange.bind(this, this.reverseDate(this.itemData.date))]),
+      'name': new FormControl(this.itemData.name, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.name)]),
+      'eventType': new FormControl(this.itemData.eventType, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.eventType)]),
+      'other': new FormControl(this.itemData.other, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.other)]),
+      'email': new FormControl(this.itemData.email, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.email)]),
+      'location': new FormControl(this.itemData.location, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.location)]),
+      'address': new FormControl(this.itemData.address, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.address)]),
+      'phone': new FormControl(this.itemData.phone, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.phone)]),
+      'confirmed': new FormControl(this.itemData.confirmed, [this.ngVal.unchange.bind(this, this.itemData.confirmed)]),
+      'descriptions': new FormControl(this.itemData.descriptions, [Validators.required, this.ngVal.unchange.bind(this, this.itemData.descriptions)])
     });
+  }
+  
+  reverseDate(dt: string){
+    let time =  (dt.indexOf(" ") > 0)? dt.split(" ")[1]: false;
+    let dtText = time? dt.split(" ")[0].split('-').reverse().join('-')+" "+ time: dt.split('-').reverse().join('-');
+    return dtText;
+  }
+
+  default(formItem: FormGroup, itemId) {
+    formItem.setValue(this.itemData[itemId]);
+  }
+
+  clear(item) {
+    item.reset();
+  }
+
+  update(formItem: FormGroup, itemId) {
+
+    let valItems = this.ngVal.getValidatedItems(this.eventEdit)['inputs'];
+
+    /* send files to server */
+    if(Object.keys(valItems).length){
+      if(valItems['date']) valItems['date'] = this.reverseDate(valItems['date']);
+      this.send(valItems, "PATCH");
+    }
   }
 
   configEditor(evt) {
@@ -67,17 +96,19 @@ export class EventEditComponent implements OnInit {
   }
 
   onSubmit(){
-    console.log(this.eventEdit);
-    
-    if(true){
-      this.send(this.eventEdit.value, "PUT");
+    let valItems = this.ngVal.getValidatedItems(this.eventEdit)['inputs'];
+    console.log("the form: ", this.eventEdit, " validate items: ", valItems);
+    if(Object.keys(valItems).length){
+
+      if(valItems['date']) valItems['date'] = this.reverseDate(valItems['date']);
+      this.send(valItems, "PUT");
     }
   }
 
   send(body, method?) {
 
     let url = "events/"+this.itemData.id+"?_method=PUT";
-    body['buzi'] ="me";
+    // body['buzi'] ="me";
     console.log(body);
     
     this.http.postData(url, body)
@@ -113,25 +144,29 @@ export class EventEditComponent implements OnInit {
       this.datePicker = <HTMLDivElement>this.calendar.fire(false, this.eventEdit, input);
       input.parentElement.style.position = "relative";
 
-      this.setStyles(this.datePicker);
+      this.setStyles(this.datePicker, input.parentElement.clientHeight);
       this.confCalendar(this.datePicker);
 
       input.parentElement.appendChild(this.datePicker);
       this.fired = true;
+    }else{
+      this.toggleDisplay();
     }
   }
 
-  setStyles(elem) {
+  setStyles(elem, parentHeight) {
     elem.classList.add('position-absolute');
-    elem.style.right = 50 + "%";
-    elem.classList.add('w-50');
+    elem.style.top = parentHeight + "px";
+    // elem.style.right = 50 + "%";
+    elem.classList.add('shadow-sm');
+    // elem.classList.add('w-50');
   }
 
   confCalendar(calendar: HTMLDivElement) {
 
     $(document).on("click", (e) => {
       if (calendar.contains(e.target) || e.target.id == "date") {
-        if (e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
+        // if (e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
         e.stopPropagation();
         return false;
       }
@@ -194,17 +229,14 @@ export class EventEditComponent implements OnInit {
   }
 
   addEvents(event) {
-
     this.calendarDisplay(false, "open", (el, hasClass) => {
       hasClass ? this.toggleDisplay() : '';
     });
   }
 
-  showEvents(arg?) {
-  }
+  showEvents(arg?) { }
 
-  daily(dateStr: string) {
-  }
+  daily(dateStr: string) { }
 
   weekly(dateStr?) {
     let currentDt = this.calendar.getCurrentDate();
@@ -215,7 +247,6 @@ export class EventEditComponent implements OnInit {
     this.showEvents();
   }
 
-  yearly() {
-  }
+  yearly() { }
 
 }

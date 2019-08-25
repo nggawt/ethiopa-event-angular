@@ -30,7 +30,7 @@ export class CustomerMediaComponent implements OnInit, OnDestroy {
       // console.log(data);
       this.snap = true;
       this.customer = of(co);
-      this.galleries = Array.isArray(gal['image'])? gal['image']: typeof gal['image'] == "object"? this.itemsToArray(gal['image']): [];
+      this.galleries = Array.isArray(gal['images'])? gal['images']: typeof gal['images'] == "object"? this.itemsToArray(gal['images']): [];
       this.videos = Array.isArray(gal['video'])? gal['video']: typeof gal['video'] == "object"? this.itemsToArray(gal['video']): [];
       // let msgs = localStorage.getItem('msgs');
       // console.log(JSON.parse(msgs));

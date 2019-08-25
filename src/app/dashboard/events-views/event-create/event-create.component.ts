@@ -1,25 +1,27 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
-import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
 import { NotificationService } from 'src/app/services/messages/notification.service';
+import { ResourcesService } from 'src/app/services/resources/resources.service';
+import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
 declare var $: any;
 
 @Component({
   selector: 'app-event-create',
   templateUrl: './event-create.component.html',
-  styleUrls: ['./event-create.component.css', '../../../styles/date-picker.component.css'],
+  styleUrls: ['./event-create.component.css', '../../../styles/date-picker.component.css', '../../../styles/form-inputs.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class EventCreateComponent implements OnInit {
-
-  eventCreate: FormGroup;
+export class EventCreateComponent implements OnInit, AfterViewInit {
 
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
+
+  eventCreate: FormGroup;
+  users: {id: number, name: string, email: string, about: string, area: string, address: string, eventType:string, city:string, tel: string}[];
 
   fired = false;
   datePicker: HTMLDivElement;
@@ -27,42 +29,73 @@ export class EventCreateComponent implements OnInit {
   constructor(private http: HttpService,
     private msgNotify: NotificationService,
     private calendar: CalendarDatePickerService,
-    private route: ActivatedRoute) { }
+    private rsrv: ResourcesService) { }
 
   ngOnInit() {
-    /* this.http.isLogedIn.subscribe(
-      (logged) => {
-        logged? this.router.navigate(['/']): this.formInit();
-      }
-    ); */
-    console.log("Create Events Component called!");
-
     this.formInit();
+    this.getUsers();
+  }
+
+  protected getUsers() {
+
+    this.rsrv.getResources('users', false).then(users => {
+      console.log(users);
+      setTimeout(() => $('.chosen').trigger('chosen:updated'), 200);
+      if(users) this.users = users;
+    });
+  }
+
+  ngAfterViewInit(){
+    let thiz = this;
+    $(".chosen").chosen({
+      disable_search_threshold: 5,
+      no_results_text: "אופפס!, משתמש לא קיים!",
+      placeholder_text_single: "בחר משתמש"
+    }).on('change', function(evt, params) {
+      console.log(this, ' : ',evt , params);
+      thiz.setOwnerUser(+(params.selected));
+    });
   }
 
   get f() { return this.eventCreate.controls; }
+
+  setOwnerUser(userId){
+    let user = this.users.find(user => user.id == userId);
+    console.log(user);
+
+    user? this.eventCreate.patchValue({
+      email: user.email,
+      name: user.name,
+      phone: user.tel,
+      location: user.city,
+    }, {onlySelf: true}): '';
+  }
 
   private formInit() {
     this.eventCreate = new FormGroup({
       'date': new FormControl(null, [Validators.required]),
       'name': new FormControl(null, [Validators.required]),
+      'owner': new FormControl(null),
       'eventType': new FormControl(null, [Validators.required]),
       'other': new FormControl(null),
       'email': new FormControl(null, [Validators.required]),
       'location': new FormControl(null, [Validators.required]),
       'address': new FormControl(null, [Validators.required]),
       'phone': new FormControl(null, [Validators.required]),
-      'descriptions': new FormControl(null, [Validators.required])
+      'descriptions': new FormControl(null, [Validators.required]),
+      'confirmed': new FormControl(false)
     });
   }
-
 
   onSubmit() {
     console.log(this.eventCreate);
 
-    if (true) {
+    if (this.eventCreate.valid) {
       /****** handel form inputs *****/
-      this.send(this.eventCreate.value);
+      // let dt = this.eventCreate.value['date'];
+      let valItems = this.eventCreate.value;
+      valItems['date'] = valItems['date'].split('-').reverse().join("-");
+      this.send(valItems);
     }
   }
 
@@ -78,11 +111,6 @@ export class EventCreateComponent implements OnInit {
         localStorage.setItem('errors_server', JSON.stringify(err));
         this.msgNotify.showErrors('אירוע', "פרטים שגויים!", { positionClass: "toast-top-left" });
         if (err["status"] === 401) {
-          // console.log(err['status']);
-
-          // this.http.nextIslogged(false);
-          // window.localStorage.removeItem('user_key');
-          // window.location.reload();
         }
       });
   }
@@ -95,25 +123,29 @@ export class EventCreateComponent implements OnInit {
       this.datePicker = <HTMLDivElement>this.calendar.fire(false, this.eventCreate, input);
       input.parentElement.style.position = "relative";
 
-      this.setStyles(this.datePicker);
+      this.setStyles(this.datePicker, input.parentElement.clientHeight);
       this.confCalendar(this.datePicker);
 
       input.parentElement.appendChild(this.datePicker);
       this.fired = true;
+    }else{
+      this.toggleDisplay();
     }
   }
 
-  setStyles(elem) {
+  setStyles(elem, parentHeight) {
     elem.classList.add('position-absolute');
-    elem.style.right = 50 + "%";
-    elem.classList.add('w-50');
+    elem.style.top = (parentHeight + 2) + "px";
+    elem.classList.add('shadow-sm');
+    // elem.style.right = 50 + "%";
+    // elem.classList.add('w-50');
   }
 
   confCalendar(calendar: HTMLDivElement) {
 
     $(document).on("click", (e) => {
       if (calendar.contains(e.target) || e.target.id == "date") {
-        if (e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
+        // if (e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
         e.stopPropagation();
         return false;
       }
@@ -131,27 +163,28 @@ export class EventCreateComponent implements OnInit {
   }
 
   toggleHidden(itemCller, targetInput) {
-
+    console.log(itemCller, targetInput);
+    
     if (itemCller.tagName == "SELECT" && itemCller.value == "other") {
 
-      itemCller.parentElement.classList.remove('d-block');
-      itemCller.parentElement.classList.add('d-none');
-      targetInput.parentElement.classList.remove('d-none');
-      targetInput.parentElement.classList.add('d-block');
+      itemCller.parentElement.parentElement.classList.remove('d-block');
+      itemCller.parentElement.parentElement.classList.add('d-none');
+      targetInput.parentElement.parentElement.classList.remove('d-none');
+      targetInput.parentElement.parentElement.classList.add('d-block');
       // this.eventCreate.controls['eventType'].setValue('');
 
       targetInput.hidden = !targetInput.hidden;
       this.eventCreate.controls['other'].setValue('');
     } else if (itemCller.tagName == "INPUT") {
 
-      itemCller.parentElement.classList.remove('d-block');
-      itemCller.parentElement.classList.add('d-none');
-      targetInput.parentElement.classList.remove('d-none');
-      targetInput.parentElement.classList.add('d-block');
+      itemCller.parentElement.parentElement.classList.remove('d-block');
+      itemCller.parentElement.parentElement.classList.add('d-none');
+      targetInput.parentElement.parentElement.classList.remove('d-none');
+      targetInput.parentElement.parentElement.classList.add('d-block');
 
       itemCller.hidden = !itemCller.hidden;
       this.eventCreate.controls['eventType'].setValue('');
-      this.eventCreate.controls['other'].setValue(null);
+      this.eventCreate.controls['other'].setValue(false);
     }
   }
 
@@ -171,7 +204,6 @@ export class EventCreateComponent implements OnInit {
   }
 
   createEvents() {
-    // this.eventCreate.reset();
     this.calendarDisplay(false, "open", (el, hasClass) => {
       hasClass ? this.toggleDisplay() : '';
     });
@@ -183,34 +215,9 @@ export class EventCreateComponent implements OnInit {
       hasClass ? this.toggleDisplay() : '';
 
     });
-    // console.log(event['date']);
-    // let eventCopy = Object.assign(event, {date: this.tableEvents.dateToStr(event['date'])});
-    /* let eventCopy = Object.assign({}, event);
-    let eventAdded = Object.assign(eventCopy, { date: this.tableEvents.dateToStr(event['date']) });
-    // let dt = this.tableEvents.dateToStr(event['date']);
-
-    for (let ii in this.eventCreate.controls) {
-        (eventAdded[ii]) ? this.eventCreate.controls[ii].setValue(eventAdded[ii]) : '';
-    } */
   }
 
-  showEvents(arg?) {
-    /* let evts = (arg) ? arg : this.eventsOb['events'];
-
-    let parent = $('.add-events')[0],
-        // hasEvt = this.eventsOb['hasEvents']() ? true : false,
-        monthKey = this.tableEvents.numAppendSero(this.calendar.getCurrentDate().getMonth() + 1),
-        key = !arg ? monthKey + "-" + this.calendar.getCurrentDate().getFullYear() : Object.keys(evts)[0];
-
-    if (parent.children.length > 0) {
-        while (parent.firstChild) {
-            parent.removeChild(parent.firstChild);
-        }
-    }
-    // console.log(key);
-    // console.log(evts);
-    (evts[key]) ? parent.appendChild(evts[key]) : this.tableEvents.noEvents(parent); */
-  }
+  showEvents(arg?) {  }
 
   daily(dateStr: string) {
 
@@ -219,15 +226,17 @@ export class EventCreateComponent implements OnInit {
   weekly(dateStr?) {
     let currentDt = this.calendar.getCurrentDate();
     dateStr = dateStr ? dateStr : currentDt.getDate() + "-" + (currentDt.getMonth() + 1) + "-" + currentDt.getFullYear();
-
-    // this.showEvents(this.tableEvents.weekly(dateStr));
   }
 
   monthly() {
     this.showEvents();
   }
 
-  yearly() {
-    // this.showEvents(this.tableEvents.yearly());
+  yearly() { }
+
+  inputReset(customer) {
+    let comp = customer['id'];
+    console.log(this.eventCreate.controls);
+    this.eventCreate.controls[comp].reset();
   }
 }

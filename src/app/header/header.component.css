@@ -2,45 +2,48 @@
 yellow: #F6DC2F
 red:    #F02B2B */
 
-.costum input,
-.costum button {
-    /* box-sizing: border-box; */
+.navbar {
+ padding: 0;
+}
+
+ul.navbar-nav > li {
+    position: relative;
 }
 
 .dropdown-menu a {
     text-align: right;
 }
 
-ul.navbar-nav li {
-    /* border-top: 2px solid gray; */
+ul.navbar-nav > li::after {
+    content: "";
     border-bottom: 2px solid #F02B2B;
-    margin-left: 10px;
-    padding: 1px 1px;
+    width: 0px;
+    display: inline-block;
+    position: absolute;
+    right: 50%;
+    -ms-transition: all .4s ease-in-out;
+    -webkit-transition: all .4s ease-in-out; 
+    transition: all .4s ease-in-out;
 }
 
-ul.navbar-nav li.active {
+
+header ul.navbar-nav > li:hover:after {
+    width: 100%;
+    right: 0px;
+}
+
+ul.navbar-nav > li.active::after {
+    content: "";
+    width: 100%;
+    display: block;
     border-bottom: 2px solid #F6DC2F;
+    right: 0px;
 }
 
-header ul.navbar-nav li:hover {
-    /* color: #47BD35; */
-    /* background: #F6DC2F; */
-}
 
-ul.navbar-nav li:hover>a {
+ul.navbar-nav li:hover > a {
     color: #47BD35;
-    /* color: #F6DC2F; */
 }
-
-ul.navbar-nav li>a {
-    /* color: #F6DC2F; */
-    /* color: #47BD35; */
-    /* color: #F6DC2F; */
-}
-
-ul.navbar-nav li:first-child {}
-
-nav.navbar-expand-lg {}
 
 .material-icons {
     font-size: inherit;

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 declare var $: any;
 
 @Injectable({
@@ -27,7 +28,7 @@ export class CalendarDatePickerService {
   /* HTML ELEMENTS */
   private input: HTMLInputElement;
 
-  private divChild: HTMLDivElement;
+  private datepickrContainer: HTMLDivElement;
   private divNavYears: HTMLDivElement;
   private divNavMonth: HTMLDivElement;
 
@@ -60,7 +61,7 @@ export class CalendarDatePickerService {
     let divMonth: HTMLDivElement = <HTMLDivElement>this.createElem("DIV"),
       divNav: HTMLDivElement = <HTMLDivElement>this.createElem("DIV");
 
-    this.divChild = <HTMLDivElement>this.createElem('DIV');
+    this.datepickrContainer = <HTMLDivElement>this.createElem('DIV');
     this.divNavYears = <HTMLDivElement>this.createElem('DIV');
     this.divNavYears.className = "dropdown-menu dropdown-custom clearfix position-relative";
     this.divNavYears.style.top = "auto";
@@ -101,8 +102,8 @@ export class CalendarDatePickerService {
     this.spanNext = <HTMLSpanElement>this.createElem("span");
     this.closeBtn = <HTMLSpanElement>this.createElem("span");
 
-    this.divChild.className = "datepickr-calendar clearfix forPageDiv";
-    this.divChild.id = "datepicker";
+    this.datepickrContainer.className = "datepickr-calendar w-100";
+    this.datepickrContainer.id = "datepicker";
 
     divNav.className = "col-sm-12 datepickr-year clearfix";
     divNav.id = "myDropdown";
@@ -138,18 +139,18 @@ export class CalendarDatePickerService {
     divMonth.appendChild(this.spanCurrentMonth);
     divMonth.appendChild(this.divNavMonth);
 
-    this.divChild.appendChild(divNav);
-    this.divChild.appendChild(divMonth);
-    this.divChild.appendChild(this.table);
-    this.divChild.appendChild(this.closeBtn);
+    this.datepickrContainer.appendChild(divNav);
+    this.datepickrContainer.appendChild(divMonth);
+    this.datepickrContainer.appendChild(this.table);
+    this.datepickrContainer.appendChild(this.closeBtn);
 
     if (append && append.append) {
-      elem.parentElement.parentElement.appendChild(this.divChild);
+      elem.parentElement.parentElement.appendChild(this.datepickrContainer);
       // this.toggleDisplay();
     }
   }
 
-  fire(callerIns, formEvents, input?: HTMLInputElement) {//theYear,len,theMonth
+  fire(callerIns, formEvents?:FormGroup | boolean, input?: HTMLInputElement) {//theYear,len,theMonth
     let theYear = this.date.getFullYear(),
       theMonth = this.date.getMonth(),
       len = this.monthStr.length;
@@ -167,7 +168,7 @@ export class CalendarDatePickerService {
       this.setEvents();
 
       this.fired = true;
-      return this.divChild;
+      return this.datepickrContainer;
     }
   }
 
@@ -201,7 +202,7 @@ export class CalendarDatePickerService {
       let spanEl: HTMLSpanElement = <HTMLSpanElement>e.target;
       if (spanEl.tagName === "SPAN") {
         //createCalendar.updateItems(e.target.innerHTML);
-        // thiz.divChild["style"].display = "none";
+        // thiz.datepickrContainer["style"].display = "none";
         // thiz.toggleDisplay();
       }
     }, false);
@@ -270,15 +271,10 @@ export class CalendarDatePickerService {
 
     if (this.classListToggler.length) {
 
-      // let prevMatch = this.getItemClass(this.classListToggler[0]['item']);
-      // console.log(matches);
-      // console.log(this.classListToggler[0]['name']);
-      // console.log(prevMatch);
-
       (this.classListToggler[0]['name'].length) ? this.classListToggler[0]['item'].className =
         this.classListToggler[0]['item'].className.replace("bg-warning", this.classListToggler[0]['name'].join(' ')) :
         this.classListToggler[0]['item'].classList.remove('bg-warning');
-      this.classListToggler.shift();
+        this.classListToggler.shift();
     }
 
     this.classListToggler.push({
@@ -289,7 +285,8 @@ export class CalendarDatePickerService {
     let fullDates: string = day + "-" + (this.currentDate.getMonth() + 1) + "-" + this.currentDate.getFullYear();
     if (this.callerInstans) this.callerInstans.daily(fullDates);
     this.currentDate.setDate(day);
-    this.updateItems();
+    let dt = this.updateItems();
+    (this.formEvents) ? this.formEvents.controls['date'].setValue(dt) : '';
   }
 
   getItemClass(item, patteren?) {
@@ -485,7 +482,6 @@ export class CalendarDatePickerService {
     let fullDates = this.formatedDate();
     // this.input.focus();
     // this.input.value = fullDates;
-    (this.formEvents) ? this.formEvents.controls['date'].setValue(fullDates) : '';
     this.spanCurrentMonth.innerHTML = this.monthStr[this.monthCounter] + " " + this.currentDate.getFullYear();
     return fullDates;
   }

@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, Input } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpParams } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
@@ -33,17 +33,23 @@ export class AdminCreateComponent implements OnInit {
     private route: ActivatedRoute,
     private loc: Location) {}
 
-  ngOnInit() {
-    /* this.http.isLogedIn.subscribe(
-      (logged) => {
-        logged? this.router.navigate(['/']): this.formInit();
-      }
-    ); */
-    this.formInit();
+  ngOnInit() { this.formInit(); }
+
+  get f() { return this.regiter.controls; }
+
+  private formInit(){
+    this.regiter = new FormGroup({
+      "name": new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'email': new FormControl(null, [Validators.required]),
+      'password': new FormControl(null, [Validators.required, Validators.minLength(6)]),
+      'passwordConfirm': new FormControl(null, [Validators.required, Validators.minLength(6)]),
+      'authority': new FormControl("", [Validators.required, Validators.max(3)]),
+    });
   }
 
   onSubmit(){
-
+    console.log(this.regiter);
+    
     if(this.regiter.valid){
       /****** handel form inputs *****/
       let formInputes = this.regiter;
@@ -56,7 +62,8 @@ export class AdminCreateComponent implements OnInit {
       let items = this.valForm.validate(controls, formInputes.value);
       let success = items['status'] ? items['success'] : false; */
       // const theUrl = "http://ethio:8080/api/admin-register";
-      const theUrl = "http://ethio:8080/api/admins";
+      
+      const theUrl =  "http://ethio:8080/api/admins";
       if(this.regiter.valid){
         const body = new HttpParams()
           .set('name', details['name'])
@@ -83,17 +90,5 @@ export class AdminCreateComponent implements OnInit {
         
       }
     }
-  }
-
-  get f() { return this.regiter.controls; }
-
-  private formInit(){
-    this.regiter = new FormGroup({
-      "name": new FormControl(null),
-      'email': new FormControl(null),
-      'password': new FormControl(null),
-      'passwordConfirm': new FormControl(null),
-      'authority': new FormControl(""),
-    });
   }
 }

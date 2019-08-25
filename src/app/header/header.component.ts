@@ -1,37 +1,35 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, ActivatedRoute, RouterStateSnapshot } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from '../services/http-service/http.service';
 import { Observable, of } from 'rxjs';
 import { first, filter, tap, map, skipWhile, take, skipUntil } from 'rxjs/operators';
 import { CustomersDataService } from '../customers/customers-data-service';
 import { User } from '../types/user-type';
 declare let $:any;
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css'],
-  // encapsulation: ViewEncapsulation.None
-
+  styleUrls: ['./header.component.css', '../styles/form-inputs.css'],
+  encapsulation: ViewEncapsulation.None
 })
+
 export class HeaderComponent implements OnInit {
  
   private url:string;
+  sendingMail: Observable<{[key: string]: boolean} | boolean>;
+
   eeMessage: {
-    id:string, 
+    id:string | boolean,
+    url: string,
     modalSize: string, 
     nameTo: string | boolean, 
     emailTo: string | boolean, 
     title: string
-  } = {
-    id:'contact_ee', 
-    modalSize: "modal-lg", 
-    nameTo: 'ethiopia-events', 
-    emailTo: false, 
-    title: 'שלח הודעה'
   };
 
   user$: Observable<User| boolean>;
+  
   private customersSrc: {}[];
   private articles: {}[];
   private events: {}[] ;
@@ -50,22 +48,23 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     
-    
     this.url = decodeURIComponent(location.pathname);
     this.user$ = this.http.userObs.pipe(filter(item => typeof item == "object"));
   }
 
   contactModel(param){
-    this.http.requestUrl = decodeURIComponent(location.pathname);
-    console.log(this.http.requestUrl);
+    
+   
     this.eeMessage = {
       id:'contact_ee', 
+      url: decodeURIComponent(location.pathname),
       modalSize: "modal-lg", 
       nameTo: 'אתיופיה אירועים', 
       emailTo: "ethiopia-events@gmail.com", 
       title: 'שלח הודעה'
     };
-    // $('#forgotPassword').modal();
+    this.http.sendingMail.next({['contact_ee']: true});
+    this.sendingMail = this.http.sendingMail;
   }
 
   async searchItems(evt){

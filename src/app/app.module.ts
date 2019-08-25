@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
+// import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // import { NgxPopper } from 'angular-popper';
@@ -125,6 +125,10 @@ import { AddComponentDirective } from './shared/directives/add-component.directi
 import { DashboardModelComponent } from './dashboard/dashboard-model/dashboard-model.component';
 import { MailCreateComponent } from './dashboard/mail/mail-create/mail-create.component';
 import { AdminRegistrationComponent } from './auth/admin-registration/admin-registration.component';
+// import { SendMessageDirectiveDirective } from './shared/directives/contact/send-message-directive.directive';
+import { LogInDirectiveDirective } from './shared/directives/log-in/log-in-directive.directive';
+import { ContactComponent } from './pages/contact/contact.component';
+import { ErrorsHandler } from './services/errors-exeption/errors-handler.service';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -138,6 +142,7 @@ export function tokenGetter() {
     HeaderComponent,
     AboutComponent,
     BlogComponent,
+    ContactComponent,
     AsideComponent,
     FooterComponent,
     GoalComponent,
@@ -200,6 +205,8 @@ export function tokenGetter() {
     DashboardModelComponent,
     MailCreateComponent,
     AdminRegistrationComponent,
+    LogInDirectiveDirective,
+    // SendMessageDirectiveDirective,
     // customValidatorFnFactory
     // ConcatFormComponent,
     // CustomerComponent
@@ -214,21 +221,12 @@ export function tokenGetter() {
     RouterModule,
     ReactiveFormsModule,
     NgxPaginationModule,
-    /***** modules imports start here ****/
-    // SalonsModule,
-    // DjsModule,
-    // PhotographersModule,
-    // KysesModule,
-    // CarRentsModule,
-    // FireworksModule,
-    // HotelsModule,
-    // PrintsgModule,
-    // TransportsModule,
-    // CustomersModule,
-    SharedModuleModule,
     BrowserAnimationsModule,
+    /***** modules imports start here ****/
+
+    SharedModuleModule,
     ToastrModule.forRoot({
-      timeOut: 3500,
+      timeOut: 3000,
       positionClass: 'toast-bottom-center',
       preventDuplicates: true,
     }),
@@ -236,40 +234,10 @@ export function tokenGetter() {
     /***** modules imports end ****/
     PagesRoutingModule,
     QuillModule.forRoot({
-      
-      modules: {
-        toolbar: {
-          container: [
-            ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-            ['blockquote', 'code-block'],
-        
-            [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-            [{ 'direction': 'rtl' }],                         // text direction
-        
-            //[{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-           // [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-        
-            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-            [{ 'font': [] }],
-            [{ 'align': [] }],
-        
-            //['clean'],                                         // remove formatting button
-        
-            ['link', 'image', 'video']                         // link and image, video
-          ],
-          handlers: {
-            direction: (arg) => {  console.log('customControl was clicked: ', arg); },
-            // align: (arg) => { console.log(this, arg); }
-          }
-        }
-      }
-      // theme: "bubble"
+      scrollingContainer: "html"
     }),
 
-    NgbModule.forRoot(),
+    // NgbModule.forRoot(),
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
@@ -278,13 +246,18 @@ export function tokenGetter() {
       }
     })
   ],
-  providers: [CustomersDataService, CustomersResolver, CanDeactivateGuardService],//,HotelsResolver, PhotographersResolver//HallResolver
+  providers: 
+  [ 
+    CustomersDataService, CustomersResolver, CanDeactivateGuardService,
+    { provide: ErrorHandler, useClass: ErrorsHandler}
+  ],
   bootstrap: [AppComponent],
-  entryComponents: [CustomerPreviewComponent, CustomerEditComponent, CustomerCreateComponent,
+  entryComponents: [
+    CustomerPreviewComponent, CustomerEditComponent, CustomerCreateComponent,
     EventPreviewComponent, EventEditComponent, EventCreateComponent,
     PostCreateComponent, PostPreviewComponent, PostEditComponent,
     AdminProfileComponent, AdminEditComponent, AdminCreateComponent,
-    UserProfileComponent, UserEditComponent, UserCreateComponent
+    UserProfileComponent, UserEditComponent, UserCreateComponent, ContactComponent
   ]
 })
 export class AppModule { }

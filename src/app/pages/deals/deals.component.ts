@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpService } from 'src/app/services/http-service/http.service';
+import { ResourcesService } from 'src/app/services/resources/resources.service';
 
 @Component({
   selector: 'app-deals',
@@ -7,9 +9,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DealsComponent implements OnInit {
 
-  constructor() { }
+  customers: {};
+
+  constructor(private http: HttpService,
+    private rsrv: ResourcesService) { }
+
 
   ngOnInit() {
+
+    this.rsrv.getResources('customers', false).then(customers => {
+      this.customers = customers;
+      console.log(customers);
+      
+    });
   }
 
 }

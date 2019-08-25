@@ -15,18 +15,20 @@ declare var $: any;
 
 export class CustomersComponent implements OnInit, OnDestroy {
 
-
+  sendingMail: Observable<{[key: string]: boolean} | boolean>;
   path: boolean = true;
+
   showPath: boolean;
   urlUnsubscribe: Subscription;
   hallsProps: Observable<HallType[]> | boolean;
   
-  customerMessage: {} = {
-    id:'contact_customer', 
-    modalSize: "modal-lg", 
-    nameTo: false, 
-    emailTo: false,
-    title: 'שלח הודעה'
+  customerMessage: {
+    id:string | boolean, 
+    url: string,
+    modalSize: string, 
+    nameTo: string | boolean, 
+    emailTo: string | boolean, 
+    title: string
   };
 
   private address: string;
@@ -41,7 +43,6 @@ export class CustomersComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     // let urSnapShut = this.route.snapshot.paramMap.get('name'), urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
-
     this.urlUnsubscribe = this.route.paramMap.subscribe((routeName: ParamMap) => {
       let urSnapShut = routeName.get('name'),
       urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
@@ -53,15 +54,22 @@ export class CustomersComponent implements OnInit, OnDestroy {
   }
 
   contactModel(paramCustomer) {
-    console.log(paramCustomer);
-    this.http.requestUrl = location.pathname;
+    console.log("customers called");
+
     this.customerMessage = {
       id:'contact_customer', 
+      url: decodeURIComponent(location.pathname),
       modalSize: "modal-lg", 
       nameTo: paramCustomer.company, 
       emailTo: paramCustomer.email, 
-      title: 'שלח הודעה'};
-  };
+      title: 'שלח הודעה'
+    };
+
+    this.http.sendingMail.next({['contact_customer']: true});
+    this.sendingMail = this.http.sendingMail;
+
+    // this.sendingMail.subscribe(item => console.log(item) )
+  }
 
   private getCustomerResources(url) {
     

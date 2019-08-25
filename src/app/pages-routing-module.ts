@@ -72,12 +72,11 @@ const routes: Routes = [
       { path: 'users-views/:id', component: OverviewComponent, data: { itemType: "users", comp: 'preview' } },
       { path: 'users-views/:id/edit', component: OverviewComponent, data: { itemType: "users", comp: 'edit' } },
 
-      {
-        path: 'blog-views', component: PostsViewsComponent },
-      // { path: 'blog-views/create', component: PostCreateComponent, data : { itemType: "blog"} },
-      { path: 'blog-views/create', component: OverviewComponent, data: { itemType: "blog", comp: 'create' } },
-      { path: 'blog-views/:id/edit', component: OverviewComponent, data: { itemType: "blog", comp: 'edit' } },
-      { path: 'blog-views/:id', component: OverviewComponent, data: { itemType: "blog", comp: 'preview' } },
+      { path: 'articles-views', component: PostsViewsComponent },
+      // { path: 'articles-views/create', component: PostCreateComponent, data : { itemType: "articles"} },
+      { path: 'articles-views/create', component: OverviewComponent, data: { itemType: "articles", comp: 'create' } },
+      { path: 'articles-views/:id/edit', component: OverviewComponent, data: { itemType: "articles", comp: 'edit' } },
+      { path: 'articles-views/:id', component: OverviewComponent, data: { itemType: "articles", comp: 'preview' } },
 
       { path: 'customers-views', component: CustomersViewsComponent },
       { path: 'customers-views/create', component:  OverviewComponent, data: { itemType: "customers", comp: 'create' } },
@@ -146,7 +145,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }) // prioload startigy// , { preloadingStrategy: PreloadAllModules}
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, enableTracing: false}) // prioload startigy// , { preloadingStrategy: PreloadAllModules}
   ],
   exports: [RouterModule]
 })

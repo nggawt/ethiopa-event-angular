@@ -6,12 +6,13 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
 import { NotificationService } from 'src/app/services/messages/notification.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
+import { ResourcesService } from 'src/app/services/resources/resources.service';
 declare var $: any;
 
 @Component({
   selector: 'app-post-create',
   templateUrl: './post-create.component.html',
-  styleUrls: ['./post-create.component.css', '../../../styles/date-picker.component.css'],
+  styleUrls: ['./post-create.component.css', '../../../styles/date-picker.component.css', '../../../styles/form-inputs.css'],
   encapsulation: ViewEncapsulation.None
 })
 
@@ -30,26 +31,71 @@ export class PostCreateComponent implements OnInit {
   passwordPatt: string = '^\\w{6,}$';
   quill: {};
 
+  users: {id: number, name: string, email: string, about: string, area: string, address: string, eventType:string, city:string, tel: string}[];
   fired = false;
   datePicker: HTMLDivElement;
 
   constructor(private http: HttpService,
     private msgNotify: NotificationService,
-    private calendar: CalendarDatePickerService) { }
+    private calendar: CalendarDatePickerService,
+    private rsrv: ResourcesService) { }
 
-  ngOnInit() { this.formInit(); }
+  ngOnInit() { 
+    this.formInit();
+    this.getUsers();
+   }
+
+  protected getUsers() {
+
+    this.rsrv.getResources('users', false).then(users => {
+      console.log(users);
+      setTimeout(() => $('.chosen').trigger('chosen:updated'), 200);
+      if(users) this.users = users;
+    });
+  }
+
+  ngAfterViewInit(){
+    let thiz = this;
+    $(".chosen").chosen({
+      disable_search_threshold: 5,
+      no_results_text: "אופפס!, משתמש לא קיים!",
+      placeholder_text_single: "בחר משתמש",
+    }).on('change', function(evt, params) {
+      console.log(this, ' : ',evt , params);
+      thiz.setOwnerUser(+(params.selected));
+    });
+  }
+
+  setOwnerUser(userId){
+    let user = this.users.find(user => user.id == userId);
+    console.log(user);
+
+    user? this.postCreate.patchValue({
+      email: user.email,
+      name: user.name,
+      phone: user.tel,
+      location: user.city,
+    }, {onlySelf: true}): '';
+  }
 
   get f() { return this.postCreate.controls; }
 
   private formInit() {
 
     this.postCreate = new FormGroup({
+      owner: new FormControl(null),
       name: new FormControl(null, [Validators.required]),
       title: new FormControl(null, [Validators.required]),
       body: new FormControl(null, [Validators.required]),
       date: new FormControl(null, [Validators.required]),
       confirmed: new FormControl(false, [Validators.required])
     });
+  }
+  
+  reverseDate(dt: string){
+    let time =  (dt.indexOf(" ") > 0)? dt.split(" ")[1]: false;
+    let dtText = time? dt.split(" ")[0].split('-').reverse().join('-')+" "+ time: dt.split('-').reverse().join('-');
+    return dtText;
   }
 
   configEditor(evt) {
@@ -70,16 +116,16 @@ export class PostCreateComponent implements OnInit {
 
     if (true) {// this.postCreate.valid
       /****** handel form inputs *****/
-      this.send(this.postCreate.value);
+      let valItems = this.postCreate.value;
+      if(valItems['date']) valItems['date'] = this.reverseDate(valItems['date']);
+      this.send(valItems);
     }
   }
 
-  send(body, customer?) {
+  send(body) {
 
-    let url = "blog";
-    body['buzi'] = "me";
+    let url = "articles";
     console.log(body);
-
     this.http.postData(url, body)
       .subscribe(response => {
         localStorage.setItem('success_server', JSON.stringify(response));
@@ -114,25 +160,27 @@ export class PostCreateComponent implements OnInit {
       this.datePicker = <HTMLDivElement>this.calendar.fire(false, this.postCreate, input);
       input.parentElement.style.position = "relative";
 
-      this.setStyles(this.datePicker);
+      this.setStyles(this.datePicker, input.parentElement.clientHeight);
       this.confCalendar(this.datePicker);
 
       input.parentElement.appendChild(this.datePicker);
       this.fired = true;
+    }else{
+      this.toggleDisplay();
     }
   }
 
-  setStyles(elem) {
+  setStyles(elem, parentHeight) {
     elem.classList.add('position-absolute');
-    elem.style.right = 50 + "%";
-    elem.classList.add('w-50');
+    elem.style.top = (parentHeight + 2) + "px";
+    elem.classList.add('shadow-sm');
   }
 
   confCalendar(calendar: HTMLDivElement) {
 
     $(document).on("click", (e) => {
       if (calendar.contains(e.target) || e.target.id == "date") {
-        if (e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
+        // if (e.target.id == "date" && $(calendar).is(':hidden')) this.toggleDisplay(calendar);
         e.stopPropagation();
         return false;
       }
@@ -147,30 +195,6 @@ export class PostCreateComponent implements OnInit {
   toggleDisplay(calendar?: HTMLDivElement) {
     calendar = calendar ? calendar : this.datePicker;
     (calendar.classList.toggle('open')) ? calendar.style.zIndex = '99' : calendar.style.zIndex = '0';
-  }
-
-  toggleHidden(itemCller, targetInput) {
-
-    if (itemCller.tagName == "SELECT" && itemCller.value == "other") {
-
-      itemCller.parentElement.classList.remove('d-block');
-      itemCller.parentElement.classList.add('d-none');
-      targetInput.parentElement.classList.remove('d-none');
-      targetInput.parentElement.classList.add('d-block');
-
-      targetInput.hidden = !targetInput.hidden;
-      this.postCreate.controls['other'].setValue('');
-    } else if (itemCller.tagName == "INPUT") {
-
-      itemCller.parentElement.classList.remove('d-block');
-      itemCller.parentElement.classList.add('d-none');
-      targetInput.parentElement.classList.remove('d-none');
-      targetInput.parentElement.classList.add('d-block');
-
-      itemCller.hidden = !itemCller.hidden;
-      this.postCreate.controls['eventType'].setValue('');
-      this.postCreate.controls['other'].setValue(null);
-    }
   }
 
   calendarDisplay(elem?: HTMLElement | boolean, className?: string, cBFn?) {
@@ -201,21 +225,16 @@ export class PostCreateComponent implements OnInit {
     });
   }
 
-  showEvents(arg?) {
-  }
+  showEvents(arg?) { }
 
-  daily(dateStr: string) {
-  }
+  daily(dateStr: string) { }
 
   weekly(dateStr?) {
     let currentDt = this.calendar.getCurrentDate();
     dateStr = dateStr ? dateStr : currentDt.getDate() + "-" + (currentDt.getMonth() + 1) + "-" + currentDt.getFullYear();
   }
 
-  monthly() {
-    this.showEvents();
-  }
+  monthly() { this.showEvents(); }
 
-  yearly() {
-  }
+  yearly() {  }
 }

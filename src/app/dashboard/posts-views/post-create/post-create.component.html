@@ -7,28 +7,67 @@
 <form *ngIf="postCreate" class="p-3 border rounded" [formGroup]="postCreate" (ngSubmit)="onSubmit()">
   <div class="form-row">
 
-    <div class="form-group col-md-12">
-      <div class="input">
-        <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)"
-          (keyup)="(f.date.valid)? daily(date.value):''" placeholder="בחר תאריך" [pattern]="datePattern" #date>
+    <div class="form-group col-md-6">
+      <label for="company">משתמש או בעל העסק</label>
 
-        <label class="m-0 p-1 float-left" for="date">
-          <i class="material-icons">date_range</i>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <select name="owner" id="owner" class="chosen w-100 bd-highlightpx-1 selectList" 
+          [attr.data-placeholder]="(users && users.length > 0)? null: 'אין משתמשים'" formControlName="owner">
+          <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+        </select>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+    </div>
+
+    <div class="form-group col-md-6 custom-control custom-checkbox">
+      <label for="confirmed" class="form-control-label">
+        סטטוס:
+      </label>
+      <div class="inputTypeNumber mb-2">
+        <input id="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox"
+          [checked]="f.confirmed.value">
+
+        <!-- <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight float-left"></span> -->
+        <label for="confirmed" class="custom-control-label">
+          {{ f.confirmed.value? "פעיל": "ממתין" }}
         </label>
       </div>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="date">בתאריך:</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)"
+          class="w-100 bd-highlightpx-1" (keyup)="(f.date.valid)?daily(date.value):''" placeholder="בחר תאריך"
+          [pattern]="datePattern" #date>
+
+        <!-- <span class="flex-shrink-1 bd-highlight" for="date">
+                  <i class="material-icons">date_range</i>
+                </span> -->
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <!-- <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: date, itemMethod: formMethod}">
+              </ng-container> -->
     </div>
 
     <div class="form-group col-md-6">
       <label for="title" class="form-control-label">
         שם:
       </label>
-      <input class="form-control" formControlName="name" minlength="3" type="text">
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input class="w-100 bd-highlightpx-1" formControlName="name" minlength="3" type="text">
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
     </div>
-    <div class="form-group col-md-6">
+    <div class="form-group col-md-12">
+
       <label for="title" class="form-control-label">
         נושא:
       </label>
-      <input class="form-control" formControlName="title" minlength="3" type="text">
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input class="w-100 bd-highlightpx-1" id="title" formControlName="title" type="title">
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
     </div>
     <div class="form-group col-md-12">
       <label for="subject" class="form-control-label">
@@ -38,15 +77,7 @@
         <quill-editor (onEditorCreated)="configEditor($event)" minlength="12" formControlName="body"></quill-editor>
       </div>
     </div>
-    <div class="form-group col-2 custom-control custom-checkbox">
-      <input [id]="confirmed" class="custom-control-input" type="checkbox" formControlName="confirmed"
-        [checked]="f.confirmed.value"><!--  (click)="confirmed(f.confirmed.value)" -->
 
-      <label [for]="confirmed" class="custom-control-label">
-        סטטוס:
-        {{ f.confirmed.value? "סרב": "אשר" }}
-      </label>
-    </div>
     <div class="form-group col-md-12 clearfix">
       <button class="btn btn-success btn-sm float-left" type="submit">שלח</button>
     </div>

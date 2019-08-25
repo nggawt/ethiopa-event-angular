@@ -32,12 +32,14 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
 
     $(document).on('hidden.bs.modal', model, function (e) {
       /// TODO EVENTS
-      console.log("requestUrl: ", thiz.http.requestUrl, 'element: ', e.target);
+      console.log("element_id: ",thiz.params.id, " requestUrl: ",  thiz.http.requestUrl, 'element: ', e.target);
       thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]): 
                               thiz.router.navigate(['../'], { relativeTo: thiz.route });
       // console.log(thiz.http.requestUrl);
       if($(model).is(':hidden')){
         thiz.http.requestUrl = false;
+        thiz.http.loginTo = false;
+        if(thiz.params.id = "login") thiz.http.allowLogIn.next(false);
         $(document).off('hidden.bs.modal');
         return e.preventDefault()
       } 

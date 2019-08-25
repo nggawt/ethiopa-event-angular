@@ -1,6 +1,9 @@
 <!-- position-relative -->
-<app-contact [mailProps]="eeMessage"></app-contact>
+<!-- <app-contact [mailProps]="eeMessage"></app-contact> -->
+<div *ngIf="(sendingMail | async) as allowMesage">
 
+    <ng-template *ngIf="allowMesage && allowMesage[eeMessage.id]" [appSendMessageDirective]="eeMessage"></ng-template>
+</div>
 <header class="d-flex flex-row-reverse">
     <div *ngIf="user$ | async as user; else noUser" class="align-self-center">
 
@@ -62,7 +65,7 @@
         <!-- mr-auto  class="col-sm-10 offset-1"-->
         <div class="collapse navbar-collapse row" id="navbarSupportedContent">
 
-            <ul class="navbar-nav col text-right">
+            <ul class="navbar-nav mr-1 text-right">
                 <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                     <a class="nav-link" routerLink="/">ברוכים הבאים</a>
                 </li>

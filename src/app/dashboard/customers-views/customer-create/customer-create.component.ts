@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
@@ -16,17 +16,17 @@ declare var $;
 @Component({
   selector: 'app-customer-create',
   templateUrl: './customer-create.component.html',
-  styleUrls: ['./customer-create.component.css', '../../../styles/validate.css']
+  styleUrls: ['./customer-create.component.css', '../../../styles/form-inputs.css']
 })
-export class CustomerCreateComponent implements OnInit {
+export class CustomerCreateComponent implements OnInit, AfterViewInit {
 
   /* ************ valadition **************** */
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
   phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
 
-  itemsResources$: Observable<{}>;
-  @Input() itemData: {};
+  itemData: {};
+  users: any;
   /* **************************** */
   createCustomer: FormGroup;
   formMethod: string = "post";
@@ -45,42 +45,44 @@ export class CustomerCreateComponent implements OnInit {
     public formFiles: FormFilesAndInputsProccesorService) { }
 
   ngOnInit() {
-    this.itemsResources$ = this.srv.resourcesObsever.pipe(map(items => this.getUsers(items)));
-
-    this.http.isLogedIn.subscribe((isLogged) => {
 
       this.formInt();
+      this.getUsers()
       this.formFiles.initApp(false, this.createCustomer, "post");
-      $('.media-placeholder').hide();
+      // $('.media-placeholder').hide();
+  }
 
-      if (!isLogged) {
+  protected getUsers() {
 
-        // this.formInt();
-      } else {
-
-        // this.router.navigate(['/']);
-      }
+    this.srv.getResources('users', false).then(users => {
+      console.log(users);
+      setTimeout(() => $('.chosen').trigger('chosen:updated'), 200);
+      if(users) this.users = users;
     });
   }
 
-  setOwnerUser(userId, users){
-    let user = users.find(user => user.id == (+userId));
+  ngAfterViewInit(){
+    let thiz = this;
+    $(".chosen").chosen({
+      disable_search_threshold: 5,
+      no_results_text: "אופפס!, משתמש לא קיים!",
+      placeholder_text_single: "בחר משתמש"
+    }).on('change', function(evt, params) {
+      console.log(this, ' : ',evt , params);
+      thiz.setOwnerUser(+(params.selected));
+    });
+  }
+
+  setOwnerUser(userId){
+    let user = this.users.find(user => user.id == userId);
     console.log(user);
-    // this.createCustomer.patchValue
+
     user? this.createCustomer.patchValue({
       email: user.email,
+      owner: user.id,
       contact: user.name,
       tel: user.tel,
     }, {onlySelf: true}): '';
-  }
-
-  protected getUsers(items) {
-    let users = items['users'] && items['users'].data ? [...items['users'].data, ...items['users'].pending] : false;
-    console.log(users);
-    
-    let customers = items['customers'] && items['customers'].data ? [...items['customers'].data, ...items['customers'].pending] : false;
-    users = users ? users.filter(user => this.userIsCustomer(user, customers)) : false;
-    return users;
   }
 
   userIsCustomer(user: any, customers: any) {
@@ -115,15 +117,15 @@ export class CustomerCreateComponent implements OnInit {
   private formInt() {
 
     this.createCustomer = new FormGroup({
-      'owner': new FormControl("", [Validators.minLength(3)]),
+      'owner': new FormControl(""),
       'company': new FormControl(null, [Validators.required, Validators.minLength(3)]),
       'businessType': new FormControl("", [Validators.required, Validators.minLength(3)]),
       'title': new FormControl(null, [Validators.required, Validators.minLength(3)]),
       'contact': new FormControl(null, [Validators.required, Validators.minLength(3)]),
-      'tel': new FormControl(null, [Validators.required, Validators.minLength(3)]),
-      'email': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      'tel': new FormControl(null, [Validators.required]),
+      'email': new FormControl(null, [Validators.required]),
       'address': new FormControl(null, [Validators.required, Validators.minLength(3)]),
-      'descriptions': new FormControl(null, [Validators.required, Validators.minLength(3)]),
+      // 'descriptions': new FormControl(null, [Validators.required, Validators.minLength(3)]),
       'content': new FormControl(null, [Validators.required]),
       'deals': new FormControl(null, [Validators.required, Validators.minLength(3)]),
       'confirmed': new FormControl(false),
@@ -158,16 +160,16 @@ export class CustomerCreateComponent implements OnInit {
 
   onSubmit() {
 
-    if (!this.createCustomer.valid) {
-      let msgBag = this.msgsBag.initMessages(this.createCustomer);
-      this.messages = {
-        errors: msgBag['errors'],
-        success: msgBag['success']
-      };
-      this.msgNotify.showErrors('נא לתקן את השגיאות', "פרטים שגויים", {positionClass: "toast-center-center"});
-      console.log("messages: ", this.messages, " form not validated: ", this.createCustomer);
-      return;
-    }
+    // if (!this.createCustomer.valid) {
+    //   let msgBag = this.msgsBag.initMessages(this.createCustomer);
+    //   this.messages = {
+    //     errors: msgBag['errors'],
+    //     success: msgBag['success']
+    //   };
+    //   this.msgNotify.showErrors('נא לתקן את השגיאות', "פרטים שגויים", {positionClass: "toast-center-center"});
+    //   console.log("messages: ", this.messages, " form not validated: ", this.createCustomer);
+    //   return;
+    // }
     /* get validated items */
     let valItems = this.formFiles.getValidatedItems(this.createCustomer);
 
@@ -198,10 +200,8 @@ export class CustomerCreateComponent implements OnInit {
       .subscribe(response => {
         localStorage.setItem('success_server', JSON.stringify(response));
         this.sync(body, response);
-        this.msgs(body, response);
-        // if(response['errors']){
+        
         console.log(response);
-
         /**** send new customer to his own page *****/
 
       }, (err) => {
@@ -223,15 +223,6 @@ export class CustomerCreateComponent implements OnInit {
       this.itemData[item] = items[item];
     });
     this.msgNotify.showSuccess('קליינט', "חשבון קליינט נוצר בהצלחה", {positionClass: "toast-bottom-center"});
-  }
-
-  msgs(body, response) {
-
-    /* this.message = "קליינט עודכן בהצלחה";// "אדמין עודכן בהצלחה"; //response.messages.success.update[0];
-        setTimeout(() => {
-          $('#' + this.id).click();
-          this.message = false;
-        }, 3000) */
   }
 
   private galItems() {

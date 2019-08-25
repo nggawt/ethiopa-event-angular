@@ -21,32 +21,3 @@ input:invalid+small:after {
     color: #f00;
     padding-left: 5px;
 }
-
-/* input:invalid+small:after {
-    position: relative;
-    content: '✖';
-    padding-left: 5px;
-}
-
-input:valid+small:after {
-    position: relative;
-    content: '✓';
-    padding-left: 5px;
-}
- */
-
-/* input:valid+span:after,
-select:valid+span:after,
-textarea:valid+span:after {
-    content: '✓';
-    color: #26b72b;
-    padding-left: 5px;
-}
-
-input:invalid+span:after,
-select:invalid+span:after,
-textarea:invalid+span:after {
-    content: '✖';
-    color: #f00;
-    padding-left: 5px;
-} */

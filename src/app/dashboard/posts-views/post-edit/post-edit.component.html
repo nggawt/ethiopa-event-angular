@@ -1,46 +1,129 @@
-
+<ng-template *ngIf="allowLogIn | async" appLogInDirective></ng-template>
 <div class="shadow-sm p-1 mb-3">
   <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
     ערוך מאמר\פוסט
   </div>
 </div>
-<form *ngIf="itemData" class="p-3 border rounded" [formGroup]="postUpdate" (ngSubmit)="onSubmit()">
+<form *ngIf="itemData" class="p-3 border rounded" [formGroup]="articleEdit" (ngSubmit)="onSubmit()">
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="name" class="form-control-label">
         שם:
       </label>
-      <input class="form-control" formControlName="name" type="text">
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input class="w-100 bd-highlightpx-1" formControlName="name" type="text">
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <ng-container
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.name, id: 'name', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div class="form-group col-md-6">
-      <label for="date" class="form-control-label">
-        תאריך:
+
+    <div class="form-group col-md-6 custom-control custom-checkbox">
+      <label for="confirmed" class="form-control-label">
+        סטטוס:
       </label>
-      <input class="form-control" id="date" formControlName="date" type="text">
+      <div class="inputTypeNumber mb-2">
+        <input id="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox"
+          [checked]="f.confirmed.value">
+
+        <!-- <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight float-left"></span> -->
+        <label for="confirmed" class="custom-control-label">
+          {{ f.confirmed.value? "פעיל": "ממתין" }}
+        </label>
+      </div>
+      <ng-container
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.confirmed, id: 'confirmed', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div class="form-group col-md-12">
+
+    <div class="form-group col-md-6">
+      <label for="date">בתאריך:</label>
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+        <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)"
+          class="w-100 bd-highlightpx-1" (keyup)="(f.date.valid)?daily(date.value):''" placeholder="בחר תאריך"
+          [pattern]="datePattern" #date>
+
+        <!-- <span class="flex-shrink-1 bd-highlight" for="date">
+          <i class="material-icons">date_range</i>
+        </span> -->
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.date, id: 'date', itemMethod: formMethod}">
+      </ng-container>
+    </div>
+
+    <div class="form-group col-md-6">
+
       <label for="title" class="form-control-label">
         נושא:
       </label>
-      <input class="form-control" id="title" formControlName="title" type="title">
+      <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+        <textarea class="w-100 bd-highlightpx-1" id="title" formControlName="title" type="title" rows="3"></textarea>
+        <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+      </div>
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.title, id: 'title', itemMethod: formMethod}">
+      </ng-container>
     </div>
+
     <div class="form-group col-md-12">
       <label for="body" class="form-control-label">
         תיאור\הודעה:
       </label>
-      <quill-editor (onEditorCreated)="configEditor($event)" formControlName="body" #body>
-      </quill-editor>
+      <div class="clearfix mb-2">
+        <quill-editor (onEditorCreated)="configEditor($event)" formControlName="body" #body>
+        </quill-editor>
+      </div>
+      
+      <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.body, id: 'body', itemMethod: formMethod}">
+      </ng-container>
     </div>
-    <div class="form-group col-2 custom-control custom-checkbox">
-      <input [id]="confirmed" class="custom-control-input" type="checkbox" [checked]="f.confirmed.value" formControlName="confirmed" >
 
-      <label [for]="confirmed" class="custom-control-label">
-        סטטוס:
-        {{ f.confirmed.value? "סרב": "אשר" }}
-      </label>
-    </div>
     <div class="col-sm-12 clearfix">
       <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
     </div>
   </div>
 </form>
+
+
+<ng-template #clickedMethods let-elem="elem" let-itemId="id" let-itemMethod="itemMethod">
+  
+  <div class="mb-2">
+    <a *ngIf="itemMethod == 'update' && (elem.valid || itemId == 'images')"
+      class="ml-1 px-2 py-2 mb-2 border rounded text-center active" (click)="update(elem, itemId)">
+      <span>
+        עדכן
+        <i class="material-icons text-success">
+          update
+        </i>
+      </span>
+    </a>
+    <a *ngIf="elem.value && elem.value.length" class="ml-1 px-2 py-2 mb-2 border rounded text-center active"
+      (click)="clear(elem, itemId)">
+      <span>
+        נקה
+        <i class="material-icons text-warning">
+          clear
+        </i>
+      </span>
+    </a>
+    <a *ngIf="itemMethod == 'update'" class="ml-1 px-2 py-2 mb-2 border rounded text-center active"
+      (click)="default(elem, itemId)">
+      <span>
+        מקור
+        <i class="material-icons text-primary">
+          redo
+        </i>
+      </span>
+    </a>
+  </div>
+  <div *ngIf="messages && messages[elem.id]" class="bg-light p-1 ml-1">
+    <p *ngFor="let message of messages[elem.id]" class="bg-light p-1 m-1 d-block">
+      <span *ngIf="message[elem.id] || message['message']"
+        [ngClass]="message['type'] == 'errors'? 'text-danger': 'text-'+message['type'] ">
+        <b>#</b>
+        {{ message[elem.id] || message['message'] }}
+      </span>
+    </p>
+  </div>
+</ng-template>

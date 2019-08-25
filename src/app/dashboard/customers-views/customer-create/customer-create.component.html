@@ -3,18 +3,16 @@
     צור קליינט
   </div>
 </div>
-<form *ngIf="itemsResources$ | async as users" class="p-3 border rounded" [formGroup]="createCustomer"
+<form  class="p-3 border rounded" [formGroup]="createCustomer"
   (ngSubmit)="onSubmit()">
   <div class="form-row">
     <div class="co-sm-12 col-md-6">
       <label for="company">משתמש או בעל העסק</label>
       <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-        <select name="owner" id="owner" class="w-100 bd-highlightpx-1 selectList" formControlName="owner" required
+        <select name="owner" id="owner" class="chosen w-100 bd-highlightpx-1 selectList" formControlName="owner" required
           #owner (change)="setOwnerUser(owner.value, users)">
-          <option value="" selected disabled>בחר משתמש</option>
           <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
         </select>
-
         <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
       </div>
       <div *ngIf="f.owner.invalid && f.owner.touched" class="invalid-feedback d-block">* שדה חובה</div>
@@ -22,7 +20,7 @@
       </ng-container>
     </div>
 
-    <div class="co-sm-12 col-md-6">
+    <div class="col-sm-12 col-md-6">
       <label for="company">סוג העסק</label>
       <div class="inputTypeNumber mb-2 d-flex bd-highlight">
         <select name="businessType" id="businessType" class="w-100 bd-highlightpx-1 selectList"
@@ -65,7 +63,7 @@
     </div>
 
 
-    <div class="co-sm-12 col-md-6">
+    <div class="col-sm-12 col-md-6">
 
       <label for="contact">אימייל</label>
       <div class="inputTypeNumber mb-2 d-flex bd-highlight">
@@ -107,7 +105,7 @@
       </ng-container>
     </div>
 
-    <div class="co-sm-12 col-lg-6">
+    <div class="col-sm-12 col-lg-6">
       <label for="address">כתובת</label>
 
       <div class="inputTypeNumber mb-2 d-flex bd-highlight">
@@ -122,7 +120,7 @@
       </ng-container>
     </div>
 
-    <div class="co-sm-12 col-lg-6">
+    <div class="col-sm-12">
       <label for="title">סלוגן החברה</label>
 
       <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
@@ -136,8 +134,7 @@
       </ng-container>
     </div>
 
-    <div class="co-sm-12 col-lg-6">
-
+    <!-- <div class="co-sm-12 col-lg-6">
       <label for="descriptions">תיאור החברה</label>
       <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
         <textarea wrap="hard" class="w-100 bd-highlightpx-1" type="text" name="descriptions" id="descriptions"
@@ -150,15 +147,11 @@
       <ng-container
         *ngTemplateOutlet="clickedMethods; context:{elem: f.descriptions, id: 'descriptions', itemMethod: formMethod}">
       </ng-container>
-    </div>
-    <div class="col-12 position-relative">
+    </div> -->
+    <div class="col-md-12">
 
       <label for="content">אודות החברה</label>
       <div class="mb-2 clearfix">
-        <!-- <textarea class="w-100 bd-highlightpx-1" type="text" name="content" id="content"
-                formControlName="content" minlength="6" required #content>
-        
-              </textarea> -->
         <quill-editor (onEditorCreated)="configEditor($event)" formControlName="content" #content></quill-editor>
       </div>
       <!-- <div *ngIf="f.content.invalid && f.content.touched" class="invalid-feedback d-block">* שדה חובה</div> -->

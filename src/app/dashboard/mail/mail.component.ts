@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { HttpService } from 'src/app/services/http-service/http.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-mail',
@@ -15,20 +16,15 @@ export class MailComponent implements OnInit {
 
   pathName: string;
 
-
-  customerMessage: {
-    id: string,
-    nameTo: string | boolean,
-    emailTo: string | boolean,
-    modalSize: string,
+  sendingMail: Observable<{[key: string]: boolean} | boolean>;
+  mailItems: {
+    id:string | boolean, 
+    url: string,
+    modalSize: string, 
+    nameTo: string | boolean, 
+    emailTo: string | boolean, 
     title: string
-  } = {
-      id: 'new_mail',
-      modalSize: "modal-lg",
-      nameTo: false,
-      emailTo: false,
-      title: 'שלח הודעה'
-    };
+  };
 
   constructor(private srv: ResourcesService, private http: HttpService) {
     // this.srv.initResources('messages', false);
@@ -52,13 +48,16 @@ export class MailComponent implements OnInit {
   newMail() {
     console.log("callled newMail()");
 
-    this.customerMessage = {
+    this.mailItems = {
       id: 'new_mail',
+      url: decodeURIComponent(location.pathname),
       modalSize: "modal-lg",
       nameTo: "",
       emailTo: "",
       title: 'שלח הודעה'
     };
+    this.http.sendingMail.next({['new_mail']: true});
+    this.sendingMail = this.http.sendingMail;
   }
 
   get favoritesLen() {

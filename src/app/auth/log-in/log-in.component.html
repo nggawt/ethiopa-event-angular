@@ -3,7 +3,7 @@
     <form class="p-3" [formGroup]="logInform" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <div class="inputTypeNumber">
-            <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם" required />
+            <input name="name" type="text" class="col-11" formControlName="name" placeholder="שם" minlength="3" required />
       
             <span class="validity float-left"></span>
           </div>
@@ -14,7 +14,7 @@
         <div class="form-group">
       
           <div class="inputTypeNumber">
-            <input name="email" type="email" class="col-11" formControlName="email" placeholder="אימייל" [pattern]="emailPatt"
+            <input name="email" type="email" class="col-11" formControlName="email" placeholder="אימייל" minlength="6" [pattern]="emailPatt"
               required />
       
             <span class="validity float-left"></span>
@@ -27,7 +27,7 @@
       
           <div class="inputTypeNumber">
             <input name="password" type="password" class="col-11" formControlName="password" placeholder="סיסמה"
-              [pattern]="passwordPatt" required />
+              [pattern]="passwordPatt" minlength="6" required />
             <span class="validity float-left"></span>
           </div>
       

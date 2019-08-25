@@ -85,7 +85,7 @@ export class LogInComponent implements OnInit, AfterContentChecked {
           let IntendedUri = this.http.intendedUri ? this.http.intendedUri : "/";
           console.log(this.jwt.decodeToken(evt['access_token']));
 
-          this.router.navigate([IntendedUri]);
+          // this.router.navigate([IntendedUri]);
           $('.close').click();
 
         }, (err) => {
