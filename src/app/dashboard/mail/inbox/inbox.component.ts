@@ -17,9 +17,8 @@ export class InboxComponent implements OnInit {
 
   ngOnInit() {
     this.srv.getResources('messages', false).then(msgs => {
-      this.messageItems = this.getFilredItems(msgs);
+      if(msgs) this.messageItems = this.getSortededItems(msgs);
       console.log('/inbox: ', msgs);
-      
     });
    }
 
@@ -52,7 +51,7 @@ export class InboxComponent implements OnInit {
     });
   }
 
-  getFilredItems(items){
+  getSortededItems(items){
     return items.filter(item => item.deleted_at === null).sort((aItem, bItem) => new Date(bItem.created_at).getTime() - new Date(aItem.created_at).getTime());
   }
 

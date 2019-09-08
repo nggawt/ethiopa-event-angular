@@ -4,18 +4,23 @@
   <div class="col-12 mb-3">
     <div class="rounded-right-warning bg-light shadow-sm clearfix">
       <h5 class="p-2 text-black-50 h2 float-right">
-          <a routerLink="/dashboard">
-            <!-- (click)=setTemplateType(main) -->
-            <i class="material-icons">dashboard</i>
-          </a>
-          דשבורד
+        <a routerLink="/dashboard">
+          <!-- (click)=setTemplateType(main) -->
+          <i class="material-icons">dashboard</i>
+        </a>
+        דשבורד
       </h5>
       <div class="float-left m-1">
-        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/admins-views/create')"> צור אדמין</button>
-        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/users-views/create')"> צור משתמש</button>
-        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/customers-views/create')"> צור קליינט</button>
-        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/articles-views/create')"> צור פוסט</button>
-        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/events-views/create')"> צור אירוע</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/admins-views/create')"> צור
+          אדמין</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/users-views/create')"> צור
+          משתמש</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/customers-views/create')"> צור
+          קליינט</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/articles-views/create')"> צור
+          פוסט</button>
+        <button class="btn btn-link m-1" type="button" (click)="create('dashboard/events-views/create')"> צור
+          אירוע</button>
         <a class="btn btn-outline-success m-1" (click)="login('/login')"> התחבר</a>
         <a class="btn btn-outline-danger m-1" (click)="logout()"> התנתק</a>
         <!-- <a class="btn btn-outline-warning m-1" (click)="register()">admin register</a> -->
@@ -25,8 +30,7 @@
   </div>
   <div class="col-sm-2">
 
-    <ul
-      class="navbar-nav rounded-right-warning list-unstyled text-secondary">
+    <ul class="navbar-nav rounded-right-warning list-unstyled text-secondary">
       <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
         <a routerLink="/dashboard">
           <!-- (click)=setTemplateType(main) -->
@@ -50,7 +54,8 @@
       <li class="nav-item" routerLinkActive="active"><a routerLink="events-views">אירועים</a></li>
       <!-- (click)=setTemplateType(events) -->
       <li class="nav-item" routerLinkActive="active"><a routerLink="mail">דואר
-          <span *ngIf="resources['messages'] as messages" class="badge badge-primary badge-pill"> {{ messages.data.length }} </span>
+          <span *ngIf="resources['messages'] as messages" class="badge badge-primary badge-pill">
+            {{ messages.data.length }} </span>
         </a></li>
       <!--  (click)=setTemplateType(messages) -->
       <!-- <li class="nav-item" routerLinkActive="active"><a routerLink="role">ניהול הרשאות</a></li> -->
@@ -93,22 +98,26 @@
         </div>
         <hr>
         <div class="body p-1">
-          <span class="text d-block">
-            סהכ:
-          </span>
-          <div class="circle text-center">
-            <span class="total p-3">{{ users.length }}</span>
+            <div class="recent">
+              <span class="text">
+                הצטרפו לאחרונה:
+              </span>
+              <span class="recently">10</span>
+            </div>
+  
+            <div class="total text-center clearfix">
+              <span class="float-right">
+                סהכ:
+              </span>
+              <span class="total-item p-3">{{ users.length }}</span>
+            </div>
           </div>
-        </div>
-        <div class="footer p-1">
-          <span class="text">
-            הצטרפו לאחרונה:
-          </span>
-          <span class="recently">10</span>
-        </div>
+          <div class="footer clearfix">
+            <a class="btn btn-link btn-sm recently float-left" routerLink="users-views">משתמשים</a>
+          </div>
       </div>
     </div>
-    
+
     <div *ngIf="res['customers'] && res['customers'].data as customers" class="col-sm-3">
       <div class="p-3 border rounded">
         <div class="header">
@@ -117,18 +126,22 @@
         </div>
         <hr>
         <div class="body p-1">
-          <span class="text d-block">
-            סהכ:
-          </span>
-          <div class="circle text-center">
-            <span class="total p-3">{{ customers.length }}</span>
+          <div class="recent">
+            <span class="text">
+              הצטרפו לאחרונה:
+            </span>
+            <span class="recently">10</span>
+          </div>
+
+          <div class="total text-center clearfix">
+            <span class="float-right">
+              סהכ:
+            </span>
+            <span class="total-item p-3">{{ customers.length }}</span>
           </div>
         </div>
-        <div class="footer p-1">
-          <span class="text">
-            הצטרפו לאחרונה:
-          </span>
-          <span class="recently">10</span>
+        <div class="footer clearfix">
+          <a class="btn btn-link btn-sm recently float-left" routerLink="customers-views">קליינטים</a>
         </div>
       </div>
     </div>
@@ -140,19 +153,23 @@
         </div>
         <hr>
         <div class="body p-1">
-          <span class="text d-block">
-            סהכ:
-          </span>
-          <div class="circle text-center">
-            <span class="total p-3">{{ articles.length }}</span>
+            <div class="recent">
+              <span class="text">
+                הצטרפו לאחרונה:
+              </span>
+              <span class="recently">10</span>
+            </div>
+  
+            <div class="total text-center clearfix">
+              <span class="float-right">
+                סהכ:
+              </span>
+              <span class="total-item p-3">{{ articles.length }}</span>
+            </div>
           </div>
-        </div>
-        <div class="footer p-1">
-          <span class="text">
-            נוספו לאחרונה:
-          </span>
-          <span class="recently">10</span>
-        </div>
+          <div class="footer clearfix">
+            <a class="btn btn-link btn-sm recently float-left" routerLink="articles-views">מאמרים</a>
+          </div>
       </div>
     </div>
     <div *ngIf="res['events'] && res['events'].data as events" class="col-sm-3">
@@ -163,19 +180,23 @@
         </div>
         <hr>
         <div class="body p-1">
-          <span class="text d-block">
-            סהכ:
-          </span>
-          <div class="circle text-center">
-            <span class="total p-3">{{ events.length }}</span>
+            <div class="recent">
+              <span class="text">
+                הצטרפו לאחרונה:
+              </span>
+              <span class="recently">10</span>
+            </div>
+  
+            <div class="total text-center clearfix">
+              <span class="float-right">
+                סהכ:
+              </span>
+              <span class="total-item p-3">{{ events.length }}</span>
+            </div>
           </div>
-        </div>
-        <div class="footer p-1">
-          <span class="text">
-            נוספו לאחרונה:
-          </span>
-          <span class="recently">10</span>
-        </div>
+          <div class="footer clearfix">
+            <a class="btn btn-link btn-sm recently float-left" routerLink="events-views">אירועים</a>
+          </div>
       </div>
     </div>
 
@@ -195,7 +216,7 @@
       </h5>
       <div class="border rounded p-3">
         <div *ngFor="let resource of res | keyvalue">
-          
+
           <div *ngIf="resource.value && resource.value.pending as pend" class="border-bottom">
             <!-- <app-pending [itemsLists]="resource.value"></app-pending> -->
             <a class="py-2 d-flex justify-content-between align-items-center" [routerLink]="resource.key+'-views'">

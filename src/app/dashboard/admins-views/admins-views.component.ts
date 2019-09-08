@@ -5,6 +5,8 @@ import { map, tap, filter, first } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service/http.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
+declare var $:any;
+
 @Component({
   selector: 'app-admins-views',
   templateUrl: './admins-views.component.html',
@@ -51,6 +53,22 @@ export class AdminsViewsComponent implements OnInit {
   show(path){
     this.http.requestUrl = location.pathname;
     this.router.navigate([path]);
+  }
+
+  makeAdmin(id, admin){
+    let selected = $("#"+id)[0];
+    console.log(selected.value, admin);
+    let adminProp = {authority: selected.value, id: admin.id};
+    this.send(adminProp, 'PATCH');
+  }
+
+  send(items: { [key: string]: string }, method: string): void {
+
+    let url = 'admins/' + items.id + '?_method=' + method;
+    this.http.postData(url, items).subscribe(response => {
+      console.log('response: ', response);
+      // if(response['status']) this.update(items, response);
+    });
   }
 
   destroy(path:string, items: any):void{

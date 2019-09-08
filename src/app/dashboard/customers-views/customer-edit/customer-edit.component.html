@@ -105,7 +105,7 @@
       </ng-container>
     </div>
 
-    <div class="col-12">
+    <div class="form-group col-md-6">
       <label for="title">סלוגן החברה</label>
 
       <div class="mb-2 d-flex bd-highlight">
@@ -117,20 +117,25 @@
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.title,id: 'title', itemMethod: formMethod}">
       </ng-container>
     </div>
+    
+    <div class="form-group col-md-6 custom-control custom-checkbox">
+      <label for="confirmed" class="form-control-label">
+        סטטוס:
+      </label>
+      <div class="inputTypeNumber mb-2">
+        <input id="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox"
+          [checked]="f.confirmed.value">
 
-    <div class="col-12">
-      <label for="descriptions">תיאור החברה</label>
-
-      <div class="mb-2 d-flex textArea">
-        <textarea class="w-100 bd-highlightpx-1" type="text" class="form-control" rows="3" name="descriptions"
-          id="descriptions" formControlName="descriptions" required minlength="3" #descriptions></textarea>
-        <!-- <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span> -->
+        <!-- <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight float-left"></span> -->
+        <label for="confirmed" class="custom-control-label">
+          {{ f.confirmed.value? "פעיל": "ממתין" }}
+        </label>
       </div>
-      <div *ngIf="f.descriptions.invalid && f.descriptions.touched" class="invalid-feedback d-block">* שדה חובה</div>
       <ng-container
-        *ngTemplateOutlet="clickedMethods; context:{elem: f.descriptions,id: 'descriptions', itemMethod: formMethod}">
+        *ngTemplateOutlet="clickedMethods; context:{elem: f.confirmed, id: 'confirmed', itemMethod: formMethod}">
       </ng-container>
     </div>
+
     <div class="col-12 position-relative">
 
       <label for="content">אודות החברה</label>
@@ -159,21 +164,6 @@
       </ng-container>
     </div>
 
-    <div class="col-12">
-
-      <div class="mb-2 custom-checkbox">
-        <input [id]="confirmed" class="custom-control-input" formControlName="confirmed" type="checkbox"
-          [checked]="f.confirmed.value">
-        <label [for]="confirmed" class="custom-control-label">
-          סטטוס:
-          {{ f.confirmed.value? "סרב": "אשר" }}
-        </label>
-      </div>
-      <ng-container
-        *ngTemplateOutlet="clickedMethods; context:{elem: f.confirmed, id: 'confirmed', itemMethod: formMethod}">
-      </ng-container>
-    </div>
-
     <div class="co-sm-12 col-md-6">
       <p class="pb-2 m-0">לוגו החברה</p>
       <div class="form-group border bg-white clearfix">
@@ -191,7 +181,7 @@
       </div>
 
       <div *ngIf="f.loggo.value && f.loggo.value.length" FormArrayName="loggo" style="min-height: 90px;"
-        class="bg-dark">
+        class="bg-dark clearfix">
         <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.loggo, id: 'loggo' }">
         </ng-container>
       </div>
@@ -218,7 +208,7 @@
           (change)="formFiles.selectedFiles($event,'video')" required /><!-- [formControlName]="video" -->
       </div>
       <div *ngIf="f.video.value && f.video.value.length" FormArrayName="video" id="video-box" style="min-height: 90px;"
-        class="bg-dark">
+        class="bg-dark clearfix">
         <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.video, id: 'video'}">
         </ng-container>
       </div>
@@ -244,11 +234,11 @@
       </div>
 
       <div *ngIf="f.images.value && f.images.value.length" FormArrayName="images" style="min-height: 90px;"
-        class="bg-dark">
+        class="bg-dark clearfix">
         <ng-container *ngTemplateOutlet="galleryTemp; context:{elem: f.images, id: 'images'}">
         </ng-container>
       </div>
-      <div *ngIf="f.images.invalid" class="invalid-feedback d-block">* הפרטים לא תקפים </div>
+      <!-- <div *ngIf="f.images.invalid" class="invalid-feedback d-block">* הפרטים לא תקפים </div> -->
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: f.images, id: 'images', itemMethod: formMethod}">
       </ng-container>
     </div>
@@ -289,7 +279,7 @@
 </ng-template>
 
 <ng-template #clickedMethods let-elem="elem" let-itemId="id" let-itemMethod="itemMethod">
-  <div class="mb-2">
+  <div class="my-3">
 
     <a *ngIf="itemMethod == 'update' && (elem.valid || itemId == 'images')"
       class="ml-1 px-2 py-2 mb-2 border rounded text-center active" (click)="update(elem, itemId)">

@@ -1,9 +1,9 @@
 <dashboard-model [modelProps]="mdProps">
 
-<div *ngIf="itemData" class="col-12 text-right">
+  <div *ngIf="itemData" class="col-12 text-right">
 
     <form class="form-row p-3 border rounded  bg-white" [formGroup]="formGr" (ngSubmit)="onSubmit()">
-      
+
       <div class="form-group col-md-6">
         <label for="name" class="form-control-label">
           שם:
@@ -66,17 +66,16 @@
         <label for="about" class="form-control-label">
           תיאור\אודות:
         </label>
-        <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-
-          <textarea class="w-100 bd-highlightpx-1" id="about" formControlName="about" type="text" (keyup)="posElem(textArea)" #textArea></textarea>
-          <span class="validity float-left"></span>
+        <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+          <textarea class="w-100 bd-highlightpx-1" id="about" formControlName="about" type="title" rows="3"></textarea>
+          <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
         </div>
       </div>
 
       <div class="col-sm-12 clearfix">
-          <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
+        <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
       </div>
     </form>
     <h2 *ngIf="mdProps.message" class="h4 text-center text-success"> {{mdProps.message}} </h2>
-</div>
+  </div>
 </dashboard-model>

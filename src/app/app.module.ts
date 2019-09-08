@@ -129,6 +129,7 @@ import { AdminRegistrationComponent } from './auth/admin-registration/admin-regi
 import { LogInDirectiveDirective } from './shared/directives/log-in/log-in-directive.directive';
 import { ContactComponent } from './pages/contact/contact.component';
 import { ErrorsHandler } from './services/errors-exeption/errors-handler.service';
+import { CustomerToHebPipe } from './shared/pipes-module/customer-to-heb.pipe';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -206,6 +207,7 @@ export function tokenGetter() {
     MailCreateComponent,
     AdminRegistrationComponent,
     LogInDirectiveDirective,
+    CustomerToHebPipe,
     // SendMessageDirectiveDirective,
     // customValidatorFnFactory
     // ConcatFormComponent,

@@ -31,23 +31,23 @@ export class MailComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.srv.getResources('messages', false).then(msgs => {
-      this.msgsResources = msgs;
+      console.log(msgs);
+      
+      this.msgsResources = msgs? msgs: [];
       this.setPathName();
     });
-
-    
   }
 
   setPathName(){
-    let loc = window.location.pathname,
-        locExploded = loc.split('/');
+    let loc = window.location.pathname, locExploded = loc.split('/');
     this.pathName = locExploded[(locExploded.length - 1)];
   }
 
   newMail() {
+    
     console.log("callled newMail()");
-
     this.mailItems = {
       id: 'new_mail',
       url: decodeURIComponent(location.pathname),

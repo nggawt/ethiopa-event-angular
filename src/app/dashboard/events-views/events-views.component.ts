@@ -2,7 +2,7 @@ import { Component, OnInit, Input, TemplateRef, ViewChild } from '@angular/core'
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { FormGroup, FormControl } from '@angular/forms';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 declare var $;
 
 @Component({
@@ -19,11 +19,10 @@ export class EventsViewsComponent implements OnInit {
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
-  constructor(private http: HttpService, private resSrv: ResourcesService) { }
+  constructor(private http: HttpService, private rsrv: ResourcesService) { }
 
   ngOnInit() {
-
-    this.itemsResources$ = this.resSrv.resourcesObsever.pipe(tap(item => console.log(item)));
+    this.itemsResources$ = this.rsrv.events.pipe(map(item => this.rsrv.pagination(item, 'events')),tap(item => console.log(item)));
     this.tempType =  this.tableEvents;
   }
   
@@ -121,6 +120,22 @@ export class EventsViewsComponent implements OnInit {
     //   $(ul).show();
     // });
   }
+
+  confirmed(item){
+  
+    let url = "events/"+item.id+"?_method=PATCH";
+    let requestItems = { confirmed: ! item.confirmed };
+
+    console.log("url ", url, " item ", item, " items: ", requestItems);
+    this.http.postData(url, requestItems).subscribe(response =>{
+      console.log('response: ', response);
+      item.confirmed = ! item.confirmed;
+      this.rsrv.update('events', item); 
+    });
+    
+  }
+
+  
 
   destroy(items){
     

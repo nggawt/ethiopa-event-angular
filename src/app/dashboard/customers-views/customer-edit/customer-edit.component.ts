@@ -136,7 +136,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
       'tel': new FormControl(customer.tel, [Validators.required, this.ngVal.unchange.bind(this, customer.tel)]),
       'email': new FormControl(customer.email, [Validators.required, this.ngVal.unchange.bind(this, customer.email)]),
       'address': new FormControl(customer.address, [Validators.required, this.ngVal.unchange.bind(this, customer.address)]),
-      'descriptions': new FormControl(customer.descriptions, [Validators.required, this.ngVal.unchange.bind(this, customer.descriptions)]),
+      // 'descriptions': new FormControl(customer.descriptions, [Validators.required, this.ngVal.unchange.bind(this, customer.descriptions)]),
       'content': new FormControl(customer.content, [Validators.required, this.ngVal.unchange.bind(this, customer.content)]),
       'deals': new FormControl(customer.deals, [Validators.required, this.ngVal.unchange.bind(this, customer.deals)]),
       'confirmed': new FormControl(customer.confirmed, [Validators.required, this.ngVal.unchange.bind(this, customer.confirmed)]),
@@ -185,9 +185,9 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     evt.format('align', 'right', 'user');
     evt.format('size', 'normal', 'user');
     evt.format('header', 3, 'user');
-
-    // var toolbar = evt.getModule('toolbar');
-    // console.log(toolbar);
+    
+    let container: HTMLDivElement = evt.container;
+    container.style.minHeight = "90px";
   }
 
   getValidatedItems() {
@@ -269,7 +269,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
         /**** send new customer to his own page *****/
 
       }, (err) => {
-        localStorage.setItem('errors_server', JSON.stringify(err));
+        // localStorage.setItem('errors_server', JSON.stringify(err));
         console.log(err);
         if (err["status"] === 401) {
           // console.log(err['status']);

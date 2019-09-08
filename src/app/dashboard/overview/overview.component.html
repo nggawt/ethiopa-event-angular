@@ -2,7 +2,8 @@
 
 <div *ngIf="itemResource" class="text-right">
   <ng-container
-    [ngTemplateOutlet]="(itemType == 'customers')? cleint:(itemType == 'blog')? blog: (itemType == 'events')? events:(itemType == 'users')? users: (itemType == 'admins')? admins: default">
+    [ngTemplateOutlet]="(itemType == 'customers')? cleint:(itemType == 'blog')? blog: 
+    (itemType == 'events')? events:(itemType == 'users')? users: (itemType == 'admins')? admins: default">
   </ng-container>
 
   <!-- <ng-template add-component></ng-template> -->

@@ -1,7 +1,7 @@
 <ng-template #default>
   Loading...
 </ng-template>
-<div class="row text-right" *ngIf="(itemsResources$  | async )?.articles as articles">
+<div class="row text-right" *ngIf="(itemsResources$  | async ) as articles">
   <div class="col-sm-12 mb-3">
     <div class="shadow-sm p-1">
       <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
@@ -34,6 +34,7 @@
         (pageChange)="resource.config.currentPage = $event">
 
         <div class="custom-pagination float-right">
+          
           <div class="pagination-previous" [class.disabled]="p.isFirstPage()">
             <i *ngIf="!p.isFirstPage()" (click)="p.previous()" class="fa fa-angle-double-right"></i>
           </div>
@@ -78,6 +79,7 @@
       </td>
       <td [ngClass]="article.confirmed? 'text-success':'text-danger'">
         {{article.confirmed? "פעיל":  "ממתין"}}
+        <a class="badge badge-default badge-pill page-link text-warning" (click)="confirmed(article)">השהה</a>
       </td>
       <td><a class="btn btn-primary btn-sm" [routerLink]="article.id">הצג</a></td>
       <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+article.user_id">משתמש</a></td>

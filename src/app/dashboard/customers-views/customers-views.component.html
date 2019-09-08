@@ -2,7 +2,7 @@
   Loading...
 </ng-template>
 
-<div class="row text-right" *ngIf="(itemsResources$  | async )?.customers as customers">
+<div class="row text-right" *ngIf="(itemsResources$  | async ) as customers">
 
   <div class="col-sm-12 mb-3">
     <div class="shadow-sm p-1">
@@ -79,6 +79,7 @@
       </td>
       <td [ngClass]="customer.customer.confirmed? 'text-success':'text-danger'">
         {{customer.customer.confirmed? "פעיל":  "ממתין"}}
+        <a class="badge badge-default badge-pill page-link text-warning" (click)="confirmed(customer.customer)">השהה</a>
       </td>
       <td><a class="btn btn-primary btn-sm" [queryParams]="{name:  customer.customer.businessType}"
           [routerLink]="customer.customer.id">הצג</a>

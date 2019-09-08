@@ -3,7 +3,7 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 declare var $;
 
@@ -20,11 +20,10 @@ export class CustomersViewsComponent implements OnInit {
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
-  constructor(private http: HttpService, private resSrv: ResourcesService, private router: Router) { }
+  constructor(private http: HttpService, private rsrv: ResourcesService, private router: Router) { }
 
   ngOnInit() {
-
-    this.itemsResources$ = this.resSrv.resourcesObsever.pipe(tap(item => console.log(item)));
+    this.itemsResources$ = this.rsrv.customers.pipe(map(item => this.rsrv.pagination(item, 'customers')),tap(item => console.log(item)));
     this.tempType =  this.tableCustomers;
   }
   
@@ -40,4 +39,17 @@ export class CustomersViewsComponent implements OnInit {
     console.log(url, param);
     this.router.navigate([url], { queryParams: { name: param} });
   }
+
+  confirmed(item){
+  
+    let url = "customers/"+item.id+"?_method=PATCH";
+    let requestItems = {formInputs: { confirmed: ! item.confirmed  }};
+
+    console.log("url ", url, " item ", item, " items: ", requestItems);
+    this.http.postData(url, requestItems).subscribe(response =>{
+      console.log('response: ', response);
+      item.confirmed = ! item.confirmed;
+      this.rsrv.update('customers', item); 
+    }); 
+  } 
 }

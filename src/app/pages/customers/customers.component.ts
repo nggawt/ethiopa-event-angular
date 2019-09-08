@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, RoutesRecognized, ActivatedRoute, Data, ParamMap } from '@angular/router';
-import { map, filter, tap } from 'rxjs/operators';
+import { map, filter, tap, first } from 'rxjs/operators';
 import { HallType } from '../../customers/hall-type';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
@@ -75,11 +75,11 @@ export class CustomersComponent implements OnInit, OnDestroy {
     
     if (this.allawAddress.indexOf(url) >= 0) {
 
-      this.route.data.subscribe(data => {
+      this.route.data.pipe(first()).subscribe(data => {
         let customerData = data['customers']? data['customers']: false;
         let addr = this.allawAddress.find(item => { return item == url; });
         this.address = addr;
-        // console.log(data);
+        console.log(data);
         // console.log(addr);
 
         this.hallsProps = customerData && customerData[addr] ? of(customerData[addr]) : false;
@@ -94,9 +94,9 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
   private timesNavigated(link?) {
     link = link ? link : '/';
-    // setTimeout(() => {
+    setTimeout(() => {
       this.router.navigate([link]);
-    // }, 100);
+    }, 100);
     return false;
   }
 

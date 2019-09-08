@@ -2,6 +2,8 @@ import { Component, OnInit, Input, TemplateRef, ViewChild } from '@angular/core'
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { FormGroup, FormControl } from '@angular/forms';
+import { map, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 declare var $;
 
 @Component({
@@ -10,7 +12,7 @@ declare var $;
   styleUrls: ['./posts-views.component.css']
 })
 export class PostsViewsComponent implements OnInit {
-  itemsResources$:{};
+  itemsResources$:Observable<{}>;
   formGr: FormGroup;
 
   @ViewChild('default', {static: true}) tempType: TemplateRef<any>;
@@ -22,7 +24,7 @@ export class PostsViewsComponent implements OnInit {
 
   ngOnInit() {
 
-    this.itemsResources$ = this.rsrv.resourcesObsever;
+    this.itemsResources$ = this.rsrv.articles.pipe(map(item => this.rsrv.pagination(item, 'articles')),tap(item => console.log(item)));
     this.tempType =  this.tablearticles;
     
   }
@@ -121,10 +123,24 @@ export class PostsViewsComponent implements OnInit {
     //   $(ul).show();
     // });
   }
+
+  confirmed(item){
+  
+    let url = "articles/"+item.id+"?_method=PATCH";
+    let requestItems = { confirmed: ! item.confirmed };
+
+    console.log("url ", url, " item ", item, " items: ", requestItems);
+    this.http.postData(url, requestItems).subscribe(response =>{
+      console.log('response: ', response);
+      item.confirmed = ! item.confirmed;
+      this.rsrv.update('articles', item); 
+    });
+    
+  }
   
   destroy(items){
     
-    let url = "blog/"+items.id+"? _method=DELETE";
+    let url = "articles/"+items.id+"? _method=DELETE";
     this.http.postData(url, null).subscribe(response => {
       console.log(response);
     });

@@ -1,8 +1,10 @@
-import { Component, OnInit, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, TemplateRef, ViewChild, OnChanges } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { tap, map, first, filter } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 declare var $;
 
 @Component({
@@ -11,21 +13,34 @@ declare var $;
   styleUrls: ['./users-views.component.css']
 })
 
-export class UsersViewsComponent implements OnInit {
-  itemsResources$:{};
+export class UsersViewsComponent implements OnInit, OnChanges {
+  itemsResources$:Observable<{}>;
   formGr: FormGroup;
   @ViewChild('default', {static: true}) tempType: TemplateRef<any>;
   @ViewChild('tableusers', {static: true}) tableusers: TemplateRef<any>;
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
-  constructor(private http: HttpService, private resSrv: ResourcesService, private router: Router) { }
+  constructor(private http: HttpService, private rsrv: ResourcesService, private router: Router) { }
 
   ngOnInit() {
-    this.itemsResources$ = this.resSrv.resourcesObsever;
+    // this.rsrv.getResources('users', true).then(users => {
+    //   console.log(users);
+    //   let dataUsers = this.rsrv.pagination(users, 'users');
+    //   this.itemsResources$ = of(dataUsers);
+    // });
+    // this.rsrv.dataTransform('users');
+    this.itemsResources$ = this.rsrv.users.pipe(filter(item => typeof item == "object"), 
+    map(items => this.rsrv.dataTransform('users', items)),map(items => this.rsrv.pagination(items, 'users')),tap(item => console.log(item)));
     this.tempType =  this.tableusers;
   }
-  
+
+  ngOnChanges(){
+    console.log("users onChange called!");
+    
+    this.rsrv.dataTransform('users');
+  }
+
   get f() : {} {
     return this.formGr.controls;
   }
@@ -124,6 +139,38 @@ export class UsersViewsComponent implements OnInit {
         // this.savedId['prevElemId'] = false;
         // document.removeEventListener('click', this.editIem);
       }
+    });
+  }
+
+  bannedUntil(){
+    let date = new Date();
+    let nextTwoWeeks = new Date(date.setDate(date.getDate() + 14)),
+        dt = nextTwoWeeks.getFullYear()+"-"+nextTwoWeeks.getMonth()+"-"+nextTwoWeeks.getDate()+" "+
+        nextTwoWeeks.getHours()+":"+nextTwoWeeks.getMinutes()+":"+nextTwoWeeks.getSeconds();
+
+    return dt;
+  }
+
+  forbidden(items){
+
+    let isForbidden = items.forbidden,
+        method = isForbidden? '/open': '/lock',
+        url = "banntrash/"+items.id+method;
+
+    let data = {
+      banned_until: isForbidden? null: this.bannedUntil(),
+      email: items.email,
+      id: items.id,
+      model: 'user'
+    };
+
+    console.log("url ", url, " items: ", data);
+    this.http.postData(url, data).subscribe(response =>{
+      console.log('response: ', response);
+      items.forbidden = ! items.forbidden;
+      let res = isForbidden? response['user']: response['forbidden'];
+      
+      this.rsrv.forbiddenUser('users', res, isForbidden); 
     });
   }
 

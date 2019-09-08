@@ -29,7 +29,6 @@ export class ContactComponent implements OnInit, OnDestroy {
   constructor(
     private fmValidor: ValidationService,
     private http: HttpService,
-    public messages: MessagesService,
     private router: Router,
     private route: ActivatedRoute) { }
 
@@ -77,9 +76,6 @@ export class ContactComponent implements OnInit, OnDestroy {
       .subscribe(evt => {
 
         console.log('requestUrl: ', requestUrl, ' request: ', evt);
-        let msgs = this.messages.proccesMessages(evt);
-        console.log(msgs);
-        this.messages = msgs;
         //this.resetMessages();
 
       }, (err) => {

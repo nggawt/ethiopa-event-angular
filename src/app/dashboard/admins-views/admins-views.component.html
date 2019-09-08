@@ -6,35 +6,35 @@
       <div class="p-3 clearfix">
         <a routerLinkActive="active" routerLink="#"
           class="googleFont ml-1 py-1 px-2 border rounded text-center float-right">
-            אדמנים
-            <i class="material-icons">supervisor_account</i>
+          אדמנים
+          <i class="material-icons">supervisor_account</i>
         </a>
         <a routerLinkActive="active" routerLink="#"
           class="googleFont ml-1 py-1 px-2 border rounded text-center float-right">
-              אבטחה
-              <i class="material-icons">
-                security
-                </i>
-        </a>
-
-        <a routerLinkActive="active" routerLink="#"
-          class="googleFont ml-1 py-1 px-2 border rounded text-center float-right">
-            פרופיל
-            <i class="material-icons">select_all</i>
+          אבטחה
+          <i class="material-icons">
+            security
+          </i>
         </a>
 
         <a routerLinkActive="active" routerLink="#"
           class="googleFont ml-1 py-1 px-2 border rounded text-center float-right">
-            ניהול הרשאות
-            <i class="material-icons">add</i>
+          פרופיל
+          <i class="material-icons">select_all</i>
+        </a>
+
+        <a routerLinkActive="active" routerLink="#"
+          class="googleFont ml-1 py-1 px-2 border rounded text-center float-right">
+          ניהול הרשאות
+          <i class="material-icons">add</i>
         </a>
 
         <a routerLinkActive="active" (click)="destroy()"
           class="googleFont py-1 px-2 border rounded text-center float-left">
-            הסר חשבון
-            <i class="material-icons text-danger">
-              delete_forever
-            </i>
+          הסר חשבון
+          <i class="material-icons text-danger">
+            delete_forever
+          </i>
         </a>
 
         <a routerLinkActive="active" class="btn btn-primary" (click)="create('/dashboard/admins-views/create')"
@@ -62,10 +62,11 @@
             <th scope="col">ערוך</th>
             <th scope="col">הצג</th>
             <th scope="col">סמכות</th>
+            <th scope="col">הרשאות</th>
           </tr>
         </thead>
-        <tbody *ngFor="let admin of admins">
-          <tr>
+        <tbody>
+          <tr *ngFor="let admin of admins; let idx = index">
             <th scope="row">{{ idx }}</th>
             <td>{{ admin.name }}</td>
             <td>
@@ -81,11 +82,33 @@
             <td>
               {{ admin.authority?.slug }}
             </td>
+            <td>
+              <div class="row no-gutters">
+                <div class="col-8">
+                  <div class="inputTypeNumber d-flex bd-highlight">
+                    <select *ngIf="admin.authority?.id as authId" [id]="'authority'+admin.authority.slug+(idx+1)"
+                      class="w-100 bd-highlightpx-1" [value]="authId">
+
+                      <option [value]="authId" selected disabled>{{ admin.authority?.name }}</option>
+                      <option *ngIf="admin.authority?.slug != 'admin'" [value]="1">Admin</option>
+                      <option *ngIf="admin.authority?.slug != 'author'" [value]="2">Author</option>
+                      <option *ngIf="admin.authority?.slug != 'editor'" [value]="3">Editor</option>
+                    </select>
+
+                    <span class="validity float-left"></span>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <button type="button" class="btn btn-link" (click)="makeAdmin('authority'+admin.authority.slug+(idx+1), admin)">אשר</button>
+                </div>
+              </div>
+
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
-    
+
   </div>
 </div>
 <router-outlet></router-outlet>

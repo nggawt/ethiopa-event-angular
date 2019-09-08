@@ -159,6 +159,7 @@ export class HttpService {
     return this.http.post(postUrl, (body || {}), opt).pipe(catchError(err => {
       // this.esrv.handleError(err);
       // console.error(err.message);
+      localStorage.setItem('errors_server', JSON.stringify(err));
       console.log("Error is handled");
       return throwError("Error thrown from catchError");
     }));

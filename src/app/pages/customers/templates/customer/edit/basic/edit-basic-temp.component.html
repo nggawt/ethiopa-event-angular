@@ -291,7 +291,7 @@
         <div class="col-sm-12 form-group border p-3">
       
           <label for="descriptions">אודות החברה</label>
-          <textarea wrap="hard" value="{{ customer.descriptions | removeWhiteSpace  }}" class="w-100 form-control text-right note" (mouseenter)="textAreaAdjust($event)" (mouseleave)="textAreamouseleave($event)" type="text" name="descriptions"
+          <textarea wrap="hard" value="{{ customer.descriptions | MultiSpaceTosingleWhiteSpace  }}" class="w-100 form-control text-right note" (mouseenter)="textAreaAdjust($event)" (mouseleave)="textAreamouseleave($event)" type="text" name="descriptions"
             id="descriptions" formControlName="descriptions" minlength="6" #descriptions>
       
           </textarea>

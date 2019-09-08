@@ -1,14 +1,15 @@
 <div class="card">
     <div class="row no-gutters">
-      <div class="card-header">
-        <img class="img-fluid" [src]="itemData.customer.loggo" [alt]="itemData.customer.company">
+      <div class="col-sm-2 text-center bg-light">
+        <h5 >{{ itemData.customer.title }}</h5><!-- class="text-right pr-3" -->
+        <img class="img-fluid" [src]="itemData.customer.loggo" class="card-img px-3 pb-3" [alt]="itemData.customer.company">
       </div>
-      <div class="col">
+      <div class="col-md-10">
         <div class="card-body">
-          <h5 class="card-title">{{ itemData.customer.title }}</h5>
+          <h5 class="card-title">אודות</h5>
           <ul class="list-group p-0">
             <li class="list-group-item">
-              שם: {{ itemData.customer.company }}
+              שם: {{ itemData.customer.company | customerToHeb }}
             </li>
             <li class="list-group-item">
               אימייל: {{ itemData.customer.email }}
@@ -18,12 +19,6 @@
             </li>
             <li class="list-group-item">
               כתובת: {{ itemData.customer.address }}
-            </li>
-            <li class="list-group-item">
-              אודות:
-              <p>
-                {{ itemData.customer.descriptions }}
-              </p>
             </li>
             <li class="list-group-item">
               מבצעים:
@@ -41,7 +36,7 @@
             <li *ngIf="itemData.gallery && itemData.gallery.video as videos" class="list-group-item">
               גלריית וידאו:
               <div class="border border-success bg-dark d-flex-row">
-                <video *ngFor="let video of videos; let idxVid = index" controls=true class="m-1">
+                <video *ngFor="let video of videos; let idxVid = index" controls=true class="m-1 w-50">
                   <source [src]="video" type="video/mp4">
                 </video>
               </div>

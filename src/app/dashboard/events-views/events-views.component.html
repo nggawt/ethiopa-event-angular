@@ -2,7 +2,7 @@
   Loading...
 </ng-template>
 
-<div class="row text-right" *ngIf="(itemsResources$  | async )?.events as events">
+<div class="row text-right" *ngIf="(itemsResources$  | async ) as events">
   <div class="col-sm-12 mb-3">
     <div class="shadow-sm p-1">
       <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
@@ -79,6 +79,7 @@
       </td>
       <td [ngClass]="event.confirmed? 'text-success':'text-danger'">
         {{event.confirmed? "פעיל":  "ממתין"}}
+        <a class="badge badge-default badge-pill page-link text-warning" (click)="confirmed(event)">השהה</a>
       </td>
       <td><a class="btn btn-primary btn-sm" [routerLink]="event.id">הצג</a></td>
       <td><a class="btn btn-info btn-sm" [routerLink]="'/dashboard/users-views/'+event.user_id">משתמש</a></td>

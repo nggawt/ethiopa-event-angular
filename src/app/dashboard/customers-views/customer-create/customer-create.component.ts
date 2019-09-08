@@ -152,6 +152,10 @@ export class CustomerCreateComponent implements OnInit, AfterViewInit {
     evt.format('align', 'right', 'user');
     evt.format('size', 'normal', 'user');
     evt.format('header', 3, 'user');
+
+    let container: HTMLDivElement = evt.container;
+    container.style.minHeight = "90px";
+    // container.classList.add('h-100');
     console.log(evt);
 
     // var toolbar = evt.getModule('toolbar');

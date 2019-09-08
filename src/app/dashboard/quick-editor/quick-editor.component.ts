@@ -29,7 +29,7 @@ export class QuickEditorComponent implements OnInit {
 
   ngOnInit() {
 
-    this.itemsResources$ = this.resSrv.resourcesObsever.pipe(filter(items => typeof items == "object"), map(items => this.paginateConf(items)));
+    // this.itemsResources$ = this.resSrv.resourcesObsever.pipe(filter(items => typeof items == "object"), map(items => this.paginateConf(items)));
   }
   
   paginateConf(items){

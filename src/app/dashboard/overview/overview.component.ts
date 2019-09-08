@@ -18,7 +18,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   // @ViewChild(AddComponentDirective, {static: true}) entry: AddComponentDirective;
   // @ViewChild('placeholder', {static: true}) adHost: ViewContainerRef;
-  @ViewChild(AddComponentDirective, {read: AddComponentDirective, static: false }) compItem: AddComponentDirective;
+  @ViewChild(AddComponentDirective, {read: AddComponentDirective, static: true }) compItem: AddComponentDirective;
   constructor(
     private comlist: CompLists, 
     private srv: ResourcesService, 
@@ -33,7 +33,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
     this.srv.getResources(this.itemType, false)
     .then(resource => {
-
+      console.log(resource);
+      
       (this.itemType == 'customers')? this.route.queryParamMap.subscribe((params: ParamMap) => {
         let routeName = params.get('name');
         Array.isArray(resource[routeName])? this.setItemResource(resource[routeName], itemId): '';

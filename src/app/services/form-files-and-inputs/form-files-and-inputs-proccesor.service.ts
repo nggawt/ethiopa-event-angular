@@ -104,7 +104,7 @@ export class FormFilesAndInputsProccesorService {
     this.getFileObject(Object.keys(del), (item) => {
       if (del[item].length) delFilesLink[item] = del[item];
     });
-    return delFilesLink;
+    return Object.keys(delFilesLink).length? delFilesLink: false;
   }
 
   getUrl(customer) {
@@ -407,9 +407,11 @@ export class FormFilesAndInputsProccesorService {
   private findElemLinks(id, target) {
 
     let ob = this.arrayFlies[target].find(elem => elem['id'] == id);
-
-    console.log(target, id, ob, this.arrayFlies);
-    let item = (ob && target == 'images') ? this.galleries.find(el => el.indexOf(ob.name) >= 0) :
+    
+    console.log(target, id, ob, this.arrayFlies, this.galleries);
+    let item = (ob && target == 'images') ? this.galleries.find(el => {
+      return typeof el == "string"? el.indexOf(ob.name) >= 0:false;
+    }) :
       (ob && target == 'video') ? this.videos.find(el => el.indexOf(ob.name) >= 0) : (ob && target == 'loggo') ? this.customer.loggo : false;
     return item;
   }

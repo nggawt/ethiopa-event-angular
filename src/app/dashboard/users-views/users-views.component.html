@@ -2,7 +2,7 @@
   Loading...
 </ng-template>
 
-<div class="text-right row" *ngIf="(itemsResources$  | async )?.users as users">
+<div class="text-right row" *ngIf="(itemsResources$  | async ) as users">
   <div class="col-sm-12 mb-3">
     <div class="shadow-sm p-1">
       <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
@@ -81,7 +81,11 @@
           {{ user.created_at  | dateHebraw:'full' }}
         </small>
       </td>
-      <td class="text-success">פעיל</td>
+      <td class="text-success" [class.text-danger]="user.forbidden">
+          {{user.forbidden? "חסום":  "פעיל"}}
+          <a  class="badge badge-default badge-pill page-link" [ngClass]="! user.forbidden? 'text-danger': 'text-success'" (click)="forbidden(user)">{{ user.forbidden? "בטל חסימה":  "חסום"}}</a>
+          <!-- <a *ngIf="user.forbidden" class="badge badge-default badge-pill page-link text-success" (click)="unblock(user)">אפשר</a> -->
+      </td>
       <td><a class="btn btn-primary btn-sm" [routerLink]="user.id">הצג</a></td>
       <td><a class="btn btn-outline-danger btn-sm" (click)="edit('/dashboard/users-views/'+user.id+'/edit')">ערוך</a>
         <!--  [routerLink]="user.id+'/edit'" -->
