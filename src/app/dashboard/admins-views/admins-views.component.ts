@@ -15,6 +15,7 @@ declare var $:any;
 export class AdminsViewsComponent implements OnInit {
 
   admins: {};
+  allowSubmitButton:{} = {};
   loginTemp: boolean;
 
   constructor(private srv: ResourcesService, private http: HttpService, private router:Router, private route: ActivatedRoute) { }
@@ -53,6 +54,11 @@ export class AdminsViewsComponent implements OnInit {
   show(path){
     this.http.requestUrl = location.pathname;
     this.router.navigate([path]);
+  }
+
+  allowSubmit($event, key, admin){
+    console.log($event.target.value, admin);
+    this.allowSubmitButton[key] = $event.target.value != admin.authority.id;
   }
 
   makeAdmin(id, admin){

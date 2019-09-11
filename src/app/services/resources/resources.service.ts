@@ -61,13 +61,12 @@ export class ResourcesService {
 
   forbiddenUser(key, items, isForbidden: boolean){
     // let users =  this.resources[key].getValue();
+    
+    let forbidden =  this.resources['forbidden'].getValue();
+    forbidden = forbidden && Array.isArray(forbidden)? forbidden: [];
+    console.log('forbidden: ', forbidden, ' items: ',items);
 
-    let forbidden =  this.resources['forbidden'].getValue(), id = (key == "users")? items.id: items.user_id;
-    console.log(forbidden);
-    
-    let forbiddenItems = (isForbidden)? this.removeForbidden(forbidden, id): this.pushForbidden(forbidden, items);
-    
-    
+    let forbiddenItems = (isForbidden)? this.removeForbidden(forbidden, items): this.pushForbidden(forbidden, items);
     // if(users) users.map(user => user.id == items['user_id']? user['forbidden'] = items.forbidden: user);
     // if (this.resources[key]) this.resources[key].next(users);
     if (this.resources['forbidden'] && forbidden) this.resources['forbidden'].next(forbiddenItems);
@@ -75,8 +74,11 @@ export class ResourcesService {
     console.log("users: ", 'users', " forbidden: ", forbiddenItems, ' items: ', items);
   }
 
-  removeForbidden(forbiddens, id){
-    if(Array.isArray(forbiddens)) forbiddens.forEach((forbiddenUser, index) => (forbiddenUser['user_id'] == id)? forbiddens.splice(index, 1) : '');
+  removeForbidden(forbiddens, items){
+    let finderKey = items.email? 'email': 'user_id', 
+        finderValue = items.email? items.email: items.id;
+
+    if(Array.isArray(forbiddens)) forbiddens.forEach((forbiddenUser, index) => (forbiddenUser[finderKey] == finderValue)? forbiddens.splice(index, 1) : '');
     return forbiddens;
   }
 
@@ -91,7 +93,7 @@ export class ResourcesService {
     return this.http.getData(url).pipe(first(),
       map(items => this.checkHasKey(items, 'status')? false: items),
       tap(item => {
-        console.log(url, " : ", item);
+        // console.log(url, " : ", item);
         // this.itemResources[url] = item;
       })).toPromise();
 
@@ -107,20 +109,22 @@ export class ResourcesService {
     console.log("calll");
     
     ! items? this.getResources(key, false).then(item => {
-      items = this.usersTransform(items);
+      items = this.usersTransform(item);
     }):  items = this.usersTransform(items);
+    console.log(items);
+    
     return items;
   }
 
-  usersTransform(users){
+  usersTransform(items){
 
     this.getResources('forbidden', false).then(forbidden => {
       console.log(forbidden);
       
-      users = (forbidden && Array.isArray(users))? 
-          users.map(user => user['forbidden'] = forbidden.find(forbidden => (forbidden.user_id == (user.user_id || user.id)))? true: false): false;
+      items = (forbidden && Array.isArray(items))? 
+          items.map(user => user['forbidden'] = forbidden.find(forbiddenItem => (forbiddenItem.email == user.email))? true: false): false;
     });
-    return users;
+    return items;
   }
 
   req(url) {

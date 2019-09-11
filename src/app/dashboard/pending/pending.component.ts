@@ -47,29 +47,31 @@ export class PendingComponent implements OnInit, OnChanges {
     response['forbidden'] = forbiddens.find(forbidden => forbidden.user_id == response.user_id)? true: false;
     return response;
   }
+  
   forbidden(items){
 
     let isForbidden = items.forbidden,
         resName = this.itemsLists.resName,
-        method = isForbidden? items.user_id+'/open': items.id+'/lock',
-        url = "banntrash/"+method;
+        method = isForbidden? '/open': '/lock',
+        url = "banntrash/"+items.id+ method;
 
     let data = {
       banned_until: isForbidden? null: this.bannedUntil(),
       email: items.email,
-      id: items.user_id, 
+      id: items.id, 
+      user_id: items.user_id, 
       model: resName.slice(0, (resName.length - 1))
     };
 
     console.log("url ", url, " items to send: ", data, " item to update: ", items);
     this.http.postData(url, data).subscribe(response =>{
       console.log('response: ', response);
-      items.forbidden = ! items.forbidden;
       // this.rsrv.update(resName, items); 
-
-      let res = isForbidden? response['user']: response['forbidden'];
-      
-      this.rsrv.forbiddenUser('users', res, isForbidden); 
+      if(response['status']){
+        items.forbidden = ! items.forbidden;
+        let res = isForbidden? response['user']: response['forbidden'];
+        this.rsrv.forbiddenUser('users', res, isForbidden); 
+      }
     });
   }
 

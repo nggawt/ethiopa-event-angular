@@ -87,7 +87,7 @@
                 <div class="col-8">
                   <div class="inputTypeNumber d-flex bd-highlight">
                     <select *ngIf="admin.authority?.id as authId" [id]="'authority'+admin.authority.slug+(idx+1)"
-                      class="w-100 bd-highlightpx-1" [value]="authId">
+                      class="w-100 bd-highlightpx-1" [value]="authId" (change)="allowSubmit($event, 'authority'+admin.authority.slug+(idx+1), admin)">
 
                       <option [value]="authId" selected disabled>{{ admin.authority?.name }}</option>
                       <option *ngIf="admin.authority?.slug != 'admin'" [value]="1">Admin</option>
@@ -99,7 +99,7 @@
                   </div>
                 </div>
                 <div class="col-4">
-                  <button type="button" class="btn btn-link" (click)="makeAdmin('authority'+admin.authority.slug+(idx+1), admin)">אשר</button>
+                  <button *ngIf="allowSubmitButton['authority'+admin.authority.slug+(idx+1)]" type="button" class="btn btn-link" (click)="makeAdmin('authority'+admin.authority.slug+(idx+1), admin)">אשר</button>
                 </div>
               </div>
 

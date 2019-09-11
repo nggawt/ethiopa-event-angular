@@ -13,11 +13,11 @@ export class InboxComponent implements OnInit {
   messageItems: {};
   
 
-  constructor(private http: HttpService, private srv: ResourcesService) { }
+  constructor(private http: HttpService, private rsrv: ResourcesService) { }
 
   ngOnInit() {
-    this.srv.getResources('messages', false).then(msgs => {
-      if(msgs) this.messageItems = this.getSortededItems(msgs);
+    this.rsrv.getResources('messages', false).then(msgs => {
+      if(msgs) this.messageItems = this.rsrv.dataTransform('messages', this.getSortededItems(msgs));
       console.log('/inbox: ', msgs);
     });
    }
@@ -51,8 +51,43 @@ export class InboxComponent implements OnInit {
     });
   }
 
-  getSortededItems(items){
+  protected getSortededItems(items){
     return items.filter(item => item.deleted_at === null).sort((aItem, bItem) => new Date(bItem.created_at).getTime() - new Date(aItem.created_at).getTime());
+  }
+
+  forbidden(items){
+
+    let isForbidden = items.forbidden,
+        method = isForbidden? '/open': '/lock',
+        url = "banntrash/"+items.id+ method;
+
+    let data = {
+      banned_until: isForbidden? null: this.bannedUntil(),
+      email: items.email,
+      id: items.id, 
+      user_id: items.user_id, 
+      model: 'message'
+    };
+
+    console.log("url ", url, " items to send: ", data, " item to update: ", items);
+    this.http.postData(url, data).subscribe(response =>{
+      console.log('response: ', response);
+      // this.rsrv.update(resName, items); 
+      if(response['status']){
+        items.forbidden = ! items.forbidden;
+        let res = isForbidden? response['user']: response['forbidden'];
+        this.rsrv.forbiddenUser('users', res, isForbidden); 
+      }
+    });
+  }
+
+  protected bannedUntil(){
+    let date = new Date();
+    let nextTwoWeeks = new Date(date.setDate(date.getDate() + 14)),
+        dt = nextTwoWeeks.getFullYear()+"-"+nextTwoWeeks.getMonth()+"-"+nextTwoWeeks.getDate()+" "+
+        nextTwoWeeks.getHours()+":"+nextTwoWeeks.getMinutes()+":"+nextTwoWeeks.getSeconds();
+
+    return dt;
   }
 
 }

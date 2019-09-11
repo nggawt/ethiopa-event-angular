@@ -13,7 +13,11 @@
             <i class="fa fa-star"></i>
             מועדפים
         </a>
-    <a class="badge badge-warning badge-pill page-link"  (click)="srv.block(message)">חסום משתמש</a>
+    <!-- <a class="badge badge-warning badge-pill page-link"  (click)="forbidden(message)">חסום משתמש</a> -->
+          <a  class="badge badge-default badge-pill page-link" 
+                [ngClass]="! message.forbidden? 'text-danger': 'text-success'" (click)="forbidden(message)">
+                {{ message.forbidden? "בטל חסימה":  "חסום"}}
+            </a>
         <a class="badge badge-danger badge-pill page-link" (click)="trash(message)">אשפה</a>
     </app-mail-menu-temp>
 
