@@ -31,6 +31,7 @@ export class ResourcesService {
   public articles = this.resources.articles.asObservable();
   public events = this.resources.events.asObservable();
   public admins = this.resources.admins.asObservable();
+  public messages = this.resources.messages.asObservable();
   public forbidden = this.resources.forbidden.asObservable();
 
   private itemResources = {};
@@ -87,13 +88,26 @@ export class ResourcesService {
     return forbiddens;
   }
 
+  getAll(res: string[], paginate): Observable<{}> | any {
+    let itemsResources = {};
+
+    res.forEach(resource => {
+      
+      this[resource].pipe(map(items => paginate? this.pagination(items, resource): items))
+        .subscribe(itemRes => {
+          if (itemRes) itemsResources[resource] = itemRes;
+        });
+    });
+    return itemsResources;
+  }
+
   protected regiter(url): Promise<any> {
 
     this.regItems.push(url);
     return this.http.getData(url).pipe(first(),
       map(items => this.checkHasKey(items, 'status')? false: items),
       tap(item => {
-        // console.log(url, " : ", item);
+        // console.log("send request to server: Url: ", url, " : ", item);
         // this.itemResources[url] = item;
       })).toPromise();
 
@@ -164,7 +178,7 @@ export class ResourcesService {
 
   pagination(resource: {}, resourceName: string) {
 
-    (resourceName == "customers" && !resource[resourceName]) ? resource = { [resourceName]: resource } : '';
+    (resourceName == "customers" && ! resource[resourceName]) ? resource = { [resourceName]: resource } : '';
     let mapedItems = this.mapItems(resource),
       paginated = this.dataPaginated(resourceName, mapedItems);
     return paginated;
@@ -214,13 +228,17 @@ export class ResourcesService {
     return arr;
   }
 
-  protected getCustomersItems(customers) {
-    let customersArray = [];
-    Object.keys(customers).forEach(customersType => customers[customersType].forEach(item => {
-      let customer = { customer: item['customer'], gallery: item['gallery'] };
-      customersArray.push(customer);
-    }));
-    return customersArray;
+  getCustomersItems(customers) {
+    // let customersArray = [];
+    // Object.keys(customers).forEach(customersType => customers[customersType].forEach(item => {
+    //   let customer = { customer: item['customer'], gallery: item['gallery'] };
+    //   customersArray.push(customer);
+    // }));
+    // return customersArray;
+    return Object.keys(customers).reduce((total, current: string) => {
+      if(customers[current] && customers[current].length) total = [...total, ...customers[current]];
+      return total;
+    }, []);
   }
 
   findItem(id, itemType) {

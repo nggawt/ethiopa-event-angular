@@ -1,6 +1,6 @@
 <!-- <app-admin-registration *ngIf="isRegistered"></app-admin-registration> -->
 
-<div *ngIf="resources$ | async as resources" class="row text-right">
+<div *ngIf="resources" class="row text-right">
   <div class="col-12 mb-3">
     <div class="rounded-right-warning bg-light shadow-sm clearfix">
       <h5 class="p-2 text-black-50 h2 float-right">
@@ -53,7 +53,7 @@
       <!-- (click)=setTemplateType(posts) -->
       <li class="nav-item" routerLinkActive="active"><a routerLink="events-views">אירועים</a></li>
       <!-- (click)=setTemplateType(events) -->
-      <li class="nav-item" routerLinkActive="active"><a routerLink="mail">דואר
+      <li class="nav-item" routerLinkActive="active"><a routerLink="mail-views">דואר
           <span *ngIf="resources['messages'] as messages" class="badge badge-primary badge-pill">
             {{ messages.data.length }} </span>
         </a></li>
@@ -73,231 +73,11 @@
     <!-- <ng-content></ng-content> -->
 
     <router-outlet></router-outlet>
-    <ng-container *ngTemplateOutlet="templateType; context:{elem: resources}"></ng-container>
+    <!-- <ng-container *ngTemplateOutlet="templateType; context:{elem: resources}"></ng-container> -->
   </div>
 </div>
 
-<ng-template #loading>
-  <div class="col-sm-3">
-    <div class="p-3 border rounded">
-      <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
-    </div>
-  </div>
-</ng-template>
 
-<ng-template #main let-res="elem">
-  <div *ngIf="res" class="row">
-
-    <div *ngIf="res['users'] && res['users'].data as users; else loading" class="col-sm-3">
-      <div class="p-3 border rounded">
-        <div class="header">
-          <i class="fa fa-users" style="font-size: 1.5rem;"></i>
-          משתמשים
-        </div>
-        <hr>
-        <div class="body p-1">
-            <div class="recent">
-              <span class="text">
-                הצטרפו לאחרונה:
-              </span>
-              <span class="recently">10</span>
-            </div>
-  
-            <div class="total text-center clearfix">
-              <span class="float-right">
-                סהכ:
-              </span>
-              <span class="total-item p-3">{{ users.length }}</span>
-            </div>
-          </div>
-          <div class="footer clearfix">
-            <a class="btn btn-link btn-sm recently float-left" routerLink="users-views">משתמשים</a>
-          </div>
-      </div>
-    </div>
-
-    <div *ngIf="res['customers'] && res['customers'].data as customers" class="col-sm-3">
-      <div class="p-3 border rounded">
-        <div class="header">
-          <!-- <i class="fa fa-users" style="font-size: 1.5rem;"></i> -->
-          קליינטים
-        </div>
-        <hr>
-        <div class="body p-1">
-          <div class="recent">
-            <span class="text">
-              הצטרפו לאחרונה:
-            </span>
-            <span class="recently">10</span>
-          </div>
-
-          <div class="total text-center clearfix">
-            <span class="float-right">
-              סהכ:
-            </span>
-            <span class="total-item p-3">{{ customers.length }}</span>
-          </div>
-        </div>
-        <div class="footer clearfix">
-          <a class="btn btn-link btn-sm recently float-left" routerLink="customers-views">קליינטים</a>
-        </div>
-      </div>
-    </div>
-    <div *ngIf="res['articles'] && res['articles'].data as articles" class="col-sm-3">
-      <div class="p-3 border rounded">
-        <div class="header">
-          <!-- <i class="fa fa-users" style="font-size: 1.5rem;"></i> -->
-          מאמרים\פוסטים
-        </div>
-        <hr>
-        <div class="body p-1">
-            <div class="recent">
-              <span class="text">
-                הצטרפו לאחרונה:
-              </span>
-              <span class="recently">10</span>
-            </div>
-  
-            <div class="total text-center clearfix">
-              <span class="float-right">
-                סהכ:
-              </span>
-              <span class="total-item p-3">{{ articles.length }}</span>
-            </div>
-          </div>
-          <div class="footer clearfix">
-            <a class="btn btn-link btn-sm recently float-left" routerLink="articles-views">מאמרים</a>
-          </div>
-      </div>
-    </div>
-    <div *ngIf="res['events'] && res['events'].data as events" class="col-sm-3">
-      <div class="p-3 border rounded">
-        <div class="header">
-          <!-- <i class="fa fa-users" style="font-size: 1.5rem;"></i> -->
-          אירועים
-        </div>
-        <hr>
-        <div class="body p-1">
-            <div class="recent">
-              <span class="text">
-                הצטרפו לאחרונה:
-              </span>
-              <span class="recently">10</span>
-            </div>
-  
-            <div class="total text-center clearfix">
-              <span class="float-right">
-                סהכ:
-              </span>
-              <span class="total-item p-3">{{ events.length }}</span>
-            </div>
-          </div>
-          <div class="footer clearfix">
-            <a class="btn btn-link btn-sm recently float-left" routerLink="events-views">אירועים</a>
-          </div>
-      </div>
-    </div>
-
-    <div class="col-sm-12 my-3" style="height:260px;">
-      <div class="border rounded h-100">
-        <ul>
-          <li>סטטיסטיקה(גרף)</li>
-          <li>תנועות ופעילויות</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="col">
-      <h5 class="shadow-sm py-2 text-black-50 h5">
-        <i class="fa fa-message text-secondary"></i>
-        ממתינים:
-      </h5>
-      <div class="border rounded p-3">
-        <div *ngFor="let resource of res | keyvalue">
-
-          <div *ngIf="resource.value && resource.value.pending as pend" class="border-bottom">
-            <!-- <app-pending [itemsLists]="resource.value"></app-pending> -->
-            <a class="py-2 d-flex justify-content-between align-items-center" [routerLink]="resource.key+'-views'">
-              <h3 class="h6">
-                {{ (resource.key == 'customers')? 'קליינטים':(resource.key == 'users')? 'משתמשים': (resource.key == 'articles')? 'מאמרים\\פוסטים':'אירועים' }}
-
-                <small
-                  *ngIf="(pend[0] && pend[0].created_at) || (pend[0] && pend[0].customer && pend[0].customer.created_at) as dt; else dateTxt"
-                  class="text-muted">
-                  {{ dt | dateHebraw:'full' }}
-                </small>
-              </h3>
-              <span class="badge badge-primary badge-pill">{{ pend.length }}</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #dateTxt>
-      <small class="text-muted">אין ממתינים חדשים</small>
-    </ng-template>
-
-    <div class="col-sm-4">
-      <h5 class="shadow-sm py-2 text-black-50 h5">
-        <i class="fa fa-message text-secondary"></i>
-        משימות:
-      </h5>
-      <div class="border rounded p-3">
-        <div class="border-bottom">
-
-          <a href="#" class="py-2 d-flex justify-content-between align-items-center">
-            <h6 class="h6">
-              הושלמו
-              <small class="text-muted">אין ממתינים חדשים</small>
-            </h6>
-            <span class="badge badge-primary badge-pill">2</span>
-          </a>
-        </div>
-        <div class="border-bottom">
-          <a href="#" class="py-2 d-flex justify-content-between align-items-center">
-
-            <h6 class="h6">
-              בתהליך
-              <small class="text-muted">אין ממתינים חדשים</small>
-            </h6>
-            <span class="badge badge-primary badge-pill">10</span>
-          </a>
-        </div>
-        <div class="border-bottom">
-          <a href="#" class="py-2 d-flex justify-content-between align-items-center">
-
-            <h6 class="h6">
-              ממתינים
-              <small class="text-muted">אין ממתינים חדשים</small>
-            </h6>
-            <span class="badge badge-primary badge-pill">10</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-sm-4">
-      <div class="rounded">
-        <div class="list-group">
-          <h5 class="shadow-sm py-2 text-black-50 h5">
-            <i class="fa fa-message text-secondary"></i>
-            ממתינים:
-          </h5>
-          <a class="list-group-item d-flex justify-content-between align-items-center">Dapibus ac facilisis in
-            <span class="badge badge-primary badge-pill">2</span>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
-          <a href="#" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
-          <a href="#" class="list-group-item list-group-item-action disabled" tabindex="-1"
-            aria-disabled="true">Vestibulum at eros</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-template>
 
 
 <!-- 

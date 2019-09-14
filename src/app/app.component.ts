@@ -52,5 +52,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngOnDestroy() {
     // (! this.constHome)? this.uriObject.unsubscribe(): '';
+    this.uriObject.unsubscribe();
   }
 }

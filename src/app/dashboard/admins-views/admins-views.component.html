@@ -93,8 +93,8 @@
                       <option *ngIf="admin.authority?.slug != 'admin'" [value]="1">Admin</option>
                       <option *ngIf="admin.authority?.slug != 'author'" [value]="2">Author</option>
                       <option *ngIf="admin.authority?.slug != 'editor'" [value]="3">Editor</option>
+                      
                     </select>
-
                     <span class="validity float-left"></span>
                   </div>
                 </div>
@@ -102,7 +102,6 @@
                   <button *ngIf="allowSubmitButton['authority'+admin.authority.slug+(idx+1)]" type="button" class="btn btn-link" (click)="makeAdmin('authority'+admin.authority.slug+(idx+1), admin)">אשר</button>
                 </div>
               </div>
-
             </td>
           </tr>
         </tbody>

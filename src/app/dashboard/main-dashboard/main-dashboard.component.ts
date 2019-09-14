@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, TemplateRef, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { skipWhile, map, filter, tap, first } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
+
 
 @Component({
   selector: 'main-dashboard',
@@ -12,10 +13,10 @@ import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular
 })
 export class MainDashboardComponent implements OnInit, OnDestroy {
 
-  resources$: Observable<{}>;
+  resources: {};
   templateType;
 
-  @ViewChild('main', { static: true }) main: TemplateRef<any>;
+  // @ViewChild('main', { static: true }) main: TemplateRef<any>;
 
   /* Subscription */
   // usersSubsription: Subscription;
@@ -30,37 +31,36 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   constructor(private http: HttpService, private rsrv: ResourcesService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    let resources = ['forbidden', 'users', 'customers', 'articles', 'events'];
-    this.routerSubscrition = this.router.events.pipe(filter(obType => obType instanceof NavigationStart)).subscribe(routeUrl => {/*  || obType instanceof NavigationEnd */
-      this.templateType = routeUrl['url'] == '/dashboard' ? this.main : null;
-    });
+    let resources = ['forbidden', 'users', 'customers', 'articles', 'events', 'messages'];
+    // this.routerSubscrition = this.router.events.pipe(filter(obType => obType instanceof NavigationStart)).subscribe(routeUrl => {/*  || obType instanceof NavigationEnd */
+    //   this.templateType = routeUrl['url'] == '/dashboard' ? this.main : false;
+    //   console.log("cccc");
+      
+    // });
 
-    this.templateType = this.router['url'] == '/dashboard' ? this.main : null;
-    this.rsrv.initResources(resources, true);
+    // this.templateType = this.router['url'] == '/dashboard' ? this.main : false;
+    this.rsrv.initResources(resources, false);
     // this.srv.initResources('admins');
 
     this.getResources(resources);
   }
 
-  getResources(res: string[]): Observable<{}> | any{
+  getResources(res: string[]): Observable<{}> | any {
     let itemsResources = {};
 
     res.forEach(resource => {
+
       this.resourceSubscrition = this.rsrv[resource]
-        .pipe(map(item => this.rsrv.pagination(item, resource)))
+        .pipe(filter(items => typeof items == "object"),
+          map(item => this.rsrv.pagination(item, resource)))
         .subscribe(itemRes => {
-          if(itemRes) itemsResources[resource] = itemRes;
+          if (itemRes) itemsResources[resource] = itemRes;
         });
     });
-    this.resources$ = of(itemsResources);
-
-    // let resources = res.reduce((total, current) => {
-    //   total = this.rsrv[current].pipe(map(item => this.rsrv.pagination(item, current)),tap(item => console.log(item)));
-    //   return total;
-    // });
-    // console.log(resources)
+    this.resources = itemsResources;
   }
 
+  
   getOuterRquests() {
     console.log(this.http.outRequests);
   }
@@ -110,8 +110,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.customersSubsription.unsubscribe();
     this.articlesSubsription.unsubscribe();
     this.eventsSubsription.unsubscribe(); */
-    this.routerSubscrition.unsubscribe();
-    this.resourceSubscrition.unsubscribe();
+    if(this.routerSubscrition) this.routerSubscrition.unsubscribe();
+    if(this.resourceSubscrition) this.resourceSubscrition.unsubscribe();
     // this.resources$.unsubscribe();
   }
 

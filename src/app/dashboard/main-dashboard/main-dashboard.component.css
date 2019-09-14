@@ -25,15 +25,8 @@ ul.navbar-nav li:hover > a {
 }
 
 
-.total-item {
-    font-size: 2.5rem;
-    /* border: 1px solid cadetblue; */
-    /* border-radius: 100%; */
-}
-.recently{
-    font-size: 1.2rem;
-}
 
+/* 
 div.spinner-border{
     display: inline-block;
     width: 2rem;
@@ -45,4 +38,4 @@ div.spinner-border{
     border-radius: 50%;
     -webkit-animation: spinner-border .75s linear infinite;
     animation: spinner-border .75s linear infinite;
-}
+} */

@@ -1,5 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* 
+green    #47BD35;
+yellow   #F6DC2F;
+red      #F02B2B;
+*/
 
 /* @import 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'; */
 
@@ -19,7 +24,8 @@ body {
     /* font-family: 'Frank Ruhl Libre', Arial, Georgia, 'Times New Roman', Times, serif; */
     /* background: #F6DC2F; */
     overflow-x:hidden;
-    height: 100%;
+    position: relative;
+    /* height: 100%; */
 }
 
 div.main-header {
@@ -77,9 +83,9 @@ footer.footer {
     }
   } */
 
-.rounded {
-    /* border-right: 5px solid #F6DC2F; */
-}
+/* .rounded {
+    border-right: 5px solid #F6DC2F;
+} */
 
 
 /* form style inputs */
@@ -151,46 +157,38 @@ a.googleFont {
 
 /*  spinner */
 
-
-.spinner-wrraper {
+.spin {
+    z-index: 999;
+    /* height: 100%; */
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* bottom: 0; */
-    background: white;
-    /* background: rgba(220,220,220,1); */
-    width: 100%;
-    height: 100%;
-    z-index: 99;
+    top: 50%; 
+    right: 50%;
+    /* background-color: #17a2b8; */
 }
 
-.spinner {
-    position: absolute;
-    border: 32px solid #F6DC2F;
-    border-top: 32px solid #47BD35;
-    border-bottom: 32px solid #F02B2B;
-    /******default*******/
-    /* border: 32px solid silver; */
-    /* border-top: 32px solid #337AB7; */
+div.spinner-border {
+    display: inline-block;
+    /* width: 2rem;
+    height: 2rem; */
+    vertical-align: text-bottom;
+    border: .25em solid #F6DC2F;
+    border-right-color: #f00;
+    border-left-color: #47BD35;
     border-radius: 50%;
-    animation: spin 700ms linear infinite;
-    /* width: fit-content; */
-    /* height: fit-content; */
-    top: 50%;
-    left: 50%;
-    /* position: fixed; */
-    z-index: 99;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
 }
 
-@keyframes spin {
+
+/* @keyframes spin {
     0% {
         transform: rotate(0deg)
     }
     100% {
         transform: rotate(360deg)
     }
-}
+} */
+
 /* end spinner */
 
 

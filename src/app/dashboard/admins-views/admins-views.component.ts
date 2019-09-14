@@ -57,7 +57,7 @@ export class AdminsViewsComponent implements OnInit {
   }
 
   allowSubmit($event, key, admin){
-    console.log($event.target.value, admin);
+    // console.log($event.target.value, admin);
     this.allowSubmitButton[key] = $event.target.value != admin.authority.id;
   }
 

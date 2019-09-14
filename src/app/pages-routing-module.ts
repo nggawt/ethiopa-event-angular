@@ -46,6 +46,7 @@ import { OutboxComponent } from './dashboard/mail/outbox/outbox.component';
 import { TrashComponent } from './dashboard/mail/trash/trash.component';
 import { FavoritesComponent } from './dashboard/mail/favorites/favorites.component';
 import { PreferencesComponent } from './dashboard/mail/preferences/preferences.component';
+import { MainComponent } from './dashboard/main-dashboard/main/main.component';
 
 
 // import { NotificationsComponent } from './dashboard/notifications/notifications.component';
@@ -57,6 +58,8 @@ const routes: Routes = [
   {
     path: 'dashboard', component: MainDashboardComponent, children: [
       // START dashboard childrens
+      { path: '',   redirectTo: 'main', pathMatch: 'full' },
+      { path: 'main', component: MainComponent},
       { path: 'admins-views', component: AdminsViewsComponent, children: []},
       { path: 'admins-views/create', component: OverviewComponent, data: { itemType: "admins", comp: 'create' } },
       { path: 'admins-views/:id', component: OverviewComponent, data: { itemType: "admins", comp: 'preview' } },
@@ -91,7 +94,7 @@ const routes: Routes = [
 
       /****** mail ******/
       {
-        path: 'mail', component: MailComponent, children: [
+        path: 'mail-views', component: MailComponent, children: [
           { path: '',   redirectTo: 'inbox', pathMatch: 'full' },
           { path: 'favorites', component: FavoritesComponent },
           { path: 'preferences', component: PreferencesComponent },

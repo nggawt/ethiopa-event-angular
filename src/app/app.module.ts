@@ -130,6 +130,9 @@ import { LogInDirectiveDirective } from './shared/directives/log-in/log-in-direc
 import { ContactComponent } from './pages/contact/contact.component';
 import { ErrorsHandler } from './services/errors-exeption/errors-handler.service';
 import { CustomerToHebPipe } from './shared/pipes-module/customer-to-heb.pipe';
+import { CardComponent } from './dashboard/main-dashboard/card/card.component';
+import { ResourcesNameConvertorPipe } from './shared/pipes-module/resources-name-convertor.pipe';
+import { MainComponent } from './dashboard/main-dashboard/main/main.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -208,6 +211,9 @@ export function tokenGetter() {
     AdminRegistrationComponent,
     LogInDirectiveDirective,
     CustomerToHebPipe,
+    CardComponent,
+    ResourcesNameConvertorPipe,
+    MainComponent,
     // SendMessageDirectiveDirective,
     // customValidatorFnFactory
     // ConcatFormComponent,

@@ -10,16 +10,31 @@
   <link href="https://fonts.googleapis.com/css?family=Frank+Ruhl+Libre" rel="stylesheet">
 </head>
 
-<body class="h-100 position-relative">
+<body class="position-relative">
   <div id="fb-root"></div>
   <script async defer crossorigin="anonymous"
     src="https://connect.facebook.net/he_IL/sdk.js#xfbml=1&version=v4.0"></script>
 
+    
   <app-root>
     <!-- Loading... -->
-    <div class="spinner-wrraper">
+    <!-- <div class="spinner-wrraper">
       <div class="spinner"></div>
+    </div> -->
+
+    <!-- <div class="spinner-wrraper" *ngIf="showIndicetor | async">
+      <div class="spinner"></div>
+    </div> -->
+    <div class="spin">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+      <div class="spinner-grow spinner-grow-sm" role="status">
+        <!-- <span class="sr-only">Loading...</span> -->
+      </div>
     </div>
+
+
   </app-root>
 
 </body>
