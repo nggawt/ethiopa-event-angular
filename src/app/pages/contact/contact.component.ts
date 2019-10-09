@@ -4,6 +4,7 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ResourcesService } from 'src/app/services/resources/resources.service';
 
 declare var $: any;
 @Component({
@@ -20,41 +21,82 @@ export class ContactComponent implements OnInit, OnDestroy {
     id: string,
     url: string,
     nameTo: string | boolean,
+    nameFrom: string | boolean,
     emailTo: string | boolean,
     modalSize: string,
     title: string
+    inputs: {
+      email_from: boolean,
+      email_to: boolean,
+      name: boolean,
+      area: boolean,
+      phone: boolean,
+      city: boolean
+    }
   };
 
   formConcat: FormGroup;
-  constructor(
-    private fmValidor: ValidationService,
-    private http: HttpService,
-    private router: Router,
-    private route: ActivatedRoute) { }
+  constructor(private http: HttpService, private rsrv: ResourcesService) { }
 
   ngOnInit() {
 
     this.initFormConcat();
   }
 
-  initFormConcat() {
+  getInputs(all: string | boolean, only?: string) {
+    let inputs = this.mailProps.inputs,
+      emailFrom = inputs && typeof inputs.email_from == "string" ? inputs.email_from : null,
+      emailTo = inputs && typeof inputs.email_to == "string" ? inputs.email_to : null;
 
-    this.formConcat = new FormGroup({
+    let inputsForm = {
       name: new FormControl(null, [Validators.required, Validators.min(3), Validators.max(40)]),
-      email: new FormControl(null, [Validators.required]),
+      email_from: new FormControl(emailFrom, [Validators.required]),
+      email_to: new FormControl(emailTo, [Validators.required]),
       phone: new FormControl(null),
       city: new FormControl(null, [Validators.min(3), Validators.max(40)]),
       area: new FormControl(null, [Validators.required, Validators.min(3), Validators.max(40)]),
       subject: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(90)]),
       message: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(255)]),//, this.same
-    });
+    };
+
+    return (all && all == "all") ? inputsForm : inputsForm[only];
+  }
+
+  sendToInputs() {
+
+    /*  
+     email_from: new FormControl(emailFrom, [Validators.required]),
+     email: new FormControl(emailTo, [Validators.required]), 
+     subject: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(90)]),
+     message: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(255)]),//, this.same
+     */
+    let inputsGroups = {},
+      inputs = this.mailProps.inputs;
+
+    for (let ii in inputs) {
+      if (inputs[ii] && typeof inputs[ii] != "string") inputsGroups[ii] = this.getInputs(false, ii);
+    }
+    return inputsGroups;
+  }
+
+  initFormConcat() {
+    let fGroupInputs = !this.mailProps.inputs ? this.getInputs("all") : this.sendToInputs();
+    console.log(fGroupInputs);
+
+    this.formConcat = new FormGroup(fGroupInputs);
   }
 
   onSubmit() {
-    
+
     if (this.formConcat.valid) {
       const theUrl = "contact";
-      this.send(this.formConcat.value, false, theUrl);
+      let valuesToSend = this.formConcat.value;
+      (typeof valuesToSend.email_from != "string")? valuesToSend.email_from = this.mailProps.inputs.email_from: '';
+      (typeof valuesToSend.email_to != "string")? valuesToSend.email_to = this.mailProps.inputs.email_to: '';
+      (typeof valuesToSend.name != "string")? valuesToSend.name = this.mailProps.nameFrom: '';
+      console.log("valid data: ", valuesToSend);
+      
+      this.send(valuesToSend, false, theUrl);
     } else {
       console.log(this.formConcat);
     }

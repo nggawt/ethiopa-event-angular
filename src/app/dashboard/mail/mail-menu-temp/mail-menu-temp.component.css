@@ -1,0 +1,7 @@
+span.dt-size {
+    font-size: 0.7rem;
+}
+
+.align-items-center .custom-control-label::after {
+ position: relative;
+}

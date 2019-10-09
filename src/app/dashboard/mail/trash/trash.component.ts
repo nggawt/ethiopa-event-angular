@@ -21,7 +21,7 @@ export class TrashComponent implements OnInit {
   }
 
   restoreTrashed(item){
-    let url = 'messages/'+ item.id;
+    let url = 'banntrash/'+ item.id+"/restore";
     this.http.postData(url).subscribe(response =>{
       console.log(response);
       

@@ -1,14 +1,15 @@
 <model-template [mailProps]="mailProps">
+
     <form class="form-row p-3" [formGroup]="formConcat" (ngSubmit)="onSubmit()">
 
-        <div class="form-group col-md-6">
+        <div *ngIf="! mailProps.inputs || mailProps.inputs.name" class="form-group col-md-6">
             <div class="inputTypeNumber mb-2 d-flex bd-highlight">
                 <input type="text" formControlName="name" class="w-100 bd-highlightpx-1" id="name"
                     placeholder="השם שלך">
                 <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
             </div>
         </div>
-        <div class="form-group col-md-6">
+        <div *ngIf="! mailProps.inputs || mailProps.inputs.city" class="form-group col-md-6">
             <div class="inputTypeNumber mb-2 d-flex bd-highlight">
                 <input class="w-100 bd-highlightpx-1" type="text" formControlName="city" id="city"
                     placeholder="עיר מגורים">
@@ -16,11 +17,11 @@
             </div>
         </div>
 
-        <div class="form-group col-md-6">
+        <div *ngIf="! mailProps.inputs || mailProps.inputs.area" class="form-group col-md-6">
 
             <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-                <select id="rigion" formControlName="area" class="w-100 bd-highlightpx-1">
-                    <option selected>אזור</option>
+                <select id="area" formControlName="area" class="w-100 bd-highlightpx-1">
+                    <option selected disabled>אזור</option>
                     <option value="north">צפון</option>
                     <option value="center">מרכז והשפלה</option>
                     <option value="south">דרום</option>
@@ -30,7 +31,7 @@
 
         </div>
 
-        <div class="form-group col-md-6">
+        <div *ngIf="! mailProps.inputs || mailProps.inputs.phone" class="form-group col-md-6">
             <div class="inputTypeNumber mb-2 d-flex bd-highlight">
                 <input type="tel" formControlName="phone" class="w-100 bd-highlightpx-1" id="phone"
                     [pattern]="phonePatteren" placeholder="טלפון/פלאפון">
@@ -38,15 +39,26 @@
             </div>
 
         </div>
-        <div class="form-group col-md-6">
+        <div *ngIf="formConcat.controls.email_from" class="form-group col-md-6">
+            <!--  || mailProps.inputs.email_from -->
+            <label for="email_from">אימייל</label>
             <div class="inputTypeNumber mb-2 d-flex bd-highlight">
-                <input type="email" formControlName="email" class="w-100 bd-highlightpx-1" id="email"
-                    [pattern]="emailPatteren" placeholder="אימייל">
+                <input type="email" formControlName="email_from" class="w-100 bd-highlightpx-1" id="email_from"
+                    [pattern]="emailPatteren" placeholder="האימייל שלך">
                 <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
             </div>
 
         </div>
+        <div *ngIf="formConcat.controls.email_to" class="form-group col-md-6"><!-- *ngIf="! mailProps.inputs || ! mailProps.inputs.email_to" -->
+            <label [for]="email_to">אימייל</label>
+            <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+                <input type="email" formControlName="email_to" class="w-100 bd-highlightpx-1" id="email_to"
+                    [pattern]="emailPatteren" placeholder="שלח ל...">
+                <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+            </div>
+        </div>
         <div class="form-group col-md-6">
+            <label for="email_to">נושא:</label>
             <div class="inputTypeNumber mb-2 d-flex bd-highlight">
                 <input type="text" formControlName="subject" class="w-100 bd-highlightpx-1" id="input"
                     placeholder="נושא הפניה">
@@ -55,6 +67,7 @@
 
         </div>
         <div class="form-group col-md-12">
+            <label for="email_to">הודעה:</label>
             <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
                 <textarea formControlName="message" class="w-100 bd-highlightpx-1" id="textarea" rows="8"
                     placeholder="הוסף הודעה">

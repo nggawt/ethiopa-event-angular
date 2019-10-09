@@ -1,9 +1,9 @@
 <!-- position-relative -->
 <!-- <app-contact [mailProps]="eeMessage"></app-contact> -->
 <div *ngIf="(sendingMail | async) as allowMesage">
-
     <ng-template *ngIf="allowMesage && allowMesage[eeMessage.id]" [appSendMessageDirective]="eeMessage"></ng-template>
 </div>
+
 <header class="d-flex flex-row-reverse">
     <div *ngIf="user$ | async as user; else noUser" class="align-self-center">
 
@@ -78,9 +78,9 @@
                 <li class="nav-item" routerLinkActive="active">
                     <a class="nav-link" routerLink="/scedule-events">יומן אירועים</a>
                 </li>
-                <li class="nav-item" routerLinkActive="active">
+                <!-- <li class="nav-item" routerLinkActive="active">
                     <a class="nav-link" routerLink="/מאמרים">מאמרים</a>
-                </li>
+                </li> -->
                 <li class="nav-item dropdown" routerLinkActive="active">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -7,7 +7,7 @@ import { HttpService } from '../http-service/http.service';
   providedIn: 'root'
 })
 export class ResourcesService {
-  
+
   private resources: {
     users: BehaviorSubject<{}[] | boolean>,
     customers: BehaviorSubject<{}[] | boolean>,
@@ -24,7 +24,7 @@ export class ResourcesService {
       events: new BehaviorSubject(false),
       admins: new BehaviorSubject(false),
       forbidden: new BehaviorSubject(false)
-  };
+    };
 
   public users = this.resources.users.asObservable();
   public customers = this.resources.customers.asObservable();
@@ -48,42 +48,41 @@ export class ResourcesService {
     if (this.resources[key]) this.resources[key].next(resources);
   }
 
-  update(key: string, resource: {}, method?:string): void {
-    let items =  this.resources[key].getValue();
+  update(key: string, resource: {}, method?: string): void {
+    let items = this.resources[key].getValue();
     // console.log(items);
-    if(items && key == "customers"){
+    if (items && key == "customers") {
       let customers = items[resource['businessType']];
-      customers.map(item => item.customer.id == resource['id']? resource: item);
-      items = {[resource['businessType']]: customers};
-    }else if(items) items.map(item => item.id == resource['id']? resource: item);
+      customers.map(item => item.customer.id == resource['id'] ? resource : item);
+      items = { [resource['businessType']]: customers };
+    } else if (items) items.map(item => item.id == resource['id'] ? resource : item);
     // console.log(items);
     if (this.resources[key]) this.resources[key].next(items);
   }
 
-  forbiddenUser(key, items, isForbidden: boolean){
+  forbiddenUser(key, items, isForbidden: boolean) {
     // let users =  this.resources[key].getValue();
-    
-    let forbidden =  this.resources['forbidden'].getValue();
-    forbidden = forbidden && Array.isArray(forbidden)? forbidden: [];
-    console.log('forbidden: ', forbidden, ' items: ',items);
 
-    let forbiddenItems = (isForbidden)? this.removeForbidden(forbidden, items): this.pushForbidden(forbidden, items);
+    let forbidden = this.resources['forbidden'].getValue();
+    forbidden = forbidden && Array.isArray(forbidden) ? forbidden : [];
+    console.log('forbidden: ', forbidden, ' items: ', items);
+
+    let forbiddenItems = (isForbidden) ? this.removeForbidden(forbidden, items) : this.pushForbidden(forbidden, items);
     // if(users) users.map(user => user.id == items['user_id']? user['forbidden'] = items.forbidden: user);
     // if (this.resources[key]) this.resources[key].next(users);
     if (this.resources['forbidden'] && forbidden) this.resources['forbidden'].next(forbiddenItems);
-
     console.log("users: ", 'users', " forbidden: ", forbiddenItems, ' items: ', items);
   }
 
-  removeForbidden(forbiddens, items){
-    let finderKey = items.email? 'email': 'user_id', 
-        finderValue = items.email? items.email: items.id;
+  removeForbidden(forbiddens, items) {
+    let finderKey = items.email ? 'email' : 'user_id',
+      finderValue = items.email ? items.email : items.user_id ? items.user_id : items.id;
 
-    if(Array.isArray(forbiddens)) forbiddens.forEach((forbiddenUser, index) => (forbiddenUser[finderKey] == finderValue)? forbiddens.splice(index, 1) : '');
+    if (Array.isArray(forbiddens)) forbiddens.forEach((forbiddenUser, index) => (forbiddenUser[finderKey] == finderValue) ? forbiddens.splice(index, 1) : '');
     return forbiddens;
   }
 
-  pushForbidden(forbiddens, items){
+  pushForbidden(forbiddens, items) {
     forbiddens.push(items);
     return forbiddens;
   }
@@ -92,8 +91,8 @@ export class ResourcesService {
     let itemsResources = {};
 
     res.forEach(resource => {
-      
-      this[resource].pipe(map(items => paginate? this.pagination(items, resource): items))
+
+      this[resource].pipe(map(items => paginate ? this.pagination(items, resource) : items))
         .subscribe(itemRes => {
           if (itemRes) itemsResources[resource] = itemRes;
         });
@@ -105,7 +104,7 @@ export class ResourcesService {
 
     this.regItems.push(url);
     return this.http.getData(url).pipe(first(),
-      map(items => this.checkHasKey(items, 'status')? false: items),
+      map(items => this.checkHasKey(items, 'status') ? false : items),
       tap(item => {
         // console.log("send request to server: Url: ", url, " : ", item);
         // this.itemResources[url] = item;
@@ -118,27 +117,32 @@ export class ResourcesService {
 
   }
 
-  dataTransform(key:string, items?: {}){
+  dataTransform(key: string, items?: {}) {
     // if(!items || this.checkHasKey(items, 'status')) return false;
-    console.log("calll");
-    
-    ! items? this.getResources(key, false).then(item => {
-      items = this.usersTransform(item);
-    }):  items = this.usersTransform(items);
-    console.log(items);
-    
+    !items ? this.getResources(key, false).then(item => {
+      items = this.itemsTransform(item);
+    }) : items = this.itemsTransform(items);
+    // console.log(items);
     return items;
   }
 
-  usersTransform(items){
+  itemsTransform(items) {
 
     this.getResources('forbidden', false).then(forbidden => {
-      console.log(forbidden);
-      
-      items = (forbidden && Array.isArray(items))? 
-          items.map(user => user['forbidden'] = forbidden.find(forbiddenItem => (forbiddenItem.email == user.email))? true: false): false;
+      console.log("forbiddens: ", forbidden);
+      (forbidden && Array.isArray(items)) ? items = items.map(user => user['forbidden'] = forbidden.find(forbiddenItem => (forbiddenItem.email == user.email)) ? true : false) : false;
     });
+    // items = (Array.isArray(items)) ? items.map(user => user['forbidden'] = this.isForbidden(user.email)): false;
     return items;
+  }
+
+  isForbidden(itemValue: string, itemKey?: string) {
+    itemKey = itemKey? itemKey: "email";
+    let isTrue = false;
+    this.getResources('forbidden', false).then(forbidden => {
+      isTrue = Array.isArray(forbidden)? forbidden.find(item => item[itemKey] == itemValue) ? true : false: false;
+    });
+    return isTrue;
   }
 
   req(url) {
@@ -158,27 +162,24 @@ export class ResourcesService {
     if (typeof items == "string") items = [items];
     for (let ii of items) {
 
-      let isResExisst = (this.regItems.indexOf(ii) != -1) && this.resources[ii] && this.resources[ii].getValue();
-      // console.log(this.resources[ii]);
-      
-      if (isResExisst) continue; 
+      let isResExisst = (this.regItems.indexOf(ii) != -1) && this.resources[ii] && this.resources[ii].getValue() ? true : false;
+
+      if (isResExisst) continue;
       let itemsData = await this.regiter(ii);
-      if (itemsData) this.setResourcesData(ii, itemsData); 
+      if (itemsData) this.setResourcesData(ii, itemsData);
+      // console.log(ii, ' :-> ', itemsData);
     }
   }
 
   protected setResourcesData(res: string, data: any) {
     let item = (data && data[res]) ? data[res] : data;
-    // console.log(item);
-    
-
     if (item) this.emitResources(res, item);
     // console.log("data current: ", data, "name: ", res, "rsources: ", this.itemResources);
   }
 
   pagination(resource: {}, resourceName: string) {
 
-    (resourceName == "customers" && ! resource[resourceName]) ? resource = { [resourceName]: resource } : '';
+    (resourceName == "customers" && !resource[resourceName]) ? resource = { [resourceName]: resource } : '';
     let mapedItems = this.mapItems(resource),
       paginated = this.dataPaginated(resourceName, mapedItems);
     return paginated;
@@ -236,7 +237,7 @@ export class ResourcesService {
     // }));
     // return customersArray;
     return Object.keys(customers).reduce((total, current: string) => {
-      if(customers[current] && customers[current].length) total = [...total, ...customers[current]];
+      if (customers[current] && customers[current].length) total = [...total, ...customers[current]];
       return total;
     }, []);
   }
@@ -268,13 +269,13 @@ export class ResourcesService {
   async getResources(items: string, paginate: boolean) {
 
     paginate ? paginate : false;
-    let resource = this.resources[items]? this.resources[items].getValue(): false;
-    
+    let resource = this.resources[items] ? this.resources[items].getValue() : false;
+
     if (resource) {
       return resource;
     } else {
       await this.regiterResources(items, paginate);
-    return this.resources[items]? this.resources[items].getValue(): resource;
+      return this.resources[items] ? this.resources[items].getValue() : resource;
     }
   }
 

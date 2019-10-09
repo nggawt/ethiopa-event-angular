@@ -5,7 +5,7 @@
       <div class="modal-content">
         
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">{{ mailProps.title }} ל: <small class="text-success"> {{ mailProps.nameTo}} </small></h5>
+            <h5 *ngIf="mailProps.inputs" class="modal-title" id="exampleModalLabel">{{ mailProps.title }} ל: <small class="text-success"> {{ mailProps.nameTo}} </small></h5>
             <button type="button" class="close m-0 float-left" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>

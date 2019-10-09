@@ -6,7 +6,7 @@ import { PostPreviewComponent } from '../posts-views/post-preview/post-preview.c
 import { PostEditComponent } from '../posts-views/post-edit/post-edit.component';
 import { EventPreviewComponent } from '../events-views/event-preview/event-preview.component'
 import { EventEditComponent } from '../events-views/event-edit/event-edit.component'
-import { AdminProfileComponent } from '../admins-views/admin-profile/admin-profile.component';
+import { AdminPreviewComponent } from '../admins-views/admin-preview/admin-preview.component';
 import { AdminCreateComponent } from '../admins-views/admin-create/admin-create.component';
 import { UserProfileComponent } from '../users-views/user-profile/user-profile.component';
 import { UserCreateComponent } from '../users-views/user-create/user-create.component';
@@ -36,7 +36,7 @@ export class CompLists {
             create: EventCreateComponent
         },
         admins: {
-            preview: AdminProfileComponent,
+            preview: AdminPreviewComponent,
             edit: AdminEditComponent,
             create: AdminCreateComponent
         },

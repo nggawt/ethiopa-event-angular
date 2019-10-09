@@ -24,6 +24,9 @@ ul.navbar-nav li:hover > a {
     /* color: #F6DC2F; */
 }
 
+div.admin a:hover{
+    text-decoration: none !important;
+}
 
 
 /* 

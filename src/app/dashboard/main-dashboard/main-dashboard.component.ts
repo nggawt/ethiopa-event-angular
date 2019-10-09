@@ -4,6 +4,7 @@ import { skipWhile, map, filter, tap, first } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
+import { Admin } from 'src/app/types/admin-type';
 
 
 @Component({
@@ -15,6 +16,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
   resources: {};
   templateType;
+  admin: Observable<Admin>;
 
   // @ViewChild('main', { static: true }) main: TemplateRef<any>;
 
@@ -23,7 +25,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   // customersSubsription: Subscription;
   // articlesSubsription: Subscription;
   // eventsSubsription: Subscription;
-  routerSubscrition: Subscription;
+  adminSubscrition: Subscription;
   resourceSubscrition: Subscription;
 
 
@@ -31,18 +33,18 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   constructor(private http: HttpService, private rsrv: ResourcesService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    let resources = ['forbidden', 'users', 'customers', 'articles', 'events', 'messages'];
-    // this.routerSubscrition = this.router.events.pipe(filter(obType => obType instanceof NavigationStart)).subscribe(routeUrl => {/*  || obType instanceof NavigationEnd */
-    //   this.templateType = routeUrl['url'] == '/dashboard' ? this.main : false;
-    //   console.log("cccc");
-      
-    // });
+    this.adminSubscrition = this.http.userObs.pipe(tap(item => {
 
-    // this.templateType = this.router['url'] == '/dashboard' ? this.main : false;
-    this.rsrv.initResources(resources, false);
-    // this.srv.initResources('admins');
 
-    this.getResources(resources);
+    })).subscribe(admin => {
+      if (admin) { }
+
+      let resources = ['forbidden', 'users', 'customers', 'articles', 'events', 'messages'];
+      this.rsrv.initResources(resources, false);
+      this.getResources(resources);
+      this.admin = of(admin);
+
+    });
   }
 
   getResources(res: string[]): Observable<{}> | any {
@@ -60,7 +62,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.resources = itemsResources;
   }
 
-  
+
   getOuterRquests() {
     console.log(this.http.outRequests);
   }
@@ -110,8 +112,8 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
     this.customersSubsription.unsubscribe();
     this.articlesSubsription.unsubscribe();
     this.eventsSubsription.unsubscribe(); */
-    if(this.routerSubscrition) this.routerSubscrition.unsubscribe();
-    if(this.resourceSubscrition) this.resourceSubscrition.unsubscribe();
+    if (this.adminSubscrition) this.adminSubscrition.unsubscribe();
+    if (this.resourceSubscrition) this.resourceSubscrition.unsubscribe();
     // this.resources$.unsubscribe();
   }
 

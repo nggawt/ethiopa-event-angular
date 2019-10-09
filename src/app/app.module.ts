@@ -86,9 +86,9 @@ import { EventTypeToHebPipe } from './shared/pipes-module/event-type-to-heb.pipe
 import { UsersViewsComponent } from './dashboard/users-views/users-views.component';
 import { EventsViewsComponent } from './dashboard/events-views/events-views.component';
 import { TasksComponent } from './dashboard/tasks/tasks.component';
-import { SecurityComponent } from './dashboard/security/security.component';
+import { SecurityComponent } from './dashboard/settings/security/security.component';
 import { PostsViewsComponent } from './dashboard/posts-views/posts-views.component';
-import { AdminProfileComponent } from './dashboard/admins-views/admin-profile/admin-profile.component';
+import { AdminPreviewComponent } from './dashboard/admins-views/admin-preview/admin-preview.component';
 import { CustomersViewsComponent } from './dashboard/customers-views/customers-views.component';
 import { NotificationsComponent } from './dashboard/notifications/notifications.component';
 import { AdminsViewsComponent } from './dashboard/admins-views/admins-views.component';
@@ -133,6 +133,12 @@ import { CustomerToHebPipe } from './shared/pipes-module/customer-to-heb.pipe';
 import { CardComponent } from './dashboard/main-dashboard/card/card.component';
 import { ResourcesNameConvertorPipe } from './shared/pipes-module/resources-name-convertor.pipe';
 import { MainComponent } from './dashboard/main-dashboard/main/main.component';
+import { MapByPipe } from './shared/pipes-module/map-by.pipe';
+import { SlugPipe } from './shared/pipes-module/slug.pipe';
+import { RolesComponent } from './dashboard/settings/roles/roles.component';
+import { SettingsComponent } from './dashboard/settings/settings.component';
+import { DashboardAdminComponent } from './dashboard/settings/dashboard-admin/dashboard-admin.component';
+import { GenerateIdPipe } from './shared/pipes-module/generate-id.pipe';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -173,7 +179,7 @@ export function tokenGetter() {
     TasksComponent,
     SecurityComponent,
     PostsViewsComponent,
-    AdminProfileComponent,
+    AdminPreviewComponent,
     CustomersViewsComponent,
     NotificationsComponent,
     AdminsViewsComponent,
@@ -214,6 +220,12 @@ export function tokenGetter() {
     CardComponent,
     ResourcesNameConvertorPipe,
     MainComponent,
+    MapByPipe,
+    SlugPipe,
+    RolesComponent,
+    SettingsComponent,
+    DashboardAdminComponent,
+    GenerateIdPipe,
     // SendMessageDirectiveDirective,
     // customValidatorFnFactory
     // ConcatFormComponent,
@@ -264,7 +276,7 @@ export function tokenGetter() {
     CustomerPreviewComponent, CustomerEditComponent, CustomerCreateComponent,
     EventPreviewComponent, EventEditComponent, EventCreateComponent,
     PostCreateComponent, PostPreviewComponent, PostEditComponent,
-    AdminProfileComponent, AdminEditComponent, AdminCreateComponent,
+    AdminPreviewComponent, AdminEditComponent, AdminCreateComponent,
     UserProfileComponent, UserEditComponent, UserCreateComponent, ContactComponent
   ]
 })

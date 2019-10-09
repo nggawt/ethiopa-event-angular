@@ -1,0 +1,32 @@
+
+<div *ngIf="resources" class="row">
+
+    <div *ngFor="let resource of resources | keyvalue" class="col-sm-3 mb-3">
+           
+        <div *ngIf="resource.value && (resource.key | resourcesNameConvertor:'en') as resName" class="p-3 border rounded" (click)="logger(resource)">
+            <div class="header">
+                <i class="fa fa-users" style="font-size: 1.5rem;"></i>
+                {{ resName }}
+            </div>
+            <!-- <hr> -->
+            <div class="body p-1">
+                <div class="recent">
+                    <span class="text">
+                        {{ resource.key != 'forbidden'? "הצטרפו לאחרונה:" : "נחסמו לאחרונה" }}
+                    </span>
+                    <span class="recently">10</span>
+                </div>
+
+                <div class="total text-center clearfix">
+                    <span class="float-right">
+                        סהכ:
+                    </span>
+                    <span class="total-item p-3">{{ resource.value?.data.length || "0" }}</span>
+                </div>
+            </div>
+            <div class="footer clearfix">
+                <a class="btn btn-link btn-sm recently float-left" routerLink="users-views">{{ resName }}</a>
+            </div>
+        </div>
+    </div>
+</div>

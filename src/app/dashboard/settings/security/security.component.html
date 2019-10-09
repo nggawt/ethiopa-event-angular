@@ -1,0 +1,44 @@
+<div *ngIf="(itemsResources$  | async ) as resources" class="text-right">
+  <div class="row">
+    <div class="col-sm-12 mb-3">
+      <div class="shadow-sm p-1 border-top">
+        <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
+          ניהול הרשאות
+          <span class="btn btn-success btn-sm mr-auto p-2 bd-highlight"
+            (click)="create('/dashboard/users-views/create')">צור הרשאה
+            חדש</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form class="form-row">
+    <div *ngFor="let role of resources.roles; let idx = index" class="col-sm-12">
+      <div class="p-3 border rounded">
+          <h5>{{ role.name }}
+              <span class="text-muted">הרשאות</span>
+            </h5>
+            <div *ngFor="let autority of role.permissions | keyvalue; let idxx = index" class="d-inline-block border p-3 m-1">
+              <ul class="list-unstyled p-0">
+                <li class="text-left">
+                  <p>{{autority.key}}</p>
+                  <div class="custom-control custom-checkbox  text-right">
+                    <input [id]="role.name+autority.key" class="custom-control-input" type="checkbox" [checked]="autority.value"
+                      (click)="checked(autority)">
+      
+                    <label [for]="role.name+autority.key" class="custom-control-label">
+                      {{ autority.value? "בטל": "אשר" }}
+                    </label>
+                  </div>
+                </li>
+              </ul>
+              <a class="ml-1"><span class="badge badge-success badge-pill">עדכן</span></a>
+              <a><span class="badge badge-danger badge-pill">מחק</span></a>
+            </div>
+      </div>
+      
+      <hr>
+    </div>
+  </form>
+
+</div>

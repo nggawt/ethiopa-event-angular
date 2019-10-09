@@ -25,6 +25,7 @@ export class ProfileComponent implements OnInit {
   datePattern: RegExp = /^\b((?=0)0[1-9]|(?=[1-9])[1-9]|(?=[1-2])[1-2][0-9]|(?=3)3[0-1])\-((?=0)0[1-9]|(?=[1-9])[1-9]|(?=1)1[0-2]?)\-20((?=1)19|(?=2)2[0-5])$/;//\d{2}\-\d{2}\-\d{4}
   timePattern: RegExp = /^\b((?=0)0[0-9]|(?=1)1[0-9]|(?=2)2[0-3])\:((?=0)0[0-9]|(?=1)1[0-9]|(?=[0-5])[0-5][0-9])$/;
   /***************  ********************/
+  formSetting: FormGroup;
 
   user: User | boolean;
   show: boolean = true;
@@ -50,7 +51,6 @@ export class ProfileComponent implements OnInit {
   fired: boolean = false;
   /* **************************** */
   formEvents: FormGroup;
-  formSetting: FormGroup;
   allowFormSetting: Observable<boolean> = of(false);
   formMethod: string = this.eventsOb['hasEvents'] && this.eventsOb['hasEvents']() ? "update" : 'create';
   hasClassShow = false;

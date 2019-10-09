@@ -7,6 +7,6 @@ export declare interface User {
     area: string, 
     about: string, 
     tel: string, 
-    customer: {} | boolean,
-    events: {} | boolean 
+    customer?: {} | boolean,
+    events?: {} | boolean 
 }

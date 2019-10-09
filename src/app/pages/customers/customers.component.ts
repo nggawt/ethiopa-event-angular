@@ -27,8 +27,19 @@ export class CustomersComponent implements OnInit, OnDestroy {
     url: string,
     modalSize: string, 
     nameTo: string | boolean, 
+    nameFrom: string | boolean,
     emailTo: string | boolean, 
-    title: string
+    title: string,
+    inputs: {
+      email_from: string | boolean,
+      email_to: string | boolean,
+      name: string | boolean,
+      area: boolean,
+      phone: boolean,
+      city: boolean,
+      subject: boolean,
+      message: boolean
+    }
   };
 
   private address: string;
@@ -61,8 +72,19 @@ export class CustomersComponent implements OnInit, OnDestroy {
       url: decodeURIComponent(location.pathname),
       modalSize: "modal-lg", 
       nameTo: paramCustomer.company, 
+      nameFrom: paramCustomer.name,
       emailTo: paramCustomer.email, 
-      title: 'שלח הודעה'
+      title: 'שלח הודעה',
+      inputs: {
+        email_from: true,
+        email_to: paramCustomer.email,
+        name: true,
+        area: true,
+        phone: true,
+        city: true,
+        subject: true,
+        message: true
+      }
     };
 
     this.http.sendingMail.next({['contact_customer']: true});

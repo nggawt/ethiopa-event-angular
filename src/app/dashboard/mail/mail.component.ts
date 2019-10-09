@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { HttpService } from 'src/app/services/http-service/http.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { Admin } from 'src/app/types/admin-type';
 
 @Component({
   selector: 'app-mail',
@@ -13,17 +14,31 @@ export class MailComponent implements OnInit {
   /*  msgs: {};
    @Output() messages: EventEmitter<{}> = new EventEmitter<{}>(); */
   msgsResources;
+  admin: Admin;
 
+  adminSubscription: Subscription;
   pathName: string;
 
   sendingMail: Observable<{[key: string]: boolean} | boolean>;
+
   mailItems: {
     id:string | boolean, 
     url: string,
     modalSize: string, 
     nameTo: string | boolean, 
+    nameFrom: string | boolean, 
     emailTo: string | boolean, 
-    title: string
+    title: string,
+    inputs: {
+      email_from: string | boolean,
+      email_to: string | boolean,
+      name: boolean,
+      area: boolean,
+      phone: boolean,
+      city: boolean,
+      subject: boolean,
+      message: boolean
+    }
   };
 
   constructor(private srv: ResourcesService, private http: HttpService) {
@@ -31,6 +46,8 @@ export class MailComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.adminSubscription = this.http.userObs.subscribe(admin => typeof admin == "object"? this.admin = admin: false);
 
     this.srv.getResources('messages', false).then(msgs => {
       console.log(msgs);
@@ -47,14 +64,28 @@ export class MailComponent implements OnInit {
 
   newMail() {
     
-    console.log("callled newMail()");
+    console.log("callled newMail()", 'user | admin : ', this.admin);
+    if( ! this.admin) return false;
+    let user = this.admin.user?this.admin.user: this.admin;
+
     this.mailItems = {
       id: 'new_mail',
       url: decodeURIComponent(location.pathname),
       modalSize: "modal-lg",
-      nameTo: "",
+      nameTo: "whatever user",
+      nameFrom: user['name'],
       emailTo: "",
-      title: 'שלח הודעה'
+      title: 'שלח הודעה',
+      inputs: {
+        email_from: user['email'],
+        email_to: true,
+        name: false,
+        area: false,
+        phone: false,
+        city: false,
+        subject: true,
+        message: true
+      }
     };
     this.http.sendingMail.next({['new_mail']: true});
     this.sendingMail = this.http.sendingMail;

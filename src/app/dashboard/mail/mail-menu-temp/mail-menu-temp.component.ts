@@ -18,10 +18,10 @@ export class MailMenuTempComponent implements OnInit {
     console.log("mail-menu component called");
    }
 
-   replay(message, sendTo) {
-    console.log(message.value, sendTo);
+   replay(message, textArea) {
+    console.log(textArea.value);
 
-    this.http.postData('replay', {message: message.value }).subscribe(response =>{
+    this.http.postData('messages/'+message.id+'/replay', {message: textArea.value }).subscribe(response =>{
       console.log(response);
       
     });

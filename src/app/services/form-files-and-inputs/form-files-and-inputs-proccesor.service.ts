@@ -104,6 +104,8 @@ export class FormFilesAndInputsProccesorService {
     this.getFileObject(Object.keys(del), (item) => {
       if (del[item].length) delFilesLink[item] = del[item];
     });
+    console.log(delFilesLink);
+    
     return Object.keys(delFilesLink).length? delFilesLink: false;
   }
 

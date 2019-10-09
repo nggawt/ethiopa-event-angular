@@ -17,6 +17,9 @@ export class DateHebrawPipe implements PipeTransform {
     if(args == "day") return day;
     if(args == "month") return hebMonth;
     if(args == "year") return year;
+    if(args == "day_month") return day;
+    if(args == "day_month_year") return day+ ","+ hebMonth+", " +year;;
+
     if(args == "full") return day +" ל"+ hebMonth +", בשעה " + dt.getHours()+":"+dt.getMinutes() +", " +year;
   }
 

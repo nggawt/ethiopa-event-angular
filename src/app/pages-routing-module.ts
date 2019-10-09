@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, RouterModule, Routes, NoPreloading } from '@angular/router';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 // import { LogInComponent } from './auth/log-in/log-in.component';
 import { RegistrationComponent } from './auth/registration/registration.component';
@@ -47,6 +47,11 @@ import { TrashComponent } from './dashboard/mail/trash/trash.component';
 import { FavoritesComponent } from './dashboard/mail/favorites/favorites.component';
 import { PreferencesComponent } from './dashboard/mail/preferences/preferences.component';
 import { MainComponent } from './dashboard/main-dashboard/main/main.component';
+import { SecurityComponent } from './dashboard/settings/security/security.component';
+import { AdminPreviewComponent } from './dashboard/admins-views/admin-preview/admin-preview.component';
+import { RolesComponent } from './dashboard/settings/roles/roles.component';
+import { SettingsComponent } from './dashboard/settings/settings.component';
+import { DashboardAdminComponent } from './dashboard/settings/dashboard-admin/dashboard-admin.component';
 
 
 // import { NotificationsComponent } from './dashboard/notifications/notifications.component';
@@ -58,8 +63,8 @@ const routes: Routes = [
   {
     path: 'dashboard', component: MainDashboardComponent, children: [
       // START dashboard childrens
-      { path: '',   redirectTo: 'main', pathMatch: 'full' },
-      { path: 'main', component: MainComponent},
+      // { path: '',   redirectTo: 'main', pathMatch: 'full' },
+      { path: '', component: MainComponent},
       { path: 'admins-views', component: AdminsViewsComponent, children: []},
       { path: 'admins-views/create', component: OverviewComponent, data: { itemType: "admins", comp: 'create' } },
       { path: 'admins-views/:id', component: OverviewComponent, data: { itemType: "admins", comp: 'preview' } },
@@ -103,15 +108,24 @@ const routes: Routes = [
           { path: 'outbox', component: OutboxComponent }
         ]
       },
+
+      /****** Settings ******/
+      {
+        path: 'settings', component: SettingsComponent, children: [
+          { path: '', component: DashboardAdminComponent },
+          // { path: 'security', component: SecurityComponent },
+          { path: 'roles', component: RolesComponent },
+          // { path: 'preferences', component: PreferencesComponent },
+          // { path: 'trash', component: TrashComponent },
+          // { path: 'inbox', component: InboxComponent },
+          // { path: 'outbox', component: OutboxComponent }
+        ]
+      },
       
-      /* { path: 'mail/favorites', component: FavoritesComponent },
-      { path: 'mail/preferences', component: PreferencesComponent },
-      { path: 'mail/trash', component: TrashComponent },
-      { path: 'mail/inbox', component: InboxComponent },
-      { path: 'mail/outbox', component: OutboxComponent }, */
      
 
       { path: 'task', component: TasksComponent },
+      // { path: 'security', component: SecurityComponent },
       { path: 'quick-editor', component: QuickEditorComponent }
     ]// END dashboard childrens
   },

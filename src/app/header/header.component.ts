@@ -25,7 +25,17 @@ export class HeaderComponent implements OnInit {
     modalSize: string, 
     nameTo: string | boolean, 
     emailTo: string | boolean, 
-    title: string
+    title: string,
+    inputs: {
+      email_from: string | boolean,
+      email_to: string | boolean,
+      name: boolean,
+      area: boolean,
+      phone: boolean,
+      city: boolean,
+      subject: boolean,
+      message: boolean
+    }
   };
 
   user$: Observable<User| boolean>;
@@ -57,11 +67,21 @@ export class HeaderComponent implements OnInit {
    
     this.eeMessage = {
       id:'contact_ee', 
-      url: decodeURIComponent(location.pathname),
+      url: decodeURIComponent(location.pathname),//'/contact',
       modalSize: "modal-lg", 
       nameTo: 'אתיופיה אירועים', 
       emailTo: "ethiopia-events@gmail.com", 
-      title: 'שלח הודעה'
+      title: 'שלח הודעה',
+      inputs: {
+        email_from: true,
+        email_to: "ethiopia-events@gmail.com",
+        name: true,
+        area: true,
+        phone: true,
+        city: true,
+        subject: true,
+        message: true
+      }
     };
     this.http.sendingMail.next({['contact_ee']: true});
     this.sendingMail = this.http.sendingMail;

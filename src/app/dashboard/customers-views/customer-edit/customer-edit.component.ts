@@ -222,7 +222,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     /* check if gallery items or input items */
     if (this.galItems().indexOf(itemId) >= 0) {/* gallery items */
       valItems = { ['gallery']: { [itemId]: this.mapValidated(itemId) } };
-      fDel = { [itemId]: this.formFiles.filesDl[itemId] };
+      fDel = this.formFiles.filesDl[itemId].length? { [itemId]: this.formFiles.filesDl[itemId] }: false;
     } else {/* input items */
       valItems['inputs'] = itemId == 'content'? this.setContent(formItem, itemId): {[itemId]: formItem.value};
     }
@@ -293,6 +293,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
       this.message = false;
     }, 3000) */
   }
+  
   close() {
     this.router.navigate(['../']);
   }

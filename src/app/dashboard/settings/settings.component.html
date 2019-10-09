@@ -1,0 +1,52 @@
+<div class="row text-right">
+  <div class="col-sm-12">
+      
+    <div class="shadow-sm border-top">
+
+      <div class="p-3 d-flex justify-content-between">
+
+        <!-- <a routerLinkActive="active" routerLink="#"
+            class="googleFont ml-1 py-1 px-2 border rounded text-center">
+            אבטחה
+            <i class="material-icons">
+              security
+            </i>
+          </a> -->
+        
+        <div class="my-nav">
+
+          <a routerLinkActive="active" routerLink="./" class="googleFont ml-1 p-2 border rounded text-center ">
+            הגדרות
+            <i class="material-icons">select_all</i>
+          </a>
+
+          <a routerLinkActive="active" routerLink="roles" class="googleFont p-2 border rounded text-center">
+            ניהול הרשאות
+            <i class="material-icons">add</i>
+          </a>
+        </div>
+        <div class="other-nav">
+
+          <a routerLinkActive="active" (click)="destroy()" class="googleFont ml-1 p-2 border rounded text-center ">
+            הסר חשבון
+            <i class="material-icons text-danger">
+              delete_forever
+            </i>
+          </a>
+
+          <a routerLinkActive="active" class="btn btn-primary" (click)="create('/dashboard/admins-views/create')"
+            class="googleFont p-2 border rounded text-center">
+            <span>
+              צור אדמין חדש
+              <i class="material-icons">
+                create
+              </i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<router-outlet></router-outlet>
