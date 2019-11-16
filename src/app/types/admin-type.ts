@@ -11,5 +11,5 @@ export declare interface Admin {
         permissions: {[key: string]: boolean},
         slug
     },
-    roles?: {id: number, name: string, permissions: {[key: string]: boolean}, slug: string, created_at: string, updated_at: string}[],
+    roles?: {id?: number, name: string, permissions: {[key: string]: boolean}, slug: string, created_at?: string, updated_at?: string}[],
 }

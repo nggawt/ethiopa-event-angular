@@ -3,9 +3,9 @@
     <div class="row">
         <div *ngFor="let resource of resources | keyvalue" class="col-sm-3 mb-3">
             
-            <div class="border-top">
+            <!-- <div class="border-top"> -->
                 <div *ngIf="resource.value && (resource.key | resourcesNameConvertor:'en') as resName"
-                    (click)="logger(resource)">
+                class="border-top" (click)="logger(resource)">
 
                     <div class="border rounded shadow-sm">
                         <div class="p-2 bg-light">
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            <!-- </div> -->
         </div>
         <div class="col-sm-12 mb-3">
             <div class="border rounded">

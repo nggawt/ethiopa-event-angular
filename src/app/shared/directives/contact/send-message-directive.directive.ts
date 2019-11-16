@@ -9,9 +9,7 @@ export class SendMessageDirectiveDirective implements OnInit, OnDestroy {
   @Input() appSendMessageDirective;
   componentRef: any;
 
-  constructor(public tempRef: TemplateRef<any>, 
-    public viewCont: ViewContainerRef, 
-    private resolver: ComponentFactoryResolver) { }
+  constructor(public viewCont: ViewContainerRef, private resolver: ComponentFactoryResolver) { }
 
   ngOnInit(){ this.loadComponent(); }
 
@@ -27,7 +25,6 @@ export class SendMessageDirectiveDirective implements OnInit, OnDestroy {
 
   ngOnDestroy(){ 
     this.componentRef.destroy(); 
-    this.tempRef = null;
     console.log("destroy message component");
   }
 

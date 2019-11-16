@@ -1,4 +1,5 @@
 <!-- <app-admin-registration *ngIf="isRegistered"></app-admin-registration> -->
+<div [appLogInDirective]="isLogged"></div>
 
 <div *ngIf="resources" class="row text-right">
   <div class="col-12 mb-3">
@@ -36,7 +37,7 @@
           <div class="bg-light">
             <!-- style="height: 75px; width:75px;" -->
             <img class="border rounded-circle" width="100%" height="100%"
-              src="https://source.unsplash.com/random/120x120?count=10"
+              [src]="adminUser.avatar"
               [alt]="adminUser.name">
 
           </div>

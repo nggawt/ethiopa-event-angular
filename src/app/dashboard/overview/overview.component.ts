@@ -33,7 +33,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
     this.srv.getResources(this.itemType, false)
     .then(resource => {
-      console.log(resource);
+      console.log(resource, itemId, this.itemType);
       
       (this.itemType == 'customers')? this.route.queryParamMap.subscribe((params: ParamMap) => {
         let routeName = params.get('name');
@@ -44,7 +44,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   setItemResource(resource, itemId){
-    let item = resource.find(item => this.srv.checkTypeId(item, 'customer').id == itemId);
+    let item = this.itemType == "admins"? resource.find(admin => admin.user.id == itemId): resource.find(item => this.srv.checkTypeId(item, 'customer').id == itemId);
     this.itemResource = item;
   }
   

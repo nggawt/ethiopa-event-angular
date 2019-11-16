@@ -17,7 +17,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
   resources: {};
   templateType;
   admin: Observable<Admin>;
-
+  isLogged: { [key: string]: string } | boolean;
   // @ViewChild('main', { static: true }) main: TemplateRef<any>;
 
   /* Subscription */
@@ -37,8 +37,9 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
 
     })).subscribe(admin => {
-      if (admin) { }
-
+      if (! admin) {
+        this.isLogged = { from_path: decodeURIComponent(location.pathname), url: "admin-login" };
+      }
       let resources = ['forbidden', 'users', 'customers', 'articles', 'events', 'messages'];
       this.rsrv.initResources(resources, false);
       this.getResources(resources);

@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
+import { Admin } from 'src/app/types/admin-type';
 declare var $;
 
 @Component({
@@ -29,7 +30,7 @@ export class AdminEditComponent implements OnInit {
     message: false,
     title: 'ערוך אדמין'
   };
-  @Input() itemData: {id: number, name: string, email: string, authority: {id: string, name: string, slug: string}};
+  @Input() itemData: Admin;// {id: number, name: string, email: string, authority: {id: string, name: string, slug: string}};
 
 
   constructor(private srv: ResourcesService,
@@ -47,17 +48,18 @@ export class AdminEditComponent implements OnInit {
   }
 
   itemForm(items) {
-
+    console.log(items);
+    
     this.formGr = new FormGroup({
       authority: new FormControl(items.authority.name, [this.ngVal.unchange.bind(this, items.authority.name)]),
-      name: new FormControl(items.name, [this.ngVal.unchange.bind(this, items.name)]),
-      email: new FormControl(items.email, [this.ngVal.unchange.bind(this, items.email)])
+      name: new FormControl(items.user.name, [this.ngVal.unchange.bind(this, items.user.name)]),
+      email: new FormControl(items.user.email, [this.ngVal.unchange.bind(this, items.user.email)])
     });
   }
 
   onSubmit() {
 
-    console.log(this.formGr, this.itemData.id);
+    console.log(this.formGr, this.itemData.user.id);
     let validItems = this.ngVal.getValidatedItems(this.formGr),
       validInputs = Object.keys(validItems.inputs).length ? validItems.inputs : false;
       validInputs ? this.send(validInputs, 'PUT') : console.log('Please fill valid form');
@@ -65,7 +67,7 @@ export class AdminEditComponent implements OnInit {
 
   send(items: { [key: string]: string }, method: string): void {
 
-    let url = 'admins/' + this.itemData.id + '?_method=' + method;
+    let url = 'admins/' + this.itemData.user.id + '?_method=' + method;
     this.http.postData(url, items).subscribe(response => {
       console.log('response: ', response);
       if(response['status']) this.update(items, response);

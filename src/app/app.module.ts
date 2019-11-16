@@ -139,6 +139,10 @@ import { RolesComponent } from './dashboard/settings/roles/roles.component';
 import { SettingsComponent } from './dashboard/settings/settings.component';
 import { DashboardAdminComponent } from './dashboard/settings/dashboard-admin/dashboard-admin.component';
 import { GenerateIdPipe } from './shared/pipes-module/generate-id.pipe';
+import { DashboardProfileComponent } from './dashboard/settings/dashboard-profile/dashboard-profile.component';
+import { UserSettingComponent } from './dashboard/user-setting/user-setting.component';
+import { CreateRoleComponent } from './dashboard/settings/roles/create-role/create-role.component';
+import { KeyinObjectPipe } from './shared/pipes-module/keyin-object.pipe';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -226,6 +230,10 @@ export function tokenGetter() {
     SettingsComponent,
     DashboardAdminComponent,
     GenerateIdPipe,
+    DashboardProfileComponent,
+    UserSettingComponent,
+    CreateRoleComponent,
+    KeyinObjectPipe,
     // SendMessageDirectiveDirective,
     // customValidatorFnFactory
     // ConcatFormComponent,

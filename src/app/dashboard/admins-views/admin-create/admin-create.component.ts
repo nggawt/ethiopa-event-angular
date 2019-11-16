@@ -27,11 +27,8 @@ export class AdminCreateComponent implements OnInit {
     title: 'צור אדמין'
   };
   
-  constructor(private router: Router, 
-    private http: HttpService, 
-    private valForm: FormProccesorService,
-    private route: ActivatedRoute,
-    private loc: Location) {}
+  constructor(
+    private http: HttpService, ) {}
 
   ngOnInit() { this.formInit(); }
 

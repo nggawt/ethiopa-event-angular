@@ -15,9 +15,9 @@ export class CustomersResolver implements Resolve<HallType> {
         // let router = decodeURIComponent(this.router.url);
         // let url: string = decodeURIComponent(location.pathname).split('/')[1];
         
-        let customers = this.srv.getResources('customers', false);//.then(customers => {
+        //let customers = this.srv.getResources('customers', false);//.then(customers => {
         //     return customers? customers: [];
         // });
-        return customers;
+        return this.srv.getResources('customers', false); 
     }
 }

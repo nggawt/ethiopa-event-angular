@@ -52,6 +52,8 @@ import { AdminPreviewComponent } from './dashboard/admins-views/admin-preview/ad
 import { RolesComponent } from './dashboard/settings/roles/roles.component';
 import { SettingsComponent } from './dashboard/settings/settings.component';
 import { DashboardAdminComponent } from './dashboard/settings/dashboard-admin/dashboard-admin.component';
+import { DashboardProfileComponent } from './dashboard/settings/dashboard-profile/dashboard-profile.component';
+import { CreateRoleComponent } from './dashboard/settings/roles/create-role/create-role.component';
 
 
 // import { NotificationsComponent } from './dashboard/notifications/notifications.component';
@@ -115,6 +117,8 @@ const routes: Routes = [
           { path: '', component: DashboardAdminComponent },
           // { path: 'security', component: SecurityComponent },
           { path: 'roles', component: RolesComponent },
+          { path: 'roles/create', component: CreateRoleComponent},/* OverviewComponent , data: { itemType: "admins", comp: 'create' } */
+          { path: 'preferences', component: DashboardProfileComponent },
           // { path: 'preferences', component: PreferencesComponent },
           // { path: 'trash', component: TrashComponent },
           // { path: 'inbox', component: InboxComponent },

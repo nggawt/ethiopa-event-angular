@@ -40,12 +40,13 @@ export class DashboardModelComponent implements OnInit, AfterViewInit {
         /// TODO EVENTS
         console.log("requestUrl: ", thiz.http.requestUrl, 'element: ', e.target, 'id: ', thiz.modelProps.id);
         if (thiz.modelProps && thiz.modelProps.id) {
-
-          thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) :
-            thiz.router.navigate(['/dashboard']);
+          let url_back = localStorage.getItem('url_back');
+          let url = thiz.http.requestUrl? thiz.http.requestUrl: url_back? url_back: '/dashboard';
+          thiz.router.navigate([url]);
           // console.log(thiz.http.requestUrl);
           if ($(model).is(':hidden')) {
             thiz.http.requestUrl = false;
+            localStorage.removeItem('url_back');
             $(document).off('hidden.bs.modal');
             return e.preventDefault()
           }

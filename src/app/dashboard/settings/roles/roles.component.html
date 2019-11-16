@@ -1,44 +1,169 @@
 <div *ngIf="(admin$  | async ) as admin" class="text-right">
-    <div class="row">
-      <div class="col-sm-12 mb-3">
-        <div class="shadow-sm p-1 border-top">
-          <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
-            ניהול הרשאות
-            <span class="btn btn-success btn-sm mr-auto p-2 bd-highlight"
-              (click)="create('/dashboard/users-views/create')">צור הרשאה
-              חדש</span>
-          </div>
+  <div class="row">
+    <div class="col-sm-12 mb-3">
+      <div class="shadow-sm p-1 border-top">
+        <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
+          ניהול הרשאות
+          <span class="btn btn-success btn-sm mr-auto p-2 bd-highlight"
+            (click)="create('/dashboard/settings/roles/create')">צור סמכות
+            חדש</span>
         </div>
       </div>
     </div>
-  
-    <form class="form-row">
-      <div *ngFor="let role of admin.roles; let idx = index" class="col-sm-12">
-        <div class="p-3 border rounded">
-            <h5>{{ role.name }}
-                <span class="text-muted">הרשאות</span>
-              </h5>
-              <div *ngFor="let autority of role.permissions | keyvalue; let idxx = index" class="d-inline-block border p-3 m-1">
-                <ul class="list-unstyled p-0">
-                  <li class="text-left">
-                    <p>{{autority.key}}</p>
-                    <div class="custom-control custom-checkbox  text-right">
-                      <input [id]="role.name+autority.key" class="custom-control-input" type="checkbox" [checked]="autority.value"
-                        (click)="checked(autority)">
-        
-                      <label [for]="role.name+autority.key" class="custom-control-label">
-                        {{ autority.value? "בטל": "אשר" }}
-                      </label>
-                    </div>
-                  </li>
-                </ul>
-                <a class="ml-1"><span class="badge badge-success badge-pill">עדכן</span></a>
-                <a><span class="badge badge-danger badge-pill">מחק</span></a>
-              </div>
-        </div>
-        
-        <hr>
-      </div>
-    </form>
-  
   </div>
+
+  <form class="form-row">
+    <div *ngFor="let role of admin.roles; let idx = index" class="col-sm-12">
+      <div class="p-3 border rounded">
+        <h5>{{ role.name }}
+          <span class="text-muted">הרשאות</span>
+          <button type="button" class="btn btn-primary btn-sm float-left"
+            (click)="initRoleComponent(role, addRolesTemplate)">הוסף\ערוך</button>
+        </h5>
+        <div *ngFor="let permission of role.permissions | keyvalue; let idxx = index"
+          class="d-inline-block border p-3 m-1">
+          <ul class="list-unstyled p-0">
+            <li>
+              <p>{{permission.key}}</p>
+              <div class="custom-control custom-checkbox  text-right">
+                <input [id]="role.name+permission.key" class="custom-control-input" type="checkbox"
+                  [checked]="permission.value" (click)="checked(permission)">
+
+                <label [for]="role.name+permission.key" class="custom-control-label">
+                  {{ permission.value? "בטל": "אשר" }}
+                </label>
+              </div>
+            </li>
+          </ul>
+          <a class="ml-1"><span class="badge badge-success badge-pill" (click)="updateRole(role, permission, 'up')">עדכן</span></a>
+          <a><span class="badge badge-danger badge-pill" (click)="updateRole(role, permission, 'dl')">מחק</span></a>
+        </div>
+      </div>
+
+      <hr>
+    </div>
+  </form>
+
+  <ng-template #addRolesTemplate>
+    <div id="addRolePanel" class="p-3 border rounded bg-light clearfix shadow-lg">
+      <div class="form-row">
+        <div class="col-sm-6">
+          <label class="my-1" for="name">סמכות</label>
+          <div class="inputTypeNumber mb-2 d-flex bd-highlight">
+            <input id="autoritys" type="text" [value]="selecteddAuth? selecteddAuth.name: auth.value" name="autority"
+              class="w-100 bd-highlight px-1" (keyup)="onSelecedAuthChange(auth)" #auth>
+
+            <span class="validity float-left"></span>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <p class="my-1">סמכויות קיימות</p>
+          <select [size]="admin.roles.length" class="form-control text-dark" (change)="onSelecedAuthChange($event)">
+            <option *ngFor="let role of admin.roles" [value]="role.name"
+              [selected]="selecteddAuth && role.name == selecteddAuth.name">{{ role.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-sm-6">
+          <label class="d-block col-12 mb-0 p-0" for="authority">הרשאה</label>
+          <div class="inputTypeNumber d-flex bd-highlight">
+            <input id="authority" type="text" name="authority" class="w-100 bd-highlight px-1" #roleInput>
+            <span class="validity float-left"></span>
+          </div>
+        </div>
+        <div class="col clearfix">
+          <p class="d-block mb-0">צור הרשאה</p>
+          <span class="btn btn-success d-block float-right" (click)="newRole(roleInput)">חדש</span>
+        </div>
+      </div>
+      <div *ngIf="selecteddAuth && selecteddAuth.permissions" class="form-row">
+        <div class="col-12">
+          <p class="my-1">בחר הרשאות קיימות</p>
+          <!-- <fieldset [attr.disabled]="! (f.name.valid)? true: null"> -->
+          <div class="inputTypeNumber mb-2 d-flex flex-wrap">
+            <div *ngFor="let permission of selecteddAuth.permissions | keyvalue; let idx = index"
+              class="custom-control custom-checkbox col-6 px-1 d-flex align-items-center">
+
+              <input [id]="permission.key+idx" [value]="permission.key" class="custom-control-input" type="checkbox"
+                      [disabled]="(checkBoxChanged | keyinObject:permission.key)" [checked]="permission.value" (click)="onCheckChanged($event, selecteddAuth.name)" #checkBox><!-- [disabled]="(checkBoxChanged | keyinObject:permission.key)? true:null" -->
+
+              <button *ngIf="! checkBoxChanged[permission.key] || checkBoxChanged[permission.key] == 'rm'" type="button"
+                class="btn btn-outline-danger btn-sm my-1 col-3"
+                (click)="removePermission(permission.key, checkBox)">הסר</button>
+
+              <ng-container [ngTemplateOutlet]="checkBoxChanged[permission.key] == 'up'? updateTemplate: ''"
+                [ngTemplateOutletContext]="{htmItm:checkBox, fn: addPermission.bind(this)}">
+
+              </ng-container>
+
+              <label [for]="permission.key+idx" class="custom-control-label col-6">
+                {{ permission.key }}
+              </label>
+            </div>
+          </div>
+          <!-- </fieldset> -->
+        </div>
+      </div>
+      <div *ngIf="selecteddAuth && hasItems" class="form-row">
+        <div class="col-12">
+          <p class="my-1">הרשאות חדשות</p>
+          <div class="inputTypeNumber mb-2 d-flex flex-wrap">
+            <div *ngFor="let permission of selecteddAuth.up | keyvalue; let idx1 = index"
+              class="custom-control custom-checkbox col-6 px-1 d-flex align-items-center">
+
+              <input [id]="'new'+permission.key+idx1" [value]="permission.key" class="custom-control-input" type="checkbox"
+                [checked]="permission.value" (click)="updateChecked(checkBoxNew)" #checkBoxNew>
+              <!-- <button type="button" class="btn btn-outline-success btn-sm my-1 col-3"
+                (click)="addPermission(checkBoxNew)">הוסף</button> -->
+
+                <button type="button" class="btn btn-outline-warning btn-sm my-1 col-3"
+                  (click)="removePermission(permission.key)">הסר</button>
+
+              <label [for]="'new'+permission.key+idx1" class="custom-control-label col-6">
+                {{ permission.key }}
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="form-row">
+        <div *ngIf="chosenPermissions && chosenPermissions.length" class="col-12">
+
+          <p class="my-1">הרשאות</p>
+          <div class="inputTypeNumber mb-2 d-flex flex-wrap">
+            <div *ngFor="let permission of chosenPermissions; let idx2 = index"
+              class="custom-control custom-checkbox  col-6 px-1 d-flex align-items-center">
+              <div *ngIf="permission | keyvalue as item" class="col-12">
+
+                <input [id]="'addedItem'+idx2+item[0].key" [value]="item[0].key" class="custom-control-input"
+                  type="checkbox" [checked]="item[0].value" (click)="updateCheckBox(checkBox1)" #checkBox1>
+                <button type="button" class="btn btn-outline-warning btn-sm my-1 col-3"
+                  (click)="removePermission(item[0].key, idx2)">הסר</button>
+                <label [for]="'addedItem'+idx2+item[0].key" class="custom-control-label col-6">
+                  {{ item[0].key }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+      <div class="form-row">
+        <div class="col clearfix">
+          <button type="button" class="btn btn-success float-left" (click)="addRoleItem()">
+           עדכן
+          </button>
+          <button type="button" class="btn btn-warning" (click)="revoke()">
+            <!-- <i class="fa fa-envelope"></i> -->
+            בטל
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </ng-template>
+
+  <ng-template #updateTemplate let-item="htmItm" let-fn="fn" let-method="method">
+    <button type="button" class="btn btn-outline-success btn-sm my-1 col-3" (click)="fn(item)">עדכן</button>
+  </ng-template>
+</div>

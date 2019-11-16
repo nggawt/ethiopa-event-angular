@@ -15,27 +15,28 @@
         
         <div class="my-nav">
 
-          <a routerLinkActive="active" routerLink="./" class="googleFont ml-1 p-2 border rounded text-center ">
+          <a routerLinkActive="active" routerLink="./" class="btn btn-link ml-1 btn-sm">
             הגדרות
-            <i class="material-icons">select_all</i>
+            <i class="material-icons">
+              verified_user
+              </i>
           </a>
 
-          <a routerLinkActive="active" routerLink="roles" class="googleFont p-2 border rounded text-center">
+          <a routerLinkActive="active" routerLink="roles" class="btn btn-link ml-1 btn-sm">
             ניהול הרשאות
             <i class="material-icons">add</i>
+          </a>
+          <a routerLinkActive="active" routerLink="preferences" class="btn btn-link btn-sm">
+            דשבורד העדפות
+            <i class="material-icons">
+              settings_applications
+              </i>
           </a>
         </div>
         <div class="other-nav">
 
-          <a routerLinkActive="active" (click)="destroy()" class="googleFont ml-1 p-2 border rounded text-center ">
-            הסר חשבון
-            <i class="material-icons text-danger">
-              delete_forever
-            </i>
-          </a>
-
           <a routerLinkActive="active" class="btn btn-primary" (click)="create('/dashboard/admins-views/create')"
-            class="googleFont p-2 border rounded text-center">
+            class="btn btn-link ml-1 btn-sm">
             <span>
               צור אדמין חדש
               <i class="material-icons">
@@ -43,6 +44,13 @@
               </i>
             </span>
           </a>
+          <a routerLinkActive="active" class="btn btn-link btn-sm" (click)="destroy()">
+            הסר חשבון
+            <i class="material-icons text-danger">
+              delete_forever
+            </i>
+          </a>
+
         </div>
       </div>
     </div>

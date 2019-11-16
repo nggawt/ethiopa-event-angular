@@ -1,31 +1,40 @@
-<dashboard-model [modelProps]='mdProps'>
-  <div *ngIf="itemData" class="border p-3 rounded">
+<!-- <dashboard-model [modelProps]='mdProps'> -->
+<div *ngIf="itemData" class="border rounded">
 
-    <form class="form-row" [formGroup]="formGr" (ngSubmit)="onSubmit()">
-      <!-- (ngSubmit)="srv.update('admins', itemData, formGr, 'PUT')" -->
-      <div class="form-group col-md-6">
-        <label for="name" class="form-control-label">
-          שם:
-        </label>
+  <form class="p-3" [formGroup]="formGr" (ngSubmit)="onSubmit()">
+    <!-- class="form-row" -->
+    <!-- (ngSubmit)="srv.update('admins', itemData, formGr, 'PUT')" -->
+    <div class="form-group row">
+      <label for="name" class="col col-form-label">
+        שם:
+      </label>
+      <div class="col-sm-9 col-lg-10">
+
         <div class="inputTypeNumber mb-2 d-flex bd-highlight">
           <input class="w-100 bd-highlightpx-1" formControlName="name" type="text">
           <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
         </div>
       </div>
-      <div class="form-group col-md-6">
-        <label for="email" class="form-control-label">
-          אימייל:
-        </label>
+    </div>
+
+    <div class="form-group row">
+      <label for="email" class="col col-form-label">
+        אימייל:
+      </label>
+      <div class="col-sm-9 col-lg-10">
+
         <div class="inputTypeNumber mb-2 d-flex bd-highlight">
           <input class="w-100 bd-highlightpx-1" id="email" formControlName="email" type="email">
           <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
         </div>
       </div>
+    </div>
 
-      <div class="form-group col-md-6">
-        <label for="authority" class="form-control-label">
-          הרשאות :
-        </label>
+    <div class="form-group row">
+      <label for="authority" class="col col-form-label">
+        הרשאות :
+      </label>
+      <div class="col-sm-9 col-lg-10">
         <div class="inputTypeNumber mb-2 d-flex bd-highlight">
           <select *ngIf="itemData.authority?.id as authId" id="authority" [value]="authId" formControlName="authority"
             class="w-100 bd-highlightpx-1" required>
@@ -38,17 +47,22 @@
           <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
         </div>
       </div>
+      
 
-      <div class="col-sm-12 clearfix">
-        <!-- <span class="btn btn-light btn-sm" (click)="initForm(false, tableCustomers)"> -->
-        <span class="border border-success rounded p-1 costum-btn costum-btn-success">
-          <i class="material-icons">chevron_right </i>
-          <i class="mt-icons"> חזור </i>
-        </span>
-        <!-- </span> -->
-        <button class="btn btn-success btn-sm float-left" type="submit">עדכן</button>
+    </div>
+    <div class="d-flex justify-content-end">
+        <!-- <div class="col d-inline-block">
+            <span class="border border-success rounded p-1 costum-btn costum-btn-success">
+                <i class="material-icons">chevron_right </i>
+                <i class="mt-icons"> חזור </i>
+              </span>
+        </div> -->
+          <button class="btn btn-success btn-sm" type="submit">עדכן</button>
       </div>
-    </form>
-    <h2 *ngIf="mdProps.message" class="h4 text-center text-success">{{mdProps.message}}</h2>
-  </div>
-</dashboard-model>
+  </form>
+  <hr>
+  <h2 *ngIf="mdProps.message" class="h4 text-center text-success">{{mdProps.message}}</h2>
+  <app-user-setting *ngIf="itemData.authority" [admin]="itemData"></app-user-setting>
+
+</div>
+<!-- </dashboard-model> -->

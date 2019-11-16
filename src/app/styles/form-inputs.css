@@ -1,7 +1,7 @@
 
 
 .inputTypeNumber {
-    height: calc(2.25rem + 2px);
+    /* height: calc(2.25rem + 2px); */
     padding: .375rem .25rem;
     line-height: 1.5;
     color: #495057;
@@ -64,7 +64,7 @@ textarea.note {
 
 /* form validaty */
 
-input.ng-valid+span:after,
+/* input.ng-valid+span:after,
 select.ng-valid+span:after,
 textarea.ng-valid+span:after,
 input:valid+small:after {
@@ -80,5 +80,5 @@ input:invalid+small:after {
     content: '✖';
     color: #f00;
     padding-left: 5px;
-}
+} */
 

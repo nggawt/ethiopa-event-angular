@@ -68,16 +68,16 @@
         <tbody>
           <tr *ngFor="let admin of admins; let idx = index">
             <th scope="row">{{ idx }}</th>
-            <td>{{ admin.name }}</td>
+            <td>{{ admin.user.name }}</td>
             <td>
-              <small *ngIf="admin.created_at as dt" class="text-muted">
+              <small *ngIf="admin.user.created_at as dt" class="text-muted">
                 {{ dt | dateHebraw:'full' }}
               </small>
             </td>
-            <td><a class="btn btn-outline-primary btn-sm" (click)="show('/dashboard/admins-views/'+admin.id)">הצג</a>
+            <td><a class="btn btn-outline-primary btn-sm" (click)="show('/dashboard/admins-views/'+admin.user.id)">הצג</a>
             </td>
             <td><a class="btn btn-outline-warning btn-sm"
-                (click)="edit('/dashboard/admins-views/'+admin.id+'/edit')">ערוך</a></td>
+                (click)="edit('/dashboard/admins-views/'+admin.user.id+'/edit')">ערוך</a></td>
             <td><a class="btn btn-outline-danger btn-sm" (click)="destroy('admins', admin)">מחק</a></td>
             <td>
               {{ admin.authority?.slug }}

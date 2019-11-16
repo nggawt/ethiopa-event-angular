@@ -21,6 +21,8 @@ export class HttpService {
     })
   };
 
+  private USER_TYPE: { [user: string]: boolean } = { USER: false, ADMIN: false };
+
   private apiKey: any;
   private logged: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private user: BehaviorSubject<User | Admin | boolean> = new BehaviorSubject(false);
@@ -44,15 +46,17 @@ export class HttpService {
   public userObs: Observable<any> = this.user.asObservable();
 
   constructor(private http: HttpClient, private jwt: JwtHelperService, private esrv: ErrorsHandler) {
+    let isAuth = this.isAuth();
+    console.log('is Authonticated: ',isAuth, ' expire in: ', this.jwt.getTokenExpirationDate(this.jwt.tokenGetter()));
 
-    console.log('is Authonticated: ', this.isAuth());
-    if (this.isAuth()) this.userPromise();
+    if (isAuth) this.userPromise();
     let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
     // this.getData('customers').subscribe(item => console.log(item));
     // this.logNumRequsts();
   }
 
   isExpiredToken() {
+    
     return this.jwt.isTokenExpired(this.jwt.tokenGetter());
   }
 
@@ -62,6 +66,10 @@ export class HttpService {
       console.log(this.outRequests);
       clearTimeout(timeOut);
     }, 7000);
+  }
+
+  updateObservable(keyName: string, data: {}) {
+    this[keyName].next(data);
   }
 
   protected setOutRequests(url) {
@@ -87,48 +95,41 @@ export class HttpService {
         // map(user => user && user['admin']? user['admin']: user ? user: false),
         tap(res => {
           let itemsRes = res && res['admin'] ? res['admin'] : res ? res : false;
-          console.log(itemsRes);
+          
+          let isAdmin = res['roles'] || res['authority'] || res['admin'];
+
+          isAdmin ? this.USER_TYPE["ADMIN"] = true : itemsRes ? this.USER_TYPE["USER"] = true : '';
 
           if (itemsRes && itemsRes['access_token']) {
             this.allowLogIn.next(false);
-            this.setUserProps(itemsRes['user']);
             this.setApiKey(itemsRes);
-
-            let user = res['roles'] ? {
-              user: itemsRes['user'],
-              authority: itemsRes['authority'],
-              roles: res['roles']
-            } : (itemsRes && itemsRes['authority'] )? {
-              user: itemsRes['user'],
-              authority: itemsRes['authority']
-            } : itemsRes['user'] ? itemsRes['user'] : false;
-
-            console.log(user);
+            
+            let user = this.getResponseUser(res);
+            this.setUserProps(user);
             this.user.next(user);
+            console.log("url: ", theUrl, 'response: ', res, " user: ", user);
           }
         }));
   }
 
-  protected getResponseUserProps(response) {
+  protected getResponseUser(response){
 
-    if (response && response['admin']) {
-      let admin = response['admin'];
+    let itemsRes = response && response['admin'] ? response['admin'] : response;
 
-      return response['roles'] ? {
-        user: admin['user'],
-        authority: admin['authority'],
-        access_token: admin['access_token'],
-        roles: response['roles']
-      } : {
-          user: admin['user'],
-          authority: admin['authority']
-        };
+    let user = response['roles'] ? {
+      user: itemsRes['user'],
+      authority: itemsRes['authority'],
+      roles: response['roles']
+    } : (itemsRes && itemsRes['authority']) ? {
+      user: itemsRes['user'],
+      authority: itemsRes['authority']
+    } : itemsRes['user'] ? itemsRes['user'] : false;
 
-    } else if (response['user']) {
-      return response;
-    } else {
-      return false;
-    }
+    (user['user'] && !user['user'].avatar)
+        ? user['user'].avatar = 'https://source.unsplash.com/random/120x120' : !user.avatar
+        ? user.avatar = 'https://source.unsplash.com/random/120x120' : '';
+
+    return user;
   }
 
   public sendResetPassword(credential) {
@@ -175,15 +176,12 @@ export class HttpService {
   }
 
   store(theUrl, body) {
-
-    this.setOutRequests(theUrl);
-    return this.http.post(theUrl, (body || {}), this.getHttpOpt())
+    let url = this.baseUrl + "/" + theUrl;
+    this.setOutRequests(url);
+    return this.http.post(url, (body || {}), this.getHttpOpt())
       .pipe(
         tap(user => {
-          if (user['access_token']) {
-            this.setUserProps(user);
-            console.log(user);
-          }
+          console.log(user);
         }));
   }
 
@@ -205,7 +203,8 @@ export class HttpService {
 
     url = url ? this.baseUrl + "/" + url : "http://ethio:8080/api/events";
     //this.setOutRequests(url);
-    return !this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap(item => this.setOutRequests(url)), first()) : this.http.get(url).pipe(tap(item => this.setOutRequests(url)), first());
+    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap(item => this.setOutRequests(url)), first()) : 
+                                    this.http.get(url).pipe(tap(item => this.setOutRequests(url)), first());
   }
 
   logOut(urlParams?) {
@@ -225,38 +224,32 @@ export class HttpService {
         }));
   }
 
+  getUserType() {
+    let token = new HttpParams().set('token', this.jwt.tokenGetter());
+    this.http.post(this.baseUrl + '/user-type', token, this.headersOpt).subscribe(userType => {
+      console.log(userType);
+
+    });
+  }
+
   userPromise(path?): Promise<User | any> {
-    console.log("userPromise");
+    console.log("userPromise", " window.localStorage: ", window.localStorage);
 
     path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/auth-user";//me
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
-
+    this.getUserType();
     this.setOutRequests(theUrl);
     return this.http.post(theUrl, token, this.headersOpt)
       .pipe(
         first(),
         tap((res) => {
-          let itemsRes = res && res['admin'] ? res['admin'] : res ? res : false;
-
-          let user = res['roles'] ? { 
-            user: itemsRes['user'], 
-            authority: itemsRes['authority'], 
-            roles: res['roles'] 
-          } : (itemsRes && itemsRes['authority']) ? { 
-            user: itemsRes['user'], 
-            authority: itemsRes['authority'] 
-          } : itemsRes['user'] ? itemsRes['user'] : false;
-
+          let user = this.getResponseUser(res);
           console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
           if (user) this.setUserProps(user);
 
         })).toPromise().catch(this.esrv.handleError);
   }
-
-  // handleError(errors) {
-  //   console.log(errors);
-  // }
 
   private removePropsUser() {
     this.logged.next(false);

@@ -17,6 +17,7 @@ declare let $:any;
 export class HeaderComponent implements OnInit {
  
   private url:string;
+  loginParams: { [key: string]: string } | boolean = false;
   sendingMail: Observable<{[key: string]: boolean} | boolean>;
 
   eeMessage: {
@@ -44,10 +45,10 @@ export class HeaderComponent implements OnInit {
   private articles: {}[];
   private events: {}[] ;
 
-  private itemsSearch: {customers: {}[], events: {}[], blog: {}[]} = {
+  private itemsSearch: {customers: {}[], events: {}[], articles: {}[]} = {
     customers: [],
     events: [],
-    blog: []
+    articles: []
   };
 
   constructor(
@@ -59,7 +60,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     
     this.url = decodeURIComponent(location.pathname);
-    this.user$ = this.http.userObs.pipe(filter(item => typeof item == "object"));
+    this.user$ = this.http.userObs.pipe(tap(user => console.log(user)));// .pipe(filter(item => typeof item == "object"))
   }
 
   contactModel(param){
@@ -115,11 +116,11 @@ export class HeaderComponent implements OnInit {
       // console.log(sceduleEvents);
       if(sceduleEvents.length) searchItems = [...searchItems, ...sceduleEvents];
 
-      /* filter Blog && Articles*/
+      /* filter articles && Articles*/
       let articleProps = ['id', 'title', 'body', 'date'];
-      let blog = await this.gatItems(input, 'blog', articleProps);
-      // console.log(blog);
-      if(blog.length) searchItems = [...searchItems, ...blog];
+      let articles = await this.gatItems(input, 'articles', articleProps);
+      console.log(articles);
+      if(articles.length) searchItems = [...searchItems, ...articles];
 
       /* filter pages(contact EE and Customers) */
 
@@ -127,7 +128,7 @@ export class HeaderComponent implements OnInit {
       // console.log(searchItems);
       
       let cHtm = await this.createHtms(searchItems);
-          
+      console.log(cHtm);
       if(divSearch.firstElementChild) divSearch.removeChild(divSearch.firstElementChild);
       divSearch.appendChild(cHtm);
       divSearch.className += " shadow-sm";
@@ -245,7 +246,7 @@ export class HeaderComponent implements OnInit {
         if(foundedItem){
           let slicedItems = (foundedItem.length > 2)? foundedItem.slice(0,2):foundedItem;
           let url = (link == "customers")? (itemKey == "discription")? "/"+link+"/"+item['businessType']+"/"+item['company']+"/about":
-          "/"+link+"/"+item['businessType']+"/"+item['company']:(link == "blog")? "/"+link+"/"+item['id']:"/"+link;
+          "/"+link+"/"+item['businessType']+"/"+item['company']:(link == "articles")? "/"+link+"/"+item['id']:"/"+link;
 
           let fd = {
             match: slicedItems.join('::'),
@@ -277,8 +278,8 @@ export class HeaderComponent implements OnInit {
   logIn(){
     this.http.requestUrl = decodeURIComponent(location.pathname);
     console.log(location.pathname);
-    
-    this.router.navigate(['/login']);
+    this.loginParams = {from_path: location.pathname, url: "login"}
+    // this.router.navigate(['/login']);
   } 
   
   register(path){
@@ -289,7 +290,7 @@ export class HeaderComponent implements OnInit {
     this.router.navigate([path]);
   }
 
-  private setUrlPage(customer){
+  setUrlPage(customer){
     
     let compNameTrimed = customer['company'].trim(),
         bTypeTrimed = customer['businessType'].trim(),
@@ -299,7 +300,7 @@ export class HeaderComponent implements OnInit {
     return "customers/"+businessType+"/"+compName;
   }
 
-  private setUrlProfile(obj){
+  setUrlProfile(obj){
     return "/users/"+obj['name'];
   }
 

@@ -1,0 +1,7 @@
+/* div.inputTypeNumber .custom-control-label::after {
+    position: relative !important;
+} */
+
+div.inputTypeNumber .custom-control-inline {
+    margin-right: 0px;
+}

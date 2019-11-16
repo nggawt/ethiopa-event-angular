@@ -1,0 +1,10 @@
+/* select:-internal-list-box option:checked {
+    background-color: -internal-inactive-list-box-selection !important;
+    color           : -internal-inactive-list-box-selection-text !important;
+    color           : red !important;
+    background-color: blue !important;
+} */
+
+select {
+    overflow      : hidden;
+}
