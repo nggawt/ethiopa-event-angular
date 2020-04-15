@@ -93,7 +93,7 @@ export class UpdatePostComponent implements OnInit {
   }
 
   send(body, url?: string, method?: string) {
-    let baseUrl = "http://ethio:8080/api";
+    let baseUrl = "http://lara.test/api";
     url = url ? url : "blog";
 
     let updaterUrl = url && method ? baseUrl + "/" + url + "/" + this.post["id"] + "?_method=" + method : baseUrl + "/" + url;

@@ -21,7 +21,7 @@ export class AdminsViewsComponent implements OnInit {
   constructor(private srv: ResourcesService, private http: HttpService, private router:Router, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    // let url = "http://ethio:8080/api/admins";
+    // let url = "http://lara.test/api/admins";
     this.initAdmins();
   }
 

@@ -416,7 +416,7 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
 
   send(body, method) {
 
-    let updaterUrl = "http://ethio:8080/api/customers/" + this.customer["id"] + "? _method=" + method;
+    let updaterUrl = "http://lara.test/api/customers/" + this.customer["id"] + "? _method=" + method;
 
     this.http.postData(updaterUrl, body)
       .subscribe(evt => {

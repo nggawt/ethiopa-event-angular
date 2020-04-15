@@ -228,7 +228,7 @@ export class EventsSchedulComponent implements OnInit {
     }
     send(body) {
 
-        let updaterUrl = "http://ethio:8080/api/customers";
+        let updaterUrl = "http://lara.test/api/customers";
 
         this.http.postData(updaterUrl, body)
             .subscribe(evt => {
@@ -251,7 +251,7 @@ export class EventsSchedulComponent implements OnInit {
     }
     delEvents(event) {
         console.log(event);
-        let updaterUrl = "http://ethio:8080/api/events/" + event["id"] + "? _method=delete";
+        let updaterUrl = "http://lara.test/api/events/" + event["id"] + "? _method=delete";
 
         this.http.postData(updaterUrl, event).subscribe((response) => {
             console.log(response);

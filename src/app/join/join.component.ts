@@ -346,7 +346,7 @@ export class JoinComponent implements OnInit, CanDeactivateComponent {
 
   send(body, customer?) {
 
-    let updaterUrl = "http://ethio:8080/api/customers";
+    let updaterUrl = "http://lara.test/api/customers";
 
     this.http.postData(updaterUrl, body)
       .subscribe(evt => {

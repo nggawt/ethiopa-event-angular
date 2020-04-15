@@ -422,7 +422,7 @@ export class ProfileComponent implements OnInit {
 
   delEvents(event) {
     console.log(event);
-    let updaterUrl = "http://ethio:8080/api/events/" + event["id"] + "?_method=delete";
+    let updaterUrl = "http://lara.test/api/events/" + event["id"] + "?_method=delete";
 
     this.http.postData(updaterUrl, event).subscribe((response) => {
       console.log(response);
@@ -506,7 +506,7 @@ export class ProfileComponent implements OnInit {
 
   formSt(formGroups) {
 
-    const theUrl = "http://ethio:8080/api/users/" + this.user["id"];
+    const theUrl = "http://lara.test/api/users/" + this.user["id"];
     const act: string | boolean = (formGroups.id == "changeEmail") ? "change_email" : (formGroups.id == "changePassword") ? "change_password" : false;
     let url = act ? theUrl + "/" + act : theUrl;
     let method = act ? 'PATCH' : (formGroups.id == "deleteAccount") ? "DELETE" : false;
@@ -618,7 +618,7 @@ export class ProfileComponent implements OnInit {
   }
 
   send(body, method?: string | boolean, urlArg?: string) {
-    let url = urlArg ? urlArg : "http://ethio:8080/api/events";
+    let url = urlArg ? urlArg : "http://lara.test/api/events";
     let requestUrl = method ? (!urlArg) ? url + "/" + this.currentEvt["id"] + "?_method=" + method : urlArg + "?_method=" + method : url;
     console.log(requestUrl);
 

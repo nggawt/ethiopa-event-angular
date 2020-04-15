@@ -40,7 +40,7 @@ export class HttpService {
   }
 
   public authUser: User;
-  private baseUrl: string = "http://ethio:8080/api";
+  private baseUrl: string = "http://lara.test/api";
 
   public isLogedIn: Observable<boolean> = this.logged.asObservable();
   public userObs: Observable<any> = this.user.asObservable();
@@ -80,7 +80,7 @@ export class HttpService {
   public logIn(credential, path?) {
 
     path = path ? path : this.loginTo ? this.loginTo : false;
-    const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/login";
+    const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/login";
 
     console.log("URL: ", theUrl);
     let body = new HttpParams()
@@ -135,7 +135,7 @@ export class HttpService {
   public sendResetPassword(credential) {
 
     //password/email  
-    const theUrl = "http://ethio:8080/api/password/email";
+    const theUrl = "http://lara.test/api/password/email";
     let body = new HttpParams()
       .set('name', credential['userName'])
       .set('email', credential['logInEmail']);
@@ -156,7 +156,7 @@ export class HttpService {
   public resetPassword(credential) {
 
     //password/email  
-    const theUrl = "http://ethio:8080/api/password/reset";
+    const theUrl = "http://lara.test/api/password/reset";
     let body = new HttpParams()
       .set('email', credential['email'])
       .set('password', credential['newPassword'])
@@ -201,7 +201,7 @@ export class HttpService {
 
   getData(url?, opt?) {
 
-    url = url ? this.baseUrl + "/" + url : "http://ethio:8080/api/events";
+    url = url ? this.baseUrl + "/" + url : "http://lara.test/api/events";
     //this.setOutRequests(url);
     return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap(item => this.setOutRequests(url)), first()) : 
                                     this.http.get(url).pipe(tap(item => this.setOutRequests(url)), first());
@@ -236,7 +236,7 @@ export class HttpService {
     console.log("userPromise", " window.localStorage: ", window.localStorage);
 
     path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
-    const theUrl = path ? this.baseUrl + "/" + path : "http://ethio:8080/api/auth-user";//me
+    const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/auth-user";//me
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
     this.getUserType();
     this.setOutRequests(theUrl);

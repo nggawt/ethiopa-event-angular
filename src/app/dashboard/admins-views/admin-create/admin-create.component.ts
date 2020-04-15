@@ -58,9 +58,9 @@ export class AdminCreateComponent implements OnInit {
       
       let items = this.valForm.validate(controls, formInputes.value);
       let success = items['status'] ? items['success'] : false; */
-      // const theUrl = "http://ethio:8080/api/admin-register";
+      // const theUrl = "http://lara.test/api/admin-register";
       
-      const theUrl =  "http://ethio:8080/api/admins";
+      const theUrl =  "http://lara.test/api/admins";
       if(this.regiter.valid){
         const body = new HttpParams()
           .set('name', details['name'])

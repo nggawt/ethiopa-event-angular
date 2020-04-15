@@ -59,7 +59,7 @@ export class AdminRegistrationComponent implements OnInit {
       let formInputes = this.regiter;
       let details = formInputes.value;
 
-      const theUrl = "http://ethio:8080/api/admin-register";
+      const theUrl = "http://lara.test/api/admin-register";
       if (this.regiter.valid) {
         const body = new HttpParams()
           .set('name', details['name'])

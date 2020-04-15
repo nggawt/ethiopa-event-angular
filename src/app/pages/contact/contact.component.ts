@@ -111,7 +111,7 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   send(body, method?: string | boolean, urlArg?: string) {
 
-    let url = urlArg ? urlArg : "http://ethio:8080/api/events";
+    let url = urlArg ? urlArg : "http://lara.test/api/events";
     let requestUrl = method ? urlArg + "?_method=" + method : url;// (! urlArg)? url + "/" + this.currentEvt["id"] + "?_method=" + method:
 
     this.http.postData(requestUrl, body)

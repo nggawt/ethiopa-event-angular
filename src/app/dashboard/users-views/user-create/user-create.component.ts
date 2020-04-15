@@ -50,7 +50,7 @@ export class UserCreateComponent implements OnInit {
     /****** handel form inputs *****/
 
     if (this.userCreate.valid) {
-      const theUrl = "http://ethio:8080/api/users";
+      const theUrl = "http://lara.test/api/users";
 
       this.http.store(theUrl, this.userCreate.value).
         subscribe(evt => {

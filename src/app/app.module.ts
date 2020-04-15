@@ -269,7 +269,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        whitelistedDomains: ['http://ethio:8080/api/'],
+        whitelistedDomains: ['http://lara.test/api/'],
         blacklistedRoutes: ['example.com/examplebadroute/']
       }
     })

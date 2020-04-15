@@ -88,7 +88,7 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
 
   delEvents(event) {
     console.log(event);
-    let updaterUrl = "http://ethio:8080/api/events/" + event["id"] + "? _method=delete";
+    let updaterUrl = "http://lara.test/api/events/" + event["id"] + "? _method=delete";
 
     this.http.postData(updaterUrl, event).subscribe((response) => {
       console.log(response);
