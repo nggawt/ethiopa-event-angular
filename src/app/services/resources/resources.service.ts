@@ -131,17 +131,17 @@ export class ResourcesService {
     this.getResources('forbidden', false).then(forbidden => {
       console.log("forbiddens: ", forbidden);
       (forbidden && Array.isArray(items)) ? items = items.map(user => user['forbidden'] = forbidden.find(forbiddenItem => (forbiddenItem.email == user.email)) ? true : false) : false;
-    });
+    });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
     // items = (Array.isArray(items)) ? items.map(user => user['forbidden'] = this.isForbidden(user.email)): false;
     return items;
   }
 
   isForbidden(itemValue: string, itemKey?: string) {
-    itemKey = itemKey? itemKey: "email";
+    itemKey = itemKey? itemKey: "email";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     let isTrue = false;
     this.getResources('forbidden', false).then(forbidden => {
       isTrue = Array.isArray(forbidden)? forbidden.find(item => item[itemKey] == itemValue) ? true : false: false;
-    });
+    });                                                                                                           
     return isTrue;
   }
 
@@ -149,7 +149,6 @@ export class ResourcesService {
     return this.http.getData(url).pipe(first(),
       tap(item => {
         // console.log(url);
-
       })).toPromise();
   }
 

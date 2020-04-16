@@ -17,8 +17,14 @@ export class InboxComponent implements OnInit {
 
   ngOnInit() {
     this.rsrv.getResources('messages', false).then(msgs => {
-      if(msgs) this.messageItems = this.rsrv.dataTransform('messages', this.getSortededItems(msgs));
-      console.log('/inbox: ', msgs);
+      if(msgs){
+
+        let sorted = this.getSortededItems(msgs);
+        // console.log('/inbox: ', msgs);
+        console.log('/sorted: ', sorted);
+         this.messageItems = this.rsrv.dataTransform('messages', sorted);
+      }
+      console.log('/inbox: ', this.messageItems);
     });
    }
 
@@ -52,7 +58,7 @@ export class InboxComponent implements OnInit {
   }
 
   protected getSortededItems(items){
-    return items.filter(item => item.deleted_at === null).sort((aItem, bItem) => new Date(bItem.created_at).getTime() - new Date(aItem.created_at).getTime());
+    return items.filter(item => item.deleted_at === null || item.deleted_at === undefined).sort((aItem, bItem) => new Date(bItem.created_at).getTime() - new Date(aItem.created_at).getTime());
   }
 
   forbidden(items){
