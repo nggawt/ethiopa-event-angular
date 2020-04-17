@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class EventPreviewComponent implements OnInit {
 
-  @Input() itemData: {};
+  @Input() itemData: {} | any;
 
   constructor() { }
 

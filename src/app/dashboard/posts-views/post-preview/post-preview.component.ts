@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class PostPreviewComponent implements OnInit {
 
-  @Input() itemData: {};
+  @Input() itemData: {} | any;
   constructor() { }
 
   ngOnInit() {

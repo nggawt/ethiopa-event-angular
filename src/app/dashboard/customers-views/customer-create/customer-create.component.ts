@@ -73,7 +73,7 @@ export class CustomerCreateComponent implements OnInit, AfterViewInit {
     });
   }
 
-  setOwnerUser(userId){
+  setOwnerUser(userId, userObj?:{}){
     let user = this.users.find(user => user.id == userId);
     console.log(user);
 

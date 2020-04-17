@@ -3,21 +3,7 @@ import { PreloadAllModules, RouterModule, Routes, NoPreloading } from '@angular/
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 // import { LogInComponent } from './auth/log-in/log-in.component';
 import { RegistrationComponent } from './auth/registration/registration.component';
-import { ResetPasswordComponent } from './auth/rest-password/reset-password.component';
-import { AdminsViewsComponent } from './dashboard/admins-views/admins-views.component';
-import { CustomerEditComponent } from './dashboard/customers-views/customer-edit/customer-edit.component';
-import { CustomersViewsComponent } from './dashboard/customers-views/customers-views.component';
-import { EventEditComponent } from './dashboard/events-views/event-edit/event-edit.component';
-import { EventsViewsComponent } from './dashboard/events-views/events-views.component';
-import { MailComponent } from './dashboard/mail/mail.component';
-import { MainDashboardComponent } from './dashboard/main-dashboard/main-dashboard.component';
-import { OverviewComponent } from './dashboard/overview/overview.component';
-import { PostEditComponent } from './dashboard/posts-views/post-edit/post-edit.component';
-import { PostsViewsComponent } from './dashboard/posts-views/posts-views.component';
-import { QuickEditorComponent } from './dashboard/quick-editor/quick-editor.component';
-import { TasksComponent } from './dashboard/tasks/tasks.component';
-import { UserEditComponent } from './dashboard/users-views/user-edit/user-edit.component';
-import { UsersViewsComponent } from './dashboard/users-views/users-views.component';
+import { ResetPasswordComponent } from './auth/rest-password/reset-password.component'; 
 import { JoinComponent } from './join/join.component';
 import { AboutComponent } from './pages/about/about.component';
 // import { ContactComponent } from './pages/contact/contact.component';
@@ -34,26 +20,8 @@ import { ProfileComponent } from './pages/profile/profile.component';
 /****************** MAIN Pages ********************/
 import { WellcomeComponent } from './pages/wellcome/wellcome.component';
 import { CanDeactivateGuardService } from './services/can-deactivate-guard/can-deactivate-guard.service';
-import { RouteGuardService } from './services/route-guard/route-guard.service';
-import { AdminCreateComponent } from './dashboard/admins-views/admin-create/admin-create.component';
-import { LogInComponent } from './auth/log-in/log-in.component';
-import { CustomerCreateComponent } from './dashboard/customers-views/customer-create/customer-create.component';
-import { UserCreateComponent } from './dashboard/users-views/user-create/user-create.component';
-import { PostCreateComponent } from './dashboard/posts-views/post-create/post-create.component';
-import { EventCreateComponent } from './dashboard/events-views/event-create/event-create.component';
-import { InboxComponent } from './dashboard/mail/inbox/inbox.component';
-import { OutboxComponent } from './dashboard/mail/outbox/outbox.component';
-import { TrashComponent } from './dashboard/mail/trash/trash.component';
-import { FavoritesComponent } from './dashboard/mail/favorites/favorites.component';
-import { PreferencesComponent } from './dashboard/mail/preferences/preferences.component';
-import { MainComponent } from './dashboard/main-dashboard/main/main.component';
-import { SecurityComponent } from './dashboard/settings/security/security.component';
-import { AdminPreviewComponent } from './dashboard/admins-views/admin-preview/admin-preview.component';
-import { RolesComponent } from './dashboard/settings/roles/roles.component';
-import { SettingsComponent } from './dashboard/settings/settings.component';
-import { DashboardAdminComponent } from './dashboard/settings/dashboard-admin/dashboard-admin.component';
-import { DashboardProfileComponent } from './dashboard/settings/dashboard-profile/dashboard-profile.component';
-import { CreateRoleComponent } from './dashboard/settings/roles/create-role/create-role.component';
+import { RouteGuardService } from './services/route-guard/route-guard.service'; 
+import { LogInComponent } from './auth/log-in/log-in.component'; 
 
 
 // import { NotificationsComponent } from './dashboard/notifications/notifications.component';
@@ -62,77 +30,7 @@ import { CreateRoleComponent } from './dashboard/settings/roles/create-role/crea
 const routes: Routes = [
   { path: '', component: WellcomeComponent },
   { path: 'users/:id', component: ProfileComponent },
-  {
-    path: 'dashboard', component: MainDashboardComponent, children: [
-      // START dashboard childrens
-      // { path: '',   redirectTo: 'main', pathMatch: 'full' },
-      { path: '', component: MainComponent},
-      { path: 'admins-views', component: AdminsViewsComponent, children: []},
-      { path: 'admins-views/create', component: OverviewComponent, data: { itemType: "admins", comp: 'create' } },
-      { path: 'admins-views/:id', component: OverviewComponent, data: { itemType: "admins", comp: 'preview' } },
-      { path: 'admins-views/:id/edit', component: OverviewComponent, data: { itemType: "admins", comp: 'edit' } },
-      // { path: 'admins-views/:id/edit', component: AdminEditComponent, data : { itemType: "admins"} },
-
-      {
-        path: 'users-views', component: UsersViewsComponent, children: [
-          { path: 'create', component:  OverviewComponent, data: { itemType: "users", comp: 'create' } },
-        ]
-      },
-
-      { path: 'users-views/:id', component: OverviewComponent, data: { itemType: "users", comp: 'preview' } },
-      { path: 'users-views/:id/edit', component: OverviewComponent, data: { itemType: "users", comp: 'edit' } },
-
-      { path: 'articles-views', component: PostsViewsComponent },
-      // { path: 'articles-views/create', component: PostCreateComponent, data : { itemType: "articles"} },
-      { path: 'articles-views/create', component: OverviewComponent, data: { itemType: "articles", comp: 'create' } },
-      { path: 'articles-views/:id/edit', component: OverviewComponent, data: { itemType: "articles", comp: 'edit' } },
-      { path: 'articles-views/:id', component: OverviewComponent, data: { itemType: "articles", comp: 'preview' } },
-
-      { path: 'customers-views', component: CustomersViewsComponent },
-      { path: 'customers-views/create', component:  OverviewComponent, data: { itemType: "customers", comp: 'create' } },
-      { path: 'customers-views/:id', component: OverviewComponent, data: { itemType: "customers", comp: 'preview' } },
-      { path: 'customers-views/:id/edit', component: OverviewComponent, data: { itemType: "customers", comp: 'edit' } },
-
-      { path: 'events-views', component: EventsViewsComponent },
-      { path: 'events-views/create', component: OverviewComponent, data: { itemType: "events", comp: 'create' } },
-      { path: 'events-views/:id', component: OverviewComponent, data: { itemType: "events", comp: 'preview' } },
-      { path: 'events-views/:id/edit', component: OverviewComponent, data: { itemType: "events", comp: 'edit' } },
-      // { path: 'notifications', component: NotificationsComponent },
-
-      /****** mail ******/
-      {
-        path: 'mail-views', component: MailComponent, children: [
-          { path: '',   redirectTo: 'inbox', pathMatch: 'full' },
-          { path: 'favorites', component: FavoritesComponent },
-          { path: 'preferences', component: PreferencesComponent },
-          { path: 'trash', component: TrashComponent },
-          { path: 'inbox', component: InboxComponent },
-          { path: 'outbox', component: OutboxComponent }
-        ]
-      },
-
-      /****** Settings ******/
-      {
-        path: 'settings', component: SettingsComponent, children: [
-          { path: '', component: DashboardAdminComponent },
-          // { path: 'security', component: SecurityComponent },
-          { path: 'roles', component: RolesComponent },
-          { path: 'roles/create', component: CreateRoleComponent},/* OverviewComponent , data: { itemType: "admins", comp: 'create' } */
-          { path: 'preferences', component: DashboardProfileComponent },
-          // { path: 'preferences', component: PreferencesComponent },
-          // { path: 'trash', component: TrashComponent },
-          // { path: 'inbox', component: InboxComponent },
-          // { path: 'outbox', component: OutboxComponent }
-        ]
-      },
-      
-     
-
-      { path: 'task', component: TasksComponent },
-      // { path: 'security', component: SecurityComponent },
-      { path: 'quick-editor', component: QuickEditorComponent }
-    ]// END dashboard childrens
-  },
+  
   { path: 'אודות', component: AboutComponent },
   { path: 'login', component: LogInComponent },
   // { path: 'logout', component: LogOutComponent },
@@ -155,7 +53,7 @@ const routes: Routes = [
   { path: 'scedule-events', component: EventsSchedulComponent },
   { path: 'deals', component: DealsComponent },
   // { path: 'צור-קשר', component: ContactComponent },
-  { path: 'customers', loadChildren: "./pages/customers/customers.module#CustomersModule" },
+  { path: 'customers', loadChildren: () => import('./pages/customers/customers.module').then(m => m.CustomersModule) },
 
   // { path: "**", component: PageNotFoundComponent}
   { path: "errors-page", component: ErrorPageComponent, data: { errorMsg: "You have page ERRoR" } },

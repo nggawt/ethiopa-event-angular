@@ -36,6 +36,7 @@ export class EventsSchedulComponent implements OnInit {
     };
 
     formEvents: FormGroup;
+    formMethod = "post";
 
     messages: any = {};
     private date: Date = new Date();
@@ -300,7 +301,7 @@ export class EventsSchedulComponent implements OnInit {
         (evts[key]) ? parent.appendChild(evts[key]) : this.tableEvents.noEvents(parent);
     }
 
-    daily(dateStr: string) {
+    daily(dateStr?: string) {
         let currentDt = this.calendar.getCurrentDate();
         dateStr = dateStr ? dateStr : currentDt.getDate() + "-" + (currentDt.getMonth() + 1) + "-" + currentDt.getFullYear();
 

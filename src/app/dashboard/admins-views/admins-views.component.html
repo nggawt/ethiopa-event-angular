@@ -71,7 +71,7 @@
             <td>{{ admin.user.name }}</td>
             <td>
               <small *ngIf="admin.user.created_at as dt" class="text-muted">
-                {{ dt | dateHebraw:'full' }}
+                {{ dt | dateHeb:'full' }}
               </small>
             </td>
             <td><a class="btn btn-outline-primary btn-sm" (click)="show('/dashboard/admins-views/'+admin.user.id)">הצג</a>

@@ -34,8 +34,8 @@
       <label for="date">בתאריך:</label>
       <div class="inputTypeNumber mb-2 d-flex bd-highlight">
         <input id="date" formControlName="date" type="text" autocomplete="off" (click)="fire(date)" class="w-100 bd-highlightpx-1"
-          (keyup)="(f.date.valid)?daily(date.value):''" placeholder="בחר תאריך" [pattern]="datePattern" #date>
-
+          (keyup)="(f.date.valid)?daily(date.value):''" placeholder="בחר תאריך"  #date>
+        <!-- [pattern]="datePattern" -->
         <!-- <span class="flex-shrink-1 bd-highlight" for="date">
           <i class="material-icons">date_range</i>
         </span> -->
@@ -111,7 +111,7 @@
     <div class="form-group col-md-6">
       <label for="email">אימייל</label>
       <div class="inputTypeNumber d-flex bd-highlight">
-        <input type="email" id="email" class="w-100 bd-highlightpx-1" formControlName="email" [pattern]="emailPatteren"
+        <input type="email" id="email" class="w-100 bd-highlightpx-1" formControlName="email" [pattern]="emailPatt"
           #email>
         <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
       </div>
@@ -122,7 +122,7 @@
     <div class="form-group col-md-6">
       <label for="phone">טלפון/פלאפון</label>
       <div class="inputTypeNumber d-flex bd-highlight">
-        <input type="tel" id="phone" class="w-100 bd-highlightpx-1" formControlName="phone" [pattern]="phoneNum" #phone>
+        <input type="tel" id="phone" class="w-100 bd-highlightpx-1" formControlName="phone"  #phone> <!-- [pattern]="phoneNum" -->
         <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
       </div>
       <ng-container *ngTemplateOutlet="clickedMethods; context:{elem: phone, itemMethod: formMethod}">

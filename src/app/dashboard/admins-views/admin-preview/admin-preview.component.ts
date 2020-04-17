@@ -6,7 +6,7 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./admin-preview.component.css']
 })
 export class AdminPreviewComponent implements OnInit {
-  @Input() itemData: {};
+  @Input() itemData: {} | any;
   constructor() { }
 
   ngOnInit() {

@@ -4,17 +4,22 @@ import { NotificationService } from 'src/app/services/messages/notification.serv
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
 import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
+
 import { AddComponentDirective } from 'src/app/shared/directives/add-component.directive';
 import { LogInComponent } from 'src/app/auth/log-in/log-in.component';
+
 import { Observable } from 'rxjs';
 import { ErrorsHandler } from 'src/app/services/errors-exeption/errors-handler.service';
-import { QuillConfig } from 'ngx-quill';
+import { QuillConfig } from 'ngx-quill-v2';
 
 declare var $: any;
 @Component({
   selector: 'app-post-edit',
   templateUrl: './post-edit.component.html',
-  styleUrls: ['./post-edit.component.css', '../../../styles/date-picker.component.css', '../../../styles/form-inputs.css'],
+  styleUrls: [
+    './post-edit.component.css', 
+    '../../../styles/date-picker.component.css', '../../../styles/form-inputs.css'
+  ],
   encapsulation: ViewEncapsulation.None
 })
 export class PostEditComponent implements OnInit {

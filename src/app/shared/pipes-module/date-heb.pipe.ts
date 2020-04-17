@@ -1,13 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'dateHebraw'
+  name: 'dateHeb'
 })
-export class DateHebrawPipe implements PipeTransform {
+export class DateHebPipe implements PipeTransform {
   private monthStr: string[] = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
   public weekStr: string[] = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 
   transform(value: any, args?: any): any {
+    // console.log(value);
     
     let dt = new Date(value),
     day = dt.getDate(),

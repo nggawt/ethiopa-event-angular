@@ -57,6 +57,10 @@ export class MailComponent implements OnInit {
     });
   }
 
+  create(url:string){
+    alert("need implementation");
+  }
+
   setPathName(){
     let loc = window.location.pathname, locExploded = loc.split('/');
     this.pathName = locExploded[(locExploded.length - 1)];

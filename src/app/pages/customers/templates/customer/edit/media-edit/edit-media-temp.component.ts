@@ -39,7 +39,7 @@ export class EditMediaTempComponent implements OnInit{
     'gallery': []
   };
 
-  private messages: {}  = {};
+  messages: {}  = {};
 
   constructor(private router: Router,
     private http: HttpService,

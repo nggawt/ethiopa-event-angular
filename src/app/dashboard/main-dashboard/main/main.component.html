@@ -6,7 +6,6 @@
             <!-- <div class="border-top"> -->
                 <div *ngIf="resource.value && (resource.key | resourcesNameConvertor:'en') as resName"
                 class="border-top" (click)="logger(resource)">
-
                     <div class="border rounded shadow-sm">
                         <div class="p-2 bg-light">
                             <i *ngIf="resource.key == 'users'" class="fa fa-users" style="font-size: 1.5rem;"></i>
@@ -72,7 +71,7 @@
                                 <small
                                     *ngIf="(pend[0] || pend[0] && pend[0].customer) && (pend[0].created_at || pend[0].customer.created_at) as dt; else dateTxt"
                                     class="text-muted">
-                                    {{ dt | dateHebraw:'full' }}
+                                    {{ dt | dateHeb:'full' }}
                                 </small>
                             </h3>
                         </a>

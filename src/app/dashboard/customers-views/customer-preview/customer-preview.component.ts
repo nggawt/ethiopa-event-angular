@@ -7,7 +7,8 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class CustomerPreviewComponent implements OnInit {
 
-  @Input() itemData: {};
+  @Input() itemData: {} | any;
+  
   constructor() { }
 
   ngOnInit() {

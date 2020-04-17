@@ -12,4 +12,11 @@ export class SettingsComponent implements OnInit {
   ngOnInit() {
   }
 
+  create(url: string){
+    alert("create fn need to implement");
+  }
+
+  destroy(url?: string){
+    alert("destroy fn need to implement");
+  }
 }

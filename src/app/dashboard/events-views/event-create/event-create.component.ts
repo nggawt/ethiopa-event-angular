@@ -20,6 +20,9 @@ export class EventCreateComponent implements OnInit, AfterViewInit {
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
 
+  formMethod = "post";
+  messages:any = false;
+
   eventCreate: FormGroup;
   users: {id: number, name: string, email: string, about: string, area: string, address: string, eventType:string, city:string, tel: string}[];
 
@@ -238,5 +241,17 @@ export class EventCreateComponent implements OnInit, AfterViewInit {
     let comp = customer['id'];
     console.log(this.eventCreate.controls);
     this.eventCreate.controls[comp].reset();
+  }
+
+  reset(){
+    alert("reset fn need implementation");
+  }
+
+  close(){
+    alert("close fn need implementation");
+  }
+
+  allTodefault(){
+    alert("allTodefault fn need implementation");
   }
 }

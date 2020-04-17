@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
 
 import { MainDashboardComponent } from '../main-dashboard/main-dashboard.component';
 import { MainComponent } from '../main-dashboard/main/main.component';
@@ -21,11 +21,13 @@ import { DashboardAdminComponent } from '../settings/dashboard-admin/dashboard-a
 import { RolesComponent } from '../settings/roles/roles.component';
 import { CreateRoleComponent } from '../settings/roles/create-role/create-role.component';
 import { DashboardProfileComponent } from '../settings/dashboard-profile/dashboard-profile.component';
+import { TasksComponent } from '../tasks/tasks.component';
+import { QuickEditorComponent } from '../quick-editor/quick-editor.component';
 
 const routes: Routes = [
   
   {
-    path: '', component: MainDashboardComponent, children: [
+    path: 'dashboard', component: MainDashboardComponent, children: [
       // START dashboard childrens
       // { path: '',   redirectTo: 'main', pathMatch: 'full' },
       { path: '', component: MainComponent},
@@ -79,7 +81,7 @@ const routes: Routes = [
           { path: '', component: DashboardAdminComponent },
           // { path: 'security', component: SecurityComponent },
           { path: 'roles', component: RolesComponent },
-          { path: 'roles/create', component: CreateRoleComponent },/* OverviewComponent , data: { itemType: "admins", comp: 'create' } */
+          { path: 'roles/create', component: CreateRoleComponent},/* OverviewComponent , data: { itemType: "admins", comp: 'create' } */
           { path: 'preferences', component: DashboardProfileComponent },
           // { path: 'preferences', component: PreferencesComponent },
           // { path: 'trash', component: TrashComponent },
@@ -87,20 +89,19 @@ const routes: Routes = [
           // { path: 'outbox', component: OutboxComponent }
         ]
       },
-      
-     
-
+      { path: 'task', component: TasksComponent },
       // { path: 'security', component: SecurityComponent },
+      { path: 'quick-editor', component: QuickEditorComponent }
     ]// END dashboard childrens
-  },
- 
-
+  }
 ];
 
 @NgModule({
   declarations: [],
   imports: [
-    CommonModule
-  ]
+    CommonModule,
+    RouterModule.forChild(routes)
+  ],
+  exports: [RouterModule]
 })
 export class DashboardRoutingModule { }

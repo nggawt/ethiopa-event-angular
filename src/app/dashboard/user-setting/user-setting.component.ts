@@ -14,6 +14,7 @@ export class UserSettingComponent implements OnInit {
   @Input() admin: Admin;
   emailPatteren: RegExp;
   formSetting: FormGroup;
+  messages: {} | any;
 
   /***************  ********************/
   constructor(private http: HttpService, private helper: HelpersService) { }
@@ -82,5 +83,14 @@ export class UserSettingComponent implements OnInit {
 
       });
   }
+
+  onSubmit(){
+    alert("onSubmit fn need to implement");
+  }
+
+  displayMessages(messages?: string){
+    alert("displayMessages fn need to implement");
+  }
+
 
 }

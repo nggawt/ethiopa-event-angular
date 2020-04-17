@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { isArray } from 'util';
 import { MessagesService } from '../services/messages/messages.service';
 
 @Injectable({
@@ -188,7 +187,7 @@ export class FormProccesorService {
     let ob = {};
     for (let ii in messages) {//for in items
 
-      if (isArray(messages[ii]) && messages[ii].length > 0) {
+      if (Array.isArray(messages[ii]) && messages[ii].length > 0) {
         messageArray[type] = [];
         ob[ii] = {};
 

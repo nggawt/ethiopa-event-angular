@@ -66,7 +66,7 @@
       <td> {{customer.customer.company}}</td>
       <td>
         <small *ngIf="customer.customer.created_at as dt" class="text-muted">
-          {{ dt | dateHebraw:'full' }}
+          {{ dt | dateHeb:'full' }}
         </small>
       </td>
       <td [ngClass]="customer.customer.confirmed? 'text-success':'text-danger'">
@@ -107,7 +107,7 @@
       <td>{{user.email}} </td>
       <td>
         <small class="text-muted">
-          {{ user.created_at  | dateHebraw:'full' }}
+          {{ user.created_at  | dateHeb:'full' }}
         </small>
       </td>
       <td class="text-success">פעיל</td>
@@ -145,7 +145,7 @@
 
       <td>
         <small class="text-muted">
-          {{ event.created_at  | dateHebraw:'full' }}
+          {{ event.created_at  | dateHeb:'full' }}
         </small>
       </td>
       <td [ngClass]="event.confirmed? 'text-success':'text-danger'">
@@ -184,7 +184,7 @@
       <th scope="row">{{article.name}}</th>
       <td>
         <small class="text-muted">
-          {{ article.created_at  | dateHebraw:'full' }}
+          {{ article.created_at  | dateHeb:'full' }}
         </small>
       </td>
       <td [ngClass]="article.confirmed? 'text-success':'text-danger'">

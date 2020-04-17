@@ -74,7 +74,7 @@
       <th scope="row">{{article.name}}</th>
       <td>
         <small class="text-muted">
-          {{ article.created_at  | dateHebraw:'full' }}
+          {{ article.created_at  | dateHeb:'full' }}
         </small>
       </td>
       <td [ngClass]="article.confirmed? 'text-success':'text-danger'">
