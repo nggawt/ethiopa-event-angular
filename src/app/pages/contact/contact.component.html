@@ -69,13 +69,29 @@
         <div class="form-group col-md-12">
             <label for="email_to">הודעה:</label>
             <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
-                <textarea formControlName="message" class="w-100 bd-highlightpx-1" id="textarea" rows="8"
-                    placeholder="הוסף הודעה">
-            </textarea>
+                <textarea formControlName="message" class="w-100 bd-highlightpx-1" id="textarea" rows="3"
+                    placeholder="הוסף הודעה" textareaResize="'fff'">
+                </textarea> <!-- (keyup)="changeHeight($event)"-->
                 <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
             </div>
         </div>
         <button type="submit" class="btn btn-success">שלח</button>
     </form>
 
+<!-- 
+    <form>
+        <div class="form-group col-md-12">
+          <label for="email_to">הודעה:</label>
+          <div class="inputTypeNumber mb-2 d-flex bd-highlight textarea">
+              <textarea class="w-100 bd-highlightpx-1" id="textarea" rows="3"
+                  placeholder="הוסף הודעה" textareaResize="'fff'">
+              </textarea> 
+              <span class="validity d-sm-none d-lg-block flex-shrink-1 bd-highlight"></span>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-success">שלח</button>
+    </form>
+ -->
+
 </model-template>
+

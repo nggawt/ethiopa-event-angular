@@ -52,7 +52,6 @@ import { ErrorPageComponent } from './pages/error-page/error-page.component';
 
 /*************** modules **************/
 import { SharedModuleModule } from './shared/shared-module/shared-module.module';
-import { QuillModule } from 'ngx-quill-v2';
 
 /****************** Shared pipes ********************/
 
@@ -129,11 +128,7 @@ export function tokenGetter() {
     }),
 
     /***** modules imports end ****/
-    QuillModule.forRoot({
-      scrollingContainer: "html"
-    }),
-
-    // NgbModule.forRoot(),
+    
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,

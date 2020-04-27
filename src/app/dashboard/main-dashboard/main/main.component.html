@@ -44,7 +44,13 @@
                     <li>תנועות ופעילויות</li>
                  </ul> 
                 -->
-                <canvas id="canvas"></canvas>
+                <canvas  baseChart
+                    [datasets]="barChartData"
+                    [labels]="barChartLabels"
+                    [options]="barChartOptions"
+                    [legend]="barChartLegend"
+                    [chartType]="barChartType">
+                </canvas><!-- id="canvas" -->
             </div>
         </div>
     </div>

@@ -89,7 +89,7 @@
                     <select *ngIf="admin.authority?.id as authId" [id]="'authority'+admin.authority.slug+(idx+1)"
                       class="w-100 bd-highlightpx-1" [value]="authId" (change)="allowSubmit($event, 'authority'+admin.authority.slug+(idx+1), admin)">
 
-                      <option [value]="authId" selected disabled>{{ admin.authority?.name }}</option>
+                      <option [value]="authId" [selected]="admin.authority?.id == authId" disabled="true">{{ admin.authority?.name }}</option>
                       <option *ngIf="admin.authority?.slug != 'admin'" [value]="1">Admin</option>
                       <option *ngIf="admin.authority?.slug != 'author'" [value]="2">Author</option>
                       <option *ngIf="admin.authority?.slug != 'editor'" [value]="3">Editor</option>
@@ -99,7 +99,8 @@
                   </div>
                 </div>
                 <div class="col-4">
-                  <button *ngIf="allowSubmitButton['authority'+admin.authority.slug+(idx+1)]" type="button" class="btn btn-link" (click)="makeAdmin('authority'+admin.authority.slug+(idx+1), admin)">אשר</button>
+                  <button *ngIf="allowSubmitButton['authority'+admin.authority.slug+(idx+1)]" 
+                    type="button" class="btn btn-link" (click)="makeAdmin('authority'+admin.authority.slug+(idx+1), admin)">אשר</button>
                 </div>
               </div>
             </td>
@@ -107,7 +108,7 @@
         </tbody>
       </table>
     </div>
-
+    
   </div>
 </div>
 <router-outlet></router-outlet>

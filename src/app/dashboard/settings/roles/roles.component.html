@@ -5,8 +5,7 @@
         <div class="bg-light p-3 clearfix d-flex bd-highlight align-items-center">
           ניהול הרשאות
           <span class="btn btn-success btn-sm mr-auto p-2 bd-highlight"
-            (click)="create('/dashboard/settings/roles/create')">צור סמכות
-            חדש</span>
+            (click)="create('/dashboard/settings/roles/create')">צור סמכות חדש</span>
         </div>
       </div>
     </div>
@@ -24,7 +23,7 @@
           class="d-inline-block border p-3 m-1">
           <ul class="list-unstyled p-0">
             <li>
-              <p>{{permission.key}}</p>
+              <p>{{ permission.key }}</p>
               <div class="custom-control custom-checkbox  text-right">
                 <input [id]="role.name+permission.key" class="custom-control-input" type="checkbox"
                   [checked]="permission.value" (click)="checked(permission)">

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription, Observable, of, merge, combineLatest, forkJoin, timer, zip } from 'rxjs';
 import { ResourcesService } from 'src/app/services/resources/resources.service';
-import { Chart } from 'chart.js';
+// import { Chart } from 'chart.js';
 import { map, filter, finalize, concatAll, mergeAll, mapTo, concat, tap, first, last, takeWhile, take, takeLast, switchAll } from 'rxjs/operators';
 
 declare var $: any;
@@ -17,6 +17,22 @@ export class MainComponent implements OnInit {
   chart: any;
   resourceSubscrition: Subscription;
   intervalItems: any;
+
+
+  /* Chart.js */
+  public barChartOptions = {
+    scaleShowVerticalLines: false,
+    responsive: true
+  };  
+  
+  public barChartLabels = ['2006', '2007', '2008', '2009', '2010', '2011', '2012'];
+
+  public barChartType = 'bar';
+
+  public barChartLegend = true;  public barChartData = [
+    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Series A'},
+    {data: [28, 48, 40, 19, 86, 27, 90], label: 'Series B'}
+  ];
 
   constructor(private rsrv: ResourcesService) { }
 
@@ -137,7 +153,7 @@ export class MainComponent implements OnInit {
       };
       config.data.datasets.push(newDataset);
     });
-    this.chart = new Chart(canvas, config);
+    // this.chart = new Chart(canvas, config);
   }
 
   ngOnDestroy() {

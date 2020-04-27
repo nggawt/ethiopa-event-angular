@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ResourcesService } from '../../services/resources/resources.service';
-import { Observable, of } from 'rxjs';
-import { map, tap, filter, first } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service/http.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -20,23 +18,19 @@ export class AdminsViewsComponent implements OnInit {
 
   constructor(private srv: ResourcesService, private http: HttpService, private router:Router, private route: ActivatedRoute) { }
 
+  
   ngOnInit() {
     // let url = "http://lara.test/api/admins";
-    this.initAdmins();
+      this.initAdmins();
   }
 
   initAdmins(){
     // this.srv.initResources('admins');
     this.srv.getResources('admins', false).then(items => {
+      console.log(items);
       this.admins = items;
     });
     
-    // this.usersType$  = this.srv.resourcesObsever.pipe(first(item => typeof item == "object"));
-  }
-
-  getUserTypes(items){
-    
-    return { users: items['users'], customers: items['customers'] };
   }
 
   edit(path){
@@ -57,14 +51,14 @@ export class AdminsViewsComponent implements OnInit {
   }
 
   allowSubmit($event, key, admin){
-    // console.log($event.target.value, admin);
+    console.log($event.target.value, admin);
     this.allowSubmitButton[key] = $event.target.value != admin.authority.id;
   }
 
   makeAdmin(id, admin){
     let selected = $("#"+id)[0];
-    console.log(selected.value, admin);
-    let adminProp = {authority: selected.value, id: admin.id};
+    let adminProp = {authority: selected.value, id: admin.user?.id};
+    console.log(selected.value, admin, adminProp);
     this.send(adminProp, 'PATCH');
   }
 

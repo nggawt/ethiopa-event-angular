@@ -5,6 +5,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ChartsModule } from 'ng2-charts';
+import { QuillModule } from 'ngx-quill-v2';
 
 /****************** Dashboard components ********************/
 import { MainDashboardComponent } from '../main-dashboard/main-dashboard.component';
@@ -113,7 +115,12 @@ import { PipesModule } from 'src/app/shared/pipes-module/pipes-module';
     TemplateModule,
     DashboardRoutingModule,
     PipesModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    ChartsModule,
+    QuillModule.forRoot({
+      scrollingContainer: "html"
+    }),
+
   ]
 })
 export class DahsboardModule { }

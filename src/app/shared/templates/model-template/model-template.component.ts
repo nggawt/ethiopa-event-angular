@@ -27,6 +27,7 @@ export class ModelTemplateComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+
     let model = $('#'+ this.mailProps.id).modal();
     let thiz = this;
 

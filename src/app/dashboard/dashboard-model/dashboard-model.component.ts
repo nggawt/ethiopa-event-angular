@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit, OnChanges, AfterViewChecked, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
 declare var $: any;

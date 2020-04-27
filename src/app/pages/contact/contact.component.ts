@@ -37,7 +37,7 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   formConcat: FormGroup;
   constructor(private http: HttpService, private rsrv: ResourcesService) { }
-
+  
   ngOnInit() {
 
     this.initFormConcat();
@@ -86,6 +86,11 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.formConcat = new FormGroup(fGroupInputs);
   }
 
+  changeHeight(evt){
+    evt.target.style.height = 'auto'; 
+    evt.target.style.height =   ((evt.target).scrollHeight) + 'px'; 
+  }
+
   onSubmit() {
 
     if (this.formConcat.valid) {
@@ -103,8 +108,6 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   getStl(input) {
-    console.log(input);
-
     let ngClassResualt = (input.valid && input.touched && input.dirty) ? 'border border-success' : (input.touched && input.dirty) ? 'border border-danger' : false;
     if (ngClassResualt) return ngClassResualt;
   }
