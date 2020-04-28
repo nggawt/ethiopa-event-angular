@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { of, BehaviorSubject, Observable, AsyncSubject, throwError } from 'rxjs';
-import { tap, delay, map, find, filter, first, catchError } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { tap, first, catchError } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { User } from '../../types/user-type';
 import { ErrorsHandler } from '../errors-exeption/errors-handler.service';
 import { Admin } from 'src/app/types/admin-type';
+import { Customers } from 'src/app/types/customers-type';
 
 @Injectable({
   providedIn: 'root'
@@ -56,7 +56,6 @@ export class HttpService {
   }
 
   isExpiredToken() {
-    
     return this.jwt.isTokenExpired(this.jwt.tokenGetter());
   }
 
@@ -199,11 +198,9 @@ export class HttpService {
     }));
   }
 
-  getData(url?, opt?) {
-
+  getData(url?, opt?): Observable<{[key:string]:Customers[]} | any> {
     url = url ? this.baseUrl + "/" + url : "http://lara.test/api/events";
-    //this.setOutRequests(url);
-    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap(item => this.setOutRequests(url)), first()) : 
+    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap((item) => this.setOutRequests(url)), first()) : 
                                     this.http.get(url).pipe(tap(item => this.setOutRequests(url)), first());
   }
 
@@ -211,7 +208,6 @@ export class HttpService {
     urlParams = urlParams ? this.baseUrl + "/" + urlParams : this.baseUrl + "/logout";
     let token = new HttpParams().set('token', this.apiKey);
     console.log('token', this.apiKey);
-
 
     return this.http.post(urlParams, token, this.getHttpOpt())
       .pipe(
@@ -236,10 +232,13 @@ export class HttpService {
     console.log("userPromise", " window.localStorage: ", window.localStorage);
 
     path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
+    
     const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/auth-user";//me
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
+
     this.getUserType();
     this.setOutRequests(theUrl);
+
     return this.http.post(theUrl, token, this.headersOpt)
       .pipe(
         first(),
@@ -247,7 +246,6 @@ export class HttpService {
           let user = this.getResponseUser(res);
           console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
           if (user) this.setUserProps(user);
-
         })).toPromise().catch(this.esrv.handleError);
   }
 

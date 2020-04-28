@@ -65,8 +65,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
   }
 
   contactModel(paramCustomer) {
-    console.log("customers called");
-
+    
     this.customerMessage = {
       id:'contact_customer', 
       url: decodeURIComponent(location.pathname),

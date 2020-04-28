@@ -2,11 +2,11 @@ import { Directive, OnDestroy, OnInit, TemplateRef, ComponentFactoryResolver, Vi
 import { ContactComponent } from 'src/app/pages/contact/contact.component';
 
 @Directive({
-  selector: '[appSendMessageDirective]'
+  selector: '[appSendMessage]'
 })
 export class SendMessageDirectiveDirective implements OnInit, OnDestroy {
   
-  @Input() appSendMessageDirective;
+  @Input() appSendMessage;
   componentRef: any;
 
   constructor(public viewCont: ViewContainerRef, private resolver: ComponentFactoryResolver) { }
@@ -20,12 +20,12 @@ export class SendMessageDirectiveDirective implements OnInit, OnDestroy {
     this.viewCont.clear();
 
     this.componentRef = this.viewCont.createComponent(factory);
-    this.componentRef.instance.mailProps = this.appSendMessageDirective;
+    this.componentRef.instance.mailProps = this.appSendMessage;
   }
 
   ngOnDestroy(){ 
     this.componentRef.destroy(); 
-    console.log("destroy message component");
+    console.log("destroy message SendMessageDirectiveDirective");
   }
 
 }

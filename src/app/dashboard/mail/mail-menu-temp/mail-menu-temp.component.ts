@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ResourcesService } from 'src/app/services/resources/resources.service';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mail-menu-temp',
@@ -8,24 +8,26 @@ import { HttpService } from 'src/app/services/http-service/http.service';
   styleUrls: ['./mail-menu-temp.component.css']
 })
 
-export class MailMenuTempComponent implements OnInit {
+export class MailMenuTempComponent implements OnInit, OnDestroy {
   
   @Input() message: {};
-  @Input() idx: {};
+  @Input() idx: number;
+
+  private replayRequet: Subscription;
+
   constructor(private http: HttpService) { }
 
-  ngOnInit() {
-    console.log("mail-menu component called");
-   }
+  ngOnInit() { }
 
    replay(message, textArea) {
-    console.log(textArea.value);
 
-    this.http.postData('messages/'+message.id+'/replay', {message: textArea.value }).subscribe(response =>{
+    console.log(textArea.value);
+    let url = 'messages/'+message.id+'/replay';
+    this.replayRequet = this.http.postData(url, {message: textArea.value }).subscribe(response =>{
       console.log(response);
       
     });
   }
   
-  
+  ngOnDestroy(){ if(this.replayRequet) this.replayRequet.unsubscribe(); }
 }

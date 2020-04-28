@@ -23,6 +23,7 @@ import { CreateRoleComponent } from '../settings/roles/create-role/create-role.c
 import { DashboardProfileComponent } from '../settings/dashboard-profile/dashboard-profile.component';
 import { TasksComponent } from '../tasks/tasks.component';
 import { QuickEditorComponent } from '../quick-editor/quick-editor.component';
+import { MailsComponent } from '../mail/mails/mails.component';
 
 const routes: Routes = [
   
@@ -66,11 +67,12 @@ const routes: Routes = [
       /****** mail ******/
       {
         path: 'mail-views', component: MailComponent, children: [
-          { path: '',   redirectTo: 'inbox', pathMatch: 'full' },
+          { path: '',   redirectTo: 'mails', pathMatch: 'full' },
+          { path: 'inbox', component: InboxComponent },
           { path: 'favorites', component: FavoritesComponent },
           { path: 'preferences', component: PreferencesComponent },
           { path: 'trash', component: TrashComponent },
-          { path: 'inbox', component: InboxComponent },
+          { path: 'mails', component: MailsComponent },
           { path: 'outbox', component: OutboxComponent }
         ]
       },

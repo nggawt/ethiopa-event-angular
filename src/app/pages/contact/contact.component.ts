@@ -1,9 +1,6 @@
-import { Component, OnInit, Input, OnChanges, AfterContentInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpService } from 'src/app/services/http-service/http.service';
-import { ValidationService } from 'src/app/services/validation/validation.service';
-import { MessagesService } from 'src/app/services/messages/messages.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { HttpService } from 'src/app/services/http-service/http.service'; 
 import { ResourcesService } from 'src/app/services/resources/resources.service';
 
 declare var $: any;
@@ -64,12 +61,6 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   sendToInputs() {
 
-    /*  
-     email_from: new FormControl(emailFrom, [Validators.required]),
-     email: new FormControl(emailTo, [Validators.required]), 
-     subject: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(90)]),
-     message: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(255)]),//, this.same
-     */
     let inputsGroups = {},
       inputs = this.mailProps.inputs;
 
@@ -80,15 +71,9 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   initFormConcat() {
-    let fGroupInputs = !this.mailProps.inputs ? this.getInputs("all") : this.sendToInputs();
+    let fGroupInputs = ! this.mailProps.inputs ? this.getInputs("all") : this.sendToInputs();
     console.log(fGroupInputs);
-
     this.formConcat = new FormGroup(fGroupInputs);
-  }
-
-  changeHeight(evt){
-    evt.target.style.height = 'auto'; 
-    evt.target.style.height =   ((evt.target).scrollHeight) + 'px'; 
   }
 
   onSubmit() {
@@ -132,22 +117,6 @@ export class ContactComponent implements OnInit, OnDestroy {
           window.location.reload();
         }
       });
-  }
-
-  validateForm(form: FormGroup): any {
-    let invalid = form.valid ? true : false;
-    console.log(form);
-    console.log(invalid);
-
-    return invalid ? { invalid: true } : null;
-  }
-
-  same(val: FormControl): { [s: string]: boolean } | null {
-    // console.log(val);
-    if (false) {
-      return { "dfdf": true };
-    }
-    return null;
   }
 
   ngOnDestroy() {

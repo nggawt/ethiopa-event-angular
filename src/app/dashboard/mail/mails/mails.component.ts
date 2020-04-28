@@ -1,30 +1,28 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ResourcesService } from 'src/app/services/resources/resources.service';
 
 @Component({
-  selector: 'app-inbox',
-  templateUrl: './inbox.component.html',
-  styleUrls: ['./inbox.component.css']
+  selector: 'app-mails',
+  templateUrl: './mails.component.html',
+  styleUrls: ['./mails.component.css']
 })
-export class InboxComponent implements OnInit {
+export class MailsComponent implements OnInit {
 
   messageItems: {};
-  
 
   constructor(private http: HttpService, private rsrv: ResourcesService) { }
 
   ngOnInit() {
     this.rsrv.getResources('messages', false).then(msgs => {
+      
       if(msgs){
 
         let sorted = this.getSortededItems(msgs);
+        this.messageItems = this.rsrv.dataTransform('messages', sorted);
         // console.log('/inbox: ', msgs);
         // console.log('/sorted: ', sorted);
-         this.messageItems = this.rsrv.dataTransform('messages', sorted);
       }
-      // console.log('/inbox: ', this.messageItems);
     });
    }
 

@@ -32,7 +32,7 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
      * then check if customer recourse blong to user authenticated true else ->> rediract to recourse/customer/media 
      * then user is owner and return true
     ******/
-   console.log("responseUser");
+    console.log("responseUser");
 
     /** lets defined somes props **/
     this.intendedUrl = decodeURIComponent(state.url);
@@ -52,16 +52,16 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     }
 
     /**** so if we have auth user lats check if we have customer and let access intended page if user are owner ****/
-    if (uEmail) { return this.checkCostumer(costumerUriRecourse, uEmail); };
+    if (uEmail) { return this.checkCustomer(costumerUriRecourse, uEmail); };
 
     return this.http.userPromise()
       .then((responseUser) => {
 
-        let user = responseUser && responseUser['status'] ? responseUser['user']: false;
+        let user = responseUser && responseUser['status'] ? responseUser['user'] : false;
         /*** attach auth user props ***/
-        uEmail = ! uEmail && user ? user['email'] : uEmail;
+        uEmail = !uEmail && user ? user['email'] : uEmail;
         this.autUser = user ? responseUser : false;
-        
+
         /** if our uri is /join, lets check if auth user is already our customer member and let him access join page if false **/
         if (join >= 0 && responseUser['email']) {
           this.customers.intendedUrl = this.intendedUrl;
@@ -74,7 +74,7 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
         }
 
         /**** so if we have auth user lats check if we have customer and let access intended page if user are owner ****/
-        return this.checkCostumer(costumerUriRecourse, uEmail);
+        return this.checkCustomer(costumerUriRecourse, uEmail);
 
       },
         (reject) => {
@@ -88,11 +88,11 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
           /****** we have no user. lets check customer uri recourse ******/
           if (!costumerUriRecourse) return this.goTo();
           /**** lats check if we have customer and navigate recourse if true and let user log in ****/
-          return this.checkCostumer(costumerUriRecourse, uEmail);
+          return this.checkCustomer(costumerUriRecourse, uEmail);
         });
   }
 
-  allowLogin(url){
+  allowLogin(url) {
     this.http.allowLogIn.next(true);
     this.goTo(url);
   }
@@ -116,19 +116,19 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     return false;
   }
 
-  checkCostumer(costumerUriRecourse, uEmail) {
+  checkCustomer(costumerUriRecourse, uEmail) {
     console.log(costumerUriRecourse);
 
     return this.customers.getById(costumerUriRecourse)
       .then((res) => {
         let customer = res && res['customer'] ? res['customer'] : res;
         console.log(uEmail);
-        
+
         /****** if we have user and customer. lets check if auth user is owen recourse if true give auth user access ******/
         if (customer && uEmail === customer['email']) { return true; }
 
         /****** if auth user is not own recourse check one more time if we have auth user if false navigate him to recourse/media with posibility to log in ******/
-        if (! uEmail && customer) {
+        if (!uEmail && customer) {
           this.http.allowLogIn.next(true);
           this.http.intendedUri = this.intendedUrl;
         }

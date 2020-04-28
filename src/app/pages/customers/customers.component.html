@@ -1,7 +1,7 @@
 <!-- <app-contact [mailProps]="customerMessage"></app-contact> -->
 
 <div *ngIf="(sendingMail | async) as allowMesage">
-    <ng-template *ngIf="allowMesage && allowMesage[customerMessage.id]" [appSendMessageDirective]="customerMessage"></ng-template>
+    <ng-template *ngIf="allowMesage && allowMesage[customerMessage.id]" [appSendMessage]="customerMessage"></ng-template>
 </div>
 
 <router-outlet *ngIf="! path"></router-outlet>

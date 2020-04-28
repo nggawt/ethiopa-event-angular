@@ -1,7 +1,7 @@
 <!-- <app-contact [mailProps]="mailItems"></app-contact> -->
 
 <div *ngIf="(sendingMail | async) as allowMesage">
-    <ng-template *ngIf="allowMesage && allowMesage[mailItems.id]" [appSendMessageDirective]="mailItems">
+    <ng-template *ngIf="allowMesage && allowMesage[mailItems.id]" [appSendMessage]="mailItems">
     </ng-template>
 </div>
 <div class="row">
@@ -22,24 +22,34 @@
         <nav *ngIf="msgsResources">
     
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-    
+                
+                <a [class]="(pathName == 'mails')? 'nav-item nav-link active': 'nav-item nav-link'"
+                    routerLink="mails" id="nav-mails-tab" data-toggle="tab" role="tab"
+                    aria-controls="nav-mails" [attr.aria-selected]="(pathName == 'mails')">
+                    כל הדואר
+                    <span class="badge badge-primary">{{ getNonTrashed.length }}</span>
+                </a>
+
                 <a [class]="(pathName == 'inbox')? 'nav-item nav-link active': 'nav-item nav-link'" routerLink="inbox"
                     id="nav-inbox-tab" data-toggle="tab" role="tab" aria-controls="nav-inbox"
                     [attr.aria-selected]="(pathName == 'inbox')">
                     <span class="badge badge-primary">{{ getNonTrashed.length }}</span>
                     דואר נכנס
                 </a>
+
                 <a [class]="(pathName == 'outbox')? 'nav-item nav-link active': 'nav-item nav-link'" routerLink="outbox"
                     id="nav-outbox-tab" data-toggle="tab" role="tab" aria-controls="nav-outbox"
                     [attr.aria-selected]="(pathName == 'outbox')">
                     דואר יוצא
                 </a>
+
                 <a [class]="(pathName == 'trash')? 'nav-item nav-link active': 'nav-item nav-link'" routerLink="trash"
                     id="nav-trash-tab" data-toggle="tab" role="tab" aria-controls="nav-trash"
                     [attr.aria-selected]="(pathName == 'trash')">
                     <span class="badge badge-primary">{{ getTrashed.length }}</span>
                     אשפה
                 </a>
+
                 <a [class]="(pathName == 'favorites')? 'nav-item nav-link active': 'nav-item nav-link'"
                     routerLink="favorites" id="nav-favorites-tab" data-toggle="tab" role="tab" aria-controls="nav-favorites"
                     [attr.aria-selected]="(pathName == 'favorites')">
@@ -48,11 +58,13 @@
                     <!-- <span class="sr-only">unread msgsResources</span> -->
                     מועדפים
                 </a>
+                
                 <a [class]="(pathName == 'preferences')? 'nav-item nav-link active': 'nav-item nav-link'"
                     routerLink="preferences" id="nav-preferences-tab" data-toggle="tab" role="tab"
                     aria-controls="nav-preferences" [attr.aria-selected]="(pathName == 'preferences')">
                     העדפות
                 </a>
+
                 <a class="nav-item nav-link d-flex mr-auto text-success clearfix" (click)="newMail()" id="nav-create-tab"
                     data-toggle="tab" role="tab" aria-controls="nav-create" aria-selected="false">
                     <span class="fo-size float-right ml-1 align-text-top">+</span>

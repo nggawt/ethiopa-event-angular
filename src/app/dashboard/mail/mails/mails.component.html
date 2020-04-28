@@ -1,0 +1,31 @@
+<div *ngIf="messageItems">
+    <h1 class="h5 my-3">דואר</h1>
+
+    <!-- <div *ngFor="let message of messageItems; let idx = index" class="co-12"> -->
+    <app-mail-menu-temp *ngFor="let message of messageItems; let idx = index" [message]="message" [idx]="idx">
+            <a *ngIf="(message.name+message.id) | rmWhiteSpace as collapseId" class="badge badge-primary badge-pill page-link dropdown-toggle" data-toggle="collapse"
+            [href]="'#'+collapseId+'replay'" role="button" [attr.aria-expanded]="message.id == 1"
+            [attr.aria-controls]="collapseId+'replay'">
+            השב
+        </a>
+        <!-- <button *ngIf="(message.name+message.id) | rmWhiteSpace as collapseId" 
+            class="btn btn-link" type="button" data-toggle="collapse" 
+            [attr.data-target]="'#'+collapseId+'replay'" [attr.aria-expanded]="(idx + 1) == 1" aria-controls="collapseOne">
+            השב
+          </button> -->
+        <a *ngIf="! message.favorites" class="badge badge-default badge-pill page-link" (click)="favorites(message)">
+            <i class="fa fa-star"></i>
+            מועדפים
+        </a>
+    <!-- <a class="badge badge-warning badge-pill page-link"  (click)="forbidden(message)">חסום משתמש</a> -->
+          <a  class="badge badge-default badge-pill page-link" 
+                [ngClass]="! message.forbidden? 'text-danger': 'text-success'" (click)="forbidden(message)">
+                {{ message.forbidden? "בטל חסימה":  "חסום"}}
+            </a>
+        <a class="badge badge-danger badge-pill page-link" (click)="trash(message)">אשפה</a>
+        
+    </app-mail-menu-temp>
+
+    
+    <!-- </div> -->
+</div>

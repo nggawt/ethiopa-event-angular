@@ -1,13 +1,13 @@
 <div class="accordion" id="parent_accord">
 
     <div *ngIf="message" class="row no-gutters border mb-1">
+
         <div class="col-md-3 bg-light p-3 rounded text-right">
 
             <div class="d-flex align-items-center mb-1">
                 <!-- style="height: 75px; width:75px;" -->
 
-                <div class="w-50">
-
+                <div class="w-50 h-100">
                     <div class="bg-light">
                         <img class="border rounded-circle" width="100%" height="100%"
                             [src]="(idx)?'https://source.unsplash.com/random/120x120?count='+ idx:'https://source.unsplash.com/random/120x120'"
@@ -25,8 +25,8 @@
                         </label>
                     </div>
                 </div>
-
             </div>
+            <hr class="mb-1">
             <div class="footer-av">
 
                 <p class="h5 text-secondary text-right p-0 pl-2 m-0">
@@ -36,7 +36,7 @@
                     {{ message.date | dateHeb:"day_month_year" }}
                 </span>
             </div>
-            <hr>
+            <hr class="mb-0">
         </div>
         <div *ngIf="(message.name) | generateId  as collapseId" class="col-md-9 p-3 rounded">
 
@@ -44,24 +44,34 @@
             <div [id]="'headingOne'+collapseId" class="p-2 bg-light">
                 <!-- card-title -->
                 <h5 class="mb-0">
-                    <a data-toggle="collapse" [href]="'#'+collapseId" role="button" class="dropdown-toggle"
-                        [attr.aria-expanded]="(idx + 1) == 1" [attr.aria-controls]="collapseId">
-                        <!-- {{ (message.title.split(' ').length > 3)? message.title.slice(0, message.title.indexOf(" "+message.title.split(' ')[4])) :message.title  }} -->
+                    <a data-toggle="collapse" [href]="'#'+collapseId" role="button" class="dropdown-toggle p-1"
+                        [attr.aria-expanded]="(idx + 1) == 1" aria-controls="collapseOne">
                         {{ message.title }}
                     </a>
+                    <!-- <button class="btn btn-link" type="button" 
+                        data-toggle="collapse" [attr.data-target]="'#'+collapseId" 
+                        [attr.aria-expanded]="(idx + 1) == 1" aria-controls="collapseOne">
+                        {{ message.title }}
+                      </button> -->
+                    &nbsp;
                     <small class="text-muted">
-                        {{ (message.body.split(' ').length > 9)? message.body.slice(0, message.body.indexOf(" "+message.body.split(' ')[10])) +'...' :message.body  }}
+                        {{ message.email }}
                     </small>
                 </h5>
                 <small class="text-muted">
                     {{ message.date | dateHeb:"full" }}
                 </small>
 
+                <!-- <p class="mb-0">
+
+                    {{ (message.body.split(' ').length > 3)? message.body.slice(0, message.body.indexOf(" "+message.body.split(' ')[3])) +'...' :message.body  }}    
+
+                </p> -->
             </div>
             <div [ngClass]="(idx + 1) == 1? 'collapse mb-0 show': 'collapse mb-0'" [id]="collapseId"
-                [attr.data-parent]="'#parent_accord'" [attr.aria-labelledby]="'headingOne'+collapseId">
+                [attr.aria-labelledby]="'headingOne'+collapseId">
                 <div class="card-body">
-                    <p class="card-title">{{ message.body }}</p>
+                    <p class="mb-0">{{ message.body }}</p>
 
                     <div *ngIf="message.replay as replays" class="p-3">
                         <div *ngFor="let replay of replays" class="border rounded-lg p-3 mb-3">
@@ -72,40 +82,26 @@
                             </p>
                         </div>
                     </div>
-                    
+
                     <ng-content></ng-content>
                 </div>
             </div>
 
-            <div class="collapse mb-0" [id]="collapseId+'replay'" [attr.aria-labelledby]="'headingOne'+collapseId"
-                [attr.data-parent]="'#parent_accord'">
+            <div *ngIf="(message.name+message.id) | rmWhiteSpace as replayId" class="collapse mb-0"
+                [id]="replayId+'replay'" [attr.aria-labelledby]="'headingOne'+collapseId">
                 <div class="card-body clearfix">
                     <textarea name="replay" class="form-control" id="replay" cols="30" rows="3" placeholder="השב.."
-                        #msg></textarea>
+                    textareaResize #msg></textarea>
 
-                    <a data-toggle="collapse" [href]="'#'+collapseId" role="button"
-                        class="badge badge-primary badge-pill page-link mt-2" [attr.aria-expanded]="message.id == 1"
-                        [attr.aria-controls]="collapseId">
+                    <a data-toggle="collapse" [href]="'#'+replayId+'replay'" role="button"
+                        class="badge badge-primary badge-pill page-link mt-2" [attr.aria-expanded]="false"
+                        [attr.aria-controls]="replayId+'replay'">
                         חזור
                         <i class="fa fa-caret-up"></i>
                     </a>
                     <a (click)="replay(message, msg)" class="btn btn-outline-success btn-sm float-left mt-2">שלח</a>
                 </div>
             </div>
-            <!-- <div *ngIf="message.replay as replay" class="card">
-                <div class="card-header">
-                    <p class="card-title">
-
-                        תגובה מאת:
-
-                    </p>
-                </div>
-                <div class="card-body">
-                    <p> {{ replay.content }} </p>
-                </div>
-            </div> -->
         </div>
 
     </div>
-    <!-- </div> -->
-    <!-- <ng-content ></ng-content> -->

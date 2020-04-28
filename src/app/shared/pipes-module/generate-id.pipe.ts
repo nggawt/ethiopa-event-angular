@@ -9,8 +9,8 @@ export class GenerateIdPipe implements PipeTransform {
   constructor(public helpFn: HelpersService){}
   transform(value: string, ...args: any[]): string {
     
-    let str = args && args[0]? args[0]: "id";
-    return this.helpFn.rendId(str);
+    // let str = args && args[0]? args[0]: "id";
+    return this.helpFn.rendId(value);
   }
 
 }

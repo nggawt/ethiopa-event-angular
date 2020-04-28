@@ -27,7 +27,7 @@ export class CustomerMediaComponent implements OnInit, OnDestroy {
     this.custSubscriber = this.currentCustomer.subscribe(data =>{
       let co = data['customer'];
       let gal = data['gallery'];
-      // console.log(data);
+      
       this.snap = true;
       this.customer = of(co);
       this.galleries = Array.isArray(gal['images'])? gal['images']: typeof gal['images'] == "object"? this.itemsToArray(gal['images']): [];

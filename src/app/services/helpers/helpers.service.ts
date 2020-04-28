@@ -27,7 +27,6 @@ export class HelpersService {
   }
 
   isExpiredToken() {
-    
     return this.jwt.isTokenExpired(this.jwt.tokenGetter());
   }
 
@@ -59,13 +58,16 @@ export class HelpersService {
   
     let cleanText = text.trim();
     unwantedChars.forEach(char => {
-      if (this.isContains(cleanText, char)) cleanText = cleanText.replace((new RegExp("\\" + char, "gi")), '');
+      if (this.arrayIsContains(cleanText, char)) cleanText = cleanText.replace((new RegExp("\\" + char, "gi")), '');
     });
     return cleanText;
   }
 
-  isContains(item: string[] | string, key: string) {
-
+  arrayIsContains(item: string[] | string, key: string) {
     return (item.indexOf(key) >= 0) ? true : false;
+  }
+
+  langIsHeb(item: string){
+    return item.search(/[\u0590-\u05FF]/);
   }
 }

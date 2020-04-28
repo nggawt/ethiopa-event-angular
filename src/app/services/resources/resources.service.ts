@@ -1,7 +1,15 @@
+import { User } from 'src/app/types/user-type';
+import { Admin } from 'src/app/types/admin-type';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, filter, first } from 'rxjs/operators';
 import { HttpService } from '../http-service/http.service';
+import { Forbidden } from 'src/app/types/forbidden-type';
+import { Evt } from 'src/app/types/event-type';
+import { Article } from 'src/app/types/article-type';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+import { Customer } from 'src/app/types/customer-type';
+import { Customers } from 'src/app/types/customers-type';
 
 @Injectable({
   providedIn: 'root'
@@ -9,13 +17,13 @@ import { HttpService } from '../http-service/http.service';
 export class ResourcesService {
 
   private resources: {
-    users: BehaviorSubject<{}[] | boolean>,
-    customers: BehaviorSubject<{}[] | boolean>,
-    messages: BehaviorSubject<{}[] | boolean>,
-    articles: BehaviorSubject<{}[] | boolean>,
-    events: BehaviorSubject<{}[] | boolean>,
-    admins: BehaviorSubject<{}[] | boolean>,
-    forbidden: BehaviorSubject<{}[] | boolean>
+    users: BehaviorSubject<User[] | boolean>,
+    customers: BehaviorSubject<{[key:string]:Customers[]} | boolean>,
+    messages: BehaviorSubject<Message[] | boolean>,
+    articles: BehaviorSubject<Article[] | boolean>,
+    events: BehaviorSubject<Evt[] | boolean>,
+    admins: BehaviorSubject<Admin | boolean>,
+    forbidden: BehaviorSubject<Forbidden[] | boolean>
   } = {
       users: new BehaviorSubject(false),
       customers: new BehaviorSubject(false),
@@ -117,9 +125,9 @@ export class ResourcesService {
 
   }
 
-  dataTransform(key: string, items?: {}) {
+  dataTransform(key: string, items?: {}[] | boolean) {
     // if(!items || this.checkHasKey(items, 'status')) return false;
-    !items ? this.getResources(key, false).then(item => {
+    (! items) ? this.getResources(key, false).then(item => {
       items = this.itemsTransform(item);
     }) : items = this.itemsTransform(items);
     // console.log(items);
@@ -128,14 +136,17 @@ export class ResourcesService {
 
   itemsTransform(items) {
 
+    // console.log("forbiddens: ", forbidden);
+    // items = (Array.isArray(items)) ? items.map(user => user['forbidden'] = this.isForbidden(user.email)): false;
     this.getResources('forbidden', false).then(forbidden => {
-      console.log("forbiddens: ", forbidden);
       (forbidden && Array.isArray(items)) ? items = items.map(user => user['forbidden'] = forbidden.find(forbiddenItem => (forbiddenItem.email == user.email)) ? true : false) : false;
     });                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-    // items = (Array.isArray(items)) ? items.map(user => user['forbidden'] = this.isForbidden(user.email)): false;
     return items;
   }
 
+  getForbiddenByEmail(email:string, forbiddens:Forbidden[]){
+    return forbiddens.find(forbiddenItem => (forbiddenItem.email == email)) ? true : false;
+  }
   isForbidden(itemValue: string, itemKey?: string) {
     itemKey = itemKey? itemKey: "email";                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     let isTrue = false;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { Observable, Subscription } from 'rxjs';
@@ -9,10 +9,9 @@ import { Admin } from 'src/app/types/admin-type';
   templateUrl: './mail.component.html',
   styleUrls: ['./mail.component.css']
 })
-export class MailComponent implements OnInit {
+export class MailComponent implements OnInit, OnDestroy {
 
-  /*  msgs: {};
-   @Output() messages: EventEmitter<{}> = new EventEmitter<{}>(); */
+
   msgsResources;
   admin: Admin;
 
@@ -51,7 +50,6 @@ export class MailComponent implements OnInit {
 
     this.srv.getResources('messages', false).then(msgs => {
       console.log(msgs);
-      
       this.msgsResources = msgs? msgs: [];
       this.setPathName();
     });
@@ -110,4 +108,5 @@ export class MailComponent implements OnInit {
     return Array.prototype.filter.call(this.msgsResources, (item => item.deleted_at != null));
   }
 
+  ngOnDestroy(){ if(this.adminSubscription) this.adminSubscription.unsubscribe(); }
 }

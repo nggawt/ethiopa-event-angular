@@ -5,3 +5,7 @@ span.dt-size {
 .align-items-center .custom-control-label::after {
  position: relative;
 }
+
+textarea{
+    overflow: hidden;
+}

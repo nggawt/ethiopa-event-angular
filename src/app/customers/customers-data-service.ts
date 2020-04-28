@@ -90,11 +90,13 @@ export class CustomersDataService implements OnInit{
         });
     }
 
-    joinPagAccessor(cus, prop, customerName){
-
-        let concated = cus?this.concatCustomers(cus):false;
-        let isCustomer = concated?concated.find((items) => {return items['customer'][prop] == customerName;}):false;
+    joinPagAccessor(customers, prop, customerProp){
         
+        let concated = customers? this.concatCustomers(customers):false;
+        let isCustomer = concated && Array.isArray(concated)? 
+        concated.find(items => items['customer'][prop] == customerProp):false;
+        
+        console.log(customers, prop, customerProp, " is customer: ", isCustomer);
         (typeof isCustomer === "object")? this.customer.next(isCustomer): this.customer.next(1);
         return isCustomer;
     }
@@ -102,13 +104,15 @@ export class CustomersDataService implements OnInit{
     concatCustomers(customers){
         let cus = [];
         for(let ii in customers){
-            let cust = customers[ii];
+            // let cust = customers[ii];
+            console.log(ii);
             if(cus.length === 0){
-                cus = cust;
+                cus = customers[ii];
             }else{
-                cus = cus.concat(cust);
+                cus = cus.concat(customers[ii]);
             }
         }
+        
         return cus;
     }
 

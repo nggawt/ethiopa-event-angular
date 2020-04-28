@@ -17,33 +17,28 @@ export class ModelTemplateComponent implements OnInit, AfterViewInit {
     modelSize: string,
     title: string
   };
-  // {id:'contact_customer', nameTo: paramCustomer.company, emailTo: paramCustomer.email};
+  
   constructor(private http: HttpService, private router: Router, private route: ActivatedRoute) { }
 
-  ngOnInit() {
-    // $('#forgotPassword').modal();
-    console.log(this.mailProps);
-    
-  }
+  ngOnInit() { }
 
   ngAfterViewInit() {
 
     let model = $('#'+ this.mailProps.id).modal();
     let thiz = this;
+    console.log("model-template");
 
     $(document).on('hidden.bs.modal', model, function (e) {
-      /// TODO EVENTS
-      console.log("element_id: ",thiz.mailProps.id, " requestUrl: ",  thiz.http.requestUrl, 'element: ', e.target);
-      // thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]): 
-      //                         thiz.router.navigate(['../'], { relativeTo: thiz.route });
+
+      //console.log("element_id: ",thiz.mailProps.id, " requestUrl: ",  thiz.http.requestUrl, 'element: ', e.target);
+
       thiz.router.navigate([thiz.mailProps.url])
-      // console.log(thiz.http.requestUrl);
+      
       if($(model).is(':hidden')){
         thiz.http.requestUrl = false;
         thiz.http.loginTo = false;
         $(document).off('hidden.bs.modal');
         thiz.http.sendingMail.next({[thiz.mailProps.id]: false});
-        console.log("finished");
         
         return e.preventDefault()
       } 

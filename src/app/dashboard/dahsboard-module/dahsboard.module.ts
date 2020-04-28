@@ -58,6 +58,7 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { SharedModuleModule } from 'src/app/shared/shared-module/shared-module.module';
 import { TemplateModule } from 'src/app/shared/templates/templateModule.module';
 import { PipesModule } from 'src/app/shared/pipes-module/pipes-module';
+import { MailsComponent } from '../mail/mails/mails.component';
 
 
 @NgModule({
@@ -104,6 +105,7 @@ import { PipesModule } from 'src/app/shared/pipes-module/pipes-module';
     DashboardAdminComponent,
     DashboardProfileComponent,
     CreateRoleComponent,
+    MailsComponent
   ],
   imports: [
     CommonModule,
