@@ -30,18 +30,19 @@ export class BasicEditComponent implements OnInit,  CanDeactivateComponent{
   constructor(private halls: CustomersDataService, private http: HttpService) { }
 
   ngOnInit() {
+    console.log("basic edit");
     
     this.halls.customerObsever.pipe(
-      find((val) =>  {return val['customer']['id']})
-      ).subscribe(cost => {
+      find((val) => val && val['customer'] && val['customer']['id']))
+      .subscribe(cost => {
         let co = cost['customer'];
     
         let cId = (co && co["user_id"]) ? co["user_id"] : false;
         let authUser:any = this.http.authUser;
         let uId = authUser? authUser["id"] : false;
 
-      // console.log('costumerId: '+ cId + " userId "+ uId);
-      if(cId === uId){
+      console.log('costumerId: '+ cId + " userId "+ uId);
+      if(cId === uId || authUser['authority'].name == "Admin"){
         this.customer = co;
         this.formInt();
         this.isTrue = of(true);

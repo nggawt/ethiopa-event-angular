@@ -126,7 +126,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.urlUnsubscribe ? this.urlUnsubscribe.unsubscribe() : "";
+    if(this.urlUnsubscribe) this.urlUnsubscribe.unsubscribe();
   }
 
 }

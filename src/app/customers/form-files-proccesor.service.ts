@@ -8,52 +8,119 @@ declare var $: any;
 
 export class FormFilesProccesorService {
   /* **************************** */
-  
+
 
   /* **************************** */
 
-  constructor() {}
+  constructor() { }
 
 
   async createFilesOb(urls) {
     let files = [];
+
     for await (let url of urls) {
 
-      if(url){
-        let targetGal = url && (url.indexOf('gallery') >= 0)? 'gallery/':false;
-      let targetImage = url && (url.indexOf('images') >= 0)? 'images/':false;
-      let targetVid = url && (url.indexOf('video') >= 0)? 'video/':false;
-      let targetLoggo = url && (url.indexOf('loggo') >= 0)? 'loggo/': false;
+      if (await url) {
+        let targetGal = url && (url.indexOf('gallery') >= 0) ? 'gallery/' : false;
+        let targetImage = url && (url.indexOf('images') >= 0) ? 'images/' : false;
 
-      let target = targetGal? targetGal: targetVid? targetVid: targetImage? targetImage: targetLoggo? targetLoggo: false;
-        let promise = await this.createItemsObj(url);
-        if(target) promise['name'] = await url.split(target)[1];
+        let targetVid = url && (url.indexOf('video') >= 0) ? 'video/' : false;
+        let targetLoggo = url && (url.indexOf('loggo') >= 0) ? 'loggo/' : false;
+
+        let target = targetGal ? targetGal : targetVid ? targetVid : targetImage ? targetImage : targetLoggo ? targetLoggo : false;
+        let promise = await this.createItemsObj(url, target);
+        // if (target == "video/") {
+          
+          //   promise = await this.createItemsObj(url);
+          //   console.log(promise);
+          
+          // } else {
+            //   promise = await this.vidToOb(url);
+            // }
+            
+        console.log(promise);
+        if (target && promise) promise['name'] =  url.split(target)[1];
         promise['exisst'] = await true;
         files = await [...files, promise];
       }
-      
+
     }
     return files;
   }
 
-  async createItemsObj(elem) {
-    var imageUrl = elem;
-    var blob = null;
-    var xhr = await new XMLHttpRequest();
+  async createItemsObj(elem, target) {
 
+    var imageUrl = elem,
+      thiz = this,
+      blob = null,
+      xhr = await new XMLHttpRequest();
+
+    await xhr.open('GET', imageUrl, true);
     xhr.responseType = 'blob';
+
     let pr = new Promise((res, rej) => {
 
       xhr.onload = async function (event) {
-        
-        if (await this.readyState == 4 && this.status == 200) {
+
+
+        if (target == "video/") {
+
           blob = await xhr.response;
-          return blob ? await res(blob) : rej('no data');
+          
+          blob ? res(blob) : rej('no data');
+
+        } else if ((await this.readyState == 4 && this.status == 200)) {
+          blob = await xhr.response;
+          blob ?  res(blob) : rej('no data');
         }
       }
     });
-    await xhr.open('GET', imageUrl, true);
     await xhr.send();
+    return pr;
+  }
+
+  conFromReader(xhr) {
+    var reader = new FileReader();
+    reader.readAsDataURL(xhr.response);
+    
+    let pr = new Promise((res, rej) => {
+      reader.onload = async function (event) {
+        let resualt = await event.target.result;
+        resualt ? await res(resualt) : rej('no data');
+      }
+    });
+    return pr;
+  }
+
+  async vidToOb(MY_URL) {
+    var request = new XMLHttpRequest();
+    var blob = null;
+
+    request.open('GET', MY_URL, true);
+    request.responseType = 'blob';
+
+    let pr = new Promise((res, rej) => {
+      request.onload = function () {
+        var reader = new FileReader();
+        reader.readAsDataURL(request.response);
+
+        // reader.onload = function (e) {
+        //   console.log('DataURL:', e.target.result);
+        //   return e.target.result;
+        // };
+
+        reader.onload = function (event) {
+          // if (this.readyState == 4) {
+          blob = event.target.result;
+          console.log(blob);
+
+          return blob ? res(blob) : rej('no data');
+          // }
+        }
+      };
+
+    });
+    request.send();
     return pr;
   }
 
@@ -200,11 +267,11 @@ export class FormFilesProccesorService {
     return attrOb;
   }
 
-  handelInputFiles(ar1,arg2,arg3,arg4){
+  handelInputFiles(ar1, arg2, arg3, arg4) {
 
   }
 
-  handleFilesBeforSend(){}
+  handleFilesBeforSend() { }
 }
 
 

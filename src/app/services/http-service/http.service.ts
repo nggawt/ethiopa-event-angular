@@ -52,7 +52,7 @@ export class HttpService {
     if (isAuth) this.userPromise();
     let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
     // this.getData('customers').subscribe(item => console.log(item));
-    // this.logNumRequsts();
+    this.logNumRequsts();
   }
 
   isExpiredToken() {
@@ -62,9 +62,9 @@ export class HttpService {
   protected logNumRequsts() {
 
     let timeOut = setTimeout(() => {
-      console.log(this.outRequests);
+      console.log("num of requests: ", this.outRequests);
       clearTimeout(timeOut);
-    }, 7000);
+    }, 1000);
   }
 
   updateObservable(keyName: string, data: {}) {
@@ -164,8 +164,7 @@ export class HttpService {
 
     this.setOutRequests(theUrl);
     return this.http.post(theUrl, body, this.headersOpt)
-      .pipe(
-        first(),
+      .pipe(first(),
         tap(res => {
           if (res && res['access_token']) {
             this.setUserProps(res);
@@ -198,8 +197,8 @@ export class HttpService {
     }));
   }
 
-  getData(url?, opt?): Observable<{[key:string]:Customers[]} | any> {
-    url = url ? this.baseUrl + "/" + url : "http://lara.test/api/events";
+  getData(url, opt?): Observable<{[key:string]:Customers[]} | any> {
+    url = this.baseUrl + "/" + url;
     return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap((item) => this.setOutRequests(url)), first()) : 
                                     this.http.get(url).pipe(tap(item => this.setOutRequests(url)), first());
   }

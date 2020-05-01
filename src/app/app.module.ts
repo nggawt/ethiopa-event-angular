@@ -61,7 +61,6 @@ import { AuthComponent } from './auth/auth/auth.component';
 import { AdminRegistrationComponent } from './auth/admin-registration/admin-registration.component';
 
 /****************** Shared directive ********************/
-import { CustomValidatorsDirective } from './shared/directives/custom-validators/custom-validators.directive';
 
 
 // import { SendMessageDirectiveDirective } from './shared/directives/contact/send-message-directive.directive';
@@ -102,7 +101,6 @@ export function tokenGetter() {
     BlogTemplateComponent,
     DealsComponent,
     AuthComponent,
-    CustomValidatorsDirective,
     AdminRegistrationComponent,
   ],
 

@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angu
 import { HallType } from '../../../../customers/hall-type';
 import { CustomersDataService } from '../../../../customers/customers-data-service';
 import { Observable, of, Subscription } from 'rxjs';
+import { HelpersService } from 'src/app/services/helpers/helpers.service';
 declare var $: any;
 
 @Component({
@@ -18,7 +19,7 @@ export class CustomerMediaComponent implements OnInit, OnDestroy {
   custSubscriber: Subscription;
 
   @Input() currentCustomer: Observable<{}>;
-  constructor() { }
+  constructor(private hlFn: HelpersService) { }
 
   ngOnInit() {
     
@@ -29,13 +30,12 @@ export class CustomerMediaComponent implements OnInit, OnDestroy {
       let gal = data['gallery'];
       
       this.snap = true;
-      this.customer = of(co);
-      this.galleries = Array.isArray(gal['images'])? gal['images']: typeof gal['images'] == "object"? this.itemsToArray(gal['images']): [];
-      this.videos = Array.isArray(gal['video'])? gal['video']: typeof gal['video'] == "object"? this.itemsToArray(gal['video']): [];
+      this.customer = of(co); 
+      this.galleries = Array.isArray(gal['images'])? gal['images']: typeof gal['images'] == "object"? this.hlFn.itemsToArray(gal['images']): [];
+      this.videos = Array.isArray(gal['video'])? gal['video']: typeof gal['video'] == "object"? this.hlFn.itemsToArray(gal['video']): [];
       // let msgs = localStorage.getItem('msgs');
       // console.log(JSON.parse(msgs));
       // console.log(this.allowPage);
-      
       
       this.carouselInit();
     });

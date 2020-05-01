@@ -9,12 +9,14 @@ import { Observable, of, Subscription, pipe } from 'rxjs';
 export class CustomerTempComponent implements OnInit {
   
   @Input()  costumerProps: Observable<any>;
-  @Input()  ownerLogged: Observable<any> | boolean;
+  @Input()  ownerLogged: Observable<any>;
 
   constructor() { }
 
   ngOnInit() {
-  //  console.log(this.costumerProps);
+    console.log("customer temp");
+    
+    if(this.ownerLogged) this.ownerLogged.subscribe(boll => console.log(boll))
   }
 
 }

@@ -5,6 +5,7 @@ import { SendMessageDirectiveDirective } from '../directives/contact/send-messag
 
 import { LogInDirectiveDirective } from '../directives/log-in/log-in-directive.directive';
 import { AddComponentDirective } from '../directives/add-component.directive'; 
+import { CustomValidatorsDirective } from '../directives/custom-validators/custom-validators.directive';
     
 
 @NgModule({
@@ -16,11 +17,13 @@ import { AddComponentDirective } from '../directives/add-component.directive';
     SendMessageDirectiveDirective,
     LogInDirectiveDirective,
     AddComponentDirective,
+    CustomValidatorsDirective
   ],
   exports: [
     SendMessageDirectiveDirective,
     LogInDirectiveDirective,
     AddComponentDirective,
+    CustomValidatorsDirective
   ]
 })
 export class SharedModuleModule { }

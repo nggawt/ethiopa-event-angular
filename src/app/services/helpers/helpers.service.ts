@@ -70,4 +70,12 @@ export class HelpersService {
   langIsHeb(item: string){
     return item.search(/[\u0590-\u05FF]/);
   }
+
+  itemsToArray(items: {}){
+    let arr = [];
+    for(let ii in items){
+      arr.push(items[ii]);
+    }
+    return arr;
+  }
 }

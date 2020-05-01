@@ -14,7 +14,12 @@
                     <h4>
                         {{ customer?.title }}
                     </h4>
-                    <div [innerHTML]="customer?.content | keepHtml"></div>
+
+                    <p class="text-xl-right text-dar p-2">
+                        {{ customer?.descritions }}
+                    </p>
+                    <hr>
+                    <!-- <div [innerHTML]="customer?.content | keepHtml"></div> -->
                     <!-- <quill-view-html [content]="customer?.content" theme="snow"></quill-view-html> -->
 
                     <p>

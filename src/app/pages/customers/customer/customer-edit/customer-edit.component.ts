@@ -19,8 +19,9 @@ export class CustomerEditComponent implements OnInit {
   constructor(private http: HttpService, private router: Router, private route: ActivatedRoute, private halls: CustomersDataService) { }
 
   ngOnInit() {
+    console.log("customer edit called");
     
-    this.halls.customerObsever.pipe(find((val) =>  val['customer']['id']))
+    this.halls.customerObsever.pipe(find((val) =>  val && val['customer'] && val['customer']['id']))
     .subscribe(
       (cost) => {
         let co = cost['customer'];
@@ -29,8 +30,8 @@ export class CustomerEditComponent implements OnInit {
         let userId = this.http.authUser;
         let uId = userId? userId['id']: false;
 
-        console.log('costumerId: '+ cId + " userId "+ uId);
-        if(cId === uId){
+        // console.log('costumerId: '+ cId + " userId "+ uId, ' customer: ', co);
+        if(cId === uId || (userId && userId['authority']?.name == "Admin")){
           this.isTrue = of(true);
           this.user = userId;
         }else{

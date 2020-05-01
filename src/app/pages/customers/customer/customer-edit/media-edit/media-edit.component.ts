@@ -27,21 +27,24 @@ export class MediaEditComponent implements OnInit, CanDeactivateComponent {
   constructor(private halls: CustomersDataService, private http: HttpService) { }
 
   ngOnInit() {
-
+    
     this.halls.customerObsever.pipe(
       find((val) => { return val['customer']['id'] })
     ).subscribe(cost => {
       let co = cost['customer'];
       
-      let cId = (co && co["user_id"]) ? co["user_id"] : false;
-      let uId = this.http.authUser["id"];
+      let cId = (co && co["user_id"]) ? co["user_id"] : false,
+          authUser = this.http.authUser,
+          uId = authUser["id"];
 
-      if (cId === uId) {
+      if(cId === uId || authUser['authority'].name == "Admin"){
 
         this.customer = cost;
         this.isTrue = of(true);
 
         this.addCostumerForm = new FormGroup({});
+      console.log("media edit customer: ", this.customer);
+
       } else {
         this.isTrue = of(false);
       }

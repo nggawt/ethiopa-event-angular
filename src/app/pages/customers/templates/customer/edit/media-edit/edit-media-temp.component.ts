@@ -8,6 +8,7 @@ import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
 // import { CanDeactivateComponent } from '../../../../../../can-deactivate-guard.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HallType } from 'src/app/customers/hall-type';
+import { HelpersService } from 'src/app/services/helpers/helpers.service';
 declare var $: any;
 
 
@@ -44,26 +45,30 @@ export class EditMediaTempComponent implements OnInit{
   constructor(private router: Router,
     private http: HttpService,
     private formFiles: FormFilesProccesorService,
-    private filesValidator: FormValidationsService) { }
+    private filesValidator: FormValidationsService,
+    private hlFn: HelpersService) { }
 
   ngOnInit() {
 
-      // let gal = this.cus['gallery'];
-      // let cu = this.cus['customer'];
-      // if(localStorage.getItem('msgs')){
-      //   console.log(localStorage.getItem('msgs'));
-      //   localStorage.clear();
-      // }
-      // let cId = (cu && cu["user_id"]) ? cu["user_id"] : false;
-      // let uId = this.http.authUser["id"];
+      let gal = this.cus['gallery'];
+      let cu = this.cus['customer'];
 
-      // if (cId === uId) {
-      //   this.galleries = gal['image'];
-      //   this.videos = gal['video'];
-      //   this.customer = cu;
-      //   this.galleryInit();
-      //   this.ins.emit({media: this});
-      // }
+      if(localStorage.getItem('msgs')){
+        console.log(localStorage.getItem('msgs'));
+        localStorage.clear();
+      }
+
+      let cId = (cu && cu["user_id"]) ? cu["user_id"] : false;
+      let uId = this.http.authUser["id"];
+      
+      if (cId) {
+        this.galleries = Array.isArray(gal['images'])? gal['images']: typeof gal['images'] == "object"? this.hlFn.itemsToArray(gal['images']): [];
+        this.videos = Array.isArray(gal['video'])? gal['video']: typeof gal['video'] == "object"? this.hlFn.itemsToArray(gal['video']): [];
+        this.customer = cu;
+        this.galleryInit();
+        this.ins.emit({media: this});
+        console.log("media-template ", this.videos);
+      }
   }
 
   canLeaveThePage(): Observable<boolean> | Promise<boolean> | boolean {
@@ -82,11 +87,11 @@ export class EditMediaTempComponent implements OnInit{
   }
 
   async galleryInit() {
-
     let imgs = await this.formFiles.createFilesOb(this.galleries);
     let vid = await this.formFiles.createFilesOb(this.videos);
     let loggo = await this.formFiles.createFilesOb([this.customer.loggo]);
-
+    
+    console.log("gallInittttttttttttttttttttttttttttttttttttttttt ",imgs, loggo, vid);
     this.selectedFiles(imgs, 'gallery');
     this.selectedFiles(vid, 'video');
     this.selectedFiles(loggo, 'loggo');

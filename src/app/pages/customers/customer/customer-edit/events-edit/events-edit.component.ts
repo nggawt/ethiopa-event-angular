@@ -58,8 +58,9 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
       let authUser: any = this.http.authUser;
       let uId = authUser ? authUser["id"] : false;
 
-      (cId === uId) ? this.initApp(customer) : '';
-
+      if(cId === uId || authUser['authority'].name == "Admin"){
+        this.initApp(customer);
+      } 
     });
   }
 
@@ -74,7 +75,7 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
 
   initEvents() {
 
-    this.http.getData().subscribe((eventsList: Array<{}>) => {
+    this.http.getData("events").subscribe((eventsList: Array<{}>) => {
       if (eventsList) {
         let tablesEvents = this.tableEvents.initEvents(eventsList, this, "advanced");
         // this.eventsOb = tablesEvents;

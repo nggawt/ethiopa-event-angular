@@ -38,10 +38,12 @@
                         {{ hallsProp.customer.title }}
                     </h4>
 
-                    <!-- <p class="card-text p-1 d-block">
-                        {{ (hallsProp.customer.content.length > 90)? hallsProp.customer.content.replace(hallsProp.customer.content.slice(hallsProp.customer.content.slice(0, 120).lastIndexOf(',')), '...'):(hallsProp.customer.content) }}
-                    </p> -->
+                    <p class="card-text p-1 d-block">
+                        <!-- {{ (hallsProp.customer.content.length > 90)? hallsProp.customer.content.replace(hallsProp.customer.content.slice(hallsProp.customer.content.slice(0, 120).lastIndexOf(',')), '...'):(hallsProp.customer.content) }} -->
+                        {{ (hallsProp.customer.descritions.length > 90)? hallsProp.customer.descritions.replace(hallsProp.customer.descritions.slice(hallsProp.customer.descritions.slice(0, 120).lastIndexOf(',')), '...'):(hallsProp.customer.descritions) }}
+                    </p>
                     <div [innerHTML]="customer?.content | keepHtml"></div>
+
                     <a (click)="onSelectedLink(hallsProp.customer)" routerLink="{{ hallsProp.customer.id }}/about"
                         class="text-info font-weight-bold">
                         המשך לקרוא
@@ -50,10 +52,10 @@
                 </div>
             </div>
             <!-- justify-content-center  (click)="contactModel('ee')"-->
-            <div class="card-footer mt-auto p-2 bd-highlight text-right">
+            <div class="card-footer mt-auto bd-highlight">
                 <div class="text-center">
                     <a class="btn btn-success btn-sm" data-toggle="modal" data-target=".bd-example-modal-lg1">
-                        <span class="text-right float-right">
+                        <span>
                             צור קשר
                         </span>
                         <br />
@@ -62,17 +64,17 @@
                         </i>
                     </a>
                     <a class="btn btn-warning btn-sm" (click)="contactModel(hallsProp.customer)">
-                        <span class="text-right float-right">
+                        <span>
                             שלח הודעה
                         </span>
                         <br />
-                        <i class="material-icons btn-warning btn-sm float-left">
+                        <i class="material-icons btn btn-warning btn-sm float-left">
                             email
                         </i>
                     </a>
                     <a class="btn btn-danger btn-sm" routerLink="{{ hallsProp.customer.id }}"
                         (click)="onSelectedLink(hallsProp.customer)">
-                        <span class="text-right float-right">
+                        <span>
                             עבור לעסק
                         </span>
                         <br />

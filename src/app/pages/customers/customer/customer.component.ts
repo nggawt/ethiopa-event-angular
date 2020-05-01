@@ -24,6 +24,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   pageObs: Subscription;
   userSubs: Subscription;
   num: number = 0;
+
   constructor(private halls: CustomersDataService,
     private router: Router,
     private srv: ResourcesService,
@@ -41,21 +42,71 @@ export class CustomerComponent implements OnInit, OnDestroy {
       const currentUrl = decodeURIComponent(uriParam['url']);
       this.pathUrl = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
       if (this.pathUrl) this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathUrl, loggedUser); });
-
     });
-
     this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathUrl, loggedUser); });
   }
 
   urlCompare(uriParam) {
-    return decodeURIComponent(uriParam).split('/' + this.pathUrl)[1] + this.pathUrl;
+    let url = decodeURIComponent(uriParam).split('/' + this.pathUrl)[1] + this.pathUrl;
+    console.log("url param: ", url, " this.pathUrl: ", this.pathUrl, " this.router.url: ", this.router.url);
+    
+    return url;
   }
 
-  checkCustomer(uri, loggedUser) {
+  checkCustomer(urlId, loggedUser) {
+    urlId = urlId == 'ארמונות-לב' ? 'ארמונות לב' : urlId;
     let routeName = this.route.snapshot.paramMap.get('name');
-    console.log("Route Name: ", routeName, " id: ", uri);
 
-    /* this.srv.getItemResource('customers', uri, routeName, false).then(cust => {
+    console.log("Route Name: ", routeName, " id: ", urlId);
+
+    this.halls.getCustomers().then(customersData => {
+
+      if ('customers' in customersData) customersData = customersData['customers'];
+
+      let fields = this.halls.getFieldType(urlId),
+          customers = customersData && customersData[routeName] ? customersData[routeName] : false;
+
+      if (!customers) this.goTo(urlId);
+
+      let customerWithGall = customers.find(cs => cs['customer'][fields[urlId]] == urlId);
+      if (! customerWithGall){
+        this.goTo(urlId);
+        return;
+      } 
+
+      this.halls.customerOb = customerWithGall;
+      this.halls.CustomerEmit(customerWithGall);
+
+      let customer = customerWithGall['customer'];
+      if (!customer) this.goTo(urlId);
+
+      let urlCompare = this.urlCompare(this.router.url);
+      this.accessPage = (urlCompare == this.pathUrl);
+      
+      // console.log(customer, " loggedUser: ", loggedUser, " <" + urlCompare, " <:::> ", this.pathUrl + "> ", (urlCompare == this.pathUrl), " fields: ", fields);
+      if (customer && loggedUser && (customer["user_id"] == loggedUser['id'])) {
+        this.canAccess = of(true);
+        this.http.authUser = loggedUser;
+        this.customer = of(customerWithGall);
+
+      }else if(customer && this.http.authUser && this.http.authUser['authority']?.name == "Admin"){
+        // alert("ffff");
+        this.canAccess = of(true);
+        this.customer = of(customerWithGall);
+        // this.accessPage = true;
+        
+      } else if(customer && customer['email']){
+        this.customer = of(customerWithGall);
+        
+      }else {
+        if (!customer) this.goTo(urlId);
+        this.canAccess = of(false);
+        this.http.authUser = loggedUser;
+      }
+      console.log(customers, customerWithGall);
+    });
+
+    /* this.srv.getItemResource('customers', urlId, routeName, false).then(cust => {
       console.log(cust)
       let customer = (cust && cust['customer']) ? cust['customer'] : false;
       let urlCompare = this.urlCompare(this.router.url);
@@ -72,7 +123,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
         this.customer = of(cust);
       }
     }); */
-    this.halls.getById(uri).then(
+
+    /* this.halls.getById(urlId).then(
       (cust)=> {
 
         let customer = (cust && cust['customer'])? cust['customer']: false;
@@ -89,13 +141,14 @@ export class CustomerComponent implements OnInit, OnDestroy {
           if(customer && customer["email"]){
             this.customer = of(cust);
           }else{
-            let goTo = this.router.url.split(uri)[0];
+            let goTo = this.router.url.split(urlId)[0];
             this.goTo(goTo);
           }
-    });
+    }); */
   }
 
-  goTo(path) {
+  goTo(urlId) {
+    let path = this.router.url.split(urlId)[0];
     this.router.navigate([path]);
   }
 

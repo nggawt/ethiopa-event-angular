@@ -41,7 +41,8 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
     private http: HttpService) { }
 
   ngOnInit() {
-
+    console.log("all edit");
+    
     this.halls.customerObsever.pipe(
       find((val) => { return val['customer']['id'] })
     ).subscribe(cost => {
@@ -51,7 +52,7 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
       let authUser: any = this.http.authUser;
       let uId = authUser ? authUser["id"] : false;
 
-      if (cId === uId) {
+      if(cId === uId || authUser['authority'].name == "Admin"){
 
         this.customer = cost;
         this.cus = co;
@@ -60,7 +61,6 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
       } else {
         this.isTrue = of(false);
       }
-
     });
   }
 
