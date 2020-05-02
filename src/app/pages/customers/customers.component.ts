@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { Router, RoutesRecognized, ActivatedRoute, Data, ParamMap } from '@angular/router';
 import { map, filter, tap, first } from 'rxjs/operators';
 import { HallType } from '../../customers/hall-type';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
+import { Customer } from 'src/app/types/customer-type';
 
 declare var $: any;
 @Component({
@@ -18,6 +19,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
   sendingMail: Observable<{[key: string]: boolean} | boolean>;
   path: boolean = true;
+  modelProps: Customer;
 
   showPath: boolean;
   urlUnsubscribe: Subscription;
@@ -47,7 +49,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
     // (urlExist) ? this.getCustomerResources(urSnapShut) : this.timesNavigated();
   }
 
-  contactModel(paramCustomer) {
+  msgModel(paramCustomer) {
     
     this.customerMessage = {
       id:'contact_customer', 
@@ -72,8 +74,10 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
     this.http.sendingMail.next({['contact_customer']: true});
     this.sendingMail = this.http.sendingMail;
+  }
 
-    // this.sendingMail.subscribe(item => console.log(item) )
+  contactModel(evt, el: HTMLAnchorElement, customer: Customer){ 
+    this.modelProps = customer; 
   }
 
   private getCustomerResources(url) {

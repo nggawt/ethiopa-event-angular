@@ -1,7 +1,8 @@
 <!-- <app-contact [mailProps]="customerMessage"></app-contact> -->
 
 <div *ngIf="(sendingMail | async) as allowMesage">
-    <ng-template *ngIf="allowMesage && allowMesage[customerMessage.id]" [appSendMessage]="customerMessage"></ng-template>
+    <ng-template *ngIf="allowMesage && allowMesage[customerMessage.id]" [appSendMessage]="customerMessage">
+    </ng-template>
 </div>
 
 <router-outlet *ngIf="! path"></router-outlet>
@@ -54,7 +55,12 @@
             <!-- justify-content-center  (click)="contactModel('ee')"-->
             <div class="card-footer mt-auto bd-highlight">
                 <div class="text-center">
-                    <a class="btn btn-success btn-sm" data-toggle="modal" data-target=".bd-example-modal-lg1">
+                    <a class="btn btn-success btn-sm" (click)="contactModel($event, mdl, hallsProp.customer)"
+                        data-toggle="modal" data-target=".bd-example-modal-lg1" #mdl>
+                        <!-- <ng-container [ngTemplateOutlet]="contactCustomer"
+                            [ngTemplateOutletContext]="{data:hallsProp.customer}">
+
+                        </ng-container> -->
                         <span>
                             צור קשר
                         </span>
@@ -63,7 +69,7 @@
                             contact_phone
                         </i>
                     </a>
-                    <a class="btn btn-warning btn-sm" (click)="contactModel(hallsProp.customer)">
+                    <a class="btn btn-warning btn-sm" (click)="msgModel(hallsProp.customer)">
                         <span>
                             שלח הודעה
                         </span>
@@ -88,33 +94,29 @@
     </div>
 </div>
 
-
-
-
-<!--Contact Modal -->
-<!-- form model -->
-<!-- 
-<div *ngIf="path" class="modal fade bd-example-modal-lg1" tabindex="-1" role="dialog"
+<div *ngIf="path && modelProps" class="modal fade bd-example-modal-lg1" tabindex="-1" role="dialog"
     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <h1>hjkkhjh</h1>
     <div class="modal-dialog modal-lg">
 
         <div class="border-danger modal-content col-sm-6 mx-auto text-right">
             <button type="button" class="close float-left" data-dismiss="modal" aria-label="Close">
                 <span class="float-left" aria-hidden="true">&times;</span>
             </button>
-            <h5 class="text-success">ארמונות לב המחודשים</h5>
+            <h5 class="text-success">{{modelProps.company}}</h5>
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-12 border-bottom p-2">
-                        <span class="font-weight-bold text-dark rounded p-1">איש קשר:</span> הנהלה
+                        <span class="font-weight-bold text-dark rounded p-1">איש קשר:</span>
+                        {{modelProps.contact}}
                     </div>
                     <div class="col-sm-12 border-bottom p-2">
-                        <span class="font-weight-bold text-dark rounded p-1">טלפון/פלאפון:</span> 08-6640450 או
-                        08-664042
+                        <span class="font-weight-bold text-dark rounded p-1">טלפון/פלאפון:</span>
+                        {{modelProps.tel}}
                     </div>
                     <div class="col-sm-12 border-bottom p-2">
-                        <span class="font-weight-bold text-dark rounded p-1">כתובת:</span> אשקלון, ההסתדרות 40 (קניון לב
-                        אשקלון)
+                        <span class="font-weight-bold text-dark rounded p-1">כתובת:</span>
+                        {{modelProps.address}}
                     </div>
                 </div>
             </div>
@@ -124,63 +126,3 @@
         </div>
     </div>
 </div>
-
-
-
-<div *ngIf="path" class="modal fade bd-example-modal-lg container" tabindex="-1" role="dialog"
-    aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg row">
-        <div class="modal-content col-sm-8 mx-auto text-right">
-
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span class="float-left" aria-hidden="true">&times;</span>
-            </button>
-            <div class="p-3">
-                <h2 class="text-right text-success">שלח הודעה</h2>
-                <p>
-                    לקוחות יקרים, מלאו את הפרטים בשדות הבאים ונחזור אליכם תוך זמן קצר
-                    <span class="text-danger">
-
-                        צוות אתיופיה אירועים.
-                    </span>
-                </p>
-            </div>
-
-            <hr>
-            <form class="p-3">
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="שם מלא">
-                </div>
-                <div class="form-group">
-                    <input type="city" class="form-control" placeholder="עיר מגורים">
-
-                </div>
-                <div class="form-group">
-                    <input type="email" class="form-control" id="email" placeholder="אימייל">
-                </div>
-                <div class="form-group">
-
-                    <select id="rigion" class="rigion">
-                        <option selected>אזור</option>
-                        <option value="1">צפון</option>
-                        <option value="2">מרכז והשפלה</option>
-                        <option value="3">דרום</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <input type="tel" class="form-control" id="phone" placeholder="טלפון/פלאפון">
-                </div>
-
-                <div class="form-group">
-                    <textarea class="form-control" id="textarea" rows="3" placeholder="הוסף הודעה"></textarea>
-                </div>
-                <button type="submit" class="btn btn-success btn-sm">
-                    <i class="fa fa-envelope"></i>
-                    שלח</button>
-                <button type="button" class="btn btn-danger btn-sm float-left" data-dismiss="modal">בטל וסגור</button>
-            </form>
-        </div>
-    </div>
-</div>
- -->

@@ -1,29 +1,18 @@
+import { Injectable } from '@angular/core';
+import { CanActivate, ActivatedRouteSnapshot, Router, RouterStateSnapshot, CanActivateChild } from '@angular/router';
+import { HttpService } from '../http-service/http.service';
+import { Observable} from 'rxjs';
+import { CustomersDataService } from '../../customers/customers-data-service';
+import { find } from 'rxjs/operators';
 import { User } from 'src/app/types/user-type';
 import { Admin } from 'src/app/types/admin-type';
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, Router, RouterStateSnapshot, CanActivateChild, ActivatedRoute } from '@angular/router';
-import { HttpService } from '../http-service/http.service';
-import { Observable, empty, forkJoin, merge } from 'rxjs';
-import { CustomersDataService } from '../../customers/customers-data-service';
-import {
-  first, tap, skip,
-  skipWhile, filter,
-  find, takeLast, last,
-  takeWhile, map, defaultIfEmpty,
-  finalize, single, scan, switchMap,
-  every, endWith, startWith,
-  mergeAll,
-  auditTime,
-  shareReplay
-} from 'rxjs/operators';
-// import { map, last, filter, first, skip, tap, find } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RouteGuardService implements CanActivate, CanActivateChild {
 
-  private autUser = {};
+  private autUser: User | Admin | boolean;
   private intendedUrl: string;
   private currentUrl: string;
 
@@ -43,95 +32,88 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+              state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     /****** 
      * if costumr recourse is true else ->> return false and redirect to main path recourse
      * then check if user authenticated is true else ->> rediract to recourse/customer/media and ask to Log-in
      * then check if customer recourse blong to user authenticated true else ->> rediract to recourse/customer/media 
      * then user is owner and return true
     ******/
-   
-   /** lets defined somes props **/
-   this.intendedUrl = decodeURIComponent(state.url);
-   this.currentUrl = decodeURIComponent(this.router.url);
-   
-   let customerUriRecourse = route.parent.params.id ? route.parent.params.id : route.params.id;
-   
-   this.autUser = this.http.authUser;
-   let uEmail = this.autUser && this.autUser['email'] ? this.autUser['email'] : false;
-   let join = this.intendedUrl.indexOf('/join');
-   // let reg = this.intendedUrl.indexOf('/register');
-   if(this.userIsAdmin(this.autUser)) return true;
-   
 
-    if (!this.http.authUser) {
+    /** lets defined somes props **/
+    this.intendedUrl = decodeURIComponent(state.url);
+    this.currentUrl = decodeURIComponent(this.router.url);
+    this.autUser = this.http.authUser;
 
-      if (this.http.isExpiredToken()) {
-        return this.goTo(customerUriRecourse);
-      }
-      return this.http.userObs.pipe(
-        find(val => typeof val == "object"),
-      ).toPromise().then((user) => {
+    let customerUriRecourse = route.parent.params.id ? route.parent.params.id : route.params.id,
+        uEmail = this.autUser && this.autUser['email'] ? this.autUser['email'] : false,
+        join = this.intendedUrl.indexOf('/join');
 
-        console.log("im her: ", user);
+    // let reg = this.intendedUrl.indexOf('/register');
 
-        console.log(
-          "user: ", user,
-          " this.currentUrl : ", this.currentUrl,
-          " this.intendedUrl: ", this.intendedUrl,
-          " customerUriRecourse: ", customerUriRecourse
-        );
-
-        if (user && user['email']) {
-
-          user = user['user'] ? user['user'] : user;
-          this.autUser = user;
-          uEmail = this.autUser['email'];
-
-          if (join >= 0 && uEmail) {
-            this.customers.intendedUrl = this.intendedUrl;
-            return this.userAlreadyCostumer(uEmail);
-          }
-          return this.checkCustomer(customerUriRecourse, this.autUser['email']);
-
-        } else if (user && user['authority'] && user['authority'].name == "Admin") {
-          //console.log("its admin");
-          return true;
-        } else {
-          console.log("go to");
-          this.goTo(customerUriRecourse);
-        }
-        //return false;
-        //console.log("go to");
-        this.goTo(customerUriRecourse);
-      });
+    /** check exp date if expired login session disallow access **/
+    if (this.http.isExpiredToken()) {
+      return this.goTo(customerUriRecourse);
     }
 
-    /** if our uri is /join, lets check if auth user is already our customer member and let him access join page if false **/
+    /** if user is admin allow access **/
+    if (this.userIsAdmin(this.autUser)) return true;
+
+    /** if no user and login session not expaired get logged user check match conditions and sallow access **/
+    if (! this.http.authUser) return this.getLoggedUser(uEmail, customerUriRecourse, join); 
+
+    /** if our uri is /join and we have auth user, lets check if auth user is already our customer member and let him access join page if false **/
     if (join >= 0 && uEmail) {
       this.customers.intendedUrl = this.intendedUrl;
       return this.userAlreadyCostumer(uEmail);
-    } else if (join >= 0) {
-
     }
 
     let css;
     if (css = this.customers.customerOb ? (this.customers.customerOb['customer']) : false) {
       console.log("called gurd admin", this.autUser, " custmer: ", css.company);
-      if (uEmail === css['email'] || (this.autUser && this.autUser['authority'] && this.autUser['authority'].name == "Admin")) return true;
-      //return this.userPromise(uEmail, customerUriRecourse, join);
-      // console.log("called Again gurd admin", this.autUser);
-      // return false;
+      if (uEmail === css['email'] || this.userIsAdmin(this.autUser)) return true;
     }
+
     console.log("authUser: ", this.autUser, " uEmail: ", uEmail, " customerUriRecourse: ", customerUriRecourse);
     /**** so if we have auth user lats check if we have customer and let access intended page if user are owner ****/
-    if (uEmail) { return this.checkCustomer(customerUriRecourse, uEmail); };
+    if (uEmail) { return this.customerIsOwner(customerUriRecourse, uEmail); };
 
     /**** get log in user whitin http loged in ****/
     //return this.userPromise(uEmail, customerUriRecourse, join);
   }
 
-  userIsAdmin(user){
+  protected getLoggedUser(uEmail, customerUriRecourse, join) {
+
+    return this.http.userObs.pipe(
+      find(val => typeof val == "object"),
+    ).toPromise().then((user) => {
+
+      console.log(
+        "user: ", user,
+        " this.currentUrl : ", this.currentUrl,
+        " this.intendedUrl: ", this.intendedUrl,
+        " customerUriRecourse: ", customerUriRecourse
+      );
+
+      if (this.userIsAdmin(user)) return true;
+      if (user && user['email']) {
+
+        user = user['user'] ? user['user'] : user;
+        this.autUser = user;
+        uEmail = this.autUser['email'];
+
+        if (join >= 0 && uEmail) {
+          this.customers.intendedUrl = this.intendedUrl;
+          return this.userAlreadyCostumer(uEmail);
+        }
+        return this.customerIsOwner(customerUriRecourse, this.autUser['email']);
+      } 
+      console.log("go to");
+      return this.goTo(customerUriRecourse);
+    });
+  }
+
+  protected userIsAdmin(user) {
     return (user && user['authority'] && user['authority'].name == "Admin");
   }
 
@@ -151,12 +133,12 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     } else {
       goTo = this.intendedUrl.split(paramId)[0] + paramId;
     }
-    console.log(paramId, goTo);
+    console.log("paramId: ", paramId, " >><< URL: ", goTo);
     this.router.navigate([goTo]);//, { relativeTo: this.active }
     return false;
   }
 
-  checkCustomer(customerUriRecourse, uEmail): Promise<boolean> {
+  customerIsOwner(customerUriRecourse, uEmail): Promise<boolean> {
     customerUriRecourse = customerUriRecourse == 'ארמונות-לב' ? 'ארמונות לב' : customerUriRecourse;
 
 
@@ -167,21 +149,19 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
 
         /****** if we have user and customer. lets check if auth user is owen recourse if true give auth user access ******/
         if (customer && uEmail === customer['email']) return true;
-        console.log("passssssssssssssssssssssssssssssssssssssssssssssss");
 
         /****** if auth user is not own recourse check one more time if we have auth user if false navigate him to recourse/media with posibility to log in ******/
-        if (!uEmail && customer) {
-          this.http.allowLogIn.next(true);
-          this.http.intendedUri = this.intendedUrl;
-        }
+        // if (! uEmail && customer) {
+        //   this.http.allowLogIn.next(true);
+        //   this.http.intendedUri = this.intendedUrl;
+        // }
 
         /****** redirect user to recourse/media  ******/
-        let goToMedia = customer ? "/customers/" + customer['businessType'] + "/" + customerUriRecourse : false;
-        goToMedia ? this.goTo(goToMedia) : this.goTo();
-        return false;
+        console.log("passssssssssssssssssssssssssssssssssssssssssssssss: goToMedia ");
+        return this.goTo(customerUriRecourse);
       },
         (rej) => {
-          console.log("rejected");
+          console.log("rejected: ");
           /****** redirect user to main page or main recourse if exisist else go to home page******/
           return this.goTo();
         });
@@ -227,7 +207,7 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
   //       console.log(customerUriRecourse, uEmail);
 
   //       /**** so if we have auth user lats check if we have customer and let access intended page if user are owner ****/
-  //       return this.checkCustomer(customerUriRecourse, uEmail);
+  //       return this.customerIsOwner(customerUriRecourse, uEmail);
 
   //     },
   //       (reject) => {
@@ -241,7 +221,7 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
   //         /****** we have no user. lets check customer uri recourse ******/
   //         if (!customerUriRecourse) return this.goTo();
   //         /**** lats check if we have customer and navigate recourse if true and let user log in ****/
-  //         return this.checkCustomer(customerUriRecourse, uEmail);
+  //         return this.customerIsOwner(customerUriRecourse, uEmail);
   //       });
   // }
 

@@ -37,33 +37,22 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    // let pathId = this.route.url["value"][0].path;this.route.snapshot.params['id']
     this.pathId = this.route.snapshot.params['id'];
+    this.cusromerActiveState();
 
+    this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
+  }
+
+  cusromerActiveState(){
     this.pageObs = this.router.events
     .pipe(filter((param) => (param instanceof NavigationStart && !!param.url)))
     .subscribe((uriParam) => {
-
       const currentUrl = decodeURIComponent(uriParam['url']),
             changedpathId = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
             
       this.pathId = changedpathId && changedpathId.length? changedpathId: this.route.snapshot.params['id'];
-      
-      if(this.halls.customerOb) this.accessPage = this.urlCompare(uriParam['url']); 
-      console.log(
-          "this.accessPage: ", this.accessPage,
-          " currentUrl: ", currentUrl,
-          " this.router.url: ", this.router.url, 
-          " this.pathId: ", this.pathId, 
-          " customer: ", this.halls.customerOb,
-          " uriParam: ", uriParam,
-          " changedpathId: ", changedpathId
-          ); 
-      
-      //if (this.pathId && ! this.halls.customerOb) this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
+      if(this.halls.customerOb && this.http.isAuth()) this.accessPage = this.urlCompare(uriParam['url']); 
     });
-
-    this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
   }
 
   urlCompare(uriParam): boolean {
@@ -71,7 +60,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
         pgIdExisst = decodedUrl.indexOf(this.pathId)? decodedUrl.split('/' + this.pathId): false,
         compare = pgIdExisst && pgIdExisst.length >= 1 && (! pgIdExisst[1] || pgIdExisst[1].length === 0)? true: false;
     
-    console.warn(decodedUrl, " << pathId: ", this.pathId, " compareLen: ", decodedUrl[1].length);
+    //console.warn(decodedUrl, " << pathId: ", this.pathId, " compareLen: ", decodedUrl[1].length);
     return compare;
   }
 
@@ -79,7 +68,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
     urlId = urlId == 'ארמונות-לב' ? 'ארמונות לב' : urlId;
     let routeName = this.route.snapshot.paramMap.get('name');
 
-    console.log("Route Name: ", routeName, " id: ", urlId, " loggedUser: ", loggedUser);
+    console.warn("Route Name: ", routeName, " id: ", urlId, " loggedUser: ", loggedUser);
 
     this.halls.getCustomers().then(customersData => {
 
@@ -165,42 +154,3 @@ export class CustomerComponent implements OnInit, OnDestroy {
     if(this.userSubs) this.userSubs.unsubscribe();
   }
 }
-/* this.srv.getItemResource('customers', urlId, routeName, false).then(cust => {
-      console.log(cust)
-      let customer = (cust && cust['customer']) ? cust['customer'] : false;
-      let urlCompare = this.urlCompare(this.router.url);
-
-      this.accessPage = (urlCompare == this.pathId);
-      if (customer && loggedUser && (customer["user_id"] == loggedUser['id'])) {
-        this.canAccess = of(true);
-        this.http.authUser = loggedUser;
-      } else {
-        this.canAccess = of(false);
-        this.http.authUser = loggedUser;
-      }
-      if (customer && customer["email"]) {
-        this.customer = of(cust);
-      }
-    }); */
-
-    /* this.halls.getById(urlId).then(
-      (cust)=> {
-
-        let customer = (cust && cust['customer'])? cust['customer']: false;
-          let urlCompare = this.urlCompare(this.router.url);
-          
-          this.accessPage = (urlCompare == this.pathId);
-          if(customer && loggedUser && (customer["user_id"] == loggedUser['id'])){
-            this.canAccess = of(true);
-            this.http.authUser = loggedUser;
-          }else{
-            this.canAccess = of(false);
-            this.http.authUser = loggedUser;
-          }
-          if(customer && customer["email"]){
-            this.customer = of(cust);
-          }else{
-            let goTo = this.router.url.split(urlId)[0];
-            this.goTo(goTo);
-          }
-    }); */

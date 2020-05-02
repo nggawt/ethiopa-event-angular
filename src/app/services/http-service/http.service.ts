@@ -255,8 +255,6 @@ export class HttpService {
     const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/auth-user";//me
 
     // console.log("userPromise", " window.localStorage: ", window.localStorage);
-    // console.log("userPromise", " window.localStorage: ", window.localStorage);
-
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
 
     // this.getUserType();
@@ -267,7 +265,7 @@ export class HttpService {
         first(),
         tap((res) => {
           let user = this.getResponseUser(res);
-          console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
+          // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
           if (user) this.setUserProps(user);
         })).toPromise().catch(this.esrv.handleError);
   }
