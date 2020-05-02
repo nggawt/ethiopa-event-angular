@@ -4,6 +4,7 @@ import { map, filter, tap, first } from 'rxjs/operators';
 import { HallType } from '../../customers/hall-type';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
+import { MessageModel } from 'src/app/types/message-model-type';
 
 declare var $: any;
 @Component({
@@ -22,25 +23,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
   urlUnsubscribe: Subscription;
   hallsProps: Observable<HallType[]> | boolean;
   
-  customerMessage: {
-    id:string | boolean, 
-    url: string,
-    modalSize: string, 
-    nameTo: string | boolean, 
-    nameFrom: string | boolean,
-    emailTo: string | boolean, 
-    title: string,
-    inputs: {
-      email_from: string | boolean,
-      email_to: string | boolean,
-      name: string | boolean,
-      area: boolean,
-      phone: boolean,
-      city: boolean,
-      subject: boolean,
-      message: boolean
-    }
-  };
+  customerMessage: MessageModel;
 
   private address: string;
   private allawAddress = [
@@ -72,11 +55,12 @@ export class CustomersComponent implements OnInit, OnDestroy {
       modalSize: "modal-lg", 
       nameTo: paramCustomer.company, 
       nameFrom: paramCustomer.name,
+      emailFrom: (this.http.authUser && this.http.authUser['email'])? this.http.authUser['email']: false,
       emailTo: paramCustomer.email, 
       title: 'שלח הודעה',
       inputs: {
         email_from: true,
-        email_to: paramCustomer.email,
+        email_to: true,
         name: true,
         area: true,
         phone: true,

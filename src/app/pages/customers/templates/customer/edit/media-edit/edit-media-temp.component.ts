@@ -67,7 +67,6 @@ export class EditMediaTempComponent implements OnInit{
         this.customer = cu;
         this.galleryInit();
         this.ins.emit({media: this});
-        console.log("media-template ", this.videos);
       }
   }
 
@@ -91,7 +90,6 @@ export class EditMediaTempComponent implements OnInit{
     let vid = await this.formFiles.createFilesOb(this.videos);
     let loggo = await this.formFiles.createFilesOb([this.customer.loggo]);
     
-    console.log("gallInittttttttttttttttttttttttttttttttttttttttt ",imgs, loggo, vid);
     this.selectedFiles(imgs, 'gallery');
     this.selectedFiles(vid, 'video');
     this.selectedFiles(loggo, 'loggo');

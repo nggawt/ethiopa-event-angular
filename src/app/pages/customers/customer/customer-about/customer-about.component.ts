@@ -37,12 +37,11 @@ export class CustomerAboutComponent implements OnInit, OnDestroy {
     this.customerDt = this.hall.customerObsever.subscribe(
       (dt) => {
         this.customer$ = of(dt['customer']);
-        console.log(dt['customer']);
-        
+        // console.log(dt['customer']);
       });
   }
 
   ngOnDestroy(){
-    this.customerDt.unsubscribe();
+    if(this.customerDt) this.customerDt.unsubscribe();
   }
 }

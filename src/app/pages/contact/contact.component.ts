@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service'; 
 import { ResourcesService } from 'src/app/services/resources/resources.service';
+import { MessageModel } from 'src/app/types/message-model-type';
 
 declare var $: any;
 @Component({
@@ -14,23 +15,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   phonePatteren: RegExp = /^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})/;
   emailPatteren: RegExp = /^[a-z]+[a-zA-Z_\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$/;
 
-  @Input() mailProps: {
-    id: string,
-    url: string,
-    nameTo: string | boolean,
-    nameFrom: string | boolean,
-    emailTo: string | boolean,
-    modalSize: string,
-    title: string
-    inputs: {
-      email_from: boolean,
-      email_to: boolean,
-      name: boolean,
-      area: boolean,
-      phone: boolean,
-      city: boolean
-    }
-  };
+  @Input() mailProps: MessageModel;
 
   formConcat: FormGroup;
   constructor(private http: HttpService, private rsrv: ResourcesService) { }
@@ -40,10 +25,20 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.initFormConcat();
   }
 
+  initFormConcat() {
+    let fGroupInputs = ! this.mailProps.inputs ? this.getInputs("all") : this.buildFormInput();
+    console.log("mailProps: ", this.mailProps, " form: ", fGroupInputs);
+    this.formConcat = new FormGroup(fGroupInputs);
+  }
+
+  public get co() {
+    return this.formConcat.controls
+  }
+  
+
   getInputs(all: string | boolean, only?: string) {
-    let inputs = this.mailProps.inputs,
-      emailFrom = inputs && typeof inputs.email_from == "string" ? inputs.email_from : null,
-      emailTo = inputs && typeof inputs.email_to == "string" ? inputs.email_to : null;
+    let  emailFrom = typeof this.mailProps.emailFrom == "string" ? this.mailProps.emailFrom : null,
+          emailTo = typeof this.mailProps.emailTo == "string" ? this.mailProps.emailTo : null;
 
     let inputsForm = {
       name: new FormControl(null, [Validators.required, Validators.min(3), Validators.max(40)]),
@@ -55,11 +50,10 @@ export class ContactComponent implements OnInit, OnDestroy {
       subject: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(90)]),
       message: new FormControl(null, [Validators.required, Validators.min(6), Validators.max(255)]),//, this.same
     };
-
     return (all && all == "all") ? inputsForm : inputsForm[only];
   }
 
-  sendToInputs() {
+  buildFormInput() {
 
     let inputsGroups = {},
       inputs = this.mailProps.inputs;
@@ -68,12 +62,6 @@ export class ContactComponent implements OnInit, OnDestroy {
       if (inputs[ii] && typeof inputs[ii] != "string") inputsGroups[ii] = this.getInputs(false, ii);
     }
     return inputsGroups;
-  }
-
-  initFormConcat() {
-    let fGroupInputs = ! this.mailProps.inputs ? this.getInputs("all") : this.sendToInputs();
-    console.log(fGroupInputs);
-    this.formConcat = new FormGroup(fGroupInputs);
   }
 
   onSubmit() {

@@ -29,16 +29,7 @@ export class FormFilesProccesorService {
 
         let target = targetGal ? targetGal : targetVid ? targetVid : targetImage ? targetImage : targetLoggo ? targetLoggo : false;
         let promise = await this.createItemsObj(url, target);
-        // if (target == "video/") {
-          
-          //   promise = await this.createItemsObj(url);
-          //   console.log(promise);
-          
-          // } else {
-            //   promise = await this.vidToOb(url);
-            // }
-            
-        console.log(promise);
+        
         if (target && promise) promise['name'] =  url.split(target)[1];
         promise['exisst'] = await true;
         files = await [...files, promise];
@@ -62,11 +53,9 @@ export class FormFilesProccesorService {
 
       xhr.onload = async function (event) {
 
-
         if (target == "video/") {
 
           blob = await xhr.response;
-          
           blob ? res(blob) : rej('no data');
 
         } else if ((await this.readyState == 4 && this.status == 200)) {
@@ -89,38 +78,6 @@ export class FormFilesProccesorService {
         resualt ? await res(resualt) : rej('no data');
       }
     });
-    return pr;
-  }
-
-  async vidToOb(MY_URL) {
-    var request = new XMLHttpRequest();
-    var blob = null;
-
-    request.open('GET', MY_URL, true);
-    request.responseType = 'blob';
-
-    let pr = new Promise((res, rej) => {
-      request.onload = function () {
-        var reader = new FileReader();
-        reader.readAsDataURL(request.response);
-
-        // reader.onload = function (e) {
-        //   console.log('DataURL:', e.target.result);
-        //   return e.target.result;
-        // };
-
-        reader.onload = function (event) {
-          // if (this.readyState == 4) {
-          blob = event.target.result;
-          console.log(blob);
-
-          return blob ? res(blob) : rej('no data');
-          // }
-        }
-      };
-
-    });
-    request.send();
     return pr;
   }
 

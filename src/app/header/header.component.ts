@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { first, filter, tap, map, skipWhile, take, skipUntil } from 'rxjs/operators';
 import { CustomersDataService } from '../customers/customers-data-service';
 import { User } from '../types/user-type';
+import { MessageModel } from '../types/message-model-type';
 declare let $:any;
 
 @Component({
@@ -20,24 +21,7 @@ export class HeaderComponent implements OnInit {
   loginParams: { [key: string]: string } | boolean = false;
   sendingMail: Observable<{[key: string]: boolean} | boolean>;
 
-  eeMessage: {
-    id:string | boolean,
-    url: string,
-    modalSize: string, 
-    nameTo: string | boolean, 
-    emailTo: string | boolean, 
-    title: string,
-    inputs: {
-      email_from: string | boolean,
-      email_to: string | boolean,
-      name: boolean,
-      area: boolean,
-      phone: boolean,
-      city: boolean,
-      subject: boolean,
-      message: boolean
-    }
-  };
+  eeMessage: MessageModel;
 
   user$: Observable<User| boolean>;
   
@@ -53,29 +37,28 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private http: HttpService, 
-    private customers: CustomersDataService,
-    private router: Router, 
-    private route: ActivatedRoute) {}
+    private router: Router) {}
 
   ngOnInit() {
     
     this.url = decodeURIComponent(location.pathname);
-    this.user$ = this.http.userObs.pipe(tap(user => console.log(user)));// .pipe(filter(item => typeof item == "object"))
+    this.user$ = this.http.userObs;//.pipe(tap(user => console.log(user)));// .pipe(filter(item => typeof item == "object"))
   }
 
   contactModel(param){
     
-   
     this.eeMessage = {
       id:'contact_ee', 
       url: decodeURIComponent(location.pathname),//'/contact',
       modalSize: "modal-lg", 
       nameTo: 'אתיופיה אירועים', 
+      nameFrom: false,
+      emailFrom: false,
       emailTo: "ethiopia-events@gmail.com", 
       title: 'שלח הודעה',
       inputs: {
         email_from: true,
-        email_to: "ethiopia-events@gmail.com",
+        email_to: false,
         name: true,
         area: true,
         phone: true,

@@ -3,10 +3,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersDataService } from '../../../customers/customers-data-service';
 import { Router, ActivatedRoute, NavigationStart, RouterStateSnapshot } from '@angular/router';
 // import { HallType } from '../../../../customers/hall-type';
-import { first, single, filter, tap, skipWhile, take } from 'rxjs/operators';
+import { first, single, filter, tap, skipWhile, take, skip, skipUntil } from 'rxjs/operators';
 import { Observable, of, Observer, Subscriber, Subscribable, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http-service/http.service';
-import { ResourcesService } from 'src/app/services/resources/resources.service';
+import { MessageModel } from 'src/app/types/message-model-type';
 
 @Component({
   selector: 'app-customer',
@@ -19,45 +19,67 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   customer: Observable<any>;
   canAccess: Observable<any> | boolean;
-  pathUrl: string | boolean;
+  pathId: string;
   accessPage: boolean = true;
   pageObs: Subscription;
   userSubs: Subscription;
   num: number = 0;
 
+  sendingMail: Observable<{[key: string]: boolean} | boolean>;
+
+  customerMessage: MessageModel;
+
+
   constructor(private halls: CustomersDataService,
     private router: Router,
-    private srv: ResourcesService,
     private route: ActivatedRoute,
     private http: HttpService) { }
 
   ngOnInit() {
 
-    // let pathUrl = this.route.url["value"][0].path;this.route.snapshot.params['id']
-    this.pathUrl = this.route.snapshot.params['id'];
+    // let pathId = this.route.url["value"][0].path;this.route.snapshot.params['id']
+    this.pathId = this.route.snapshot.params['id'];
 
-    this.pageObs = this.router.events.pipe(filter((param) => (param instanceof NavigationStart && !!param.url))
-    ).subscribe((uriParam) => {
+    this.pageObs = this.router.events
+    .pipe(filter((param) => (param instanceof NavigationStart && !!param.url)))
+    .subscribe((uriParam) => {
 
-      const currentUrl = decodeURIComponent(uriParam['url']);
-      this.pathUrl = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
-      if (this.pathUrl) this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathUrl, loggedUser); });
+      const currentUrl = decodeURIComponent(uriParam['url']),
+            changedpathId = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
+            
+      this.pathId = changedpathId && changedpathId.length? changedpathId: this.route.snapshot.params['id'];
+      
+      if(this.halls.customerOb) this.accessPage = this.urlCompare(uriParam['url']); 
+      console.log(
+          "this.accessPage: ", this.accessPage,
+          " currentUrl: ", currentUrl,
+          " this.router.url: ", this.router.url, 
+          " this.pathId: ", this.pathId, 
+          " customer: ", this.halls.customerOb,
+          " uriParam: ", uriParam,
+          " changedpathId: ", changedpathId
+          ); 
+      
+      //if (this.pathId && ! this.halls.customerOb) this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
     });
-    this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathUrl, loggedUser); });
+
+    this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
   }
 
-  urlCompare(uriParam) {
-    let url = decodeURIComponent(uriParam).split('/' + this.pathUrl)[1] + this.pathUrl;
-    console.log("url param: ", url, " this.pathUrl: ", this.pathUrl, " this.router.url: ", this.router.url);
+  urlCompare(uriParam): boolean {
+    let decodedUrl = decodeURIComponent(uriParam),
+        pgIdExisst = decodedUrl.indexOf(this.pathId)? decodedUrl.split('/' + this.pathId): false,
+        compare = pgIdExisst && pgIdExisst.length >= 1 && (! pgIdExisst[1] || pgIdExisst[1].length === 0)? true: false;
     
-    return url;
+    console.warn(decodedUrl, " << pathId: ", this.pathId, " compareLen: ", decodedUrl[1].length);
+    return compare;
   }
 
   checkCustomer(urlId, loggedUser) {
     urlId = urlId == 'ארמונות-לב' ? 'ארמונות לב' : urlId;
     let routeName = this.route.snapshot.paramMap.get('name');
 
-    console.log("Route Name: ", routeName, " id: ", urlId);
+    console.log("Route Name: ", routeName, " id: ", urlId, " loggedUser: ", loggedUser);
 
     this.halls.getCustomers().then(customersData => {
 
@@ -66,24 +88,20 @@ export class CustomerComponent implements OnInit, OnDestroy {
       let fields = this.halls.getFieldType(urlId),
           customers = customersData && customersData[routeName] ? customersData[routeName] : false;
 
-      if (!customers) this.goTo(urlId);
+      if (!customers) return this.goTo(urlId);
 
       let customerWithGall = customers.find(cs => cs['customer'][fields[urlId]] == urlId);
-      if (! customerWithGall){
-        this.goTo(urlId);
-        return;
-      } 
+      if (! customerWithGall) return this.goTo(urlId); 
 
       this.halls.customerOb = customerWithGall;
       this.halls.CustomerEmit(customerWithGall);
 
       let customer = customerWithGall['customer'];
-      if (!customer) this.goTo(urlId);
+      if (!customer) return this.goTo(urlId);
 
-      let urlCompare = this.urlCompare(this.router.url);
-      this.accessPage = (urlCompare == this.pathUrl);
+      this.accessPage = this.urlCompare(this.router.url);
       
-      // console.log(customer, " loggedUser: ", loggedUser, " <" + urlCompare, " <:::> ", this.pathUrl + "> ", (urlCompare == this.pathUrl), " fields: ", fields);
+      // console.log(customer, " loggedUser: ", loggedUser, " <" + urlCompare, " <:::> ", this.pathId + "> ", (urlCompare == this.pathId), " fields: ", fields);
       if (customer && loggedUser && (customer["user_id"] == loggedUser['id'])) {
         this.canAccess = of(true);
         this.http.authUser = loggedUser;
@@ -97,21 +115,62 @@ export class CustomerComponent implements OnInit, OnDestroy {
         
       } else if(customer && customer['email']){
         this.customer = of(customerWithGall);
-        
+        console.log("called");
+        return;
       }else {
-        if (!customer) this.goTo(urlId);
+        if (!customer) return this.goTo(urlId);
         this.canAccess = of(false);
         this.http.authUser = loggedUser;
       }
-      console.log(customers, customerWithGall);
-    });
+      // console.log(customers, customerWithGall);
+    }); 
+  }
 
-    /* this.srv.getItemResource('customers', urlId, routeName, false).then(cust => {
+  goTo(urlId) {
+    
+    let path = this.router.url.split("/"+urlId)[0];
+    this.router.navigate(['/customers/halls-events']);
+    console.log("urlId: ", urlId, " path: ", path, " this.router.url: ", this.router.url);
+    return false;
+  }
+
+  contactModel(paramCustomer) {
+    
+    this.customerMessage = {
+      id:'contact_customer', 
+      url: decodeURIComponent(location.pathname),
+      modalSize: "modal-lg", 
+      nameTo: paramCustomer.company, 
+      nameFrom: paramCustomer.name,
+      emailTo: paramCustomer.email,
+      emailFrom: false,
+      title: 'שלח הודעה',
+      inputs: {
+        email_from: true,
+        email_to: true,
+        name: true,
+        area: true,
+        phone: true,
+        city: true,
+        subject: true,
+        message: true
+      }
+    };
+    this.http.sendingMail.next({['contact_customer']: true});
+    this.sendingMail = this.http.sendingMail;
+  }
+
+  ngOnDestroy() {
+    if(this.pageObs) this.pageObs.unsubscribe();
+    if(this.userSubs) this.userSubs.unsubscribe();
+  }
+}
+/* this.srv.getItemResource('customers', urlId, routeName, false).then(cust => {
       console.log(cust)
       let customer = (cust && cust['customer']) ? cust['customer'] : false;
       let urlCompare = this.urlCompare(this.router.url);
 
-      this.accessPage = (urlCompare == this.pathUrl);
+      this.accessPage = (urlCompare == this.pathId);
       if (customer && loggedUser && (customer["user_id"] == loggedUser['id'])) {
         this.canAccess = of(true);
         this.http.authUser = loggedUser;
@@ -130,7 +189,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
         let customer = (cust && cust['customer'])? cust['customer']: false;
           let urlCompare = this.urlCompare(this.router.url);
           
-          this.accessPage = (urlCompare == this.pathUrl);
+          this.accessPage = (urlCompare == this.pathId);
           if(customer && loggedUser && (customer["user_id"] == loggedUser['id'])){
             this.canAccess = of(true);
             this.http.authUser = loggedUser;
@@ -145,15 +204,3 @@ export class CustomerComponent implements OnInit, OnDestroy {
             this.goTo(goTo);
           }
     }); */
-  }
-
-  goTo(urlId) {
-    let path = this.router.url.split(urlId)[0];
-    this.router.navigate([path]);
-  }
-
-  ngOnDestroy() {
-    this.pageObs.unsubscribe();
-    this.userSubs.unsubscribe();
-  }
-}

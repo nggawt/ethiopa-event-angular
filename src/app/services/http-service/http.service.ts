@@ -31,6 +31,8 @@ export class HttpService {
   public sendingMail: BehaviorSubject<{ [key: string]: boolean } | boolean> = new BehaviorSubject(false);
 
   public intendedUri: string;
+  public currentUrl: string;
+
   public requestUrl: string | boolean;
   public loginTo: string | boolean;
   public sendTo: string;
@@ -46,13 +48,24 @@ export class HttpService {
   public userObs: Observable<any> = this.user.asObservable();
 
   constructor(private http: HttpClient, private jwt: JwtHelperService, private esrv: ErrorsHandler) {
+
     let isAuth = this.isAuth();
     console.log('is Authonticated: ',isAuth, ' expire in: ', this.jwt.getTokenExpirationDate(this.jwt.tokenGetter()));
 
     if (isAuth) this.userPromise();
-    let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
+    // let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
     // this.getData('customers').subscribe(item => console.log(item));
-    this.logNumRequsts();
+    
+  }
+
+  buildUrl(path?: string){
+    let urlKey = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : "auth-user";
+    const theUrl = urlKey ? this.baseUrl + "/" + urlKey : "http://lara.test/api/auth-user";//me
+
+    return {
+      [urlKey]: theUrl,
+      [theUrl]: urlKey
+    }
   }
 
   isExpiredToken() {
@@ -73,22 +86,26 @@ export class HttpService {
 
   protected setOutRequests(url) {
     this.outRequests.total++;
-    this.outRequests[url] = (this.outRequests[url] && this.outRequests[url] > 0) ? this.outRequests[url] = (this.outRequests[url] + 1) : this.outRequests[url] = 1;
+    let urlbuild = this.buildUrl(url);
+    
+    this.outRequests[url] = {
+      url: urlbuild[url],
+      num: this.outRequests[url] && this.outRequests[url].num? this.outRequests[url].num + 1: 1
+    };
   }
 
   public logIn(credential, path?) {
 
     path = path ? path : this.loginTo ? this.loginTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/login";
+    this.setOutRequests(path);
 
-    console.log("URL: ", theUrl);
     let body = new HttpParams()
       .set('name', credential['name'])
       .set('email', credential['email'])
       .set('password', credential['password']);
-    // const jwt = new JwtHelperService()
-    this.setOutRequests(theUrl);
-    return this.http.post(theUrl, body, this.headersOpt)
+
+      return this.http.post(theUrl, body, this.headersOpt)
       .pipe(
         first(),
         // map(user => user && user['admin']? user['admin']: user ? user: false),
@@ -133,13 +150,13 @@ export class HttpService {
 
   public sendResetPassword(credential) {
 
-    //password/email  
+    this.setOutRequests('/password/email');
     const theUrl = "http://lara.test/api/password/email";
+
     let body = new HttpParams()
       .set('name', credential['userName'])
       .set('email', credential['logInEmail']);
 
-    this.setOutRequests(theUrl);
     return this.http.post(theUrl, body, this.headersOpt)
       .pipe(
         first(),
@@ -155,14 +172,15 @@ export class HttpService {
   public resetPassword(credential) {
 
     //password/email  
+    this.setOutRequests('password/reset');
     const theUrl = "http://lara.test/api/password/reset";
+
     let body = new HttpParams()
       .set('email', credential['email'])
       .set('password', credential['newPassword'])
       .set('password_confirmation', credential['password_conf'])
       .set('token', credential['token']);
 
-    this.setOutRequests(theUrl);
     return this.http.post(theUrl, body, this.headersOpt)
       .pipe(first(),
         tap(res => {
@@ -175,7 +193,7 @@ export class HttpService {
 
   store(theUrl, body) {
     let url = this.baseUrl + "/" + theUrl;
-    this.setOutRequests(url);
+    this.setOutRequests(theUrl);
     return this.http.post(url, (body || {}), this.getHttpOpt())
       .pipe(
         tap(user => {
@@ -184,11 +202,13 @@ export class HttpService {
   }
 
   postData(postUrl, body?, opt?) {
-
-    postUrl = postUrl ? this.baseUrl + "/" + postUrl : false;
-    if (!opt) opt = this.getHttpOpt();
+    
     this.setOutRequests(postUrl);
-    return this.http.post(postUrl, (body || {}), opt).pipe(catchError(err => {
+    let url = this.baseUrl + "/" + postUrl;
+
+    if (!opt) opt = this.getHttpOpt();
+
+    return this.http.post(url, (body || {}), opt).pipe(catchError(err => {
       // this.esrv.handleError(err);
       // console.error(err.message);
       localStorage.setItem('errors_server', JSON.stringify(err));
@@ -197,10 +217,12 @@ export class HttpService {
     }));
   }
 
-  getData(url, opt?): Observable<{[key:string]:Customers[]} | any> {
-    url = this.baseUrl + "/" + url;
-    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(tap((item) => this.setOutRequests(url)), first()) : 
-                                    this.http.get(url).pipe(tap(item => this.setOutRequests(url)), first());
+  getData(path: string, opt?): Observable<{[key:string]:Customers[]} | any> {
+    let url = this.baseUrl + "/" + path;
+    
+    this.setOutRequests(path);
+    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(first()) : 
+                                    this.http.get(url).pipe(first());
   }
 
   logOut(urlParams?) {
@@ -228,15 +250,17 @@ export class HttpService {
   }
 
   userPromise(path?): Promise<User | any> {
-    console.log("userPromise", " window.localStorage: ", window.localStorage);
-
-    path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
     
+    path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/auth-user";//me
+
+    // console.log("userPromise", " window.localStorage: ", window.localStorage);
+    // console.log("userPromise", " window.localStorage: ", window.localStorage);
+
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
 
-    this.getUserType();
-    this.setOutRequests(theUrl);
+    // this.getUserType();
+    this.setOutRequests(path);
 
     return this.http.post(theUrl, token, this.headersOpt)
       .pipe(

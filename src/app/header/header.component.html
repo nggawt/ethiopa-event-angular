@@ -2,7 +2,7 @@
 <!-- <app-contact [mailProps]="eeMessage"></app-contact> -->
 <div [appLogInDirective]="loginParams"></div>
 <div *ngIf="(sendingMail | async) as allowMesage">
-    <ng-template *ngIf="allowMesage && allowMesage[eeMessage.id]" [appSendMessageDirective]="eeMessage"></ng-template>
+    <ng-template *ngIf="allowMesage && allowMesage[eeMessage.id]" [appSendMessage]="eeMessage"></ng-template>
 </div>
 
 <header class="d-flex flex-row-reverse">

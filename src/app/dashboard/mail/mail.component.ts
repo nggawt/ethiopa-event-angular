@@ -3,6 +3,7 @@ import { ResourcesService } from '../../services/resources/resources.service';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { Observable, Subscription } from 'rxjs';
 import { Admin } from 'src/app/types/admin-type';
+import { MessageModel } from 'src/app/types/message-model-type';
 
 @Component({
   selector: 'app-mail',
@@ -20,25 +21,7 @@ export class MailComponent implements OnInit, OnDestroy {
 
   sendingMail: Observable<{[key: string]: boolean} | boolean>;
 
-  mailItems: {
-    id:string | boolean, 
-    url: string,
-    modalSize: string, 
-    nameTo: string | boolean, 
-    nameFrom: string | boolean, 
-    emailTo: string | boolean, 
-    title: string,
-    inputs: {
-      email_from: string | boolean,
-      email_to: string | boolean,
-      name: boolean,
-      area: boolean,
-      phone: boolean,
-      city: boolean,
-      subject: boolean,
-      message: boolean
-    }
-  };
+  mailItems: MessageModel;
 
   constructor(private srv: ResourcesService, private http: HttpService) {
     // this.srv.initResources('messages', false);
@@ -76,10 +59,11 @@ export class MailComponent implements OnInit, OnDestroy {
       modalSize: "modal-lg",
       nameTo: "whatever user",
       nameFrom: user['name'],
-      emailTo: "",
+      emailFrom: (user && user['email'])? user['email']: false,
+      emailTo: false,
       title: 'שלח הודעה',
       inputs: {
-        email_from: user['email'],
+        email_from: true,
         email_to: true,
         name: false,
         area: false,

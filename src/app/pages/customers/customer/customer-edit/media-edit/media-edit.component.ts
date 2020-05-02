@@ -43,7 +43,6 @@ export class MediaEditComponent implements OnInit, CanDeactivateComponent {
         this.isTrue = of(true);
 
         this.addCostumerForm = new FormGroup({});
-      console.log("media edit customer: ", this.customer);
 
       } else {
         this.isTrue = of(false);

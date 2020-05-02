@@ -2,6 +2,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs'; 
 import { ResourcesService } from '../services/resources/resources.service';
 import { Customer } from '../types/customer-type';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class CustomersDataService implements OnInit {
@@ -20,7 +21,7 @@ export class CustomersDataService implements OnInit {
 
     customerOb: Customer;
 
-    constructor(private srv: ResourcesService) { this.initCustomers(); }
+    constructor(private srv: ResourcesService, private route: ActivatedRoute) { this.initCustomers(); }
 
     ngOnInit() { }
 
@@ -72,10 +73,17 @@ export class CustomersDataService implements OnInit {
 
     public getById(customerProp: any): Promise<{}> | any {
         // let customers = this.costs? this.costs: this.customers;
-        let isNumric = (!isNaN(parseFloat(customerProp)) && isFinite(customerProp));
-        let type = this.intendedUrl ? this.intendedUrl : decodeURIComponent(location.pathname).split('/')[2];
+        let isNumric = (!isNaN(parseFloat(customerProp)) && isFinite(customerProp)),
+            type = this.intendedUrl ? this.intendedUrl : decodeURIComponent(location.pathname).split('/')[2];
         type = (type === "app") ? decodeURIComponent(location.pathname).split('/')[2] : type;
 
+        let decodedUrl = decodeURIComponent(localStorage.pathname);
+        
+        if(decodedUrl.indexOf('/customers') >= 0){
+            console.log(decodedUrl.indexOf('/customers'));
+        }
+       
+        
         let prop: string | number = "company";
         if (isNumric) {
             prop = "id";
@@ -108,13 +116,12 @@ export class CustomersDataService implements OnInit {
                 return items['customer'][prop] == customerProp;
             }) : [];//{return items['customer'][prop] == customerProp;})
 
-            (typeof foundedCustomer == "object" || Array.isArray(foundedCustomer)) ? this.customer.next(foundedCustomer) : '';//this.customer.next(1);
-            
             if(typeof foundedCustomer == "object" || Array.isArray(foundedCustomer)) {
                 this.customerOb = foundedCustomer;
+                this.customer.next(foundedCustomer);//this.customer.next(1);
             }
+
             console.log(foundedCustomer);
-            
             return foundedCustomer;//? true:false;
         });
     }
@@ -134,6 +141,13 @@ export class CustomersDataService implements OnInit {
 
         console.log("customers: " , customers, " concated: ", concated, " prop: ", prop, " customerProp: ", customerProp, " is customer: ", isCustomer);
         (typeof isCustomer === "object") ? this.customer.next(isCustomer) : this.customer.next(1);
+        return isCustomer;
+    }
+
+    userIsAlreadyCustomer(customers, prop, customerProp){
+        let concated = customers ? this.concatCustomers(customers) : false;
+        let isCustomer = concated && Array.isArray(concated) ?
+            concated.filter(items => items['customer'][prop] == customerProp).length > 0? true:false : false;
         return isCustomer;
     }
 

@@ -17,13 +17,13 @@ import { CustomValidatorsDirective } from '../directives/custom-validators/custo
     SendMessageDirectiveDirective,
     LogInDirectiveDirective,
     AddComponentDirective,
-    CustomValidatorsDirective
+    CustomValidatorsDirective,
   ],
   exports: [
     SendMessageDirectiveDirective,
     LogInDirectiveDirective,
     AddComponentDirective,
-    CustomValidatorsDirective
+    CustomValidatorsDirective,
   ]
 })
 export class SharedModuleModule { }

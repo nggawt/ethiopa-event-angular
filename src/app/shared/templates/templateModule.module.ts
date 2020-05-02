@@ -13,13 +13,13 @@ import { ResizableTextAreaDirective } from '../directives/resize-textarea/resize
   declarations: [
     ContactComponent,
     ModelTemplateComponent,
-    DashboardModelComponent,
+    DashboardModelComponent,    
     ResizableTextAreaDirective
   ],
   exports: [
     ContactComponent,
     ModelTemplateComponent, 
-    DashboardModelComponent,
+    DashboardModelComponent,    
     ResizableTextAreaDirective
   ]
 })

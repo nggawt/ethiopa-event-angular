@@ -13,10 +13,6 @@ export class CustomerTempComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-    console.log("customer temp");
-    
-    if(this.ownerLogged) this.ownerLogged.subscribe(boll => console.log(boll))
-  }
+  ngOnInit() { }
 
 }
