@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, TemplateRef, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
-import { skipWhile, map, filter, tap, first } from 'rxjs/operators';
+import { map, filter, tap } from 'rxjs/operators';
 import { Subscription, Observable, of } from 'rxjs';
 import { ResourcesService } from '../../services/resources/resources.service';
-import { ActivatedRoute, Router, NavigationStart, NavigationEnd } from '@angular/router';
+import { Router } from '@angular/router';
 import { Admin } from 'src/app/types/admin-type';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 
 @Component({
@@ -30,10 +31,13 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private http: HttpService, private rsrv: ResourcesService, private route: ActivatedRoute, private router: Router) { }
+  constructor(private http: HttpService, 
+    private rsrv: ResourcesService,  
+    private router: Router,
+    private auth: AuthService) { }
 
   ngOnInit() {
-    this.adminSubscrition = this.http.userObs.pipe(tap(item => {
+    this.adminSubscrition = this.auth.userObs.pipe(tap(item => {
 
 
     })).subscribe(admin => {

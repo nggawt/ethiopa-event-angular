@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { CustomersDataService } from 'src/app/customers/customers-data-service';
+import { FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
-import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
-import { find } from 'rxjs/operators';
+import { FormProccesorService } from 'src/app/customers/form-proccesor.service'; 
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'edit-basic-temp',
@@ -32,13 +31,14 @@ export class EditBasicTempComponent implements OnInit {
 
   constructor(private router: Router,
               private http: HttpService,
-              private valForm: FormProccesorService) { }
+              private valForm: FormProccesorService,
+              private auth: AuthService) { }
 
   ngOnInit() {
     this.customer = this.cus['id']? this.cus: this.cus['customer']? this.cus['customer']:false;
 
     let customerId = this.customer['user_id'];
-    let userId = this.http.authUser['id'];
+    let userId = this.auth.authUser['id'];
     
     if(customerId == userId){
       this.ins.emit({basic: this});

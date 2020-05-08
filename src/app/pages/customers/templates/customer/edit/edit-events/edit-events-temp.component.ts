@@ -1,15 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { CustomersDataService } from 'src/app/customers/customers-data-service';
-import { HttpService } from 'src/app/services/http-service/http.service';
-import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
-import { find } from 'rxjs/operators';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
-import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
+import { FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs'; 
+import { HttpService } from 'src/app/services/http-service/http.service'; 
+import { Router, ActivatedRoute } from '@angular/router'; 
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
-declare var $: any;
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'edit-events-temp',
@@ -39,19 +35,19 @@ export class EditEventsTempComponent implements OnInit {
     other: "required|string|min:3",
   };
 
-  private input: FormData = new FormData();
   constructor(private router: Router,
               private http: HttpService,
               private route: ActivatedRoute,
               private msgSrv: MessagesService,
-              private valForm: ValidationService) { }
+              private valForm: ValidationService,
+              private auth: AuthService) { }
 
   ngOnInit() {
 
     this.customer = this.cus['id']? this.cus: this.cus['customer']? this.cus['customer']:false;
 
     let customerId = this.customer['user_id'];
-    let userId = this.http.authUser['id'];
+    let userId = this.auth.authUser['id'];
     
     if(customerId == userId){
       this.ins.emit({events: this});

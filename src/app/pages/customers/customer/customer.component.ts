@@ -1,12 +1,12 @@
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersDataService } from '../../../customers/customers-data-service';
-import { Router, ActivatedRoute, NavigationStart, RouterStateSnapshot } from '@angular/router';
-// import { HallType } from '../../../../customers/hall-type';
-import { first, single, filter, tap, skipWhile, take, skip, skipUntil } from 'rxjs/operators';
-import { Observable, of, Observer, Subscriber, Subscribable, Subscription } from 'rxjs';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-customer',
@@ -33,14 +33,15 @@ export class CustomerComponent implements OnInit, OnDestroy {
   constructor(private halls: CustomersDataService,
     private router: Router,
     private route: ActivatedRoute,
-    private http: HttpService) { }
+    private http: HttpService,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
     this.pathId = this.route.snapshot.params['id'];
     this.cusromerActiveState();
 
-    this.userSubs = this.http.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
+    this.userSubs = this.auth.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
   }
 
   cusromerActiveState(){
@@ -93,10 +94,10 @@ export class CustomerComponent implements OnInit, OnDestroy {
       // console.log(customer, " loggedUser: ", loggedUser, " <" + urlCompare, " <:::> ", this.pathId + "> ", (urlCompare == this.pathId), " fields: ", fields);
       if (customer && loggedUser && (customer["user_id"] == loggedUser['id'])) {
         this.canAccess = of(true);
-        this.http.authUser = loggedUser;
+        this.auth.authUser = loggedUser;
         this.customer = of(customerWithGall);
 
-      }else if(customer && this.http.authUser && this.http.authUser['authority']?.name == "Admin"){
+      }else if(customer && this.auth.authUser && this.auth.authUser['authority']?.name == "Admin"){
         // alert("ffff");
         this.canAccess = of(true);
         this.customer = of(customerWithGall);
@@ -109,7 +110,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
       }else {
         if (!customer) return this.goTo(urlId);
         this.canAccess = of(false);
-        this.http.authUser = loggedUser;
+        this.auth.authUser = loggedUser;
       }
       // console.log(customers, customerWithGall);
     }); 

@@ -17,6 +17,12 @@ export class ResetPasswordComponent implements OnInit {
   token: string | boolean;
   private url: string;
 
+  params = {
+    id: 'resetPassword',
+    modelSize: 'modal-md',
+    title: "איפוס סיסמה"
+  };
+
   constructor(
     private http: HttpService, 
     private router: Router, 
@@ -34,15 +40,16 @@ export class ResetPasswordComponent implements OnInit {
       'password': new FormControl(null, [Validators.required]),
       'password_confirmation': new FormControl(null, [Validators.required]),
     });
-    $('#forgotPassword').modal();
 
-    let thiz = this;
-    $(document).on('hidden.bs.modal', '.modal', function () {
+    // $('#forgotPassword').modal();
 
-      /// TODO EVENTS
-      console.log(thiz.http.requestUrl);
-      thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) : thiz.router.navigate(['../'], { relativeTo: this.route });
-    });
+    // let thiz = this;
+    // $(document).on('hidden.bs.modal', '.modal', function () {
+
+    //   /// TODO EVENTS
+    //   console.log(thiz.http.requestUrl);
+    //   thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) : thiz.router.navigate(['../'], { relativeTo: this.route });
+    // });
   }
 
 

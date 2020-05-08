@@ -16,6 +16,7 @@ import { SlugPipe } from './slug.pipe';
 import { GenerateIdPipe } from './generate-id.pipe';
 import { KeyinObjectPipe } from './keyin-object.pipe';
 import { DateHebPipe } from './date-heb.pipe';
+import { ArrayToObjects } from './array-to-object.pipe';
 // import { TextToParagraphPipe } from './text-to-paragraph.pipe';
 @NgModule({
   
@@ -34,7 +35,8 @@ import { DateHebPipe } from './date-heb.pipe';
     CustomerToHebPipe,
     SlugPipe,
     GenerateIdPipe,
-    KeyinObjectPipe
+    KeyinObjectPipe,
+    ArrayToObjects
   ],
   imports: [
     CommonModule
@@ -55,6 +57,7 @@ import { DateHebPipe } from './date-heb.pipe';
     SlugPipe,
     GenerateIdPipe,
     KeyinObjectPipe,
+    ArrayToObjects
   ],
   providers: [
     

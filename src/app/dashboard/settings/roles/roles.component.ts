@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, TemplateRef, ViewChild, ViewContainerRef, ElementRef, Renderer2 } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { Observable } from 'rxjs';
-import { finalize, take, filter, takeWhile, first, last, takeLast, tap, endWith } from 'rxjs/operators';
+import { filter,tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Admin } from 'src/app/types/admin-type';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 declare var $: any;
 
@@ -35,12 +36,16 @@ export class RolesComponent implements OnInit {
 
   tempRef: any;
 
-  constructor(private http: HttpService, private router: Router, public helpFn: HelpersService,
-    private viewContainer: ViewContainerRef, private render: Renderer2) { }
+  constructor(private http: HttpService, 
+    private router: Router, 
+    public helpFn: HelpersService,
+    private viewContainer: ViewContainerRef, 
+    private render: Renderer2,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
-    this.admin$ = this.http.userObs.pipe(filter(item => typeof item == "boolean" || typeof item == "object"),
+    this.admin$ = this.auth.userObs.pipe(filter(item => typeof item == "boolean" || typeof item == "object"),
       tap(admin => {
         if (admin) {
           this.user = admin;

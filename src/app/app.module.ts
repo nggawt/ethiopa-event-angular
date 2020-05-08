@@ -1,9 +1,9 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-// import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+// import { NgbModule } from '@ng-bootstrap/ng-bootstrap' // , ErrorHandler 
 // import { NgxPopper } from 'angular-popper';
+
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -11,12 +11,30 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
+/****************** Shared pipes ********************/
+
+/****************** Shared directive ********************/
+
+/****************** modules ********************/
+import { SharedModuleModule } from './shared/shared-module/shared-module.module';
+
+/****************** COSTUM Modules ********************/
+import { DahsboardModule } from './dashboard/dahsboard-module/dahsboard.module';
+import { TemplateModule } from './shared/templates/templateModule.module';
+import { PipesModule } from './shared/pipes-module/pipes-module';
+
+/****************** Routing ********************/
+import { PagesRoutingModule } from './pages-routing-module';
+
 /****************** Services ********************/
 import { CustomersDataService } from './customers/customers-data-service';
 import { CanDeactivateGuardService } from './services/can-deactivate-guard/can-deactivate-guard.service';
 import { CustomersResolver } from './pages/customers/customers-resolver.service';
-// import { ErrorsHandler } from './services/errors-exeption/errors-handler.service';
 
+/****************** Auth component ********************/
+import { LogInComponent } from './auth/log-in/log-in.component';
+import { AuthComponent } from './auth/auth/auth.component';
+import { AdminRegistrationComponent } from './auth/admin-registration/admin-registration.component';
 
 /****************** MAIN Pages ********************/
 import { AppComponent } from './app.component';
@@ -43,38 +61,18 @@ import { RegistrationComponent } from './auth/registration/registration.componen
 import { ResetPasswordComponent } from './auth/rest-password/reset-password.component';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 
-/****************** Routing ********************/
-import { PagesRoutingModule } from './pages-routing-module';
-
 /****************** Exeptions ********************/
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
+// import { ErrorsHandler } from './services/errors-exeption/errors-handler.service';
 
-/*************** modules **************/
-import { SharedModuleModule } from './shared/shared-module/shared-module.module';
-
-/****************** Shared pipes ********************/
-
-/****************** Auth component ********************/
-import { LogInComponent } from './auth/log-in/log-in.component';
-import { AuthComponent } from './auth/auth/auth.component';
-import { AdminRegistrationComponent } from './auth/admin-registration/admin-registration.component';
-
-/****************** Shared directive ********************/
-
-
-// import { SendMessageDirectiveDirective } from './shared/directives/contact/send-message-directive.directive';
-
-// import * as $ from "jquery";
-
-/****************** COSTUM Modules ********************/
-import { DahsboardModule } from './dashboard/dahsboard-module/dahsboard.module';
-import { TemplateModule } from './shared/templates/templateModule.module';
-import { PipesModule } from './shared/pipes-module/pipes-module';
-
-export function tokenGetter() {
-  return localStorage.getItem('token');
+export function tokenGetter(type?: string) {
+  return type? localStorage.getItem(type) : localStorage.getItem('token');
 }
+
+// export function getTokens() {
+//   return localStorage.getItem('tokens');
+// }
 
 @NgModule({
   declarations: [
@@ -129,10 +127,15 @@ export function tokenGetter() {
     
     JwtModule.forRoot({
       config: {
-        tokenGetter: tokenGetter,
+        tokenGetter: tokenGetter, 
         whitelistedDomains: ['http://lara.test/api/'],
         blacklistedRoutes: ['example.com/examplebadroute/']
-      }
+      },
+      // jwtOptionsProvider: {
+      //   provide: JWT_OPTIONS,
+      //   useFactory: getTokens,
+      //   deps: [AuthService]
+      // }
     })
   ],
   providers: 

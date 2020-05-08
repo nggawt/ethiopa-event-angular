@@ -1,13 +1,13 @@
-import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
-import { Router, RoutesRecognized, ActivatedRoute, Data, ParamMap } from '@angular/router';
-import { map, filter, tap, first } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { first } from 'rxjs/operators';
 import { HallType } from '../../customers/hall-type';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
 import { Customer } from 'src/app/types/customer-type';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
-declare var $: any;
 @Component({
   selector: 'app-customers',
   templateUrl: './customers.component.html',
@@ -34,7 +34,10 @@ export class CustomersComponent implements OnInit, OnDestroy {
     "transportation", "app/transportation", , "printing", "app/printing", , "fireworks", "app/fireworks"
   ];
 
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpService) { }
+  constructor(private router: Router, 
+    private route: ActivatedRoute, 
+    private http: HttpService,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
@@ -57,7 +60,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
       modalSize: "modal-lg", 
       nameTo: paramCustomer.company, 
       nameFrom: paramCustomer.name,
-      emailFrom: (this.http.authUser && this.http.authUser['email'])? this.http.authUser['email']: false,
+      emailFrom: (this.auth.authUser && this.auth.authUser['email'])? this.auth.authUser['email']: false,
       emailTo: paramCustomer.email, 
       title: 'שלח הודעה',
       inputs: {

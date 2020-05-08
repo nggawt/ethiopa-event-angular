@@ -1,6 +1,9 @@
 <!-- position-relative -->
 <!-- <app-contact [mailProps]="eeMessage"></app-contact> -->
-<div [appLogInDirective]="loginParams"></div>
+<div *ngIf="(allowLogin$ | async) as allowLogin">
+    <ng-template *ngIf="loginParams" [appLogInDirective]="loginParams"></ng-template>
+</div>
+
 <div *ngIf="(sendingMail | async) as allowMesage">
     <ng-template *ngIf="allowMesage && allowMesage[eeMessage.id]" [appSendMessage]="eeMessage"></ng-template>
 </div>
@@ -16,85 +19,104 @@
 
     <ng-template #userItems let-user="user">
 
-        <ng-container [ngTemplateOutlet]="user? logged: noUser" [ngTemplateOutletContext]="{user: user }">
+        <ng-container [ngTemplateOutlet]="user? logged: noUser" [ngTemplateOutletContext]="{user: user}">
         </ng-container>
 
         <div class="btn-group" role="group">
             <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
+                {{ user? "אפשריות": "התחבר"}}
                 <!-- <i class="fa fa-toolbox"></i> -->
             </button>
 
             <div class="dropdown-menu dropdown-user p-3 text-right" aria-labelledby="btnGroupDrop1">
-                <div class="user-item clearfix">
-                    משתמש:
-                    <a *ngIf="! user || (user && user.authority); else logout" class="btn btn-light float-left"
-                        (click)="logIn(islogged)">
-                        התחבר
-                        <i class="fa fa-sign-in text-success rotated"></i>
-                    </a>
-                </div>
+
+                <ng-container [ngTemplateOutlet]="loginlogout" [ngTemplateOutletContext]="{user: user }">
+                </ng-container>
                 <hr>
-                <div class="admin-item clearfix">
-                    מנהל:
-                    <a *ngIf="! user || (user && ! user.authority); else logout" class="btn btn-light float-left"
-                        (click)="logIn(islogged)">
-                        התחבר
-                        <i class="fa fa-sign-in text-primary rotated"></i>
-                    </a>
-                </div>
-                <hr>
-                <div class="myForm">
-                    <form class="form-inline">
-                        <div class="form-group mb-0">
-                            <input id="search_form" class="form-control" type="search" placeholder="חפש באתר"
-                                aria-label="Search" (keyup)="searchItems($event)">
-                        </div>
-                        <a class="btn btn-outline-light"><i class="fa fa-search"></i></a>
-                    </form>
+                <div class="myForm" appSearchDirective>
                 </div>
             </div>
         </div>
     </ng-template>
+
+    <ng-template #loginlogout let-user="user">
+        <div class="user-item clearfix">
+            משתמש:
+            <div class="float-left">
+
+                <ng-container [ngTemplateOutlet]="(! user) || (! user?.user)? login: logout"
+                    [ngTemplateOutletContext]="{user: user? user: 'user' }">
+    
+                </ng-container>
+                <a *ngIf="user && user.activeted" class="btn btn-light" (click)="logOut(user)">
+                    {{ user?.activeted == 'admin'? 'החלף': 'Active'}}
+                    <i class="fa fa-sign-out text-primary rotated"></i>
+                </a>
+            </div>
+        </div>
+        <hr>
+        <div class="admin-item clearfix">
+            מנהל:
+            <div class="float-left">
+
+                <ng-container [ngTemplateOutlet]="(! user) || (! user?.admin)?  login: logout"
+                    [ngTemplateOutletContext]="{user: user? user: 'admin' }">
+    
+                </ng-container>
+                <a *ngIf="user && user.activeted" [ngClass]="user && user.activeted == 'admin'? 'text-success': 'btn btn-light'" (click)="logOut(user)">
+                    {{ user?.activeted == 'user'? 'החלף': 'Active'}}
+    
+                    <i class="fa fa-sign-out text-primary rotated"></i>
+                </a>
+            </div>
+        </div>
+    </ng-template>
+
+
+    <ng-template #login let-user="user">
+        <a class="btn btn-light" (click)="logIn(user)">
+            התחבר
+            <!-- {{ user }} -->
+            <i class="fa fa-sign-in text-primary rotated"></i>
+        </a>
+    </ng-template>
+
     <ng-template #noUser>
 
-        <a class="btn btn-light" (click)="logIn(islogged)">
-                משתמש
-                <i class="fa fa-sign-in text-success rotated"></i>
-        </a>
-
-        <a (click)="register('/register')" class="btn btn-light">
+        <a (click)="register('/register')" class="btn btn-light" title="הרשמה">
+            הרשמה
             <i class="fa fa-user-plus text-primary"></i>
         </a>
     </ng-template>
-    <ng-template #logout>
-        <a class="btn btn-light float-left" (click)="logOut()">
+
+    <ng-template #logout let-user="user">
+
+        <a class="btn btn-light float-left" (click)="logOut(user)">
             התנתק
             <i class="fa fa-sign-out text-danger rotated"></i>
         </a>
     </ng-template>
-    <ng-template #logged let-user="user">
-        <!-- userProfil -->
-        <a [routerLink]="setUrlProfile(user)" class="btn btn-light btn-sm">
-                {{ user.authority? "מנהל": "משתמש" }}
-                <i class="material-icons text-primary">person</i>
 
+    <ng-template #logged let-user="user">
+
+        <a [routerLink]="setUrlProfile(user)" class="btn btn-light btn-sm">
+            {{ user.admin? "מנהל": "משתמש" }}
+            <i class="material-icons text-primary">person</i>
         </a>
-        <!-- customerPage -->
-        <a *ngIf="user.customer as customer" [routerLink]="setUrlPage(customer)" class="btn btn-sm btn-light">
+
+        <a *ngIf="user && user?.customer as customer" [routerLink]="setUrlPage(customer)" class="btn btn-sm btn-light">
+            הדף שלי
             <i class="material-icons">pages</i>
         </a>
-        <a class="btn btn-sm btn-light" (click)="logOut()">
+
+        <a class="btn btn-sm btn-light" (click)="logOut(user)">
             התנתק
             <i class="fa fa-sign-out text-danger rotated"></i>
         </a>
     </ng-template>
 
-    <div class="align-self-center position-relative">
 
-        <div class="hidden-item search-div position-absolute bg-white text-right">
-        </div>
-    </div>
     <nav class="navbar navbar-expand-lg col">
         <a class="navbar-brand" routerLink="/dashboard">
             <img src="./assets/pages/logosmall.gif" alt="logo">
@@ -115,10 +137,10 @@
                     <a class="nav-link" routerLink="/join">הצטרף לאינדקס</a>
                 </li>
                 <li class="nav-item" routerLinkActive="active">
-                    <a class="nav-link" routerLink="/blog">בלוג</a>
+                    <a class="nav-link" routerLink="/articles">בלוג</a>
                 </li>
                 <li class="nav-item" routerLinkActive="active">
-                    <a class="nav-link" routerLink="/scedule-events">יומן אירועים</a>
+                    <a class="nav-link" routerLink="/events">יומן אירועים</a>
                 </li>
                 <!-- <li class="nav-item" routerLinkActive="active">
                     <a class="nav-link" routerLink="/מאמרים">מאמרים</a>

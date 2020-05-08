@@ -24,10 +24,10 @@ export class CustomerAboutComponent implements OnInit, OnDestroy {
       this.accessPage = (urlCompare == this.pathUrl);
       if (customer && loggedUser && (customer["user_id"] == loggedUser['id'])) {
         this.canAccess = of(true);
-        this.http.authUser = loggedUser;
+        this.auth.authUser = loggedUser;
       } else {
         this.canAccess = of(false);
-        this.http.authUser = loggedUser;
+        this.auth.authUser = loggedUser;
       }
       if (customer && customer["email"]) {
         this.customer = of(cust);

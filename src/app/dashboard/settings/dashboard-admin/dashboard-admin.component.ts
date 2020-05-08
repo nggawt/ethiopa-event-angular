@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-dashboard-admin',
@@ -14,10 +15,10 @@ import { HelpersService } from 'src/app/services/helpers/helpers.service';
 export class DashboardAdminComponent implements OnInit {
 
   admin$: Observable<{}>;
-  constructor(private http: HttpService, private router: Router, private helper: HelpersService) { }
+  constructor(private auth: AuthService) { }
 
   ngOnInit() {
-    this.admin$ = this.http.userObs.pipe(filter(admin => typeof admin == "object"));
+    this.admin$ = this.auth.userObs.pipe(filter(admin => typeof admin == "object"));
   }
 
 }

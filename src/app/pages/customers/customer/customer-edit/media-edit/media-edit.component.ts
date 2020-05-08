@@ -1,13 +1,11 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HallType } from '../../../../../customers/hall-type';
-import { CustomersDataService } from '../../../../../customers/customers-data-service';
-import { HttpService } from '../../../../../services/http-service/http.service';
+import { CustomersDataService } from '../../../../../customers/customers-data-service'; 
 import { find } from 'rxjs/operators';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
-declare var $: any;
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-media-edit',
@@ -24,7 +22,7 @@ export class MediaEditComponent implements OnInit, CanDeactivateComponent {
   isTrue: Observable<boolean>;
   childInstans:{} | any;
 
-  constructor(private halls: CustomersDataService, private http: HttpService) { }
+  constructor(private halls: CustomersDataService, private auth: AuthService) { }
 
   ngOnInit() {
     
@@ -34,7 +32,7 @@ export class MediaEditComponent implements OnInit, CanDeactivateComponent {
       let co = cost['customer'];
       
       let cId = (co && co["user_id"]) ? co["user_id"] : false,
-          authUser = this.http.authUser,
+          authUser = this.auth.authUser,
           uId = authUser["id"];
 
       if(cId === uId || authUser['authority'].name == "Admin"){

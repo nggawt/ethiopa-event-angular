@@ -1,9 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';//CommonModule
-import { Router, ActivatedRoute } from '@angular/router';
-import { HttpService } from 'src/app/services/http-service/http.service';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core'; 
 import { Observable, Subscription, of } from 'rxjs';
-import { map, tap, every, skip, filter, first, skipWhile } from 'rxjs/operators';
+import { skipWhile } from 'rxjs/operators';
 import { ResourcesService } from 'src/app/services/resources/resources.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-blog-template',
@@ -17,8 +16,8 @@ export class BlogTemplateComponent implements OnInit, OnDestroy {
   posts$: Observable<{}>;
   subscripted: Subscription;
 
-  constructor(private http: HttpService,
-    private rsrv: ResourcesService) { }
+  constructor(private rsrv: ResourcesService,
+    private auth: AuthService,) { }
 
   ngOnInit() {
     // console.log(this.navItems);
@@ -26,7 +25,7 @@ export class BlogTemplateComponent implements OnInit, OnDestroy {
       map(posts => Array.prototype.filter.call(posts,item => this.filterItems(item)).sort(this.sortItems)),
       tap(items => {
         console.log(items);
-        this.subscripted = this.http.userObs
+        this.subscripted = this.auth.userObs
         .pipe(//filter(item => typeof item == "object" || typeof item === "boolean")
           skipWhile(item => typeof item == "number"))
         .subscribe(user => {
@@ -36,7 +35,7 @@ export class BlogTemplateComponent implements OnInit, OnDestroy {
       })); */
 
       this.rsrv.getResources('articles', false).then(articles => {
-        this.subscripted = this.http.userObs
+        this.subscripted = this.auth.userObs
         .pipe(//filter(item => typeof item == "object" || typeof item === "boolean")
           skipWhile(item => typeof item == "number"))
         .subscribe(user => {

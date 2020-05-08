@@ -4,13 +4,11 @@ import { NotificationService } from 'src/app/services/messages/notification.serv
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
 import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
-
-import { AddComponentDirective } from 'src/app/shared/directives/add-component.directive';
-import { LogInComponent } from 'src/app/auth/log-in/log-in.component';
-
+ 
 import { Observable } from 'rxjs';
 import { ErrorsHandler } from 'src/app/services/errors-exeption/errors-handler.service';
 import { QuillConfig } from 'ngx-quill-v2';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 declare var $: any;
 @Component({
@@ -39,6 +37,7 @@ export class PostEditComponent implements OnInit {
     private http: HttpService,
     private ngVal: NgValidateSrvService,
     private calendar: CalendarDatePickerService,
+    private auth: AuthService,
     private esrv: ErrorsHandler) { }
 
   ngOnInit() {
@@ -137,8 +136,8 @@ export class PostEditComponent implements OnInit {
           this.http.requestUrl = location.pathname;
           // this.http.allowLogIn.
           // this.http.nextIslogged(false);
-          this.http.allowLogIn.next(true);
-          this.allowLogIn = this.http.allowLogIn;
+          this.auth.allowLogIn.next(true);
+          this.allowLogIn = this.auth.allowLogIn;
           // window.localStorage.removeItem('user_key');
           // window.location.reload();
         }

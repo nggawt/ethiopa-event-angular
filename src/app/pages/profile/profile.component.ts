@@ -9,6 +9,7 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { User } from 'src/app/types/user-type';
 import { MessagesService } from 'src/app/services/messages/messages.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 declare var $;
 
@@ -60,7 +61,8 @@ export class ProfileComponent implements OnInit {
     private tableEvents: CreateDateTableService,
     private valForm: ValidationService,
     private msgSrv: MessagesService,
-    private router: Router) { }
+    private router: Router,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
@@ -72,7 +74,7 @@ export class ProfileComponent implements OnInit {
   }
 
   getUser() {
-    this.http.userObs.pipe(
+    this.auth.userObs.pipe(
       first((user) => user['id'])
     ).subscribe((user) => {
       console.log(user);

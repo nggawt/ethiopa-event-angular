@@ -66,7 +66,7 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
       let gal = cost['gallery'];
 
       let cId = (co && co["user_id"]) ? co["user_id"] : false;
-      let authUser: any = this.http.authUser;
+      let authUser: any = this.auth.authUser;
       let uId = authUser ? authUser["id"] : false;
 
       if (cId === uId) {

@@ -6,7 +6,7 @@
 
         <a *ngIf="(message.name+message.id) | rmWhiteSpace as collapseId"
             class="badge badge-primary badge-pill page-link dropdown-toggle" data-toggle="collapse"
-            [data-target]="'#'+collapseId+'replay'" role="button" [attr.aria-expanded]="message.id == 1"
+            data-target="'#'+collapseId+'replay'" role="button" [attr.aria-expanded]="message.id == 1"
             [attr.aria-controls]="collapseId+'replay'">
             השב+
             

@@ -1,14 +1,14 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpService } from '../services/http-service/http.service';
 import { Observable, of } from 'rxjs';
 import { CanDeactivateComponent } from '../services/can-deactivate-guard/can-deactivate-guard.service';
-import { CustomersDataService } from '../customers/customers-data-service';
 import { FormProccesorService } from '../customers/form-proccesor.service';
 import { FormFilesProccesorService } from '../customers/form-files-proccesor.service';
 import { FormValidationsService } from '../customers/form-validations.service';
+import { AuthService } from '../services/http-service/auth.service';
 
 declare let $: any;
 
@@ -45,11 +45,12 @@ export class JoinComponent implements OnInit, CanDeactivateComponent {
               private valForm: FormProccesorService, 
               private http: HttpService,
               private filesValidator: FormValidationsService,
-              private formFiles: FormFilesProccesorService) { }
+              private formFiles: FormFilesProccesorService,
+              private auth: AuthService) { }
 
   ngOnInit() {
 
-    this.http.isLogedIn.subscribe(
+    this.auth.isLogedIn.subscribe(
       (isLogged) => {
         this.isTrue = of(isLogged);
 

@@ -1,17 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { CustomersDataService } from '../../../../../customers/customers-data-service';
 import { Observable, of } from 'rxjs';
 import { HallType } from '../../../../../customers/hall-type';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpService } from '../../../../../services/http-service/http.service';
-import { first, find, tap } from 'rxjs/operators';
+import { find } from 'rxjs/operators';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
-/* import { CanDeactivateComponent } from '../../../../../can-deactivate-guard.service';
-import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
-import { FormFilesProccesorService } from 'src/app/customers/form-files-proccesor.service'; */
-
-declare var $: any;
+import { AuthService } from 'src/app/services/http-service/auth.service'; 
 
 
 @Component({
@@ -20,6 +14,7 @@ declare var $: any;
   styleUrls: ['../../../../../styles/style.component.css']
 
 })
+
 export class AllEditComponent implements OnInit, CanDeactivateComponent {
 
   /*************** customer and form group ********************/
@@ -36,9 +31,8 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
   childInstans:{} | any = {};
 
 
-  constructor(private router: Router,
-    private halls: CustomersDataService,
-    private http: HttpService) { }
+  constructor(private halls: CustomersDataService, 
+    private auth: AuthService) { }
 
   ngOnInit() {
     console.log("all edit");
@@ -49,7 +43,7 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
       let co = cost['customer'];
 
       let cId = (co && co["user_id"]) ? co["user_id"] : false;
-      let authUser: any = this.http.authUser;
+      let authUser: any = this.auth.authUser;
       let uId = authUser ? authUser["id"] : false;
 
       if(cId === uId || authUser['authority'].name == "Admin"){

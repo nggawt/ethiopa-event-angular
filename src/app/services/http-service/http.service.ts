@@ -1,3 +1,4 @@
+import { AuthToken } from 'src/app/types/auth-token-type';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -7,6 +8,7 @@ import { User } from '../../types/user-type';
 import { ErrorsHandler } from '../errors-exeption/errors-handler.service';
 import { Admin } from 'src/app/types/admin-type';
 import { Customers } from 'src/app/types/customers-type';
+import { HelpersService } from '../helpers/helpers.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,20 +16,8 @@ import { Customers } from 'src/app/types/customers-type';
 
 export class HttpService {
 
-  private headersOpt: Object = {
-    headers: new HttpHeaders({
-      'Accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded'
-    })
-  };
-
-  private USER_TYPE: { [user: string]: boolean } = { USER: false, ADMIN: false };
-
   private apiKey: any;
-  private logged: BehaviorSubject<boolean> = new BehaviorSubject(false);
-  private user: BehaviorSubject<User | Admin | boolean> = new BehaviorSubject(false);
 
-  public allowLogIn = new BehaviorSubject(false);
   public sendingMail: BehaviorSubject<{ [key: string]: boolean } | boolean> = new BehaviorSubject(false);
 
   public intendedUri: string;
@@ -37,28 +27,36 @@ export class HttpService {
   public loginTo: string | boolean;
   public sendTo: string;
 
+  private headersOpt: Object = {
+    headers: new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    })
+  };
+
   public outRequests = {
     total: 0
-  }
+  };
 
-  public authUser: User;
+  
   private baseUrl: string = "http://lara.test/api";
 
-  public isLogedIn: Observable<boolean> = this.logged.asObservable();
-  public userObs: Observable<any> = this.user.asObservable();
-
-  constructor(private http: HttpClient, private jwt: JwtHelperService, private esrv: ErrorsHandler) {
+  constructor(private http: HttpClient, 
+    private jwt: JwtHelperService, 
+    private hls: HelpersService, 
+    private esrv: ErrorsHandler) {
 
     let isAuth = this.isAuth();
-    console.log('is Authonticated: ',isAuth, ' expire in: ', this.jwt.getTokenExpirationDate(this.jwt.tokenGetter()));
+    // if (isAuth) this.userPromise();
 
-    if (isAuth) this.userPromise();
+    // console.log("this object: ", this);
+    console.log('is Authonticated: ', isAuth, ' expire in: ', this.jwt.getTokenExpirationDate(this.jwt.tokenGetter()));
     // let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
     // this.getData('customers').subscribe(item => console.log(item));
-    
+
   }
 
-  buildUrl(path?: string){
+  buildUrl(path?: string) {
     let urlKey = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : "auth-user";
     const theUrl = urlKey ? this.baseUrl + "/" + urlKey : "http://lara.test/api/auth-user";//me
 
@@ -87,10 +85,10 @@ export class HttpService {
   protected setOutRequests(url) {
     this.outRequests.total++;
     let urlbuild = this.buildUrl(url);
-    
+
     this.outRequests[url] = {
       url: urlbuild[url],
-      num: this.outRequests[url] && this.outRequests[url].num? this.outRequests[url].num + 1: 1
+      num: this.outRequests[url] && this.outRequests[url].num ? this.outRequests[url].num + 1 : 1
     };
   }
 
@@ -105,33 +103,13 @@ export class HttpService {
       .set('email', credential['email'])
       .set('password', credential['password']);
 
-      return this.http.post(theUrl, body, this.headersOpt)
-      .pipe(
-        first(),
-        // map(user => user && user['admin']? user['admin']: user ? user: false),
-        tap(res => {
-          let itemsRes = res && res['admin'] ? res['admin'] : res ? res : false;
-          
-          let isAdmin = res['roles'] || res['authority'] || res['admin'];
-
-          isAdmin ? this.USER_TYPE["ADMIN"] = true : itemsRes ? this.USER_TYPE["USER"] = true : '';
-
-          if (itemsRes && itemsRes['access_token']) {
-            this.allowLogIn.next(false);
-            this.setApiKey(itemsRes);
-            
-            let user = this.getResponseUser(res);
-            this.setUserProps(user);
-            this.user.next(user);
-            console.log("url: ", theUrl, 'response: ', res, " user: ", user);
-          }
-        }));
+    return this.http.post(theUrl, body, this.headersOpt).pipe(first());
   }
 
-  protected getResponseUser(response){
+  protected getResponseUser(response) {
 
     let itemsRes = response && response['admin'] ? response['admin'] : response;
-
+    
     let user = response['roles'] ? {
       user: itemsRes['user'],
       authority: itemsRes['authority'],
@@ -142,7 +120,7 @@ export class HttpService {
     } : itemsRes['user'] ? itemsRes['user'] : false;
 
     (user['user'] && !user['user'].avatar)
-        ? user['user'].avatar = 'https://source.unsplash.com/random/120x120' : !user.avatar
+      ? user['user'].avatar = 'https://source.unsplash.com/random/120x120' : !user.avatar
         ? user.avatar = 'https://source.unsplash.com/random/120x120' : '';
 
     return user;
@@ -202,7 +180,7 @@ export class HttpService {
   }
 
   postData(postUrl, body?, opt?) {
-    
+
     this.setOutRequests(postUrl);
     let url = this.baseUrl + "/" + postUrl;
 
@@ -217,47 +195,78 @@ export class HttpService {
     }));
   }
 
-  getData(path: string, opt?): Observable<{[key:string]:Customers[]} | any> {
+  getData(path: string, opt?): Observable<{ [key: string]: Customers[] } | any> {
     let url = this.baseUrl + "/" + path;
-    
+
     this.setOutRequests(path);
-    return ! this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(first()) : 
-                                    this.http.get(url).pipe(first());
+    return !this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(first()) :
+      this.http.get(url).pipe(first());
   }
 
   logOut(urlParams?) {
-    urlParams = urlParams ? this.baseUrl + "/" + urlParams : this.baseUrl + "/logout";
-    let token = new HttpParams().set('token', this.apiKey);
+
+    let url = urlParams ? this.baseUrl + "/" + urlParams : this.baseUrl + "/logout",
+        token = new HttpParams().set('token', this.getApiKey());
+
+    if(typeof urlParams == "object"){
+      url = urlParams.url ? this.baseUrl + "/" + urlParams.url : this.baseUrl + "/logout";
+    }
+
     console.log('token', this.apiKey);
 
-    return this.http.post(urlParams, token, this.getHttpOpt())
+    return this.http.post(url, token, this.getHttpOpt())
       .pipe(
         tap(msg => {
-          this.removePropsUser();
-          this.removeApiKey();
+          this.removePropsUser(urlParams);
+          this.removeApiKey(urlParams);
         }, (err) => {
-          this.removePropsUser();
-          this.removeApiKey();
+          this.removePropsUser(urlParams);
+          this.removeApiKey(urlParams);
         }));
+  }
+
+  getApiKey(userParams?) {
+    if (window.localStorage.getItem('tokens') && typeof userParams == "object") {
+
+      let auth = this.hls.getAuthTokens();
+      // auth && auth[userParams.type] = adminProps[typeName] : auth = adminProps;
+      if(auth && auth[userParams.type]){
+
+
+      }
+
+      //window.localStorage.setItem('tokens', JSON.stringify(auth));
+    } else {
+      // window.localStorage.setItem('tokens', JSON.stringify(adminProps));
+    }
+    return this.apiKey;
+  }
+
+  handleLogout(userParams){
+
+  }
+
+  removeApiKey(userParams?: string) {
+    console.log("tokken remove");
+    window.localStorage.clear();
+    this.apiKey = false;
   }
 
   getUserType() {
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
     this.http.post(this.baseUrl + '/user-type', token, this.headersOpt).subscribe(userType => {
       console.log(userType);
-
     });
   }
 
-  userPromise(path?): Promise<User | any> {
-    
+  userPromise(path?): Promise<User | Admin | any> {
+
     path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
     const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/auth-user";//me
 
     // console.log("userPromise", " window.localStorage: ", window.localStorage);
     let token = new HttpParams().set('token', this.jwt.tokenGetter());
 
-    // this.getUserType();
     this.setOutRequests(path);
 
     return this.http.post(theUrl, token, this.headersOpt)
@@ -265,27 +274,46 @@ export class HttpService {
         first(),
         tap((res) => {
           let user = this.getResponseUser(res);
-          // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
           if (user) this.setUserProps(user);
+          // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
         })).toPromise().catch(this.esrv.handleError);
   }
 
-  private removePropsUser() {
-    this.logged.next(false);
-    this.user.next(false);
-    this.allowLogIn.next(true);
+  authenticated(urlParams: AuthToken): Promise<User | Admin | any> {
+
+    let nameType = Object.keys(urlParams)[0],
+        path = 'auth-'+ nameType,
+        url = this.baseUrl+ "/" + path,
+        token = new HttpParams().set('token', urlParams[nameType]['token']); ; 
+    console.log(urlParams);
+    
+    this.setOutRequests(path);
+    
+    return this.http.post(url, token, this.headersOpt)
+      .pipe(
+        first(),
+        tap((res) => {
+          // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
+        })).toPromise().catch(this.esrv.handleError);
+  }
+
+  private removePropsUser(urlParam) {
+    // this.logged.next(false);
+    // this.user.next(false);
+    // this.allowLogIn.next(true);
+    // this.authUser = false;
   }
 
   private setUserProps(user) {
-    this.authUser = user;
-    this.logged.next(true);
-    this.user.next(user);
+    // this.authUser = user;
+    // this.logged.next(true);
+    // this.user.next(user);
   }
 
   isAuth() {
     let exp = this.isExpiredToken();
     if (exp) {
-      this.removePropsUser();
+      this.removePropsUser(location.pathname);
       if (this.jwt.tokenGetter()) this.removeApiKey();
       return !exp;
     }
@@ -293,25 +321,40 @@ export class HttpService {
   }
 
   setApiKey(user) {
-    if (user['authority']) window.localStorage.setItem("admin_key", "true");
+    if (user['authority']) {
+      window.localStorage.setItem("admin_key", "true");
+    }
+
     if (user['access_token']) {
+      
       this.apiKey = user['access_token'];
       window.localStorage.setItem('token', this.apiKey);
+
+      let typeName = user['authority'] ? 'admin' : 'user',
+        adminProps = {
+          [typeName]: {
+            [user['authority'] ? 'admin_key' : 'user_key']: true,
+            token: user['access_token']
+          } 
+        };
+      this.setToken(adminProps, typeName);
     }
   }
 
-  removeApiKey() {
-    console.log("tokken remove");
-    window.localStorage.clear();
-    this.apiKey = false;
-  }
+  setToken(adminProps: {[key: string]: {[key: string]: string | boolean}}, typeName) {
+    if (window.localStorage.getItem('tokens')) {
 
-  getApiKey() {
-    return this.apiKey;
+      let auth = this.hls.getAuthTokens();
+      auth ? auth[typeName] = adminProps[typeName] : auth = adminProps;
+
+      window.localStorage.setItem('tokens', JSON.stringify(auth));
+    } else {
+      window.localStorage.setItem('tokens', JSON.stringify(adminProps));
+    }
   }
 
   nextIslogged(param) {
-    this.logged.next(param);
+    // this.logged.next(param);
   }
 
   private getHttpOpt() {

@@ -8,6 +8,7 @@ import { HttpHeaders } from '@angular/common/http';
 import { HttpService } from '../../../../../services/http-service/http.service';
 import { find, tap } from 'rxjs/operators';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-basic-edit',
@@ -27,7 +28,8 @@ export class BasicEditComponent implements OnInit,  CanDeactivateComponent{
 
   isTrue: Observable<boolean>;
   childInstans:{} | any;
-  constructor(private halls: CustomersDataService, private http: HttpService) { }
+  constructor(private halls: CustomersDataService, 
+    private auth: AuthService) { }
 
   ngOnInit() {
     console.log("basic edit");
@@ -38,7 +40,7 @@ export class BasicEditComponent implements OnInit,  CanDeactivateComponent{
         let co = cost['customer'];
     
         let cId = (co && co["user_id"]) ? co["user_id"] : false;
-        let authUser:any = this.http.authUser;
+        let authUser:any = this.auth.authUser;
         let uId = authUser? authUser["id"] : false;
 
       console.log('costumerId: '+ cId + " userId "+ uId);

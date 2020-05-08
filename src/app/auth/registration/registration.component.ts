@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HttpService } from '../../services/http-service/http.service';
-import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
 import { HttpParams } from '@angular/common/http';
-// import { filter, tap, first } from 'rxjs/operators';
-declare let $: any;
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 
 @Component({
@@ -27,10 +25,12 @@ export class RegistrationComponent implements OnInit {
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
 
-  constructor(private router: Router, private http: HttpService, private valForm: FormProccesorService) { }
+  constructor(private router: Router, 
+    private http: HttpService,
+    private auth: AuthService) { }
 
   ngOnInit() {
-    this.http.isLogedIn.subscribe(
+    this.auth.isLogedIn.subscribe(
       (logged) => {
         (logged) ? this.router.navigate(['/']) : this.formInit();
       }

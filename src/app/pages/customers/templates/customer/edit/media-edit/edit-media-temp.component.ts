@@ -1,14 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormValidationsService } from 'src/app/customers/form-validations.service';
-import { FormFilesProccesorService } from 'src/app/customers/form-files-proccesor.service';
-import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
-// import { CanDeactivateComponent } from '../../../../../../can-deactivate-guard.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormFilesProccesorService } from 'src/app/customers/form-files-proccesor.service'; 
+import { FormGroup } from '@angular/forms';
 import { HallType } from 'src/app/customers/hall-type';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 declare var $: any;
 
 
@@ -46,7 +45,8 @@ export class EditMediaTempComponent implements OnInit{
     private http: HttpService,
     private formFiles: FormFilesProccesorService,
     private filesValidator: FormValidationsService,
-    private hlFn: HelpersService) { }
+    private hlFn: HelpersService,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
@@ -59,7 +59,7 @@ export class EditMediaTempComponent implements OnInit{
       }
 
       let cId = (cu && cu["user_id"]) ? cu["user_id"] : false;
-      let uId = this.http.authUser["id"];
+      let uId = this.auth.authUser["id"];
       
       if (cId) {
         this.galleries = Array.isArray(gal['images'])? gal['images']: typeof gal['images'] == "object"? this.hlFn.itemsToArray(gal['images']): [];

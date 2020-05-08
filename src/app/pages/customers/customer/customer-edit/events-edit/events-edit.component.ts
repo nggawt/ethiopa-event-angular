@@ -1,15 +1,13 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Router, ActivatedRoute, CanDeactivate } from '@angular/router';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'; 
 import { CustomersDataService } from '../../../../../customers/customers-data-service';
-import { Observable, of } from 'rxjs';
-import { HallType } from '../../../../../customers/hall-type';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpHeaders } from '@angular/common/http';
+import { Observable, of } from 'rxjs'; 
+import { FormGroup, FormControl, Validators } from '@angular/forms'; 
 import { HttpService } from '../../../../../services/http-service/http.service';
-import { find, tap } from 'rxjs/operators';
+import { find } from 'rxjs/operators';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
 import { CreateDateTableService } from 'src/app/services/create-date-table/create-date-table.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 declare var $: any;
 
 @Component({
@@ -45,7 +43,8 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
     private halls: CustomersDataService,
     private http: HttpService,
     private calendar: CalendarDatePickerService,
-    private tableEvents: CreateDateTableService) { }
+    private tableEvents: CreateDateTableService,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
@@ -55,7 +54,7 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
 
       let customer = cost['customer'];
       let cId = (customer && customer["user_id"]) ? customer["user_id"] : false;
-      let authUser: any = this.http.authUser;
+      let authUser: any = this.auth.authUser;
       let uId = authUser ? authUser["id"] : false;
 
       if(cId === uId || authUser['authority'].name == "Admin"){

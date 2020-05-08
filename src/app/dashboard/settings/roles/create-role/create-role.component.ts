@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
 import { FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { Admin } from 'src/app/types/admin-type';
 import { Observable } from 'rxjs';
-import { tap, map, first, takeWhile } from 'rxjs/operators';
-import { filter } from 'minimatch';
-declare var $: any;
+import { tap } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/http-service/auth.service';
+
 @Component({
   selector: 'app-create-role',
   templateUrl: './create-role.component.html',
@@ -27,10 +26,11 @@ export class CreateRoleComponent implements OnInit {
   };
 
   constructor(
-    private http: HttpService) { }
+    private http: HttpService,
+    private auth: AuthService) { }
 
   ngOnInit() {
-    this.admin$ = this.http.userObs.pipe(tap(admin => {
+    this.admin$ = this.auth.userObs.pipe(tap(admin => {
       console.log(admin);
       if (admin) {
         this.user = admin;

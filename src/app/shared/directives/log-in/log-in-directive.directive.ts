@@ -1,7 +1,8 @@
-import { Directive, ViewContainerRef, OnInit, ComponentFactoryResolver, OnDestroy, Input } from '@angular/core';
-import { LogInComponent } from 'src/app/auth/log-in/log-in.component';
+import { Directive, ViewContainerRef, OnInit, ComponentFactoryResolver, OnDestroy, Input, ElementRef, TemplateRef } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
+import { LogInComponent } from 'src/app/auth/log-in/log-in.component';
+import { ResetPasswordComponent } from './../../../auth/rest-password/reset-password.component';
 
 @Directive({
   selector: '[appLogInDirective]'
@@ -9,17 +10,13 @@ import { HelpersService } from 'src/app/services/helpers/helpers.service';
 
 export class LogInDirectiveDirective implements OnInit, OnDestroy {
 
-  @Input() set appLogInDirective(value: {from_path: string, url: string} | boolean) {
-    // this.viewCont.createEmbeddedView(this.tempRef);
-    
+  @Input() set appLogInDirective(value: { from_path: string, url: string, type: string }) {
 
-    if (this.hls.isExpiredToken() && typeof value == "object") {
-      this.http.requestUrl = value.from_path;
-      this.http.loginTo = value.url;
-      this.loadComponent();
-    }
-    console.log(value);
+    let validToken = (typeof value == "object" && value.type) ? this.hls.isValidToken(value.type) : this.hls.isValidToken();
+    if (!validToken && typeof value == "object") this.handleDirective(value)
+    // this.viewCont.createEmbeddedView(this.ref);
   }
+
   componentRef: any;
   constructor(public viewCont: ViewContainerRef, private resolver: ComponentFactoryResolver, private http: HttpService, public hls: HelpersService) { }
 
@@ -27,15 +24,19 @@ export class LogInDirectiveDirective implements OnInit, OnDestroy {
 
   loadComponent() {
 
-    const component = LogInComponent;
+    const component = LogInComponent; //ResetPasswordComponent;
     const factory = this.resolver.resolveComponentFactory(component);
 
     this.viewCont.clear();
-
+    
     this.componentRef = this.viewCont.createComponent(factory);
-    // this.componentRef.instance.itemData = "log-in";
-    // console.log(this.tempRef, this.componentRef);
   }
 
-  ngOnDestroy() { if(this.componentRef) this.componentRef.destroy(); }
+  handleDirective(value) {
+    this.http.requestUrl = value.from_path;
+    this.http.loginTo = value.url;
+    this.loadComponent();
+  }
+
+  ngOnDestroy() { if (this.componentRef) this.componentRef.destroy(); }
 }

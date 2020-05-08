@@ -1,13 +1,12 @@
-import { Component, OnInit, Input, AfterViewChecked, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, AfterContentChecked, OnDestroy } from '@angular/core';
 
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http-service/http.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
-// import { of } from 'rxjs';
-// import { filter, tap, first } from 'rxjs/operators';
-declare let $: any;
+import { AuthService } from 'src/app/services/http-service/auth.service'; 
 
+declare let $: any;
 
 @Component({
   selector: 'app-log-in',
@@ -31,7 +30,9 @@ export class LogInComponent implements OnInit, AfterContentChecked {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private http: HttpService, private jwt: JwtHelperService) { }
+    private http: HttpService,
+    private jwt: JwtHelperService,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
@@ -45,7 +46,7 @@ export class LogInComponent implements OnInit, AfterContentChecked {
     } */
     this.initFormLogin();
   }
-  ngAfterContentChecked (){
+  ngAfterContentChecked() {
     // if(this.http.isAuth()) this.redirect();
   }
 
@@ -79,19 +80,16 @@ export class LogInComponent implements OnInit, AfterContentChecked {
 
     if (this.logInform.valid) {
       console.log(this.logInform.value);
-      this.http.logIn(this.logInform.value).
-        subscribe(evt => {
 
+      this.auth.login(this.logInform.value, (value) => {
+        if (value) {
           let IntendedUri = this.http.intendedUri ? this.http.intendedUri : "/";
-          console.log(this.jwt.decodeToken(evt['access_token']));
-
+          // console.log(this.jwt.decodeToken(user['access_token'])); 
           // this.router.navigate([IntendedUri]);
           $('.close').click();
-
-        }, (err) => {
-          // this.isTrue = true;
-          console.log(err);
-        });
+        }
+      });
+      
     }
   }
 
@@ -104,6 +102,8 @@ export class LogInComponent implements OnInit, AfterContentChecked {
   sendEmail(path) {
     $('.close').click();
     // this.md.modal('hide');
+    console.log(path);
+
     this.router.navigate([path]);
   }
 

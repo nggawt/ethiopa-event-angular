@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpService } from '../../../../services/http-service/http.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core'; 
 import { of, Observable } from 'rxjs';
 import { CustomersDataService } from '../../../../customers/customers-data-service';
-import { find, first } from 'rxjs/operators';
-import { HttpParams } from '@angular/common/http';
+import { find } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 
 @Component({
@@ -15,8 +13,9 @@ import { HttpParams } from '@angular/common/http';
 export class CustomerEditComponent implements OnInit {
 
   isTrue: Observable<boolean>;
-  private user;
-  constructor(private http: HttpService, private router: Router, private route: ActivatedRoute, private halls: CustomersDataService) { }
+  protected user;
+  constructor(private halls: CustomersDataService,
+    private auth: AuthService) { }
 
   ngOnInit() {
     console.log("customer edit called");
@@ -26,8 +25,8 @@ export class CustomerEditComponent implements OnInit {
       (cost) => {
         let co = cost['customer'];
         let cId = (co && co["user_id"]) ? co["user_id"] : false;
-        // let uId = this.http.authUser["id"];
-        let userId = this.http.authUser;
+        // let uId = this.auth.authUser["id"];
+        let userId = this.auth.authUser;
         let uId = userId? userId['id']: false;
 
         // console.log('costumerId: '+ cId + " userId "+ uId, ' customer: ', co);

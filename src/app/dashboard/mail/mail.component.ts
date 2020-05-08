@@ -4,6 +4,7 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { Observable, Subscription } from 'rxjs';
 import { Admin } from 'src/app/types/admin-type';
 import { MessageModel } from 'src/app/types/message-model-type';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-mail',
@@ -23,13 +24,15 @@ export class MailComponent implements OnInit, OnDestroy {
 
   mailItems: MessageModel;
 
-  constructor(private srv: ResourcesService, private http: HttpService) {
+  constructor(private srv: ResourcesService, 
+    private http: HttpService,
+    private auth: AuthService) {
     // this.srv.initResources('messages', false);
   }
 
   ngOnInit() {
 
-    this.adminSubscription = this.http.userObs.subscribe(admin => typeof admin == "object"? this.admin = admin: false);
+    this.adminSubscription = this.auth.userObs.subscribe(admin => typeof admin == "object"? this.admin = admin: false);
 
     this.srv.getResources('messages', false).then(msgs => {
       console.log(msgs);
