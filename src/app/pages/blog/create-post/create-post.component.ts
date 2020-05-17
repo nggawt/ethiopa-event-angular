@@ -8,6 +8,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { User } from 'src/app/types/user-type';
 import { MessagesService } from 'src/app/services/messages/messages.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-create-post',
@@ -25,6 +26,7 @@ export class CreatePostComponent implements OnInit {
   constructor(private router: Router,
     private route: ActivatedRoute,
     private location: Location,
+    private auth: AuthService,
     private http: HttpService,
     private msgSrv: MessagesService,
     private validator: ValidationService) { }
@@ -35,7 +37,7 @@ export class CreatePostComponent implements OnInit {
 
   blog(evt){
     
-    let user = evt['user'];
+    let user = evt['user']?.user;
     (user)? this.userPromise = user : false;
       this.userPromise? this.intiForm(): this.location.back();
   }
@@ -53,21 +55,24 @@ export class CreatePostComponent implements OnInit {
 
 
     if (this.createPost.valid) {
-      let data: { name: string, title: string, body: string } = this.createPost.value
-      data['name'] = this.userPromise["name"];
+      let data: { name: string, title: string, body: string } = this.createPost.value,
+          dt= new Date();
 
-      this.send(data);
+      data['user_id'] = this.userPromise["id"];
+      data['name'] = this.userPromise["name"];
+      data['date'] = dt.getFullYear()+"-"+ dt.getMonth()+"-"+ dt.getDate();
+      data['confirmed'] = false;
+      this.send(data, 'articles', 'POST');
     }
   }
 
-  send(body, url?: string, method?: string) {
-    let baseUrl = "http://lara.test/api";
-    url = url ? url : "blog";
+  send(body, url: string, method: string) {
+    url = url ? url : "articles";
 
-    let updaterUrl = url && method ? baseUrl + "/" + url + "/" + this.userPromise["id"] + "? _method=" + method : baseUrl + "/" + url;
+    let updaterUrl = url && method ? url + "/" + this.userPromise["id"] + "? _method=" + method : url;
     console.log(updaterUrl);
     
-    this.http.postData(updaterUrl, body)
+    this.http.postDta('articles', body, this.auth.getToken(body['name']))
       .subscribe(evt => {
 
         console.log(evt);
@@ -80,7 +85,7 @@ export class CreatePostComponent implements OnInit {
 
         console.log(err);
         if (err["status"] === 401) {
-          this.http.nextIslogged(false);
+          // this.http.nextIslogged(false);
           window.localStorage.removeItem('user_key');
           window.location.reload();
         }

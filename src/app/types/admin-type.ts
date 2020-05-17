@@ -1,9 +1,28 @@
 import { User } from 'src/app/types/user-type';
 
 export declare interface Admin {
-    user: User,
+    admin: { 
+        user: AdminUserFields,
+        authority: Authority,
+        roles?: Roles[]
+    }
+}
+
+export declare interface AdminUser {
+    user: AdminUserFields,
     authority: Authority,
     roles?: Roles[],
+    activeted?: boolean
+}
+
+export declare interface AdminUserFields {
+    id: number,
+    name: string,
+    email: string,
+    avatar?: string,
+    deleted_at: string | null
+    created_at?: string,
+    updated_at?: string
 }
 
 export declare interface Authority {

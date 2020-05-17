@@ -9,7 +9,8 @@ export class ErrorsHandler implements ErrorHandler {
   handleError(error: Error | HttpErrorResponse) {
     
     if (error instanceof HttpErrorResponse) {
-      // Server or connection error happened
+    console.warn('It happens: ', error);
+    // Server or connection error happened
       if (!navigator.onLine) {
         // Handle offline error
       } else {
@@ -19,6 +20,5 @@ export class ErrorsHandler implements ErrorHandler {
       // Handle Client Error (Angular Error, ReferenceError...)     
     }
     // Log the error anywa
-    console.error('It happens: ', error);
   }
 }

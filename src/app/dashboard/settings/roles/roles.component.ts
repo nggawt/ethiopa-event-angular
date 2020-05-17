@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { filter,tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
-import { Admin } from 'src/app/types/admin-type';
+import { Admin, AdminUser } from 'src/app/types/admin-type';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
 import { AuthService } from 'src/app/services/http-service/auth.service';
 
@@ -19,7 +19,7 @@ export class RolesComponent implements OnInit {
 
   admin$: Observable<{}>;
   roles: FormGroup;
-  user: Admin;
+  user: AdminUser;
   checkBoxChanged: { [key: string]: string } = {};
 
   num: number = 0;
@@ -48,7 +48,7 @@ export class RolesComponent implements OnInit {
     this.admin$ = this.auth.userObs.pipe(filter(item => typeof item == "boolean" || typeof item == "object"),
       tap(admin => {
         if (admin) {
-          this.user = admin;
+          this.user = admin.user;
           this.formInit();
         }
       }));

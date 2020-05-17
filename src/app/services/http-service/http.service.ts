@@ -1,9 +1,9 @@
-import { AuthToken } from 'src/app/types/auth-token-type';
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable, ErrorHandler } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { tap, first, catchError } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { AuthTokens } from 'src/app/types/auth-token-type';
 import { User } from '../../types/user-type';
 import { ErrorsHandler } from '../errors-exeption/errors-handler.service';
 import { Admin } from 'src/app/types/admin-type';
@@ -14,7 +14,7 @@ import { HelpersService } from '../helpers/helpers.service';
   providedIn: 'root'
 })
 
-export class HttpService {
+export class HttpService implements ErrorHandler {
 
   private apiKey: any;
 
@@ -38,13 +38,12 @@ export class HttpService {
     total: 0
   };
 
-  
+
   private baseUrl: string = "http://lara.test/api";
 
-  constructor(private http: HttpClient, 
-    private jwt: JwtHelperService, 
-    private hls: HelpersService, 
-    private esrv: ErrorsHandler) {
+  constructor(private http: HttpClient,
+    private jwt: JwtHelperService,
+    private hls: HelpersService) {// ,private esrv: ErrorsHandler
 
     let isAuth = this.isAuth();
     // if (isAuth) this.userPromise();
@@ -109,7 +108,7 @@ export class HttpService {
   protected getResponseUser(response) {
 
     let itemsRes = response && response['admin'] ? response['admin'] : response;
-    
+
     let user = response['roles'] ? {
       user: itemsRes['user'],
       authority: itemsRes['authority'],
@@ -117,7 +116,8 @@ export class HttpService {
     } : (itemsRes && itemsRes['authority']) ? {
       user: itemsRes['user'],
       authority: itemsRes['authority']
-    } : itemsRes['user'] ? itemsRes['user'] : false;
+    } : itemsRes['user'] ?
+          itemsRes['user'] : false;
 
     (user['user'] && !user['user'].avatar)
       ? user['user'].avatar = 'https://source.unsplash.com/random/120x120' : !user.avatar
@@ -185,7 +185,8 @@ export class HttpService {
     let url = this.baseUrl + "/" + postUrl;
 
     if (!opt) opt = this.getHttpOpt();
-
+    console.log(opt);
+    
     return this.http.post(url, (body || {}), opt).pipe(catchError(err => {
       // this.esrv.handleError(err);
       // console.error(err.message);
@@ -195,7 +196,22 @@ export class HttpService {
     }));
   }
 
-  getData(path: string, opt?): Observable<{ [key: string]: Customers[] } | any> {
+  postDta(postUrl, body, token: string) {
+
+    this.setOutRequests(postUrl);
+    let url = this.baseUrl + "/" + postUrl;
+
+    console.log(token);
+    return this.http.post(url, (body || {}), this.getHttpOpt(token)).pipe(catchError(err => {
+      // this.esrv.handleError(err);
+      // console.error(err.message);
+      localStorage.setItem('errors_server', JSON.stringify(err));
+      console.log("Error is handled");
+      return throwError("Error thrown from catchError");
+    }));
+  }
+
+  getData(path: string, token?): Observable<{ [key: string]: Customers[] } | any> {
     let url = this.baseUrl + "/" + path;
 
     this.setOutRequests(path);
@@ -203,25 +219,24 @@ export class HttpService {
       this.http.get(url).pipe(first());
   }
 
-  logOut(urlParams?) {
+  logOut(urlParams?, httpToken?: string) {
 
-    let url = urlParams ? this.baseUrl + "/" + urlParams : this.baseUrl + "/logout",
-        token = new HttpParams().set('token', this.getApiKey());
+    let url = urlParams && typeof urlParams == "string" ? this.baseUrl + "/" + urlParams : this.baseUrl + "/logout",
+      token = new HttpParams().set('token', urlParams.token);
 
-    if(typeof urlParams == "object"){
+    if (typeof urlParams == "object") {
       url = urlParams.url ? this.baseUrl + "/" + urlParams.url : this.baseUrl + "/logout";
     }
 
-    console.log('token', this.apiKey);
 
-    return this.http.post(url, token, this.getHttpOpt())
+    return this.http.post(url, token, this.getHttpOpt(urlParams.token))
       .pipe(
         tap(msg => {
-          this.removePropsUser(urlParams);
-          this.removeApiKey(urlParams);
+          //this.removePropsUser(urlParams);
+          //this.removeApiKey(urlParams);
         }, (err) => {
-          this.removePropsUser(urlParams);
-          this.removeApiKey(urlParams);
+          //this.removePropsUser(urlParams);
+          //this.removeApiKey(urlParams);
         }));
   }
 
@@ -230,7 +245,7 @@ export class HttpService {
 
       let auth = this.hls.getAuthTokens();
       // auth && auth[userParams.type] = adminProps[typeName] : auth = adminProps;
-      if(auth && auth[userParams.type]){
+      if (auth && auth[userParams.type]) {
 
 
       }
@@ -242,7 +257,7 @@ export class HttpService {
     return this.apiKey;
   }
 
-  handleLogout(userParams){
+  handleLogout(userParams) {
 
   }
 
@@ -276,25 +291,42 @@ export class HttpService {
           let user = this.getResponseUser(res);
           if (user) this.setUserProps(user);
           // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
-        })).toPromise().catch(this.esrv.handleError);
+        })).toPromise().catch(this.handleError);
   }
 
-  authenticated(urlParams: AuthToken): Promise<User | Admin | any> {
+  authenticated(urlParams: AuthTokens, cbk: CallableFunction): Promise<User | Admin | any> {
 
     let nameType = Object.keys(urlParams)[0],
-        path = 'auth-'+ nameType,
-        url = this.baseUrl+ "/" + path,
-        token = new HttpParams().set('token', urlParams[nameType]['token']); ; 
+      path = 'auth-' + nameType,
+      url = this.baseUrl + "/" + path,
+      token = new HttpParams().set('token', urlParams[nameType]['token']);;
+
     console.log(urlParams);
-    
     this.setOutRequests(path);
-    
+
     return this.http.post(url, token, this.headersOpt)
       .pipe(
         first(),
         tap((res) => {
           // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
-        })).toPromise().catch(this.esrv.handleError);
+        })).toPromise().catch(cbk(this.handleError));
+  }
+
+  handleError(error: Error | HttpErrorResponse) {
+    
+    if (error instanceof HttpErrorResponse) {
+      // Server or connection error happened
+      if (!navigator.onLine) {
+        // Handle offline error
+      } else {
+        // Handle Http Error (error.status === 403, 404...)
+      }
+    } else {
+      // Handle Client Error (Angular Error, ReferenceError...)     
+    }
+    // Log the error anywa
+    console.warn('It happens: ', error);
+    return error;
   }
 
   private removePropsUser(urlParam) {
@@ -326,7 +358,7 @@ export class HttpService {
     }
 
     if (user['access_token']) {
-      
+
       this.apiKey = user['access_token'];
       window.localStorage.setItem('token', this.apiKey);
 
@@ -335,13 +367,13 @@ export class HttpService {
           [typeName]: {
             [user['authority'] ? 'admin_key' : 'user_key']: true,
             token: user['access_token']
-          } 
+          }
         };
       this.setToken(adminProps, typeName);
     }
   }
 
-  setToken(adminProps: {[key: string]: {[key: string]: string | boolean}}, typeName) {
+  setToken(adminProps: { [key: string]: { [key: string]: string | boolean } }, typeName) {
     if (window.localStorage.getItem('tokens')) {
 
       let auth = this.hls.getAuthTokens();
@@ -351,13 +383,9 @@ export class HttpService {
     } else {
       window.localStorage.setItem('tokens', JSON.stringify(adminProps));
     }
-  }
+  } 
 
-  nextIslogged(param) {
-    // this.logged.next(param);
-  }
-
-  private getHttpOpt() {
+  private getHttpOpt(token?: string) {
     // console.log(this.apiKey);
 
     return {
@@ -366,7 +394,7 @@ export class HttpService {
         // 'Content-Type': 'multipart/form-data',
         // 'Content-Type': 'application/x-www-form-urlencoded',
         // 'Accept': 'application/json',
-        'Authorization': 'Bearer ' + this.jwt.tokenGetter()
+        'Authorization': 'Bearer ' + token //this.jwt.tokenGetter()
       })
     };
   }

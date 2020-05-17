@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service'; 
 import { ResourcesService } from 'src/app/services/resources/resources.service';
 import { MessageModel } from 'src/app/types/message-model-type';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 
 declare var $: any;
 @Component({
@@ -18,7 +19,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   @Input() mailProps: MessageModel;
 
   formConcat: FormGroup;
-  constructor(private http: HttpService, private rsrv: ResourcesService) { }
+  constructor(private http: HttpService, private auth: AuthService) { }
   
   ngOnInit() {
 
@@ -90,7 +91,7 @@ export class ContactComponent implements OnInit, OnDestroy {
     let url = urlArg ? urlArg : "http://lara.test/api/events";
     let requestUrl = method ? urlArg + "?_method=" + method : url;// (! urlArg)? url + "/" + this.currentEvt["id"] + "?_method=" + method:
 
-    this.http.postData(requestUrl, body)
+    this.http.postData(requestUrl, body, this.auth.getToken(body['name']))
       .subscribe(evt => {
 
         console.log('requestUrl: ', requestUrl, ' request: ', evt);
@@ -100,7 +101,7 @@ export class ContactComponent implements OnInit, OnDestroy {
 
         console.log(err);
         if (err["status"] === 401) {
-          this.http.nextIslogged(false);
+          // this.http.nextIslogged(false);
           window.localStorage.removeItem('user_key');
           window.location.reload();
         }

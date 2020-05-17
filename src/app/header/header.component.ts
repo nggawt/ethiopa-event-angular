@@ -1,3 +1,5 @@
+import { UserFields } from 'src/app/types/user-type';
+import { Admin, AdminUserFields, AdminUser } from 'src/app/types/admin-type';
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http-service/http.service';
@@ -29,7 +31,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.url = decodeURIComponent(location.pathname);
-    this.user$ = this.auth.userObs.pipe(skip(1));
+    this.user$ = this.auth.userObs;//.pipe(skip(1));
     this.allowLogin$ = this.auth.allowLogIn;
   }
 
@@ -45,33 +47,18 @@ export class HeaderComponent implements OnInit {
       emailTo: "ethiopia-events@gmail.com",
       title: 'שלח הודעה',
       inputs: {
-        email_from: true, 
-        email_to: false, 
+        email_from: true,
+        email_to: false,
         name: true,
-        area: true, 
-        phone: true, 
+        area: true,
+        phone: true,
         city: true,
-        subject: true, 
+        subject: true,
         message: true
       }
     };
     this.http.sendingMail.next({ ['contact_ee']: true });
     this.sendingMail = this.http.sendingMail;
-  }
-
-  logOut(user: {}) {
-
-    console.log(user);
-    this.url = decodeURIComponent(location.pathname);
-    let params = this.getUrlParams(user);
-
-    this.http.logOut(params).subscribe(evt => {
-      console.log(evt);
-      // location.reload();
-    });
-
-    this.user$ = of(false);
-    this.redirect();
   }
 
   logIn(user: string) {
@@ -89,6 +76,23 @@ export class HeaderComponent implements OnInit {
     this.router.navigate([path]);
   }
 
+  logOut(user: AdminUser | UserFields) {
+    // let params = this.getUrlParams(user);
+    console.log("::users:: ", user);
+
+    // this.http.logOut(params).subscribe(evt => {
+    //   console.log(evt);
+    //   // location.reload();
+    // });
+    this.url = decodeURIComponent(location.pathname);
+    let isDone = this.auth.logout(user);
+
+    // if(isDone){
+    //   this.user$ = of(false);
+    //   this.redirect();
+    // }
+  }
+
   getUrlParams(user) {
     let params = {
       from_path: location.pathname,
@@ -104,7 +108,28 @@ export class HeaderComponent implements OnInit {
   }
 
   setUrlProfile(obj) {
-    return "/users/" + obj['name'];
+    console.log(obj);
+
+    this.router.navigate(["/users/" + obj['name']]);
+  }
+
+  setUrlPage(customer) {
+
+    let compNameTrimed = customer['company'].trim(),
+      bTypeTrimed = customer['businessType'].trim(),
+      compName = (compNameTrimed.split(' ').length > 1) ? this.appendSelashBetweenSpace(compNameTrimed, ' ') : customer['company'],
+      businessType = (bTypeTrimed.split(' ').length > 1) ? this.appendSelashBetweenSpace(bTypeTrimed, ' ') : customer['businessType'];
+
+    this.router.navigate(["/customers/" + businessType + "/" + compName]);
+  }
+
+  appendSelashBetweenSpace(text, delimiter?) {
+    let str: string;
+    delimiter = delimiter ? delimiter : " ";
+    text.split(delimiter).forEach(element => {
+      (str) ? (element != "") ? str += "-" + element : '' : (element != "") ? str = element : '';
+    });
+    return str;
   }
 
   redirect() {

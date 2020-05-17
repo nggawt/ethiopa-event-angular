@@ -5,6 +5,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { tap, map, first, filter } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { AuthService } from 'src/app/services/http-service/auth.service';
 declare var $;
 
 @Component({
@@ -21,7 +22,10 @@ export class UsersViewsComponent implements OnInit, OnChanges {
 
   savedId:{prevElemId: string | boolean} = {['prevElemId']:false};
   
-  constructor(private http: HttpService, private rsrv: ResourcesService, private router: Router) { }
+  constructor(private http: HttpService, 
+              private rsrv: ResourcesService, 
+              private router: Router,
+              private auth: AuthService) { }
 
   ngOnInit() {
     // this.rsrv.getResources('users', true).then(users => {
@@ -165,7 +169,7 @@ export class UsersViewsComponent implements OnInit, OnChanges {
     };
 
     console.log("url ", url, " items: ", data);
-    this.http.postData(url, data).subscribe(response =>{
+    this.http.postData(url, data, this.auth.getToken()).subscribe(response =>{
       console.log('response: ', response);
       items.forbidden = ! items.forbidden;
       let res = isForbidden? response['user']: response['forbidden'];

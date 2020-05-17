@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-srv.service';
-import { Admin } from 'src/app/types/admin-type';
+import { Admin, AdminUser } from 'src/app/types/admin-type';
 declare var $;
 
 @Component({
@@ -30,7 +30,7 @@ export class AdminEditComponent implements OnInit {
     message: false,
     title: 'ערוך אדמין'
   };
-  @Input() itemData: Admin;// {id: number, name: string, email: string, authority: {id: string, name: string, slug: string}};
+  @Input() itemData: AdminUser;// {id: number, name: string, email: string, authority: {id: string, name: string, slug: string}};
 
 
   constructor(private srv: ResourcesService,

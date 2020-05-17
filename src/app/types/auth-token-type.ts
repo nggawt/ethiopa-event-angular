@@ -1,6 +1,7 @@
-export declare interface AuthToken {
+export declare interface AuthTokens {
     [key: string]: {
         [key: string]: string | boolean,
-        token?: string
+        token?: string,
+        acivated?: boolean
     }
 }

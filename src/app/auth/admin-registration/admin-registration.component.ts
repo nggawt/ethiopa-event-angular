@@ -73,7 +73,7 @@ export class AdminRegistrationComponent implements OnInit {
             console.log(evt);
 
             if (evt['access_token']) {
-              this.http.nextIslogged(true);
+              // this.http.nextIslogged(true);
               $(".close").click();
               // location.reload();
               // this.router.navigate(['/']);

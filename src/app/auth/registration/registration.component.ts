@@ -68,7 +68,7 @@ export class RegistrationComponent implements OnInit {
             console.log(evt);
             
             if (evt['access_token']) {
-              this.http.nextIslogged(true);
+              // this.http.nextIslogged(true);
               // location.reload();
               this.router.navigate(['/']);
             }

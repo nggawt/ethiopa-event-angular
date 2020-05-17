@@ -375,7 +375,7 @@ export class JoinComponent implements OnInit, CanDeactivateComponent {
         if (err["status"] === 401) {
           console.log(err['status']);
           
-          this.http.nextIslogged(false);
+          // this.http.nextIslogged(false);
          // window.localStorage.removeItem('user_key');
           window.location.reload();
         }

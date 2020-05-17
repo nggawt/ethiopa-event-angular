@@ -111,7 +111,7 @@ export class UpdatePostComponent implements OnInit {
 
         console.log(err);
         if (err["status"] === 401) {
-          this.http.nextIslogged(false);
+          // this.http.nextIslogged(false);
           window.localStorage.removeItem('user_key');
           window.location.reload();
         }

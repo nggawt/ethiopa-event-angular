@@ -1,19 +1,37 @@
 
 export declare interface User {
+    user: UserFields
+}
+
+export declare interface UserFields {
     id: number
     name: string,
     email: string,
     avatar?: string,
+
     about?: string,
     area?: string,
     city?: string,
     tel?: string,
-    created_at?: string,
+
+    activeted: boolean,
+
     forbidden?: boolean,
+    customer?: {} | boolean,
+    events?: {} | boolean,
+
+    created_at?: string,
     deleted_at?: boolean | null
     updated_at?: string,
-    customer?: {} | boolean,
-    events?: {} | boolean
 }
 
+export declare interface UserTypeCommons {
+    id: number
+    name: string,
+    email: string,
+    avatar?: string,
+    created_at?: string,
+    deleted_at?: boolean | null
+    updated_at?: string,
 
+}

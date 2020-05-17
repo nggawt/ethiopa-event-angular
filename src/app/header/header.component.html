@@ -19,7 +19,11 @@
 
     <ng-template #userItems let-user="user">
 
-        <ng-container [ngTemplateOutlet]="user? logged: noUser" [ngTemplateOutletContext]="{user: user}">
+        <ng-container [ngTemplateOutlet]="user? logged: noUser" 
+        [ngTemplateOutletContext]="{
+            user: (user && user.user && user.user?.activeted)? user.user: 
+                    (user && user.admin && user.admin?.activeted)? user.admin: 'user'
+        }">
         </ng-container>
 
         <div class="btn-group" role="group">
@@ -46,11 +50,12 @@
             <div class="float-left">
 
                 <ng-container [ngTemplateOutlet]="(! user) || (! user?.user)? login: logout"
-                    [ngTemplateOutletContext]="{user: user? user: 'user' }">
+                    [ngTemplateOutletContext]="{user: user && user?.user? user.user: 'user' }">
     
                 </ng-container>
-                <a *ngIf="user && user.activeted" class="btn btn-light" (click)="logOut(user)">
-                    {{ user?.activeted == 'admin'? 'החלף': 'Active'}}
+
+                <a *ngIf="user && user?.user" class="btn btn-light" (click)="logOut(user.user)">
+                    {{ ! user.user?.activeted  ? 'החלף': 'Active'}}
                     <i class="fa fa-sign-out text-primary rotated"></i>
                 </a>
             </div>
@@ -61,11 +66,11 @@
             <div class="float-left">
 
                 <ng-container [ngTemplateOutlet]="(! user) || (! user?.admin)?  login: logout"
-                    [ngTemplateOutletContext]="{user: user? user: 'admin' }">
+                    [ngTemplateOutletContext]="{user: user && user.admin? user.admin: 'admin' }">
     
                 </ng-container>
-                <a *ngIf="user && user.activeted" [ngClass]="user && user.activeted == 'admin'? 'text-success': 'btn btn-light'" (click)="logOut(user)">
-                    {{ user?.activeted == 'user'? 'החלף': 'Active'}}
+                <a *ngIf="user && user?.admin" [ngClass]="user && user.activeted == 'admin'? 'text-success': 'btn btn-light'" (click)="logOut(user.admin)">
+                    {{ ! user.admin?.activeted? 'החלף': 'Active'}}
     
                     <i class="fa fa-sign-out text-primary rotated"></i>
                 </a>
@@ -100,12 +105,12 @@
 
     <ng-template #logged let-user="user">
 
-        <a [routerLink]="setUrlProfile(user)" class="btn btn-light btn-sm">
-            {{ user.admin? "מנהל": "משתמש" }}
+        <a (click)="setUrlProfile(user)" class="btn btn-light btn-sm">
+            {{ user.authority? "מנהל": "משתמש" }}
             <i class="material-icons text-primary">person</i>
         </a>
 
-        <a *ngIf="user && user?.customer as customer" [routerLink]="setUrlPage(customer)" class="btn btn-sm btn-light">
+        <a *ngIf="user && user?.customer as customer" (click)="setUrlPage(customer)" class="btn btn-sm btn-light">
             הדף שלי
             <i class="material-icons">pages</i>
         </a>

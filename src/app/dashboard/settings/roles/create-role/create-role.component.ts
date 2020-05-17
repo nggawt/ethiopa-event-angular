@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service';
-import { Admin } from 'src/app/types/admin-type';
+import { Admin, AdminUser } from 'src/app/types/admin-type';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/http-service/auth.service';
@@ -13,10 +13,9 @@ import { AuthService } from 'src/app/services/http-service/auth.service';
 })
 export class CreateRoleComponent implements OnInit {
 
-
   roles: FormGroup;
   admin$: Observable<Admin>;
-  user: Admin;
+  user: AdminUser;
   selectedItems:{}[] = [];
   mdProps = {
     id: 'create_role',
@@ -30,11 +29,11 @@ export class CreateRoleComponent implements OnInit {
     private auth: AuthService) { }
 
   ngOnInit() {
-    this.admin$ = this.auth.userObs.pipe(tap(admin => {
-      console.log(admin);
-      if (admin) {
-        this.user = admin;
-        this.mdProps.name = admin.user.name;
+    this.admin$ = this.auth.userObs.pipe(tap((user: Admin) => {
+      console.log(user);
+      if (user) {
+        this.user = user.admin;
+        this.mdProps.name = this.user.user.name;
         this.formInit();
       }
 

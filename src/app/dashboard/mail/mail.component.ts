@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { Observable, Subscription } from 'rxjs';
-import { Admin } from 'src/app/types/admin-type';
+import { Admin, AdminUser } from 'src/app/types/admin-type';
 import { MessageModel } from 'src/app/types/message-model-type';
 import { AuthService } from 'src/app/services/http-service/auth.service';
 
@@ -15,7 +15,7 @@ export class MailComponent implements OnInit, OnDestroy {
 
 
   msgsResources;
-  admin: Admin;
+  admin: AdminUser | boolean;
 
   adminSubscription: Subscription;
   pathName: string;
@@ -32,7 +32,7 @@ export class MailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.adminSubscription = this.auth.userObs.subscribe(admin => typeof admin == "object"? this.admin = admin: false);
+    this.adminSubscription = this.auth.userObs.subscribe((admin: Admin) => typeof admin == "object"? this.admin = admin.admin: false);
 
     this.srv.getResources('messages', false).then(msgs => {
       console.log(msgs);
@@ -53,8 +53,8 @@ export class MailComponent implements OnInit, OnDestroy {
   newMail() {
     
     console.log("callled newMail()", 'user | admin : ', this.admin);
-    if( ! this.admin) return false;
-    let user = this.admin.user?this.admin.user: this.admin;
+    if( ! this.admin && typeof this.admin == "boolean") return false;
+    let user = this.admin && typeof this.admin == "object" && this.admin.user? this.admin.user: this.admin;
 
     this.mailItems = {
       id: 'new_mail',

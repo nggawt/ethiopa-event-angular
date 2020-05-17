@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { throwError } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { AuthTokens } from 'src/app/types/auth-token-type';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ export class HelpersService {
   protected email: RegExp = /^[a-z][a-z]+[a-zA-Z_\d\.]{2,}@[A-Za-z]{3,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$/;
   protected date: RegExp = /^\b((?=0)0[1-9]|(?=[1-9])[1-9]|(?=[1-2])[1-2][0-9]|(?=3)3[0-1])\-((?=0)0[1-9]|(?=[1-9])[1-9]|(?=1)1[0-2]?)\-20((?=1)19|(?=2)2[0-5])$/;
   protected time: RegExp = /^\b((?=0)0[0-9]|(?=1)1[0-9]|(?=2)2[0-3])\:((?=0)0[0-9]|(?=1)1[0-9]|(?=[0-5])[0-5][0-9])$/;
-  protected tel: RegExp = /^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})/;
+  protected phone: RegExp = /^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})/;
 
   constructor(private jwt: JwtHelperService) { }
 
@@ -39,7 +40,7 @@ export class HelpersService {
     return ! this.jwt.isTokenExpired(this.jwt.tokenGetter());;
   }
 
-  getAuthTokens(): {[key: string]: {[key:string]: string | boolean } } | boolean {
+  getAuthTokens(): AuthTokens | boolean {
     let userToken;
     if (userToken = this.jwt.tokenGetter('tokens')) {
       let parsed = JSON.parse(userToken);

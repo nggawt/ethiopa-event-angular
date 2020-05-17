@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { Observable, of } from 'rxjs';
 import { map, filter, tap } from 'rxjs/operators';
-import { User } from 'src/app/types/user-type';
+import { User, UserFields } from 'src/app/types/user-type';
 
 @Component({
   selector: 'app-blog',
@@ -12,9 +12,9 @@ import { User } from 'src/app/types/user-type';
 export class BlogComponent implements OnInit {
 
   blogPost: {}[];
-  user: User;
+  user: UserFields;
 
-  constructor(private http: HttpService) { }
+  constructor() { }
 
   ngOnInit() {
     // this.initBlog();
@@ -33,7 +33,7 @@ export class BlogComponent implements OnInit {
 
   blog(evt){
     this.blogPost = evt['blogPosts'];
-    this.user = evt['user'];
+    this.user = evt['user']['user'];
   }
   
   sortItems(itemA, itemB){
