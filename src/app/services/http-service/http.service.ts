@@ -1,22 +1,20 @@
-import { Injectable, ErrorHandler } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { tap, first, catchError } from 'rxjs/operators';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { AuthTokens } from 'src/app/types/auth-token-type';
-import { User } from '../../types/user-type';
-import { ErrorsHandler } from '../errors-exeption/errors-handler.service';
-import { Admin } from 'src/app/types/admin-type';
 import { Customers } from 'src/app/types/customers-type';
+import { Admin } from 'src/app/types/admin-type';
+import { User } from 'src/app/types/user-type';
+import { AuthTokens } from 'src/app/types/auth-token-type';
+import { first, tap, catchError } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { ErrorsHandler } from '../errors-exeption/errors-handler.service';
 import { HelpersService } from '../helpers/helpers.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class HttpService implements ErrorHandler {
-
-  private apiKey: any;
+export class HttpService {
 
   public sendingMail: BehaviorSubject<{ [key: string]: boolean } | boolean> = new BehaviorSubject(false);
 
@@ -43,17 +41,8 @@ export class HttpService implements ErrorHandler {
 
   constructor(private http: HttpClient,
     private jwt: JwtHelperService,
-    private hls: HelpersService) {// ,private esrv: ErrorsHandler
-
-    let isAuth = this.isAuth();
-    // if (isAuth) this.userPromise();
-
-    // console.log("this object: ", this);
-    console.log('is Authonticated: ', isAuth, ' expire in: ', this.jwt.getTokenExpirationDate(this.jwt.tokenGetter()));
-    // let decoded = this.jwt.decodeToken(this.jwt.tokenGetter());
-    // this.getData('customers').subscribe(item => console.log(item));
-
-  }
+    private hls: HelpersService,
+    private esrv: ErrorsHandler) {}
 
   buildUrl(path?: string) {
     let urlKey = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : "auth-user";
@@ -63,10 +52,6 @@ export class HttpService implements ErrorHandler {
       [urlKey]: theUrl,
       [theUrl]: urlKey
     }
-  }
-
-  isExpiredToken() {
-    return this.jwt.isTokenExpired(this.jwt.tokenGetter());
   }
 
   protected logNumRequsts() {
@@ -105,30 +90,10 @@ export class HttpService implements ErrorHandler {
     return this.http.post(theUrl, body, this.headersOpt).pipe(first());
   }
 
-  protected getResponseUser(response) {
-
-    let itemsRes = response && response['admin'] ? response['admin'] : response;
-
-    let user = response['roles'] ? {
-      user: itemsRes['user'],
-      authority: itemsRes['authority'],
-      roles: response['roles']
-    } : (itemsRes && itemsRes['authority']) ? {
-      user: itemsRes['user'],
-      authority: itemsRes['authority']
-    } : itemsRes['user'] ?
-          itemsRes['user'] : false;
-
-    (user['user'] && !user['user'].avatar)
-      ? user['user'].avatar = 'https://source.unsplash.com/random/120x120' : !user.avatar
-        ? user.avatar = 'https://source.unsplash.com/random/120x120' : '';
-
-    return user;
-  }
-
   public sendResetPassword(credential) {
 
     this.setOutRequests('/password/email');
+
     const theUrl = "http://lara.test/api/password/email";
 
     let body = new HttpParams()
@@ -140,10 +105,9 @@ export class HttpService implements ErrorHandler {
         first(),
         tap(res => {
           if (res && res['access_token']) {
-            this.setUserProps(res);
+            // this.setUserProps(res);
           }
           console.log(res);
-
         }));
   }
 
@@ -151,6 +115,7 @@ export class HttpService implements ErrorHandler {
 
     //password/email  
     this.setOutRequests('password/reset');
+
     const theUrl = "http://lara.test/api/password/reset";
 
     let body = new HttpParams()
@@ -163,7 +128,7 @@ export class HttpService implements ErrorHandler {
       .pipe(first(),
         tap(res => {
           if (res && res['access_token']) {
-            this.setUserProps(res);
+            // this.setUserProps(res);
           }
           console.log(res);
         }));
@@ -215,11 +180,12 @@ export class HttpService implements ErrorHandler {
     let url = this.baseUrl + "/" + path;
 
     this.setOutRequests(path);
-    return !this.isExpiredToken() ? this.http.get(url, this.getHttpOpt()).pipe(first()) :
-      this.http.get(url).pipe(first());
+    console.log(path);
+    
+    return ! this.outRequests[url]? this.http.get(url, this.getHttpOpt()).pipe(first()): of(false);
   }
 
-  logOut(urlParams?, httpToken?: string) {
+  logOut(urlParams) {
 
     let url = urlParams && typeof urlParams == "string" ? this.baseUrl + "/" + urlParams : this.baseUrl + "/logout",
       token = new HttpParams().set('token', urlParams.token);
@@ -227,44 +193,7 @@ export class HttpService implements ErrorHandler {
     if (typeof urlParams == "object") {
       url = urlParams.url ? this.baseUrl + "/" + urlParams.url : this.baseUrl + "/logout";
     }
-
-
-    return this.http.post(url, token, this.getHttpOpt(urlParams.token))
-      .pipe(
-        tap(msg => {
-          //this.removePropsUser(urlParams);
-          //this.removeApiKey(urlParams);
-        }, (err) => {
-          //this.removePropsUser(urlParams);
-          //this.removeApiKey(urlParams);
-        }));
-  }
-
-  getApiKey(userParams?) {
-    if (window.localStorage.getItem('tokens') && typeof userParams == "object") {
-
-      let auth = this.hls.getAuthTokens();
-      // auth && auth[userParams.type] = adminProps[typeName] : auth = adminProps;
-      if (auth && auth[userParams.type]) {
-
-
-      }
-
-      //window.localStorage.setItem('tokens', JSON.stringify(auth));
-    } else {
-      // window.localStorage.setItem('tokens', JSON.stringify(adminProps));
-    }
-    return this.apiKey;
-  }
-
-  handleLogout(userParams) {
-
-  }
-
-  removeApiKey(userParams?: string) {
-    console.log("tokken remove");
-    window.localStorage.clear();
-    this.apiKey = false;
+    return this.http.post(url, token, this.getHttpOpt(urlParams.token));
   }
 
   getUserType() {
@@ -272,26 +201,6 @@ export class HttpService implements ErrorHandler {
     this.http.post(this.baseUrl + '/user-type', token, this.headersOpt).subscribe(userType => {
       console.log(userType);
     });
-  }
-
-  userPromise(path?): Promise<User | Admin | any> {
-
-    path = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : false;
-    const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/auth-user";//me
-
-    // console.log("userPromise", " window.localStorage: ", window.localStorage);
-    let token = new HttpParams().set('token', this.jwt.tokenGetter());
-
-    this.setOutRequests(path);
-
-    return this.http.post(theUrl, token, this.headersOpt)
-      .pipe(
-        first(),
-        tap((res) => {
-          let user = this.getResponseUser(res);
-          if (user) this.setUserProps(user);
-          // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
-        })).toPromise().catch(this.handleError);
   }
 
   authenticated(urlParams: AuthTokens, cbk: CallableFunction): Promise<User | Admin | any> {
@@ -309,81 +218,8 @@ export class HttpService implements ErrorHandler {
         first(),
         tap((res) => {
           // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
-        })).toPromise().catch(cbk(this.handleError));
+        })).toPromise().catch(this.esrv.handleError);
   }
-
-  handleError(error: Error | HttpErrorResponse) {
-    
-    if (error instanceof HttpErrorResponse) {
-      // Server or connection error happened
-      if (!navigator.onLine) {
-        // Handle offline error
-      } else {
-        // Handle Http Error (error.status === 403, 404...)
-      }
-    } else {
-      // Handle Client Error (Angular Error, ReferenceError...)     
-    }
-    // Log the error anywa
-    console.warn('It happens: ', error);
-    return error;
-  }
-
-  private removePropsUser(urlParam) {
-    // this.logged.next(false);
-    // this.user.next(false);
-    // this.allowLogIn.next(true);
-    // this.authUser = false;
-  }
-
-  private setUserProps(user) {
-    // this.authUser = user;
-    // this.logged.next(true);
-    // this.user.next(user);
-  }
-
-  isAuth() {
-    let exp = this.isExpiredToken();
-    if (exp) {
-      this.removePropsUser(location.pathname);
-      if (this.jwt.tokenGetter()) this.removeApiKey();
-      return !exp;
-    }
-    return !exp;
-  }
-
-  setApiKey(user) {
-    if (user['authority']) {
-      window.localStorage.setItem("admin_key", "true");
-    }
-
-    if (user['access_token']) {
-
-      this.apiKey = user['access_token'];
-      window.localStorage.setItem('token', this.apiKey);
-
-      let typeName = user['authority'] ? 'admin' : 'user',
-        adminProps = {
-          [typeName]: {
-            [user['authority'] ? 'admin_key' : 'user_key']: true,
-            token: user['access_token']
-          }
-        };
-      this.setToken(adminProps, typeName);
-    }
-  }
-
-  setToken(adminProps: { [key: string]: { [key: string]: string | boolean } }, typeName) {
-    if (window.localStorage.getItem('tokens')) {
-
-      let auth = this.hls.getAuthTokens();
-      auth ? auth[typeName] = adminProps[typeName] : auth = adminProps;
-
-      window.localStorage.setItem('tokens', JSON.stringify(auth));
-    } else {
-      window.localStorage.setItem('tokens', JSON.stringify(adminProps));
-    }
-  } 
 
   private getHttpOpt(token?: string) {
     // console.log(this.apiKey);

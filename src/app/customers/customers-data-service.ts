@@ -1,14 +1,15 @@
+import { Customers } from 'src/app/types/customers-type';
 import { Injectable, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs'; 
 import { ResourcesService } from '../services/resources/resources.service';
-import { Customer } from '../types/customer-type';
 import { ActivatedRoute } from '@angular/router';
+import { Customer } from '../types/customers-type';
 
 @Injectable()
 export class CustomersDataService implements OnInit {
 
     /**** costmumer */
-    private customers: Promise<any>;
+    private customers: Promise<Customers>;
 
     private customer: any = new BehaviorSubject(1);
     public customerObsever = this.customer.asObservable();

@@ -50,20 +50,11 @@ export class JoinComponent implements OnInit, CanDeactivateComponent {
 
   ngOnInit() {
 
-    this.auth.isLogedIn.subscribe(
-      (isLogged) => {
-        this.isTrue = of(isLogged);
-
-        if(isLogged){
-    
-          this.formInt();
-        }else{
-          
-          this.router.navigate(['/']);
-        }
-      }
-    );
-    
+    if(this.auth.authCheck()){
+      this.formInt();
+      this.isTrue = of(true);
+      console.log("logged in");
+    } 
   }
 
   inputReset(customer) {

@@ -44,7 +44,7 @@ export class BasicEditComponent implements OnInit,  CanDeactivateComponent{
         let uId = authUser? authUser["id"] : false;
 
       console.log('costumerId: '+ cId + " userId "+ uId);
-      if(cId === uId || authUser['authority'].name == "Admin"){
+      if(cId === uId || (authUser && authUser['authority']?.name == "Admin")){
         this.customer = co;
         this.formInt();
         this.isTrue = of(true);

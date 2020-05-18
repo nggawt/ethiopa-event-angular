@@ -54,9 +54,9 @@
     
                 </ng-container>
 
-                <a *ngIf="user && user?.user" class="btn btn-light" (click)="logOut(user.user)">
+                <a *ngIf="user && user?.user" [ngClass]="user && user.user?.activeted? 'btn btn-light text-success': 'btn btn-light'"  (click)="active(user.user)">
                     {{ ! user.user?.activeted  ? 'החלף': 'Active'}}
-                    <i class="fa fa-sign-out text-primary rotated"></i>
+                    <i *ngIf="(! user.user?.activeted)" class="fa fa-exchange-alt text-primary"></i>
                 </a>
             </div>
         </div>
@@ -69,10 +69,10 @@
                     [ngTemplateOutletContext]="{user: user && user.admin? user.admin: 'admin' }">
     
                 </ng-container>
-                <a *ngIf="user && user?.admin" [ngClass]="user && user.activeted == 'admin'? 'text-success': 'btn btn-light'" (click)="logOut(user.admin)">
+                <a *ngIf="user && user?.admin" [ngClass]="user && user.admin?.activeted? 'btn btn-light text-success': 'btn btn-light'" (click)="active(user.admin)">
                     {{ ! user.admin?.activeted? 'החלף': 'Active'}}
     
-                    <i class="fa fa-sign-out text-primary rotated"></i>
+                    <i *ngIf="! user.admin?.activeted" class="fa fa-exchange-alt text-primary"></i>
                 </a>
             </div>
         </div>

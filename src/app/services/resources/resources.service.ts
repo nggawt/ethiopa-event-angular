@@ -8,7 +8,6 @@ import { Forbidden } from 'src/app/types/forbidden-type';
 import { Evt } from 'src/app/types/event-type';
 import { Article } from 'src/app/types/article-type';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
-import { Customer } from 'src/app/types/customer-type';
 import { Customers } from 'src/app/types/customers-type';
 
 @Injectable({
@@ -18,7 +17,7 @@ export class ResourcesService {
 
   private resources: {
     users: BehaviorSubject<User[] | boolean>,
-    customers: BehaviorSubject<{[key:string]:Customers[]} | boolean>,
+    customers: BehaviorSubject<Customers | boolean>,
     messages: BehaviorSubject<Message[] | boolean>,
     articles: BehaviorSubject<Article[] | boolean>,
     events: BehaviorSubject<Evt[] | boolean>,

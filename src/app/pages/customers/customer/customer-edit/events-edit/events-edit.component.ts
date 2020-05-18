@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'; 
+import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core'; 
 import { CustomersDataService } from '../../../../../customers/customers-data-service';
-import { Observable, of } from 'rxjs'; 
+import { Observable, of, Subscription } from 'rxjs'; 
 import { FormGroup, FormControl, Validators } from '@angular/forms'; 
 import { HttpService } from '../../../../../services/http-service/http.service';
 import { find } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { CanDeactivateComponent } from '../../../../../services/can-deactivate-g
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
 import { CreateDateTableService } from 'src/app/services/create-date-table/create-date-table.service';
 import { AuthService } from 'src/app/services/http-service/auth.service';
+import { Evt } from 'src/app/types/event-type';
 declare var $: any;
 
 @Component({
@@ -17,7 +18,7 @@ declare var $: any;
   encapsulation: ViewEncapsulation.None
 
 })
-export class EventsEditComponent implements OnInit, CanDeactivateComponent {
+export class EventsEditComponent implements OnInit, OnDestroy, CanDeactivateComponent {
 
   phoneNum: RegExp = /^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})/;
   emailPatteren: RegExp = /^[a-z]+[a-zA-Z_\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$/;
@@ -34,6 +35,7 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
   datePicker: HTMLDivElement;
 
   eventsOb: Object = {};
+  evt$: Subscription;
 
   isTrue: Observable<boolean> = of(false);
   childInstans: {} | any;
@@ -74,7 +76,7 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
 
   initEvents() {
 
-    this.http.getData("events").subscribe((eventsList: Array<{}>) => {
+    this.evt$ = this.http.getData("events").subscribe((eventsList: Array<{}>) => {
       if (eventsList) {
         let tablesEvents = this.tableEvents.initEvents(eventsList, this, "advanced");
         // this.eventsOb = tablesEvents;
@@ -268,5 +270,9 @@ export class EventsEditComponent implements OnInit, CanDeactivateComponent {
     //     // this.formEvents.patchValue({ firstName: data.firstName, lastName: data.lastName }, { emitEvent: false });
     //     console.log(data);
     // });
+  }
+
+  ngOnDestroy(){
+    this.evt$? this.evt$.unsubscribe(): '';
   }
 }

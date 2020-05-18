@@ -3,7 +3,7 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { User, UserFields } from 'src/app/types/user-type';
-import { Admin, AdminUserFields } from 'src/app/types/admin-type';
+import { Admin, AdminUser } from 'src/app/types/admin-type';
 import { AuthTokens } from 'src/app/types/auth-token-type';
 
 @Injectable()
@@ -11,7 +11,7 @@ export abstract class BaseAuth {
 
   protected user: BehaviorSubject<Admin | User | boolean> = new BehaviorSubject(false);
   protected guard: string[] = ['user', 'admin'];
-  protected tokens: AuthTokens | boolean;
+  protected tokens: AuthTokens | null;
   public activeted: string;
 
   private USER_TYPE: { [user: string]: boolean } = { USER: false, ADMIN: false };
@@ -27,24 +27,22 @@ export abstract class BaseAuth {
 
   initAuth() {
     let tokens = this.getTokens();
-    if (tokens && Object.keys(tokens).length) {
+    if (tokens) {
       this.tokens = tokens;
-      this.updateTokens(tokens);
+      // this.updateTokens(tokens);
       this.setAuth(tokens);
+    }else{
+      localStorage.clear();
     }
   }
 
-  abstract setAuth(tokens): void;
+  // abstract setAuth(tokens): void;
+  abstract addPropsToUser(user: User | Admin):User | Admin;
+  abstract emit(user): void;
 
-  authCheck(): boolean {
-    return (!this.isExpiredToken());
-  }
+  abstract setAuthUser(user: AdminUser)
 
-  check(): boolean {
-    return (!this.isExpiredToken());
-  }
-
-  protected getTokens(multiTokens?: string): AuthTokens {
+  protected getTokens(multiTokens?: string): AuthTokens | null{
 
     multiTokens = multiTokens ? multiTokens : this.jwt.tokenGetter('tokens');
     if (!multiTokens) return {};
@@ -53,13 +51,42 @@ export abstract class BaseAuth {
     return this.validateTokens(parsed);
   }
 
-  protected validateTokens(tokens: AuthTokens) {
-    return Object.keys(tokens).reduce((tottal, current: string) => {
+/*   private updateTokens(tokens: AuthTokens): void {
+    localStorage.setItem('tokens', JSON.stringify(tokens));
+    if (tokens.admin) {
+      localStorage.setItem('token', tokens.admin.token);
+      this.activeted = 'admin';
+    } else {
+      this.activeted = 'user';
+    }
+  } */
+
+  setAuth(tokens: AuthTokens): void {
+
+    this.getAuthenticated(tokens, (users) => {
+      //console.log(users);
+      if (users) {
+        Object.keys(users).forEach((userName: string, idx: number) => {
+          if (users[userName]) this.addPropsToUser(users[userName]);
+        });
+
+        if (users.user?.user) users.user = users.user.user;
+        this.setActivated(users);
+        this.emit(users);
+      } else {
+        window.localStorage.clear();
+      }
+    });
+  }
+
+  protected validateTokens(tokens: AuthTokens): AuthTokens | null {
+    let authenticated = Object.keys(tokens).reduce((tottal, current: string) => {
       if (this.guard.indexOf(current) >= 0 && tokens[current] && this.isValidToken(tokens[current]['token'])) {
         tottal[current] = tokens[current];
       }
       return tottal;
     }, {});
+    return Object.keys(authenticated).length? authenticated: null;
   }
 
   protected isValidToken(token: string) {
@@ -72,37 +99,82 @@ export abstract class BaseAuth {
     return true;
   }
 
-  private updateTokens(tokens: AuthTokens): void {
-    localStorage.setItem('tokens', JSON.stringify(tokens));
-    if (tokens.admin) {
-      localStorage.setItem('token', tokens.admin.token);
-      this.activeted = 'admin';
+  protected setToken(adminProps: AuthTokens, typeName): void {
+
+    if (this.tokens) {
+
+      this.tokens[typeName] = adminProps[typeName];
+      this.saveToken(this.tokens);
     } else {
-      this.activeted = 'user';
+      this.saveToken(adminProps);
+      this.tokens = adminProps;
     }
   }
 
-  setActivated(tokens: AuthTokens | boolean, user?: User | Admin | boolean): void {
-    let users: User | Admin| boolean = this.user.getValue(),
-        keys = Object.keys(users);
+  check(): boolean {
+    return (!this.isExpiredToken());
+  }
 
+  protected setActivated(users?: User | Admin | boolean): void { // tokens: AuthTokens | boolean, user?: User | Admin | boolean
     
+    users = users? users: this.user.getValue();
+    let tokens = this.tokens,
+    keys = users? Object.keys(users): [];
+    
+    // this.activate()
+
     console.log("tokens:: ", tokens, " ::users:: ", users);
     if (users && keys.length == 2) {
+      let hasActive = false;
+      keys.forEach((current, idx) => { 
 
-      keys.forEach((current, idx) => {
-        this.tokens[current]['activeted'] = current == "admin" ? true : false;
-        current == "admin" ? users[current]['activeted'] = true : users && users[current] ? users[current]['activeted'] = false : '';
+        if(tokens[current]['activeted']){
+          users[current]['activeted'] = true;
+          hasActive = true;
+          this.setAuthUser(users[current]);
+        }
       });
 
+      if(! hasActive){
+        this.setAuthUser(users['admin']);
+        users['admin']['activeted'] = true
+      }
     } else if(users){
       let nameType = keys[0];
-      (user && user[nameType]) ? user[nameType].activeted = true : users && users[nameType] ? users[nameType].activeted = true : '';
+      users[nameType].activeted = true
       tokens[nameType]['activeted'] = true;
+      this.setAuthUser(users[nameType]);
     }else{
       this.activeted = null;
     }
-    console.warn("::users:: ", users, " ::user:: ", user, " ::tokens:: ", tokens);
+    console.warn("::users:: ", users, " ::tokens:: ", tokens);
+  }
+
+  activate(userType: string, users?: Admin | User | boolean, tokens?: AuthTokens){
+
+    users = users? users: this.user.getValue();
+    tokens = tokens? tokens: this.tokens;
+
+    Object.keys(users).forEach((current, idx) => { 
+
+      if(current == userType){
+        tokens[current]['activeted'] = true;
+        users[current]['activeted'] = true;
+        this.setAuthUser(users[current]);
+      }else{
+        tokens[current]['activeted'] = false;
+        users[current]['activeted'] = false;
+      }
+    });
+    // activated
+    this.activeted = userType;
+
+    // users
+    this.emit(users);
+
+    // tokens + token storage
+    this.tokens = tokens;
+    this.saveToken(this.tokens);
   }
 
   protected async getAuthenticated(tokens: AuthTokens, cabk) {
@@ -122,34 +194,8 @@ export abstract class BaseAuth {
     loggedUser['user'] && Object.keys(loggedUser['user']).length? cabk(loggedUser): cabk(false));
   }
 
-  protected buildToken(token: string, typeName: string): AuthTokens {
-
-    return {
-      [typeName]: {
-        [typeName + '_key']: true,
-        token: token,
-        activeted: false
-      }
-    };
-  }
-
-  protected setToken(adminProps: AuthTokens, typeName): void {
-
-    if (window.localStorage.getItem('tokens')) {
-
-      this.tokens ? this.tokens[typeName] = adminProps[typeName] : this.tokens = adminProps;
-      window.localStorage.setItem('tokens', JSON.stringify(this.tokens));
-    } else {
-      window.localStorage.setItem('tokens', JSON.stringify(adminProps));
-      this.tokens = adminProps;
-    }
-  }
-
-  protected removeToken(typeName: string): AuthTokens | boolean {
-    let tokens = this.tokens && Object.keys(this.tokens).length > 1? this.tokens: JSON.parse(this.jwt.tokenGetter('tokens')),
-    leftToken = (<AuthTokens | boolean>this.removeItemFromObject(tokens, typeName));
-    (leftToken)? window.localStorage.setItem('tokens', JSON.stringify(leftToken)): '';
-    return leftToken;
+  protected removeToken(typeName: string): AuthTokens | null {
+    return (<AuthTokens | null>this.removeItemFromObject(this.tokens, typeName)); 
   }
 
   protected removeUser(typeName): Admin | User | boolean {
@@ -165,11 +211,27 @@ export abstract class BaseAuth {
       (current != delimiter)? tottal[current]= object[current]: '';
       return tottal;
     }, {});
+    
     return Object.keys(ob).length? ob: false;
   }
 
   isAdmin(user: User | Admin): boolean {
     return user && user['authority'] || user['user'] && user['user']['autority'] ? true : false;
+  }
+
+  private saveToken(tokens: AuthTokens){
+    localStorage.setItem('tokens', JSON.stringify(tokens))
+  }
+
+  protected buildToken(token: string, typeName: string): AuthTokens {
+
+    return {
+      [typeName]: {
+        [typeName + '_key']: true,
+        token: token,
+        activeted: false
+      }
+    };
   }
 }
 

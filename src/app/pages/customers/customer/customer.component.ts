@@ -1,8 +1,10 @@
+import { User } from 'src/app/types/user-type';
+import { Admin } from 'src/app/types/admin-type';
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersDataService } from '../../../customers/customers-data-service';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, map, tap, auditTime } from 'rxjs/operators';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
@@ -22,7 +24,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   pathId: string;
   accessPage: boolean = true;
   pageObs: Subscription;
-  userSubs: Subscription;
+  userSubs$: Subscription;
   num: number = 0;
 
   sendingMail: Observable<{[key: string]: boolean} | boolean>;
@@ -41,7 +43,10 @@ export class CustomerComponent implements OnInit, OnDestroy {
     this.pathId = this.route.snapshot.params['id'];
     this.cusromerActiveState();
 
-    this.userSubs = this.auth.userObs.subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
+    this.userSubs$ = this.auth.userObs.pipe(
+      map((users: Admin | User) => this.auth.getActiveUser(users)),
+      tap(user => console.log("tap: ", user)))
+      .subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
   }
 
   cusromerActiveState(){
@@ -51,8 +56,9 @@ export class CustomerComponent implements OnInit, OnDestroy {
       const currentUrl = decodeURIComponent(uriParam['url']),
             changedpathId = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
             
+            
       this.pathId = changedpathId && changedpathId.length? changedpathId: this.route.snapshot.params['id'];
-      if(this.halls.customerOb && this.http.isAuth()) this.accessPage = this.urlCompare(uriParam['url']); 
+      if(this.halls.customerOb && this.auth.authCheck()) this.accessPage = this.urlCompare(uriParam['url']); 
     });
   }
 
@@ -68,8 +74,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
   checkCustomer(urlId, loggedUser) {
     urlId = urlId == 'ארמונות-לב' ? 'ארמונות לב' : urlId;
     let routeName = this.route.snapshot.paramMap.get('name');
-
-    console.warn("Route Name: ", routeName, " id: ", urlId, " loggedUser: ", loggedUser);
+    
+    console.warn("Route Name: ", routeName, " id: ", urlId, " loggedUser: ", loggedUser, " ::this.auth.authUser:: ", this.auth.authUser);
 
     this.halls.getCustomers().then(customersData => {
 
@@ -105,7 +111,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
         
       } else if(customer && customer['email']){
         this.customer = of(customerWithGall);
-        console.log("called");
+        // console.log("called");
         return;
       }else {
         if (!customer) return this.goTo(urlId);
@@ -152,6 +158,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if(this.pageObs) this.pageObs.unsubscribe();
-    if(this.userSubs) this.userSubs.unsubscribe();
+    if(this.userSubs$) this.userSubs$.unsubscribe();
   }
 }

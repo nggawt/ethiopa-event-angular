@@ -5,8 +5,8 @@ import { HallType } from '../../customers/hall-type';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
-import { Customer } from 'src/app/types/customer-type';
 import { AuthService } from 'src/app/services/http-service/auth.service';
+import { Customer } from 'src/app/types/customers-type';
 
 @Component({
   selector: 'app-customers',

@@ -3,9 +3,9 @@ import { CanActivate, ActivatedRouteSnapshot, Router, RouterStateSnapshot, CanAc
 import { HttpService } from '../http-service/http.service';
 import { Observable } from 'rxjs';
 import { CustomersDataService } from '../../customers/customers-data-service';
-import { find } from 'rxjs/operators';
-import { User } from 'src/app/types/user-type';
-import { Admin } from 'src/app/types/admin-type';
+import { find, map, auditTime } from 'rxjs/operators';
+import { User, UserFields } from 'src/app/types/user-type';
+import { Admin, AdminUser } from 'src/app/types/admin-type';
 import { AuthService } from '../http-service/auth.service';
 
 @Injectable({
@@ -13,7 +13,7 @@ import { AuthService } from '../http-service/auth.service';
 })
 export class RouteGuardService implements CanActivate, CanActivateChild {
 
-  private autUser: User | Admin | boolean;
+  private autUser: UserFields | AdminUser | boolean;
   private intendedUrl: string;
   private currentUrl: string;
 
@@ -42,14 +42,14 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     this.autUser = this.auth.authUser;
 
     let uriRecourse = route.parent.params.id ? route.parent.params.id : route.params.id,
-      uEmail = this.autUser && this.autUser['email'] ? this.autUser['email'] : 
-                this.autUser && this.autUser['user']? this.autUser['user']['email']: false,
+      uEmail = this.autUser && this.autUser['email'] ? this.autUser['email'] :
+        this.autUser && this.autUser['user'] ? this.autUser['user']['email'] : false,
       join = this.intendedUrl.indexOf('/join') >= 0;
 
     // let reg = this.intendedUrl.indexOf('/register');
 
     /** check if exp date is expired then block access **/
-    if (this.http.isExpiredToken()) {
+    if (!this.auth.authCheck()) {
       return this.goTo(this.currentUrl);
     }
 
@@ -63,17 +63,17 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     }
 
     /** if no user and login session not expaired get logged user check match conditions and sallow access **/
-    if (! this.auth.authUser) return this.getLoggedUser(uriRecourse);
+    if (!this.auth.authUser) return this.getLoggedUser(uriRecourse);
 
     let css;
     if (css = this.customers.customerOb ? (this.customers.customerOb['customer']) : false) {
-      console.log("called gurd admin", this.autUser, " custmer: ", css.company);
-      if ((! join && uEmail === css['email']) || this.userIsAdmin(this.autUser)) return true;
+      // console.log("called gurd admin", this.autUser, " custmer: ", css.company);
+      if ((!join && uEmail === css['email']) || this.userIsAdmin(this.autUser)) return true;
     }
 
-    console.log("authUser: ", this.autUser, " uEmail: ", uEmail, " uriRecourse: ", uriRecourse);
+    // console.log("authUser: ", this.autUser, " uEmail: ", uEmail, " uriRecourse: ", uriRecourse);
     /**** so if we have auth user lats check if we have customer and let access intended page if user are owner ****/
-    if (uEmail && ! join) { return this.customerIsOwner(uriRecourse, uEmail); };
+    if (uEmail && !join) { return this.customerIsOwner(uriRecourse, uEmail); };
 
     /**** get log in user whitin http loged in ****/
     return this.goTo();//this.userPromise(uEmail, uriRecourse, join);
@@ -83,11 +83,11 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
 
     return this.auth.userObs.pipe(
       find(val => typeof val == "object"),
+      map(users => this.auth.getActiveUser(users))
     ).toPromise().then((user) => {
-      
+
       if (this.userIsAdmin(user)) return true;
       return this.guardProccesCanActive(user, uriRecourse);
-
     });
   }
 
@@ -108,8 +108,30 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
       let isOwnResource = await this.customerIsOwner(uriRecourse, this.autUser['email']);
       return isOwnResource;
     }
-    console.log("go to");
+    // console.log("go to");
     return this.goTo(uriRecourse);
+  }
+
+
+  async customerIsOwner(uriRecourse, uEmail): Promise<boolean> {
+
+    uriRecourse = uriRecourse == 'ארמונות-לב' ? 'ארמונות לב' : uriRecourse;
+
+    let getCustomer = await this.customers.getById(uriRecourse),
+      customer = getCustomer && getCustomer['customer'] ? getCustomer['customer'] : getCustomer;
+    // console.log("customer: ", customer, " ::email::", uEmail);
+
+    if (customer && uEmail === customer['email']) return true;
+    return this.goTo(uriRecourse);
+  }
+
+  userAlreadyCostumer(param): Promise<boolean> {
+
+    return this.customers.getById(param)
+      .then((res) => {
+        // console.log("userAlreadyCostumer response: ", res);
+        return res ? this.goTo(this.currentUrl) : true;
+      });
   }
 
   protected userIsAdmin(user) {
@@ -124,9 +146,9 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
   goTo(paramId?) {
 
     let goTo: string;
-    paramId = paramId == 'ארמונות לב'? 'ארמונות-לב': paramId;
+    paramId = paramId == 'ארמונות לב' ? 'ארמונות-לב' : paramId;
 
-    if (! paramId) {
+    if (!paramId) {
       let priefixUrl = (this.intendedUrl.indexOf('customers') >= 0) ? this.intendedUrl.split('customers/')[1] : this.intendedUrl;
       priefixUrl = (priefixUrl.indexOf('/') >= 1) ? priefixUrl.split('/')[0] : priefixUrl;
       goTo = priefixUrl && (this.allawAddress.indexOf(priefixUrl) >= 0) ? "/customers/" + priefixUrl : '/';//"/error-page";
@@ -136,27 +158,6 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     console.log("paramId: ", paramId, " >><< URL: ", goTo);
     this.router.navigate([goTo]);//, { relativeTo: this.active }
     return false;
-  }
-
-  async customerIsOwner(uriRecourse, uEmail): Promise<boolean> {
-
-    uriRecourse = uriRecourse == 'ארמונות-לב' ? 'ארמונות לב' : uriRecourse;
-
-    let getCustomer = await this.customers.getById(uEmail),
-        customer = getCustomer && getCustomer['customer'] ? getCustomer['customer'] : getCustomer;
-
-    if (customer && uEmail === customer['emails']) return true;
-    return this.goTo(uriRecourse);
-  }
-
-  userAlreadyCostumer(param): Promise<boolean> {
-    console.log("called");
-
-    return this.customers.getById(param)
-      .then((res) => {
-        console.log("userAlreadyCostumer response: ", res);
-        return res ? this.goTo(this.currentUrl) : true;
-      });
   }
 
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {

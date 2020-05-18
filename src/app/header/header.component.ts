@@ -1,10 +1,9 @@
 import { UserFields } from 'src/app/types/user-type';
-import { Admin, AdminUserFields, AdminUser } from 'src/app/types/admin-type';
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { AdminUser } from 'src/app/types/admin-type';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http-service/http.service';
 import { Observable, of } from 'rxjs';
-import { map, skip, auditTime } from 'rxjs/operators';
 import { User } from '../types/user-type';
 import { MessageModel } from '../types/message-model-type';
 import { AuthService } from '../services/http-service/auth.service';
@@ -91,6 +90,11 @@ export class HeaderComponent implements OnInit {
     //   this.user$ = of(false);
     //   this.redirect();
     // }
+  }
+
+  active(user: UserFields | AdminUser){
+    console.log(user);
+    (! user.activeted)? this.auth.activateUser((user['authority']? 'admin': 'user')): '';
   }
 
   getUrlParams(user) {

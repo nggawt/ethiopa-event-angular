@@ -62,12 +62,12 @@ export class LogInComponent implements OnInit, AfterContentChecked {
 
   logOut() {
 
-    this.http.logOut().subscribe(evt => {
-      console.log(evt);
-      // location.reload();
-    });
-    // this.user$ = of(false);
-    this.redirect();
+    // this.http.logOut().subscribe(evt => {
+    //   console.log(evt);
+    //   // location.reload();
+    // });
+    // // this.user$ = of(false);
+    // this.redirect();
   }
 
   redirect() {
