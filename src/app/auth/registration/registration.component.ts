@@ -1,19 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Admin } from 'src/app/types/admin-type';
+import { User } from 'src/app/types/user-type';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
-import { HttpService } from '../../services/http-service/http.service';
-import { HttpParams } from '@angular/common/http';
 import { AuthService } from 'src/app/services/http-service/auth.service';
+import { Subscription } from 'rxjs';
 
+declare var $: any;
 
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.css']
 })
-export class RegistrationComponent implements OnInit {
+export class RegistrationComponent implements OnInit, OnDestroy {
 
   regiter: FormGroup;
+  regisSubs:Subscription;
+
+  @Input() ldComp: CallableFunction;
 
   params = {
     id: 'rgister',
@@ -26,59 +31,28 @@ export class RegistrationComponent implements OnInit {
   passwordPatt: string = '^\\w{6,}$';
 
   constructor(private router: Router, 
-    private http: HttpService,
     private auth: AuthService) { }
 
   ngOnInit() {
+
     this.auth.isLogedIn.subscribe(
       (logged) => {
         (logged) ? this.router.navigate(['/']) : this.formInit();
-      }
-    );
+      });
   }
 
   onSubmit() {
-    console.log("register");
     
     if (this.regiter.valid) {
       /****** handel form inputs *****/
       let formInputes = this.regiter;
-      let details = formInputes.value;
+      let details = formInputes.value; 
 
-      /* let formInputes = this.regiter;
-      let controls = formInputes.controls;
-      
-      
-      let items = this.valForm.validate(controls, formInputes.value);
-      let success = items['status'] ? items['success'] : false; */
-      const theUrl = "http://lara.test/api/register";
-      if (this.regiter.valid) {
-        const body = new HttpParams()
-          .set('name', details['name'])
-          .set('email', details['email'])
-          .set('password', details['password'])
-          .set('passwordConfirm', details['passwordConfirm'])
-          .set('city', details['city'])
-          .set('area', details['area'])
-          .set('tel', details['tel'])
-          .set('about', details['about']);
-
-        this.http.store(theUrl, body).
-          subscribe(evt => {
-            console.log(evt);
-            
-            if (evt['access_token']) {
-              // this.http.nextIslogged(true);
-              // location.reload();
-              this.router.navigate(['/']);
-            }
-
-          }, (err) => console.log(err));
-      } else {
-        /* messages errors */
-        // console.log(items['errors']);
-
-      }
+      this.regisSubs = this.auth.register(details)
+      .subscribe((user: Admin | User) => {
+        console.log(user);
+        if (user['user'] || user['admin']) decodeURIComponent(location.pathname) == "register"? this.router.navigate(['/']): $('.close').click();
+      });
     }
   }
 
@@ -94,20 +68,20 @@ export class RegistrationComponent implements OnInit {
       'area': new FormControl(null),
       'tel': new FormControl(null),
       'about': new FormControl(null),
-    });
+    }); 
+  }
 
-    
-    /* 
-         let md = $('#forgotPassword').modal();
-        let thiz = this;
-        md.on('hidden.bs.modal', function (e) {
-    
-          // thiz.router.navigate(["/"]);
-          console.log(this);
-          md.modal('hide');
-    
-          return e.preventDefault();
-        }); */
+  backToLogin(){
+    $('.close').click();
+    this.ldComp('login', {
+      from_path: location.pathname,
+      url: "login",
+      type: 'user'
+    });
+  }
+
+  ngOnDestroy(){
+    if(this.regisSubs) this.regisSubs.unsubscribe();
   }
 }
 

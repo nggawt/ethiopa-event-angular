@@ -1,10 +1,9 @@
-import { Component, OnInit, AfterContentChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 
-import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http-service/http.service';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { AuthService } from 'src/app/services/http-service/auth.service'; 
+import { AuthService } from 'src/app/services/http-service/auth.service';
+import { Subscription } from 'rxjs';
 
 declare let $: any;
 
@@ -13,14 +12,16 @@ declare let $: any;
   templateUrl: './log-in.component.html',
   styleUrls: ['./log-in.component.css']
 })
-export class LogInComponent implements OnInit, AfterContentChecked {
+export class LogInComponent implements OnInit, OnDestroy {
 
   logInform: FormGroup;
+
   phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
   emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
   passwordPatt: string = '^\\w{6,}$';
 
   url: string;
+  loginSubscriber: Subscription;
 
   params = {
     id: 'login',
@@ -28,27 +29,18 @@ export class LogInComponent implements OnInit, AfterContentChecked {
     title: "כניסה"
   };
 
-  constructor(private router: Router,
-    private route: ActivatedRoute,
-    private http: HttpService,
-    private jwt: JwtHelperService,
+  @Input() ldComp: CallableFunction;
+
+  constructor(private http: HttpService,
     private auth: AuthService) { }
 
   ngOnInit() {
 
     this.url = decodeURIComponent(location.pathname);
-    /* if (! this.http.isAuth()) {
-      this.params = {
-        id: 'login',
-        modelSize: 'modal-md',
-        title: "כניסה"
-      };
-    } */
     this.initFormLogin();
   }
-  ngAfterContentChecked() {
-    // if(this.http.isAuth()) this.redirect();
-  }
+
+  get f() { return this.logInform.controls; }
 
   private initFormLogin() {
 
@@ -57,56 +49,39 @@ export class LogInComponent implements OnInit, AfterContentChecked {
       'email': new FormControl(null, [Validators.required]),
       'password': new FormControl(null, [Validators.required])
     });
-    // $('#login').modal();
-  }
-
-  logOut() {
-
-    // this.http.logOut().subscribe(evt => {
-    //   console.log(evt);
-    //   // location.reload();
-    // });
-    // // this.user$ = of(false);
-    // this.redirect();
-  }
-
-  redirect() {
-    let splitUrl: any = (this.url.indexOf('halls-events') >= 0) ? this.url.split("/") : false;
-    splitUrl = (splitUrl && (splitUrl[1] && splitUrl[2])) ? splitUrl[1] + "/" + splitUrl[2] : (splitUrl && splitUrl[1]) ? splitUrl[1] : "/";
-    this.router.navigate([splitUrl], { relativeTo: this.route });
   }
 
   onSubmit() {
 
     if (this.logInform.valid) {
-      console.log(this.logInform.value);
-
-      this.auth.login(this.logInform.value, (value) => {
-        if (value) {
-          let IntendedUri = this.http.intendedUri ? this.http.intendedUri : "/";
-          // console.log(this.jwt.decodeToken(user['access_token'])); 
-          // this.router.navigate([IntendedUri]);
-          $('.close').click();
-        }
-      });
-      
+      this.loginSubscriber = this.auth.login(this.logInform.value)
+        .subscribe(user => {
+          // console.log(user); 
+          if (user['user'] || user['admin']) $('.close').click();
+        });
     }
   }
 
-  register(path) {
+  register() {
     $('.close').click();
-    // this.md.modal('hide');
-    this.router.navigate([path]);
+    this.ldComp('register', {
+      from_path: location.pathname,
+      url: "register",
+      type: 'user'
+    });
   }
 
-  sendEmail(path) {
-    $('.close').click();
-    // this.md.modal('hide');
-    console.log(path);
+  forgotPassword(path) {
 
-    this.router.navigate([path]);
+    $('.close').click();
+    this.ldComp('forgot', {
+      from_path: location.pathname,
+      url: "forgot",
+      type: 'user'
+    });
   }
 
-  get f() { return this.logInform.controls; }
-
+  ngOnDestroy() {
+    if (this.loginSubscriber) this.loginSubscriber.unsubscribe();
+  }
 }

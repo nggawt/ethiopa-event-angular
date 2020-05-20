@@ -2,7 +2,7 @@ import { Customers } from 'src/app/types/customers-type';
 import { Admin } from 'src/app/types/admin-type';
 import { User } from 'src/app/types/user-type';
 import { AuthTokens } from 'src/app/types/auth-token-type';
-import { first, tap, catchError } from 'rxjs/operators';
+import { first, tap, catchError, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
@@ -24,6 +24,9 @@ export class HttpService {
   public requestUrl: string | boolean;
   public loginTo: string | boolean;
   public sendTo: string;
+
+
+  token: string;
 
   private headersOpt: Object = {
     headers: new HttpHeaders({
@@ -76,10 +79,25 @@ export class HttpService {
     };
   }
 
-  public logIn(credential, path?) {
+  register(user){
+    const url = 'register',
+          body = new HttpParams()
+          .set('name', user['name'])
+          .set('email', user['email'])
+          .set('password', user['password'])
+          .set('passwordConfirm', user['passwordConfirm'])
+          .set('city', user['city'])
+          .set('area', user['area'])
+          .set('tel', user['tel'])
+          .set('about', user['about']);
 
-    path = path ? path : this.loginTo ? this.loginTo : false;
-    const theUrl = path ? this.baseUrl + "/" + path : "http://lara.test/api/login";
+    return this.store(url, body);
+  }
+
+  public logIn(credential): Observable<Admin | User | {} | boolean> {
+
+    let path = this.loginTo ? this.loginTo : false;
+    const theUrl = path ? this.baseUrl + "/" + path :  this.baseUrl +"/login";
     this.setOutRequests(path);
 
     let body = new HttpParams()
@@ -90,58 +108,39 @@ export class HttpService {
     return this.http.post(theUrl, body, this.headersOpt).pipe(first());
   }
 
-  public sendResetPassword(credential) {
+  public sendResetPassword(credential): Observable< {} | boolean>  {
 
     this.setOutRequests('/password/email');
-
-    const theUrl = "http://lara.test/api/password/email";
+    const theUrl = this.baseUrl +  "/password/email";
 
     let body = new HttpParams()
-      .set('name', credential['userName'])
-      .set('email', credential['logInEmail']);
-
-    return this.http.post(theUrl, body, this.headersOpt)
-      .pipe(
-        first(),
-        tap(res => {
-          if (res && res['access_token']) {
-            // this.setUserProps(res);
-          }
-          console.log(res);
-        }));
+      .set('name', credential['name'])
+      .set('email', credential['email']);
+    
+      return this.http.post(theUrl, body, this.headersOpt).pipe(first());
   }
 
-  public resetPassword(credential) {
+  public resetPassword(credential): Observable<Admin | User | {} | boolean>  {
 
-    //password/email  
     this.setOutRequests('password/reset');
-
-    const theUrl = "http://lara.test/api/password/reset";
-
+    const theUrl = this.baseUrl + "/password/reset";
+    
     let body = new HttpParams()
-      .set('email', credential['email'])
-      .set('password', credential['newPassword'])
-      .set('password_confirmation', credential['password_conf'])
-      .set('token', credential['token']);
+    .set('email', credential['email'])
+    .set('password', credential['password'])
+    .set('password_confirmation', credential['password_confirmation'])
+    .set('token', credential['token']);
 
-    return this.http.post(theUrl, body, this.headersOpt)
-      .pipe(first(),
-        tap(res => {
-          if (res && res['access_token']) {
-            // this.setUserProps(res);
-          }
-          console.log(res);
-        }));
+    console.log(credential);
+    return this.http.post(theUrl, body,this.headersOpt);
   }
 
-  store(theUrl, body) {
+  store(theUrl, body): Observable<Admin | User | {} | boolean>  {
+
     let url = this.baseUrl + "/" + theUrl;
     this.setOutRequests(theUrl);
-    return this.http.post(url, (body || {}), this.getHttpOpt())
-      .pipe(
-        tap(user => {
-          console.log(user);
-        }));
+
+    return this.http.post(url, (body || {}), this.getHttpOpt());
   }
 
   postData(postUrl, body?, opt?) {
@@ -150,24 +149,8 @@ export class HttpService {
     let url = this.baseUrl + "/" + postUrl;
 
     if (!opt) opt = this.getHttpOpt();
-    console.log(opt);
     
     return this.http.post(url, (body || {}), opt).pipe(catchError(err => {
-      // this.esrv.handleError(err);
-      // console.error(err.message);
-      localStorage.setItem('errors_server', JSON.stringify(err));
-      console.log("Error is handled");
-      return throwError("Error thrown from catchError");
-    }));
-  }
-
-  postDta(postUrl, body, token: string) {
-
-    this.setOutRequests(postUrl);
-    let url = this.baseUrl + "/" + postUrl;
-
-    console.log(token);
-    return this.http.post(url, (body || {}), this.getHttpOpt(token)).pipe(catchError(err => {
       // this.esrv.handleError(err);
       // console.error(err.message);
       localStorage.setItem('errors_server', JSON.stringify(err));
@@ -180,9 +163,8 @@ export class HttpService {
     let url = this.baseUrl + "/" + path;
 
     this.setOutRequests(path);
-    console.log(path);
     
-    return ! this.outRequests[url]? this.http.get(url, this.getHttpOpt()).pipe(first()): of(false);
+    return ! (this.outRequests[url])? this.http.get(url, this.getHttpOpt()).pipe(first()): of(false);
   }
 
   logOut(urlParams) {
@@ -196,29 +178,21 @@ export class HttpService {
     return this.http.post(url, token, this.getHttpOpt(urlParams.token));
   }
 
-  getUserType() {
-    let token = new HttpParams().set('token', this.jwt.tokenGetter());
-    this.http.post(this.baseUrl + '/user-type', token, this.headersOpt).subscribe(userType => {
-      console.log(userType);
-    });
-  }
-
-  authenticated(urlParams: AuthTokens, cbk: CallableFunction): Promise<User | Admin | any> {
+  authenticated(urlParams: AuthTokens, cbk: CallableFunction): Promise<User | Admin | {}> {
 
     let nameType = Object.keys(urlParams)[0],
       path = 'auth-' + nameType,
       url = this.baseUrl + "/" + path,
       token = new HttpParams().set('token', urlParams[nameType]['token']);;
 
-    console.log(urlParams);
     this.setOutRequests(path);
 
     return this.http.post(url, token, this.headersOpt)
-      .pipe(
-        first(),
-        tap((res) => {
-          // console.log('url: ', theUrl, ' response: ', res, ' user: ', user);
-        })).toPromise().catch(this.esrv.handleError);
+      .pipe(first(),map(user => this.getValidUser(user))).toPromise().catch(this.esrv.handleError);
+  }
+
+  private getValidUser(user){
+    return ((typeof user == "object") && ('status' in user) && (user['status'] === false))? false: user;
   }
 
   private getHttpOpt(token?: string) {
@@ -226,11 +200,11 @@ export class HttpService {
 
     return {
       headers: new HttpHeaders({
-        // 'Content-Type':  'application/json',
         // 'Content-Type': 'multipart/form-data',
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-        // 'Accept': 'application/json',
-        'Authorization': 'Bearer ' + token //this.jwt.tokenGetter()
+        'Content-Type': 'application/x-www-form-urlencoded',
+        // 'Content-Type':  'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + this.token
       })
     };
   }

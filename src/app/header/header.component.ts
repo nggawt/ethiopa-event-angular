@@ -3,7 +3,7 @@ import { AdminUser } from 'src/app/types/admin-type';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http-service/http.service';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { User } from '../types/user-type';
 import { MessageModel } from '../types/message-model-type';
 import { AuthService } from '../services/http-service/auth.service';
@@ -25,6 +25,8 @@ export class HeaderComponent implements OnInit {
   eeMessage: MessageModel;
   user$: Observable<User | boolean>;
   allowLogin$: Observable<boolean>;
+
+  logoutSubs: Subscription;
 
   constructor(private http: HttpService, private router: Router, private auth: AuthService) { }
 
@@ -78,23 +80,17 @@ export class HeaderComponent implements OnInit {
   logOut(user: AdminUser | UserFields) {
     // let params = this.getUrlParams(user);
     console.log("::users:: ", user);
-
-    // this.http.logOut(params).subscribe(evt => {
-    //   console.log(evt);
-    //   // location.reload();
-    // });
     this.url = decodeURIComponent(location.pathname);
-    let isDone = this.auth.logout(user);
 
-    // if(isDone){
-    //   this.user$ = of(false);
-    //   this.redirect();
-    // }
+    this.logoutSubs = this.auth.logout(user)
+      .subscribe(response => {
+        console.log(response);
+      });
   }
 
-  active(user: UserFields | AdminUser){
+  active(user: UserFields | AdminUser) {
     console.log(user);
-    (! user.activeted)? this.auth.activateUser((user['authority']? 'admin': 'user')): '';
+    (!user.activeted) ? this.auth.activateUser((user['authority'] ? 'admin' : 'user')) : '';
   }
 
   getUrlParams(user) {
@@ -140,5 +136,9 @@ export class HeaderComponent implements OnInit {
     let splitUrl: any = (this.url.indexOf('halls-events') >= 0) ? this.url.split("/") : false;
     splitUrl = (splitUrl && (splitUrl[1] && splitUrl[2])) ? splitUrl[1] + "/" + splitUrl[2] : (splitUrl && splitUrl[1]) ? splitUrl[1] : "/";
     this.router.navigate([splitUrl]);//, { relativeTo: this.route }
+  }
+
+  ngOndestoy() {
+    if (this.logoutSubs) this.logoutSubs.unsubscribe();
   }
 }

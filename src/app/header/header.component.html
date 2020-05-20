@@ -46,7 +46,7 @@
 
     <ng-template #loginlogout let-user="user">
         <div class="user-item clearfix">
-            משתמש:
+            משתמש: {{ (user && user.user? user.user.name: user? user.name: '')}}
             <div class="float-left">
 
                 <ng-container [ngTemplateOutlet]="(! user) || (! user?.user)? login: logout"
@@ -62,7 +62,7 @@
         </div>
         <hr>
         <div class="admin-item clearfix">
-            מנהל:
+            מנהל: {{ (user && user.admin? user.admin.user?.name: '')}}
             <div class="float-left">
 
                 <ng-container [ngTemplateOutlet]="(! user) || (! user?.admin)?  login: logout"
@@ -106,7 +106,7 @@
     <ng-template #logged let-user="user">
 
         <a (click)="setUrlProfile(user)" class="btn btn-light btn-sm">
-            {{ user.authority? "מנהל": "משתמש" }}
+            {{ user.authority? "מנהל": user.name }}
             <i class="material-icons text-primary">person</i>
         </a>
 

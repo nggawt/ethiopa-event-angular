@@ -1,14 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { Observable, from, of } from 'rxjs';
-import { map, tap, filter, first, single, take, takeUntil } from 'rxjs/operators';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ValidationService } from 'src/app/services/validation/validation.service';
 import { User } from 'src/app/types/user-type';
 import { MessagesService } from 'src/app/services/messages/messages.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
 
 @Component({
   selector: 'app-create-post',
@@ -23,13 +19,10 @@ export class CreatePostComponent implements OnInit {
   createPost: FormGroup;
   messages: object | any = {};
 
-  constructor(private router: Router,
-    private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
     private location: Location,
-    private auth: AuthService,
     private http: HttpService,
-    private msgSrv: MessagesService,
-    private validator: ValidationService) { }
+    private msgSrv: MessagesService) { }
 
   ngOnInit() {
     this.postId = this.route.snapshot.params['id'];
@@ -72,7 +65,7 @@ export class CreatePostComponent implements OnInit {
     let updaterUrl = url && method ? url + "/" + this.userPromise["id"] + "? _method=" + method : url;
     console.log(updaterUrl);
     
-    this.http.postDta('articles', body, this.auth.getToken(body['name']))
+    this.http.postData('articles', body)
       .subscribe(evt => {
 
         console.log(evt);

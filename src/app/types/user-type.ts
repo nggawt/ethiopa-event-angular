@@ -1,3 +1,9 @@
+import { AdminUser } from 'src/app/types/admin-type';
+
+export declare interface Users {
+    user: UserFields,
+    admin?: AdminUser
+}
 
 export declare interface User {
     user: UserFields

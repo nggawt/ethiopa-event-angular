@@ -1,7 +1,8 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Admin, AdminUser } from 'src/app/types/admin-type';
-import { User, UserFields } from 'src/app/types/user-type';
+import { User, UserFields, Users } from 'src/app/types/user-type';
 import { Auth } from './auth';
 import { BaseAuth } from './base-auth';
 
@@ -10,7 +11,7 @@ import { BaseAuth } from './base-auth';
   providedIn: 'root'
 })
 
-export class AuthService extends BaseAuth implements OnDestroy, Auth {
+export class AuthService extends BaseAuth implements Auth {
 
   private logged: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public allowLogIn = new BehaviorSubject(false);
@@ -20,41 +21,64 @@ export class AuthService extends BaseAuth implements OnDestroy, Auth {
 
   public authUser: UserFields | AdminUser | boolean;
 
-  loginSubscriber: Subscription;
 
+  login(credential: { name: string, email: string, password: string }): Observable<User | Admin | boolean> {
 
-  login(credential: { name: string, email: string, password: string }, cbk?: CallableFunction): User | boolean {
-
-    this.loginSubscriber = this.http.logIn(credential)
-      .subscribe(users => {
-
-        if (users['status']) {
-          this.addAuth(users, 'user'); 
-        } else if (users['admin']) {
-          this.addAuth(users, 'admin');  
-        } else {
-          console.warn("No user are logged in!.");
-        }
-      }, (err) => {
-        console.log(err);
-      });
-
-    return cbk ? cbk(true) : true;
+    return this.http.logIn(credential)
+      .pipe(tap((users: User | Admin) => this.handleAuth(users)));
   }
 
-  protected addAuth(users, userType: string) {
+  register(user: UserFields): Observable<User | Admin | boolean> {
 
-    let user: Admin | User = this.formatUserProps(users),
-      token = userType == 'user'? this.buildToken(users['access_token'], 'user'): 
-              this.buildToken(users[userType]['access_token'], userType);;
+    return this.http.register(user)
+      .pipe(tap((users: User | Admin) => this.handleAuth(users)));
+  }
 
+  resetPassword(user: UserFields): Observable<User | Admin | boolean> {
+
+    return this.http.resetPassword(user)
+      .pipe(tap((users: User | Admin) => this.handleAuth(users)));
+  }
+
+  sendResetPasswordEmail(user: { name: string, email: string }): Observable<{} | boolean> {
+
+    const msg = "your reset password link was sent, go check your email";
+    return this.http.sendResetPassword(user);
+  }
+
+  logout(user: AdminUser | UserFields): Observable<{} | boolean> {
+
+    let params = this.getUrlParams(user);
+    return this.http.logOut(params)
+      .pipe(tap((item: {} | boolean) => this.removeAuth(params.type)));
+  }
+
+  protected handleAuth(users: User | Admin) {
+
+    if (users['status']) {
+      this.addAuth(users, 'user');
+    } else if (users['admin']) {
+      this.addAuth(users, 'admin');
+    } else {
+      console.warn("No user are logged in!.");
+    }
+  }
+
+  protected addAuth(auth: Admin | User | boolean, userType: string) {
+
+    let user: Admin | User = this.formatUserProps(auth),
+      token = userType == 'user' ? this.buildToken(auth['access_token'], 'user') :
+        this.buildToken(auth[userType]['access_token'], userType);;
+
+    this.setToken(token, userType).setActivated(user);
     this.addUser(user, userType);
-    this.setToken(token, userType);
-    this.setActivated();
-    this.authUser = !this.authUser || user[userType].activated? user[userType]: this.authUser; 
+
+    // this.setToken(token, userType);
+    // this.setActivated();
+    ! this.authUser? this.setAuthUser(user[userType]): '';
   }
 
-  private addUser(user: User | Admin, userType: string) {
+  private addUser(user: Admin | User, userType: string) {
     let users = this.user.getValue();
     if (users && Object.keys(users).length) {
       users[userType] = user[userType];
@@ -63,30 +87,22 @@ export class AuthService extends BaseAuth implements OnDestroy, Auth {
       this.logged.next(true);
       this.user.next(user);
     }
+    return this;
   }
-  setAuthUser(user: AdminUser){
+
+  setAuthUser(user: AdminUser | UserFields | boolean) {
     this.authUser = user;
   }
 
-  activateUser(userType: string){
+  activateUser(userType: string) {
     this.activate(userType);
-  }
-
-  logout(user: AdminUser | UserFields): boolean {
-    let params = this.getUrlParams(user);
-    console.log(user, params);
-    this.http.logOut(params).subscribe(evt => {
-      console.log(evt);
-      this.removeAuth(params.type);
-    });
-    return false;
   }
 
   protected removeAuth(userType: string) {
 
     // tokens -> localstorage
     let leftToken = this.removeToken(userType),
-        leftUser = this.removeUser(userType);
+      leftUser = this.removeUser(userType);
 
     console.log("::leftUser:: ", leftUser, " ::leftToken:: ", leftToken)
     // this.tokens
@@ -96,22 +112,22 @@ export class AuthService extends BaseAuth implements OnDestroy, Auth {
     this.user.next(leftUser);
 
     // this.authUser
-    this.authUser = leftUser && leftUser[userType]? leftUser[userType]:false;
+    this.authUser = leftUser && leftUser[userType] ? leftUser[userType] : false;
 
     // activated && localstorage
-    if(leftToken && leftUser){
-      this.setActivated();
-    }else{
-      window.localStorage.clear();
+    if (leftToken && leftUser) {
+      this.setActivated(<Admin | User>leftUser);
+    } else {
+      this.destroyActivation();
     }
   }
 
-  protected formatUserProps(data) {
+  protected formatUserProps(data): Admin | User {
     let user: Admin | User = this.userTransform(data);
     return this.addPropsToUser(user);
   }
 
-  protected userTransform(data):  Admin | User{
+  protected userTransform(data): Admin | User {
 
     let user: Admin | User;
 
@@ -135,11 +151,11 @@ export class AuthService extends BaseAuth implements OnDestroy, Auth {
     }
     return user;
   }
-  
-  addPropsToUser(user: User | Admin): User | Admin {
+
+  addPropsToUser(user: Admin | User): Admin | User {
 
     (user['user'] && !user['user'].avatar) ? user['user'].avatar = 'https://source.unsplash.com/random/120x120' :
-      user && user['admin'] && ! user['admin']?.avatar ? user['admin'].avatar = 'https://source.unsplash.com/random/120x120' : '';
+      user && user['admin'] && !user['admin']?.avatar ? user['admin'].avatar = 'https://source.unsplash.com/random/120x120' : '';
     return user;
   }
 
@@ -152,12 +168,12 @@ export class AuthService extends BaseAuth implements OnDestroy, Auth {
     };
   }
 
-  getActiveUser(users: Admin | User){
-    
+  getActiveUser(users: Users) {
+
     return Object.keys(users).reduce((acc, currValue) => {
-      if(users[currValue].activeted){
+      if (users[currValue].activeted) {
         acc = users[currValue];
-      } 
+      }
       return acc;
     }, {});
   }
@@ -167,24 +183,15 @@ export class AuthService extends BaseAuth implements OnDestroy, Auth {
   }
 
   authCheck(): boolean {
-    return this.validateTokens(this.tokens)? true: false;
+    return this.validateTokens(this.tokens) ? true : false;
   }
 
   emit(users) {
     this.user.next(users);
   }
 
-  register(): boolean {
-    throw new Error("Method not implemented.");
-  }
-
   getToken(name?: string) {
     return name && this.tokens[name] ? this.tokens[name]['token'] : this.tokens && this.tokens[this.activeted] ? this.tokens[this.activeted]['token'] : '';
-  }
-
-  ngOnDestroy() {
-    if (this.loginSubscriber) this.loginSubscriber.unsubscribe();
-    console.log("unsubscribe auth component!");
   }
 }
 

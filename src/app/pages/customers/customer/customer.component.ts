@@ -1,4 +1,4 @@
-import { User } from 'src/app/types/user-type';
+import { User, Users } from 'src/app/types/user-type';
 import { Admin } from 'src/app/types/admin-type';
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -44,7 +44,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
     this.cusromerActiveState();
 
     this.userSubs$ = this.auth.userObs.pipe(
-      map((users: Admin | User) => this.auth.getActiveUser(users)),
+      map((users: Users) => this.auth.getActiveUser(users)),
       tap(user => console.log("tap: ", user)))
       .subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser); });
   }

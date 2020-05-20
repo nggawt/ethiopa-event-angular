@@ -90,7 +90,7 @@
 
       <div class="inputTypeNumber textarea">
         <textarea class="col-11" type="text" name="title" id="about" formControlName="about" required minlength="12"
-          placeholder="הוסף הודעה">
+          placeholder="אודות">
             </textarea>
         <span class="validity float-left"></span>
       </div>
@@ -103,6 +103,11 @@
         <i class="fa fa-envelope"></i>
         שלח
       </button>
+
+      <a class="btn btn-light btn-sm float-left" (click)="backToLogin()">
+        <span class="fas fa-sign-in-alt"></span> התחבר
+      </a>
     </div>
+
   </form>
 </app-auth>

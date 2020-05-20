@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/http-service/auth.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 declare var $;
 
 @Component({
@@ -9,10 +11,11 @@ declare var $;
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css']
 })
-export class ResetPasswordComponent implements OnInit {
+export class ResetPasswordComponent implements OnInit, OnDestroy {
   emailPatteren: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
 
   resetPassword: FormGroup;
+  resetSubscription:Subscription;
 
   token: string | boolean;
   private url: string;
@@ -20,11 +23,11 @@ export class ResetPasswordComponent implements OnInit {
   params = {
     id: 'resetPassword',
     modelSize: 'modal-md',
-    title: "איפוס סיסמה"
+    title: "שנה סיסמה"
   };
 
   constructor(
-    private http: HttpService, 
+    private auth: AuthService, 
     private router: Router, 
     private route: ActivatedRoute) { }
 
@@ -56,68 +59,28 @@ export class ResetPasswordComponent implements OnInit {
 
   onSubmit() {
     // let param = this.route.snapshot.queryParamMap['params'];
-    console.log("sending");
+
     let values = this.resetPassword.value;
     values['token'] = this.route.snapshot.queryParamMap['params']['token'];
     if (this.resetPassword.valid && values['token']) {
-      console.log("sending");
-      console.log(this.resetPassword.value);
-      this.sendPasswordResetEmail(values);
+     
+     this.resetSubscription = this.auth.resetPassword(values).
+      subscribe(user => {
+        console.log(user);
+        // if (user['user'] || user['admin']) $('.close').click();
+        if (user['user'] || user['admin']) decodeURIComponent(location.pathname) == "/pssword/email"? this.router.navigate(['/']): $('.close').click();
+      },
+      (err) => {
+        // this.http.nextIslogged(false);
+        console.log(err);
+      });
     }
   }
 
-  sendPasswordResetEmail(values) {
-    console.log(this.resetPassword);
-    // this.resetPassword.controls.
-    // resetPassword
-    let url = decodeURIComponent(location.pathname);
-
-
-    this.http.resetPassword(values).
-      subscribe(evt => {
-        console.log(evt);
-
-        // let redirectUrl = this.http.IntendedUri? this.http.IntendedUri: this.url? this.url: "/";
-        // if(evt['user']) this.setUrlPrpfile(evt['user']);
-        // if(evt['user'] && evt['user']['customer']) this.setUrlPage(evt['user']['customer']);
-        // this.router.navigate([redirectUrl]);
-        // $('.close').click();
-        // location.reload();
-      },
-        (err) => {
-          // this.http.nextIslogged(false);
-          console.log(err);
-        });
-  }
 
   // f() { return this.logInform.controls; }
 
-  reset(){
-    let values = this.resetPassword.value;
-    values['token'] = this.token;
-    // values['token'] = this.route.snapshot.queryParamMap['params']['token'];
 
-    if (this.resetPassword.valid && this.token) {
-      console.log("sending");
-      console.log(this.resetPassword.value);
-      this.http.resetPassword(values).
-        subscribe(evt => {
-          console.log(evt);
-          
-          let redirectUrl = this.http.intendedUri? this.http.intendedUri: this.url? this.url: "/";
-          if(evt['user']) this.setUrlProfile(evt['user']);
-          if(evt['user'] && evt['user']['customer']) this.setUrlPage(evt['user']['customer']);
-          this.router.navigate(['/']);
-          $('.close').click();
-          // location.reload();
-        },
-        (err) => {
-          // this.http.nextIslogged(false);
-          console.log(err);
-        });
-    }
-    
-  }
   private setUrlPage(customer){
     
     let compNameTrimed = customer['company'].trim(),
@@ -139,5 +102,9 @@ export class ResetPasswordComponent implements OnInit {
       (str)? (element != "")? str += "-" + element: '': (element != "")? str = element: '';
     });
     return str;
+  }
+
+  ngOnDestroy(){
+    if(this.resetSubscription) this.resetSubscription.unsubscribe();
   }
 }
