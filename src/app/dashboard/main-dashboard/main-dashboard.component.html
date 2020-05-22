@@ -1,5 +1,5 @@
 <!-- <app-admin-registration *ngIf="isRegistered"></app-admin-registration> -->
-<div [appLogInDirective]="isLogged"></div>
+<div [auth]="isLogged"></div>
 
 <div *ngIf="resources" class="row text-right">
   <div class="col-12 mb-3">

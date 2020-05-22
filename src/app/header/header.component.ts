@@ -1,6 +1,7 @@
+import { HelpersService } from './../services/helpers/helpers.service';
 import { UserFields } from 'src/app/types/user-type';
 import { AdminUser } from 'src/app/types/admin-type';
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../services/http-service/http.service';
 import { Observable, of, Subscription } from 'rxjs';
@@ -16,7 +17,7 @@ declare let $: any;
   encapsulation: ViewEncapsulation.None
 })
 
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   private url: string;
   loginParams: { [key: string]: string };
@@ -28,7 +29,10 @@ export class HeaderComponent implements OnInit {
 
   logoutSubs: Subscription;
 
-  constructor(private http: HttpService, private router: Router, private auth: AuthService) { }
+  constructor(private http: HttpService, 
+    private router: Router, 
+    private auth: AuthService,
+    private helper: HelpersService) { }
 
   ngOnInit() {
     this.url = decodeURIComponent(location.pathname);
@@ -65,26 +69,31 @@ export class HeaderComponent implements OnInit {
   logIn(user: string) {
     console.log("HEADER login method: ", user);
     this.auth.allowLogIn.next(true);
-    this.http.requestUrl = decodeURIComponent(location.pathname);
+    this.http.requestUrl = this.url
     this.loginParams = this.getUrlParams(user);
   }
 
   register(path) {
-    // $('.close').click(); 
-    this.http.requestUrl = decodeURIComponent(location.pathname);
-    console.log(this.http.requestUrl);
+    this.http.requestUrl = this.url;
+    this.router.navigate([path]);
+  }
 
+  forgot(path) {
+    this.http.requestUrl = this.url;
     this.router.navigate([path]);
   }
 
   logOut(user: AdminUser | UserFields) {
-    // let params = this.getUrlParams(user);
-    console.log("::users:: ", user);
-    this.url = decodeURIComponent(location.pathname);
 
     this.logoutSubs = this.auth.logout(user)
-      .subscribe(response => {
-        console.log(response);
+    .subscribe(response => {
+      
+      console.log("::response:: ", response);
+        if(response['status']){
+          let title = "התנתקות",
+              body = "התנתקות בוצע בהצלחה!";
+          this.helper.notifyMsg().success(body, title, { positionClass: 'toast-top-center' });
+        }
       });
   }
 
@@ -138,7 +147,11 @@ export class HeaderComponent implements OnInit {
     this.router.navigate([splitUrl]);//, { relativeTo: this.route }
   }
 
-  ngOndestoy() {
-    if (this.logoutSubs) this.logoutSubs.unsubscribe();
+  ngOnDestroy() {
+    if (this.logoutSubs){
+      this.logoutSubs.unsubscribe();
+      console.log("HEADER is Unsubscribe!");
+      
+    } 
   }
 }

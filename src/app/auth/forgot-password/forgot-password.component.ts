@@ -1,10 +1,11 @@
+import { HelpersService } from 'src/app/services/helpers/helpers.service';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { HttpService } from 'src/app/services/http-service/http.service';
 import { AuthService } from 'src/app/services/http-service/auth.service';
 import { Subscription } from 'rxjs';
+
 declare var $;
+
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
@@ -12,7 +13,8 @@ declare var $;
 })
 export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
-  emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
+  emailPatt: RegExp | string;
+  
   sendResetPasswordToEmail: FormGroup;
   forgotSubs: Subscription;
 
@@ -24,7 +26,10 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     title: "איפוס סיסמה"
   };
 
-  constructor(private router: Router, private http: HttpService, private auth: AuthService) { }
+  constructor(private helper: HelpersService, 
+    private auth: AuthService) { 
+      this.emailPatt = this.helper.getPatteren('email');
+    }
 
   ngOnInit() {
     this.initRestPasswordForm();
@@ -68,7 +73,11 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       this.forgotSubs = this.auth.sendResetPasswordEmail(this.sendResetPasswordToEmail.value)
         .subscribe(response => {
           console.log(response);
-          if(response['message']) $('.close').click();
+          if(response['status']){
+            // this.http.intendedUri = "/customers";
+            this.helper.notifyMsg().success(response['message'], "איפוס סיסמה", {positionClass: "toast-bottom-left"});
+            $('.close').click();
+          } 
         });
     }
   }

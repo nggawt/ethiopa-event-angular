@@ -13,6 +13,7 @@ export declare interface UserFields {
     id: number
     name: string,
     email: string,
+    type: string,
     avatar?: string,
 
     about?: string,

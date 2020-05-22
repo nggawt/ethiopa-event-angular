@@ -14,7 +14,7 @@ export class LogInDirectiveDirective implements OnInit, OnDestroy {
 
   @Input() set appLogInDirective(value: { from_path: string, url: string, type: string }) {
 
-    this.handleDirective('login', value);
+    this.handleDirective(value.url, value);
   }
 
   componentRef: any;
@@ -26,7 +26,7 @@ export class LogInDirectiveDirective implements OnInit, OnDestroy {
     console.log(this);
 
     this.viewCont.clear();
-    const component: any = componentName == 'login' ? LogInComponent :
+    const component: any = componentName == 'login' || componentName == 'admin-login' ? LogInComponent :
                             componentName == 'reset' ? ResetPasswordComponent :
                               componentName == 'forgot' ? ForgotPasswordComponent :
                               componentName == 'register' ? RegistrationComponent :

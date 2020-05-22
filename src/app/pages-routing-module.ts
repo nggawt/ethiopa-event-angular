@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes, NoPreloading } from '@angular/router';
+import { DashboardModule } from './dashboard/dashboard-module/dashboard.module';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
 // import { LogInComponent } from './auth/log-in/log-in.component';
 import { RegistrationComponent } from './auth/registration/registration.component';
@@ -53,6 +54,7 @@ const routes: Routes = [
   { path: 'events', component: EventsSchedulComponent },
   { path: 'deals', component: DealsComponent },
   // { path: 'צור-קשר', component: ContactComponent },
+  { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard-module/dashboard.module').then(m => m.DashboardModule) },
   { path: 'customers', loadChildren: () => import('./pages/customers/customers.module').then(m => m.CustomersModule) },
 
   // { path: "**", component: PageNotFoundComponent}
@@ -64,7 +66,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, enableTracing: false}) // prioload startigy// , { preloadingStrategy: PreloadAllModules}
+    RouterModule.forRoot(routes, { preloadingStrategy: NoPreloading, enableTracing: false}) // prioload startigy// , { preloadingStrategy: PreloadAllModules}
   ],
   exports: [RouterModule]
 })

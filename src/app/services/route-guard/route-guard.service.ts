@@ -3,9 +3,9 @@ import { CanActivate, ActivatedRouteSnapshot, Router, RouterStateSnapshot, CanAc
 import { HttpService } from '../http-service/http.service';
 import { Observable } from 'rxjs';
 import { CustomersDataService } from '../../customers/customers-data-service';
-import { find, map, auditTime } from 'rxjs/operators';
-import { User, UserFields } from 'src/app/types/user-type';
-import { Admin, AdminUser } from 'src/app/types/admin-type';
+import { find, map, tap, single } from 'rxjs/operators';
+import { UserFields } from 'src/app/types/user-type';
+import { AdminUser } from 'src/app/types/admin-type';
 import { AuthService } from '../http-service/auth.service';
 
 @Injectable({
@@ -42,9 +42,8 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     this.autUser = this.auth.authUser;
 
     let uriRecourse = route.parent.params.id ? route.parent.params.id : route.params.id,
-      uEmail = this.autUser && this.autUser['email'] ? this.autUser['email'] :
-        this.autUser && this.autUser['user'] ? this.autUser['user']['email'] : false,
-      join = this.intendedUrl.indexOf('/join') >= 0;
+        uEmail = this.autUser && this.autUser['email'] ? this.autUser['email']: false,
+        join = this.intendedUrl.indexOf('/join') >= 0;
 
     // let reg = this.intendedUrl.indexOf('/register');
 
@@ -52,9 +51,9 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     if (!this.auth.authCheck()) {
       return this.goTo(this.currentUrl);
     }
-
+    
     /** if user is admin allow access **/
-    if (this.userIsAdmin(this.autUser)) return true;
+    if (this.autUser && this.autUser['type'] == "admin") return true;
 
     /** if our uri is /join and we have auth user, lets check if auth user is already our customer member and let him access join page if false **/
     if (join && uEmail) {
@@ -68,7 +67,7 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     let css;
     if (css = this.customers.customerOb ? (this.customers.customerOb['customer']) : false) {
       // console.log("called gurd admin", this.autUser, " custmer: ", css.company);
-      if ((!join && uEmail === css['email']) || this.userIsAdmin(this.autUser)) return true;
+      if ((!join && uEmail === css['email'])) return true;
     }
 
     // console.log("authUser: ", this.autUser, " uEmail: ", uEmail, " uriRecourse: ", uriRecourse);
@@ -83,10 +82,10 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
 
     return this.auth.userObs.pipe(
       find(val => typeof val == "object"),
-      map(users => this.auth.getActiveUser(users))
+      map(users => this.auth.getActiveUser(users)),
     ).toPromise().then((user) => {
 
-      if (this.userIsAdmin(user)) return true;
+      if (user && user['type'] == "admin") return true;
       return this.guardProccesCanActive(user, uriRecourse);
     });
   }
@@ -134,10 +133,6 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
       });
   }
 
-  protected userIsAdmin(user) {
-    return (user && user['authority'] && user['authority'].name == "Admin");
-  }
-
   allowLogin(url) {
     this.auth.allowLogIn.next(true);
     this.goTo(url);
@@ -164,5 +159,3 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     return this.canActivate(route, state);
   }
 }
-
-

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -109,7 +108,6 @@ import { MailsComponent } from '../mail/mails/mails.component';
   ],
   imports: [
     CommonModule,
-    BrowserModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
@@ -125,7 +123,7 @@ import { MailsComponent } from '../mail/mails/mails.component';
 
   ]
 })
-export class DahsboardModule { }
+export class DashboardModule { }
 
 /* 
 ,

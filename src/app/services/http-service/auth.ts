@@ -11,5 +11,4 @@ export declare interface Auth {
     // getAuthenticated(token:AuthTokens, cbk: CallableFunction):void,
     setAuth(tokens:AuthTokens): void,
     auth(): this,
-    isAdmin(user: User| Admin): boolean
 }

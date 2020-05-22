@@ -8,7 +8,7 @@
 <router-outlet *ngIf="! path"></router-outlet>
 <hr class="d-sm-none">
 <div *ngIf="path" class="row text-right">
-    <div *ngIf="hallsProps | async as dataResources" class="col-sm-12 mb-3">
+    <div *ngIf="(hallsProps | async ) as dataResources" class="col-sm-12 mb-3">
         <h1 class="h2 py-2 pr-3 bg-light text-success rounded">
             {{ dataResources[0].customer.businessType == 'halls-events'? " אולמות אירועים": (dataResources[0].customer.businessType == 'salons')? "סלון כלות": (dataResources[0].customer.businessType == 'hotels')? "בתי מלון וצימרים":(dataResources[0].customer.businessType
             == 'photographers')? "צילום וידאו וסטילס": (dataResources[0].customer.businessType == 'djs')? "די-ג'י": (dataResources[0].customer.businessType == 'car-rents')? "השכרת רכב": (dataResources[0].customer.businessType == 'transports')?

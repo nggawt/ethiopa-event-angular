@@ -170,7 +170,7 @@ export class CustomerCreateComponent implements OnInit, AfterViewInit {
     //     errors: msgBag['errors'],
     //     success: msgBag['success']
     //   };
-    //   this.msgNotify.showErrors('נא לתקן את השגיאות', "פרטים שגויים", {positionClass: "toast-center-center"});
+    //   this.msgNotify.errors('נא לתקן את השגיאות', "פרטים שגויים", {positionClass: "toast-center-center"});
     //   console.log("messages: ", this.messages, " form not validated: ", this.createCustomer);
     //   return;
     // }
@@ -226,7 +226,7 @@ export class CustomerCreateComponent implements OnInit, AfterViewInit {
     Object.keys(items).forEach(item => {
       this.itemData[item] = items[item];
     });
-    this.msgNotify.showSuccess('קליינט', "חשבון קליינט נוצר בהצלחה", {positionClass: "toast-bottom-center"});
+    this.msgNotify.success('קליינט', "חשבון קליינט נוצר בהצלחה", {positionClass: "toast-bottom-center"});
   }
 
   private galItems() {

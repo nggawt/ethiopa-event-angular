@@ -1,7 +1,7 @@
 <!-- position-relative -->
 <!-- <app-contact [mailProps]="eeMessage"></app-contact> -->
 <div *ngIf="(allowLogin$ | async) as allowLogin">
-    <ng-template *ngIf="loginParams" [appLogInDirective]="loginParams"></ng-template>
+    <ng-template *ngIf="loginParams" [auth]="loginParams"></ng-template>
 </div>
 
 <div *ngIf="(sendingMail | async) as allowMesage">
@@ -19,8 +19,7 @@
 
     <ng-template #userItems let-user="user">
 
-        <ng-container [ngTemplateOutlet]="user? logged: noUser" 
-        [ngTemplateOutletContext]="{
+        <ng-container [ngTemplateOutlet]="user? logged: noUser" [ngTemplateOutletContext]="{
             user: (user && user.user && user.user?.activeted)? user.user: 
                     (user && user.admin && user.admin?.activeted)? user.admin: 'user'
         }">
@@ -47,14 +46,17 @@
     <ng-template #loginlogout let-user="user">
         <div class="user-item clearfix">
             משתמש: {{ (user && user.user? user.user.name: user? user.name: '')}}
+            
             <div class="float-left">
 
                 <ng-container [ngTemplateOutlet]="(! user) || (! user?.user)? login: logout"
                     [ngTemplateOutletContext]="{user: user && user?.user? user.user: 'user' }">
-    
+
                 </ng-container>
 
-                <a *ngIf="user && user?.user" [ngClass]="user && user.user?.activeted? 'btn btn-light text-success': 'btn btn-light'"  (click)="active(user.user)">
+                <a *ngIf="user && user?.user"
+                    [ngClass]="user && user.user?.activeted? 'btn btn-light text-success': 'btn btn-light'"
+                    (click)="active(user.user)">
                     {{ ! user.user?.activeted  ? 'החלף': 'Active'}}
                     <i *ngIf="(! user.user?.activeted)" class="fa fa-exchange-alt text-primary"></i>
                 </a>
@@ -67,11 +69,13 @@
 
                 <ng-container [ngTemplateOutlet]="(! user) || (! user?.admin)?  login: logout"
                     [ngTemplateOutletContext]="{user: user && user.admin? user.admin: 'admin' }">
-    
+
                 </ng-container>
-                <a *ngIf="user && user?.admin" [ngClass]="user && user.admin?.activeted? 'btn btn-light text-success': 'btn btn-light'" (click)="active(user.admin)">
+                <a *ngIf="user && user?.admin"
+                    [ngClass]="user && user.admin?.activeted? 'btn btn-light text-success': 'btn btn-light'"
+                    (click)="active(user.admin)">
                     {{ ! user.admin?.activeted? 'החלף': 'Active'}}
-    
+
                     <i *ngIf="! user.admin?.activeted" class="fa fa-exchange-alt text-primary"></i>
                 </a>
             </div>
@@ -80,11 +84,15 @@
 
 
     <ng-template #login let-user="user">
+        
         <a class="btn btn-light" (click)="logIn(user)">
             התחבר
             <!-- {{ user }} -->
             <i class="fa fa-sign-in text-primary rotated"></i>
         </a>
+        <p *ngIf="user == 'user'" class="m-0 p-0">
+            <a class="text-warning" (click)="forgot('/password/email')">שכחתי סיסמה? </a>
+        </p>
     </ng-template>
 
     <ng-template #noUser>
@@ -123,6 +131,7 @@
 
 
     <nav class="navbar navbar-expand-lg col">
+
         <a class="navbar-brand" routerLink="/dashboard">
             <img src="./assets/pages/logosmall.gif" alt="logo">
         </a>

@@ -286,7 +286,7 @@ export class CustomerEditComponent implements OnInit, OnDestroy {
     Object.keys(items).forEach(item => {
       this.itemData[item] = items[item];
     });
-    this.msgNotify.showSuccess(response.message, "קליינט");
+    this.msgNotify.success(response.message, "קליינט");
     /* this.message = "קליינט עודכן בהצלחה";// "אדמין עודכן בהצלחה"; //response.messages.success.update[0];
     setTimeout(() => {
       $('#' + this.id).click();

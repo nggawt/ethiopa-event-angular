@@ -41,7 +41,6 @@ export class AuthService extends BaseAuth implements Auth {
   }
 
   sendResetPasswordEmail(user: { name: string, email: string }): Observable<{} | boolean> {
-
     const msg = "your reset password link was sent, go check your email";
     return this.http.sendResetPassword(user);
   }
@@ -55,9 +54,9 @@ export class AuthService extends BaseAuth implements Auth {
 
   protected handleAuth(users: User | Admin) {
 
-    if (users['status']) {
+    if (users['status'] && users['type'] == 'user') {
       this.addAuth(users, 'user');
-    } else if (users['admin']) {
+    } else if (users['status'] && users['type'] == 'admin') {
       this.addAuth(users, 'admin');
     } else {
       console.warn("No user are logged in!.");
@@ -67,14 +66,10 @@ export class AuthService extends BaseAuth implements Auth {
   protected addAuth(auth: Admin | User | boolean, userType: string) {
 
     let user: Admin | User = this.formatUserProps(auth),
-      token = userType == 'user' ? this.buildToken(auth['access_token'], 'user') :
-        this.buildToken(auth[userType]['access_token'], userType);;
+      token = this.buildToken(auth['access_token'], userType);
 
     this.setToken(token, userType).setActivated(user);
-    this.addUser(user, userType);
-
-    // this.setToken(token, userType);
-    // this.setActivated();
+    this.addUser(user, userType); 
     ! this.authUser? this.setAuthUser(user[userType]): '';
   }
 
@@ -95,7 +90,20 @@ export class AuthService extends BaseAuth implements Auth {
   }
 
   activateUser(userType: string) {
-    this.activate(userType);
+
+    let users = this.user.getValue();
+
+    // activated
+    // tokens + token storage
+    // this.activeted = userType;
+
+    Object.keys(users).forEach((current, idx) => {
+      (current == userType) ? this.active(users, current) : this.deActive(users, current);
+    });
+    this.saveToken(this.tokens);
+
+    // users
+    this.emit(users);
   }
 
   protected removeAuth(userType: string) {
@@ -122,40 +130,34 @@ export class AuthService extends BaseAuth implements Auth {
     }
   }
 
-  protected formatUserProps(data): Admin | User {
-    let user: Admin | User = this.userTransform(data);
-    return this.addPropsToUser(user);
+  formatUserProps(data): Admin | User {
+    return this.userTransform(data);
   }
 
   protected userTransform(data): Admin | User {
-
+    console.log(data);
+    
     let user: Admin | User;
-
-    if (data['roles']) {
+    if(data.type == 'admin'){
       user = {
         admin: {
-          user: data['admin']['user'],
+          user: data['user'],
           authority: data['authority'],
-          roles: data['roles']
+          type: data.type,
+          avatar: 'https://source.unsplash.com/random/120x120'
         }
       };
-    } else if (data['authority']) {
-      user = {
-        admin: {
-          user: data['admin']['user'],
-          authority: data['authority'],
-        }
-      };
-    } else if (data['user']) {
-      user = { user: data['user'] };//data['user']; 
-    }
+      if(data['roles']) user.admin.roles = data['roles'];
+    }else if (data.type == 'user') {
+      user = { user: data['user']};
+      user['user']['avatar'] = 'https://source.unsplash.com/random/120x120';
+    } 
     return user;
   }
 
-  addPropsToUser(user: Admin | User): Admin | User {
+  addPropsToUser(user: AdminUser | UserFields): AdminUser | UserFields {
 
-    (user['user'] && !user['user'].avatar) ? user['user'].avatar = 'https://source.unsplash.com/random/120x120' :
-      user && user['admin'] && !user['admin']?.avatar ? user['admin'].avatar = 'https://source.unsplash.com/random/120x120' : '';
+      user.avatar = 'https://source.unsplash.com/random/120x120';
     return user;
   }
 
@@ -168,10 +170,12 @@ export class AuthService extends BaseAuth implements Auth {
     };
   }
 
-  getActiveUser(users: Users) {
+  getActiveUser(users: Users, userType?: string): AdminUser | UserFields | {} {
 
     return Object.keys(users).reduce((acc, currValue) => {
-      if (users[currValue].activeted) {
+      if(userType == currValue){
+        acc = users[currValue];
+      }else if (users[currValue].activeted) {
         acc = users[currValue];
       }
       return acc;

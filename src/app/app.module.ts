@@ -19,7 +19,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { SharedModuleModule } from './shared/shared-module/shared-module.module';
 
 /****************** COSTUM Modules ********************/
-import { DahsboardModule } from './dashboard/dahsboard-module/dahsboard.module';
 import { TemplateModule } from './shared/templates/templateModule.module';
 import { PipesModule } from './shared/pipes-module/pipes-module';
 
@@ -111,7 +110,6 @@ export function tokenGetter(type?: string) {
     BrowserAnimationsModule,
 
     /***** modules imports start here ****/
-    DahsboardModule,
     PagesRoutingModule,
     SharedModuleModule,
     TemplateModule,

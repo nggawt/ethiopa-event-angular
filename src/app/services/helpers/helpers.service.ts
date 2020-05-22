@@ -1,3 +1,4 @@
+import { NotificationService } from './../messages/notification.service';
 import { Injectable } from '@angular/core';
 import { throwError } from 'rxjs';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -7,14 +8,20 @@ import { AuthTokens } from 'src/app/types/auth-token-type';
   providedIn: 'root'
 })
 export class HelpersService {
-  protected email: RegExp = /^[a-z][a-z]+[a-zA-Z_\d\.]{2,}@[A-Za-z]{3,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$/;
+  protected email: RegExp | string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
+                            // /^[a-z][a-z]+[a-zA-Z_\d\.]{2,}@[A-Za-z]{3,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$/;
+                            // '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$'
+
   protected date: RegExp = /^\b((?=0)0[1-9]|(?=[1-9])[1-9]|(?=[1-2])[1-2][0-9]|(?=3)3[0-1])\-((?=0)0[1-9]|(?=[1-9])[1-9]|(?=1)1[0-2]?)\-20((?=1)19|(?=2)2[0-5])$/;
-  protected time: RegExp = /^\b((?=0)0[0-9]|(?=1)1[0-9]|(?=2)2[0-3])\:((?=0)0[0-9]|(?=1)1[0-9]|(?=[0-5])[0-5][0-9])$/;
-  protected phone: RegExp = /^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})/;
+  protected time: RegExp | string = /^\b((?=0)0[0-9]|(?=1)1[0-9]|(?=2)2[0-3])\:((?=0)0[0-9]|(?=1)1[0-9]|(?=[0-5])[0-5][0-9])$/;
+  protected phone: RegExp | string = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
+                            // '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
+                            
+  protected password: string = '^\\w{6,}$';
 
-  constructor(private jwt: JwtHelperService) { }
+  constructor(private jwt: JwtHelperService, private notify: NotificationService) { }
 
-  getPatteren(keyType: string): RegExp {
+  getPatteren(keyType: string): RegExp | string{
     return this[keyType];
   }
 
@@ -97,4 +104,17 @@ export class HelpersService {
     }
     return arr;
   }
+
+  notifyMsg(){
+    return this.notify;
+  }
+  
+  /** show successful toast */
+  // success(title: string, msg: string){
+  //   this.notify.success(msg, title, {positionClass: "toast-bottom-left"});
+  // }
+
+  // erros(title: string, msg: string){
+  //   this.notify.errors(msg, title, {positionClass: "toast-bottom-left"});
+  // }
 }

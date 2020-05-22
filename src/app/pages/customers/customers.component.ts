@@ -17,14 +17,14 @@ import { Customer } from 'src/app/types/customers-type';
 
 export class CustomersComponent implements OnInit, OnDestroy {
 
-  sendingMail: Observable<{[key: string]: boolean} | boolean>;
+  sendingMail: Observable<{ [key: string]: boolean } | boolean>;
   path: boolean = true;
   modelProps: Customer;
 
   showPath: boolean;
   urlUnsubscribe: Subscription;
   hallsProps: Observable<HallType[]> | boolean;
-  
+
   customerMessage: MessageModel;
 
   private address: string;
@@ -34,74 +34,40 @@ export class CustomersComponent implements OnInit, OnDestroy {
     "transportation", "app/transportation", , "printing", "app/printing", , "fireworks", "app/fireworks"
   ];
 
-  constructor(private router: Router, 
-    private route: ActivatedRoute, 
+  constructor(private router: Router,
+    private route: ActivatedRoute,
     private http: HttpService,
     private auth: AuthService) { }
 
   ngOnInit() {
 
-    // let urSnapShut = this.route.snapshot.paramMap.get('name'), urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
     this.urlUnsubscribe = this.route.paramMap.subscribe((routeName: ParamMap) => {
+
       let urSnapShut = routeName.get('name'),
-      urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
+        urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
       (urlExist) ? this.getCustomerResources(urSnapShut) : this.timesNavigated();
     });
-
-    // console.log(this.router.url, urlExist);
-    // (urlExist) ? this.getCustomerResources(urSnapShut) : this.timesNavigated();
   }
 
-  msgModel(paramCustomer) {
-    
-    this.customerMessage = {
-      id:'contact_customer', 
-      url: decodeURIComponent(location.pathname),
-      modalSize: "modal-lg", 
-      nameTo: paramCustomer.company, 
-      nameFrom: paramCustomer.name,
-      emailFrom: (this.auth.authUser && this.auth.authUser['email'])? this.auth.authUser['email']: false,
-      emailTo: paramCustomer.email, 
-      title: 'שלח הודעה',
-      inputs: {
-        email_from: true,
-        email_to: true,
-        name: true,
-        area: true,
-        phone: true,
-        city: true,
-        subject: true,
-        message: true
-      }
-    };
 
-    this.http.sendingMail.next({['contact_customer']: true});
-    this.sendingMail = this.http.sendingMail;
-  }
-
-  contactModel(evt, el: HTMLAnchorElement, customer: Customer){ 
-    this.modelProps = customer; 
+  contactModel(evt, el: HTMLAnchorElement, customer: Customer) {
+    this.modelProps = customer;
   }
 
   private getCustomerResources(url) {
-    
-    if (this.allawAddress.indexOf(url) >= 0) {
 
-      this.route.data.pipe(first()).subscribe(data => {
-        let customerData = data['customers']? data['customers']: false;
-        let addr = this.allawAddress.find(item => { return item == url; });
-        this.address = addr;
-        console.log(data);
-        // console.log(addr);
 
-        this.hallsProps = customerData && customerData[addr] ? of(customerData[addr]) : false;
-        this.path = this.hallsProps ? true : this.timesNavigated();
+    this.route.data.pipe(first()).subscribe(data => {
+      let customerData = data['ctype']? data['ctype']: false;
+      let addr = this.allawAddress.find(item => { return item == url; });
+      this.address = addr;
+      console.log(addr);
+      console.log(data);
 
-      });
-    } else {
-      this.path = false;
-      this.timesNavigated('errors-page');
-    }
+      this.hallsProps = data['ctype'] ? of(data['ctype']) : false;//  && customerData[addr] ? of(customerData[addr]) : false;
+      this.path = this.hallsProps ? true : this.timesNavigated();
+
+    });
   }
 
   private timesNavigated(link?) {
@@ -116,8 +82,35 @@ export class CustomersComponent implements OnInit, OnDestroy {
     //this.halls.costumerEmit(customer);
   }
 
+  msgModel(paramCustomer) {
+
+    this.customerMessage = {
+      id: 'contact_customer',
+      url: decodeURIComponent(location.pathname),
+      modalSize: "modal-lg",
+      nameTo: paramCustomer.company,
+      nameFrom: paramCustomer.name,
+      emailFrom: (this.auth.authUser && this.auth.authUser['email']) ? this.auth.authUser['email'] : false,
+      emailTo: paramCustomer.email,
+      title: 'שלח הודעה',
+      inputs: {
+        email_from: true,
+        email_to: true,
+        name: true,
+        area: true,
+        phone: true,
+        city: true,
+        subject: true,
+        message: true
+      }
+    };
+
+    this.http.sendingMail.next({ ['contact_customer']: true });
+    this.sendingMail = this.http.sendingMail;
+  }
+
   ngOnDestroy() {
-    if(this.urlUnsubscribe) this.urlUnsubscribe.unsubscribe();
+    if (this.urlUnsubscribe) this.urlUnsubscribe.unsubscribe();
   }
 
 }

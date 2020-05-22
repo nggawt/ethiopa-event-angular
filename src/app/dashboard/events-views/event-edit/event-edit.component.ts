@@ -118,13 +118,13 @@ export class EventEditComponent implements OnInit {
         // this.msgs(body, response);
         // if(response['errors']){
         console.log(response);
-        this.msgNotify.showSuccess('פוסט\\מאמר', "פוסט\\מאמר  עודכן בהצלחה", {positionClass: "toast-top-left"});
+        this.msgNotify.success('פוסט\\מאמר', "פוסט\\מאמר  עודכן בהצלחה", {positionClass: "toast-top-left"});
         /**** send new customer to his own page *****/
 
       }, (err) => {
         localStorage.setItem('errors_server', JSON.stringify(err));
         console.log(err);
-        this.msgNotify.showErrors('פוסט\\מאמר', "פרטים שגויים!", {positionClass: "toast-top-left"});
+        this.msgNotify.errors('פוסט\\מאמר', "פרטים שגויים!", {positionClass: "toast-top-left"});
 
         if (err["status"] === 401) {
           // console.log(err['status']);

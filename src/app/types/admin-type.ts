@@ -5,6 +5,7 @@ export declare interface Admin {
 export declare interface AdminUser {
     user: AdminUserFields,
     authority: Authority,
+    type: string,
     roles?: Roles[],
     activeted?: boolean,
     avatar?: string,

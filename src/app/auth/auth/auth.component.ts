@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { HttpService } from '../../services/http-service/http.service'; 
+import { HttpService } from '../../services/http-service/http.service';
 import { AuthService } from 'src/app/services/http-service/auth.service';
 declare let $: any;
 
@@ -17,7 +17,8 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
     title: string
   };
 
-  constructor(private http: HttpService, private auth: AuthService, private router: Router, private route: ActivatedRoute) { }
+  constructor(private http: HttpService, 
+    private auth: AuthService) { }
 
   ngOnInit() { }
 
@@ -25,14 +26,14 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.params) {
 
-      let model = $('#' + this.params.id).modal();
-      let thiz = this;
+      let model = $('#' + this.params.id).modal(), thiz = this;
 
       $(document).on('hidden.bs.modal', model, function (e) {
         /// TODO EVENTS
-        console.log("element_id: ", thiz.params.id, " requestUrl: ", thiz.http.requestUrl, 'element: ', e.target);
-        thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) :
-          thiz.router.navigate(['../'], { relativeTo: thiz.route });
+        console.log("element_id: ", thiz.params.id, " requestUrl: ", thiz.http.requestUrl, 'intended: ', thiz.http.intendedUri);
+        
+        thiz.http.redirect();
+
         // console.log(thiz.http.requestUrl);
         if ($(model).is(':hidden')) {
           // thiz.http.requestUrl = false;
@@ -44,13 +45,8 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
           return e.preventDefault()
         }
       });
-    } else {
-      // this.params = {
-      //     id: 'reset', 
-      //     modelSize: 'modal-md',
-      //     title: "אפס סיסמה"
-      //   };
-      console.error("auth component: 'this.params' not set ")
+    } else { 
+      console.warn("auth component: 'this.params' not set ")
     }
 
   }

@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-
+import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpService } from '../../services/http-service/http.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/services/http-service/auth.service';
+import { HelpersService } from 'src/app/services/helpers/helpers.service';
 
 declare let $: any;
 
@@ -16,9 +17,9 @@ export class LogInComponent implements OnInit, OnDestroy {
 
   logInform: FormGroup;
 
-  phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
-  emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
-  passwordPatt: string = '^\\w{6,}$';
+  phoneNum: RegExp | string;
+  emailPatt: RegExp | string;
+  passwordPatt: RegExp | string;
 
   url: string;
   loginSubscriber: Subscription;
@@ -31,8 +32,13 @@ export class LogInComponent implements OnInit, OnDestroy {
 
   @Input() ldComp: CallableFunction;
 
-  constructor(private http: HttpService,
-    private auth: AuthService) { }
+  constructor(private router: Router,
+    private helper: HelpersService,
+    private auth: AuthService) {
+    this.phoneNum = this.helper.getPatteren('phone');
+    this.emailPatt = this.helper.getPatteren('email');
+    this.passwordPatt = this.helper.getPatteren('password');
+  }
 
   ngOnInit() {
 
@@ -57,7 +63,13 @@ export class LogInComponent implements OnInit, OnDestroy {
       this.loginSubscriber = this.auth.login(this.logInform.value)
         .subscribe(user => {
           // console.log(user); 
-          if (user['user'] || user['admin']) $('.close').click();
+          if (user['status']) {
+            let title = "התחברות",
+              body = "התחברת בהצלחה!";
+            
+            this.helper.notifyMsg().success(body, title, { positionClass: "toast-bottom-left" });
+            $('.close').click();
+          }
         });
     }
   }

@@ -42,7 +42,7 @@ export class MainDashboardComponent implements OnInit, OnDestroy {
 
     })).subscribe(admin => {
       if (! admin) {
-        this.isLogged = { from_path: decodeURIComponent(location.pathname), url: "admin-login" };
+        this.isLogged = { from_path: decodeURIComponent(location.pathname), url: "admin-login", type: "admin" };
       }
       let resources = ['forbidden', 'users', 'customers', 'articles', 'events', 'messages'];
       this.rsrv.initResources(resources, false);

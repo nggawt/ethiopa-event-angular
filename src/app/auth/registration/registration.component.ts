@@ -1,3 +1,4 @@
+import { HelpersService } from 'src/app/services/helpers/helpers.service';
 import { Admin } from 'src/app/types/admin-type';
 import { User } from 'src/app/types/user-type';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
@@ -26,12 +27,17 @@ export class RegistrationComponent implements OnInit, OnDestroy {
     title: "הרשמה"
   };
 
-  phoneNum: any = '^((?=(02|03|04|08|09))[0-9]{2}[0-9]{3}[0-9]{4}|(?=(05|170|180))[0-9]{3}[0-9]{3}[0-9]{4})';
-  emailPatt: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
-  passwordPatt: string = '^\\w{6,}$';
+  phoneNum: RegExp | string;
+  emailPatt: RegExp | string;
+  passwordPatt: RegExp | string;
 
   constructor(private router: Router, 
-    private auth: AuthService) { }
+    private helper: HelpersService,
+    private auth: AuthService) { 
+      this.phoneNum = this.helper.getPatteren('phone');
+      this.emailPatt = this.helper.getPatteren('email');
+      this.passwordPatt = this.helper.getPatteren('password');
+    }
 
   ngOnInit() {
 
@@ -51,7 +57,13 @@ export class RegistrationComponent implements OnInit, OnDestroy {
       this.regisSubs = this.auth.register(details)
       .subscribe((user: Admin | User) => {
         console.log(user);
-        if (user['user'] || user['admin']) decodeURIComponent(location.pathname) == "register"? this.router.navigate(['/']): $('.close').click();
+        if(user['status']){
+          let title = "הרשמה",
+                body = "נרשמת לאתר בהצלחה";
+
+          this.helper.notifyMsg().success(body, title, {positionClass: "toast-bottom-left"});
+          decodeURIComponent(location.pathname) == "/register"? this.router.navigate(['/']): $('.close').click();
+        }
       });
     }
   }

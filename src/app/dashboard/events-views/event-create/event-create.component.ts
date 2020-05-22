@@ -109,10 +109,10 @@ export class EventCreateComponent implements OnInit, AfterViewInit {
     this.http.postData(url, body)
       .subscribe(response => {
         console.log(response);
-        this.msgNotify.showSuccess('אירוע', "אירוע נוצר בהצלחה", { positionClass: "toast-top-left" });
+        this.msgNotify.success('אירוע', "אירוע נוצר בהצלחה", { positionClass: "toast-top-left" });
       }, (err) => {
         localStorage.setItem('errors_server', JSON.stringify(err));
-        this.msgNotify.showErrors('אירוע', "פרטים שגויים!", { positionClass: "toast-top-left" });
+        this.msgNotify.errors('אירוע', "פרטים שגויים!", { positionClass: "toast-top-left" });
         if (err["status"] === 401) {
         }
       });

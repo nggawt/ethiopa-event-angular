@@ -1,9 +1,10 @@
-import { AuthService } from 'src/app/services/http-service/auth.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpService } from 'src/app/services/http-service/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { HelpersService } from 'src/app/services/helpers/helpers.service';
+import { AuthService } from 'src/app/services/http-service/auth.service';
+
 declare var $;
 
 @Component({
@@ -12,7 +13,9 @@ declare var $;
   styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent implements OnInit, OnDestroy {
-  emailPatteren: string = '^[a-z]+[a-zA-Z_\\d]*@[A-Za-z]{2,10}\.[A-Za-z]{2,3}(?:\.?[a-z]{2})?$';
+
+  emailPatteren: RegExp | string;
+  passwordPatt: RegExp | string;
 
   resetPassword: FormGroup;
   resetSubscription:Subscription;
@@ -27,9 +30,13 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private auth: AuthService, 
-    private router: Router, 
-    private route: ActivatedRoute) { }
+    private auth: AuthService,
+    private router: Router,
+    private helper: HelpersService,
+    private route: ActivatedRoute) { 
+      this.emailPatteren = this.helper.getPatteren('email');
+      this.passwordPatt = this.helper.getPatteren('password');
+    }
 
   ngOnInit() {
     this.initRestPasswordForm();
@@ -43,16 +50,6 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
       'password': new FormControl(null, [Validators.required]),
       'password_confirmation': new FormControl(null, [Validators.required]),
     });
-
-    // $('#forgotPassword').modal();
-
-    // let thiz = this;
-    // $(document).on('hidden.bs.modal', '.modal', function () {
-
-    //   /// TODO EVENTS
-    //   console.log(thiz.http.requestUrl);
-    //   thiz.http.requestUrl ? thiz.router.navigate([thiz.http.requestUrl]) : thiz.router.navigate(['../'], { relativeTo: this.route });
-    // });
   }
 
 
@@ -63,12 +60,16 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     let values = this.resetPassword.value;
     values['token'] = this.route.snapshot.queryParamMap['params']['token'];
     if (this.resetPassword.valid && values['token']) {
-     
+
      this.resetSubscription = this.auth.resetPassword(values).
       subscribe(user => {
         console.log(user);
         // if (user['user'] || user['admin']) $('.close').click();
-        if (user['user'] || user['admin']) decodeURIComponent(location.pathname) == "/pssword/email"? this.router.navigate(['/']): $('.close').click();
+        if(user['status']){ 
+          this.helper.notifyMsg().success("הסיסמה שונת בהצלחה!", "שיחזור סיסמה", {positionClass: "toast-bottom-left"});
+          (decodeURIComponent(location.pathname) == "/pssword/email")? this.router.navigate(['/']): '';
+          $('.close').click();
+        }
       },
       (err) => {
         // this.http.nextIslogged(false);
@@ -82,7 +83,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
 
   private setUrlPage(customer){
-    
+
     let compNameTrimed = customer['company'].trim(),
         bTypeTrimed = customer['businessType'].trim(),
         compName = (compNameTrimed.split(' ').length > 1)? this.appendSelashBetweenSpace(compNameTrimed, ' '):customer['company'],

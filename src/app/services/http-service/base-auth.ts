@@ -31,29 +31,22 @@ export abstract class BaseAuth {
     }
   }
 
-  abstract addPropsToUser(user: Admin | User): Admin | User;
+  abstract addPropsToUser(user:AdminUser | UserFields): AdminUser | UserFields;
   abstract emit(user: Users | Admin | User | boolean): void;
   abstract setAuthUser(user: AdminUser | UserFields | boolean)
 
   protected getTokens(multiTokens?: string): AuthTokens | boolean {
 
     multiTokens = multiTokens ? multiTokens : this.jwt.tokenGetter('tokens');
-    if (!multiTokens) return false;
-    let parsed = JSON.parse(multiTokens);
-
-    return this.validateTokens(parsed);
+    if (! multiTokens) return false;
+    return this.validateTokens(JSON.parse(multiTokens));
   }
 
   setAuth(tokens: AuthTokens): void {
 
-    this.getAuthenticated(tokens, (users) => {
+    this.getAuthenticated(tokens, (users: Users | Admin | User) => {
+
       if (users) {
-
-        Object.keys(users).forEach((userName: string, idx: number) => {
-          if (users[userName]) this.addPropsToUser(users[userName]);
-        });
-
-        if (users.user?.user) users.user = users.user.user;
         this.setActivated(users).emit(users);
 
       } else {
@@ -63,12 +56,16 @@ export abstract class BaseAuth {
   }
 
   protected validateTokens(tokens: AuthTokens | boolean): AuthTokens | boolean {
+
     let authenticated = Object.keys(tokens).reduce((tottal, current: string) => {
-      if (this.guard.indexOf(current) >= 0 && tokens[current] && this.isValidToken(tokens[current]['token'])) {
+
+      if (this.guard.indexOf(current) >= 0 && this.isValidToken(tokens[current]['token'])) {
         tottal[current] = tokens[current];
       }
       return tottal;
+      
     }, {});
+
     return Object.keys(authenticated).length ? authenticated : false;
   }
 
@@ -85,11 +82,8 @@ export abstract class BaseAuth {
   protected setToken(adminProps: AuthTokens, typeName) {
 
     if (this.tokens) {
-
       this.tokens[typeName] = adminProps[typeName];
-      // this.saveToken(this.tokens);
     } else {
-      // this.saveToken(adminProps);
       this.tokens = adminProps;
     }
     return this;
@@ -97,34 +91,21 @@ export abstract class BaseAuth {
 
   protected setActivated(users: Users | User | Admin) {
 
-    let currrentUsers = this.user.getValue(), 
-      hasActive = false,
-      tokens = this.tokens;
-
+    let currrentUsers = this.user.getValue(), hasActive = false;
     (currrentUsers && Object.keys(currrentUsers).length)? currrentUsers[Object.keys(users)[0]] = users[Object.keys(users)[0]]: currrentUsers = users;
+
     let userskeys  = Object.keys(currrentUsers);
+    userskeys.forEach((current) => {
 
-    console.log("tokens:: ", tokens, " ::users:: ", currrentUsers);
-    if (currrentUsers && userskeys.length == 2) {
-      userskeys.forEach((current, idx) => {
+      if (this.tokens[current]['activeted']) {
+        this.active(currrentUsers, current);
+        hasActive = true;
+      }
+    });
+    if (! hasActive) users['admin']? this.active(users, 'admin'): users['user'] ? this.active(users, 'user'): '';
+    this.saveToken(this.tokens);
 
-        if (tokens[current]['activeted']) {
-          this.active(currrentUsers, current);
-          hasActive = true;
-        }
-      });
-      if (!hasActive) this.active(users, 'admin');
-
-    } else if (currrentUsers) {
-      let nameType = userskeys[0];
-      this.active(currrentUsers, nameType);
-    } else if(tokens){
-      this.active(users, Object.keys(tokens)[0]);
-    }else{
-      this.destroyActivation();
-    }
-    // this.saveToken(tokens);
-    console.warn("::users:: ", currrentUsers, " ::tokens:: ", tokens);
+    console.warn("::users:: ", currrentUsers, " ::tokens:: ", this.tokens);
     return this;
   }
 
@@ -134,70 +115,45 @@ export abstract class BaseAuth {
     this.tokens[type]['activeted'] = true;
     this.http.token = this.tokens[type]['token'];
     this.activeted = type;
+    
     this.setAuthUser(users[type]);
-    this.saveToken(this.tokens);
   }
 
   deActive(users: Users | User | Admin | boolean, type: string) {
+
     users[type]['activeted'] = false;
     this.tokens[type]['activeted'] = false;
-    // this.activeted = null;
-    // this.http.token = '';
-    // this.setAuthUser(false);
-    // this.saveToken(this.tokens);
   }
 
   destroyActivation() {
+
     this.tokens = false;
     this.http.token = '';
+    this.activeted = null;
     this.setAuthUser(false);
     this.emit(false);
     window.localStorage.clear();
   }
 
-  activate(userType: string, users?: Users | User | Admin | boolean, tokens?: AuthTokens | boolean) {
-
-    users = users ? users : this.user.getValue();
-    tokens = tokens ? tokens : this.tokens;
-
-    Object.keys(users).forEach((current, idx) => {
-
-      (current == userType) ? this.active(users, current) : this.deActive(users, current);
-    });
-
-    // users
-    this.emit(users);
-
-    // activated
-    // this.activeted = userType;
-
-    // tokens + token storage
-    // this.tokens = tokens;
-    // this.saveToken(this.tokens);
-  }
-
   protected async getAuthenticated(tokens: AuthTokens, cabk) {
 
-    let loggedUser = {};
+    let loggedUser = {}, user: AdminUser | UserFields;
     if (tokens.admin) {
 
-      loggedUser['admin'] = await this.http.authenticated({ ['admin']: tokens.admin }, (err) => {
-        let error = err();
-        console.log(error);
-
+      user = await this.http.authenticated({ ['admin']: tokens.admin }, (err) => {
+        console.log(err);
       });
+      if(user && user.type == "admin") loggedUser['admin'] = this.addPropsToUser(user); 
     }
 
     if (tokens.user) {
 
-      loggedUser['user'] = await this.http.authenticated({ ['user']: tokens.user }, (err) => {
-        let error = err();
-        console.log(error);
+      user = await this.http.authenticated({ ['user']: tokens.user }, (err) => {
+        console.log(err);
       });
+      if(user && user.type == "user") loggedUser['user'] = this.addPropsToUser(user);
     }
-
-    (loggedUser && loggedUser['admin'] && Object.keys(loggedUser['admin']).length ||
-      loggedUser['user'] && Object.keys(loggedUser['user']).length ? cabk(loggedUser) : cabk(false));
+    (loggedUser? cabk(loggedUser) : cabk(false));
   }
 
   protected removeToken(typeName: string): AuthTokens | null {
@@ -219,13 +175,9 @@ export abstract class BaseAuth {
     }, {});
 
     return Object.keys(ob).length ? ob : false;
-  }
+  } 
 
-  isAdmin(user: Users): boolean {
-    return user && user['authority'] || user['user'] && user['user']['autority'] ? true : false;
-  }
-
-  private saveToken(tokens: AuthTokens | boolean) {
+  protected saveToken(tokens: AuthTokens | boolean) {
     localStorage.setItem('tokens', JSON.stringify(tokens))
   }
 
@@ -240,20 +192,3 @@ export abstract class BaseAuth {
     };
   }
 }
-
-/* getTokens fn
-    return this.guard.map((name, idx) => {
-          let item;
-          if(parsed[name] && ! this.jwt.isTokenExpired(parsed[name]['token'])){
-            item? item[name] = parsed[name]: item = {[name]: parsed[name]};
-            return item;
-          }
-          return false;
-        }).filter(item => typeof item == "object");
-    */
-/* updateTokens fn
-    let validTokens = tokens.reduce((tottal, curr) => {
-      tottal[Object.keys(curr)[0]] = curr[Object.keys(curr)[0]];
-      return tottal;
-    }, {});
-*/

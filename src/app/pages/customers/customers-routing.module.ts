@@ -14,16 +14,15 @@ import { CustomerEditComponent } from './customer/customer-edit/customer-edit.co
 import { AllEditComponent } from './customer/customer-edit/all-edit/all-edit.component';
 import { MediaEditComponent } from './customer/customer-edit/media-edit/media-edit.component';
 import { BasicEditComponent } from './customer/customer-edit/basic-edit/basic-edit.component';
-import { EventsEditComponent } from './customer/customer-edit/events-edit/events-edit.component';
-import { CustomerMediaComponent } from './customer/customer-media/customer-media.component';
+import { EventsEditComponent } from './customer/customer-edit/events-edit/events-edit.component'; 
 
 const customersRouting: Routes = [
 
-  {path: ":name", component: CustomersComponent, resolve: { customers: CustomersResolver }},
+  {path: ":name", component: CustomersComponent, resolve: { ctype: CustomersResolver }},
   {// START route customer
     path: ":name/:id", component: CustomerComponent,//, data : { itemType: "users"}
     children: [
-      // { path: "media", component: CustomerMediaComponent },
+      
       { path: 'about', component: CustomerAboutComponent },
       { path: "edit", component: CustomerEditComponent, canActivate: [RouteGuardService],
         children: [

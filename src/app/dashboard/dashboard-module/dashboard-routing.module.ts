@@ -1,3 +1,4 @@
+import { RouteAdminGuardService } from './../../services/route-guard/route-admin-guard.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
@@ -26,13 +27,15 @@ import { QuickEditorComponent } from '../quick-editor/quick-editor.component';
 import { MailsComponent } from '../mail/mails/mails.component';
 
 const routes: Routes = [
-  
+
   {
-    path: 'dashboard', component: MainDashboardComponent, children: [
+    path: '', component: MainDashboardComponent,
+    canActivate: [RouteAdminGuardService],
+    children: [
       // START dashboard childrens
       // { path: '',   redirectTo: 'main', pathMatch: 'full' },
-      { path: '', component: MainComponent},
-      { path: 'admins-views', component: AdminsViewsComponent, children: []},
+      { path: '', component: MainComponent },
+      { path: 'admins-views', component: AdminsViewsComponent, children: [] },
       { path: 'admins-views/create', component: OverviewComponent, data: { itemType: "admins", comp: 'create' } },
       { path: 'admins-views/:id', component: OverviewComponent, data: { itemType: "admins", comp: 'preview' } },
       { path: 'admins-views/:id/edit', component: OverviewComponent, data: { itemType: "admins", comp: 'edit' } },
@@ -40,7 +43,7 @@ const routes: Routes = [
 
       {
         path: 'users-views', component: UsersViewsComponent, children: [
-          { path: 'create', component:  OverviewComponent, data: { itemType: "users", comp: 'create' } },
+          { path: 'create', component: OverviewComponent, data: { itemType: "users", comp: 'create' } },
         ]
       },
 
@@ -54,7 +57,7 @@ const routes: Routes = [
       { path: 'articles-views/:id', component: OverviewComponent, data: { itemType: "articles", comp: 'preview' } },
 
       { path: 'customers-views', component: CustomersViewsComponent },
-      { path: 'customers-views/create', component:  OverviewComponent, data: { itemType: "customers", comp: 'create' } },
+      { path: 'customers-views/create', component: OverviewComponent, data: { itemType: "customers", comp: 'create' } },
       { path: 'customers-views/:id', component: OverviewComponent, data: { itemType: "customers", comp: 'preview' } },
       { path: 'customers-views/:id/edit', component: OverviewComponent, data: { itemType: "customers", comp: 'edit' } },
 
@@ -67,7 +70,7 @@ const routes: Routes = [
       /****** mail ******/
       {
         path: 'mail-views', component: MailComponent, children: [
-          { path: '',   redirectTo: 'mails', pathMatch: 'full' },
+          { path: '', redirectTo: 'mails', pathMatch: 'full' },
           { path: 'inbox', component: InboxComponent },
           { path: 'favorites', component: FavoritesComponent },
           { path: 'preferences', component: PreferencesComponent },
@@ -83,7 +86,7 @@ const routes: Routes = [
           { path: '', component: DashboardAdminComponent },
           // { path: 'security', component: SecurityComponent },
           { path: 'roles', component: RolesComponent },
-          { path: 'roles/create', component: CreateRoleComponent},/* OverviewComponent , data: { itemType: "admins", comp: 'create' } */
+          { path: 'roles/create', component: CreateRoleComponent },/* OverviewComponent , data: { itemType: "admins", comp: 'create' } */
           { path: 'preferences', component: DashboardProfileComponent },
           // { path: 'preferences', component: PreferencesComponent },
           // { path: 'trash', component: TrashComponent },

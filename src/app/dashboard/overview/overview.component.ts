@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ComponentFactoryResolver, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { CompLists } from './comp-lists';
@@ -33,10 +33,11 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
     this.srv.getResources(this.itemType, false)
     .then(resource => {
-      console.log(resource, itemId, this.itemType);
       
       (this.itemType == 'customers')? this.route.queryParamMap.subscribe((params: ParamMap) => {
         let routeName = params.get('name');
+        console.log(routeName+" ::::: "+ routeName);
+        
         Array.isArray(resource[routeName])? this.setItemResource(resource[routeName], itemId): '';
       }): Array.isArray(resource)? this.setItemResource(resource, itemId): '';
       this.loadComponent();
