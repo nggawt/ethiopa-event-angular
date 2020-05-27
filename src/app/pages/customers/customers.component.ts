@@ -5,7 +5,8 @@ import { HallType } from '../../customers/hall-type';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 import { Customer } from 'src/app/types/customers-type';
 
 @Component({
@@ -23,6 +24,8 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
   showPath: boolean;
   urlUnsubscribe: Subscription;
+  csubs: Subscription;
+
   hallsProps: Observable<HallType[]> | boolean;
 
   customerMessage: MessageModel;
@@ -41,33 +44,17 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.urlUnsubscribe = this.route.paramMap.subscribe((routeName: ParamMap) => {
+    this.csubs = this.route.data.pipe().subscribe(data => { 
+      console.log(":::data::: ", data);
 
-      let urSnapShut = routeName.get('name'),
-        urlExist = this.allawAddress.indexOf(urSnapShut) >= 0;
-      (urlExist) ? this.getCustomerResources(urSnapShut) : this.timesNavigated();
-    });
+      this.hallsProps = data && data['ctype'] ? of(data['ctype']) : false;//  && customerData[addr] ? of(customerData[addr]) : false;
+      this.path = this.hallsProps ? true : this.timesNavigated();
+
+    }); 
   }
-
 
   contactModel(evt, el: HTMLAnchorElement, customer: Customer) {
     this.modelProps = customer;
-  }
-
-  private getCustomerResources(url) {
-
-
-    this.route.data.pipe(first()).subscribe(data => {
-      let customerData = data['ctype']? data['ctype']: false;
-      let addr = this.allawAddress.find(item => { return item == url; });
-      this.address = addr;
-      console.log(addr);
-      console.log(data);
-
-      this.hallsProps = data['ctype'] ? of(data['ctype']) : false;//  && customerData[addr] ? of(customerData[addr]) : false;
-      this.path = this.hallsProps ? true : this.timesNavigated();
-
-    });
   }
 
   private timesNavigated(link?) {
@@ -111,6 +98,7 @@ export class CustomersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.urlUnsubscribe) this.urlUnsubscribe.unsubscribe();
+    if (this.csubs) this.csubs.unsubscribe();
   }
 
 }

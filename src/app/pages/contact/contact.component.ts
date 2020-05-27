@@ -3,7 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from 'src/app/services/http-service/http.service'; 
 import { ResourcesService } from 'src/app/services/resources/resources.service';
 import { MessageModel } from 'src/app/types/message-model-type';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 declare var $: any;
 @Component({

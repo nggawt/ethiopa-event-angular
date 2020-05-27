@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpService } from './../../services/http-service/http.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 declare let $: any;
 

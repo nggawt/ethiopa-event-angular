@@ -9,7 +9,8 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { User } from 'src/app/types/user-type';
 import { MessagesService } from 'src/app/services/messages/messages.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 declare var $;
 

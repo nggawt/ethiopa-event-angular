@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { Subscription } from 'rxjs';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
 
 declare let $: any;

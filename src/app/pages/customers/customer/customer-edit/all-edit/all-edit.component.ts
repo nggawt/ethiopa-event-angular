@@ -5,8 +5,7 @@ import { HallType } from '../../../../../customers/hall-type';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { find } from 'rxjs/operators';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
-import { AuthService } from 'src/app/services/http-service/auth.service'; 
-
+import { AuthService } from 'src/app/services/auth-service/auth.service'; 
 
 @Component({
   selector: 'app-all-edit',

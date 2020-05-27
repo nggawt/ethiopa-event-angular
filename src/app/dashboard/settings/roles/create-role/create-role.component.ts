@@ -4,7 +4,8 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { Admin, AdminUser } from 'src/app/types/admin-type';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 @Component({
   selector: 'app-create-role',

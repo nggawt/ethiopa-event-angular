@@ -7,9 +7,8 @@ import { FormFilesProccesorService } from 'src/app/customers/form-files-procceso
 import { FormGroup } from '@angular/forms';
 import { HallType } from 'src/app/customers/hall-type';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 declare var $: any;
-
 
 @Component({
   selector: 'edit-media-temp',

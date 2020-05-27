@@ -5,7 +5,8 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { tap, map, first, filter } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 declare var $;
 
 @Component({

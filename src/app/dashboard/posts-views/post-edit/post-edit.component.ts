@@ -8,7 +8,8 @@ import { NgValidateSrvService } from 'src/app/services/validators/ng-validate-sr
 import { Observable } from 'rxjs';
 import { ErrorsHandler } from 'src/app/services/errors-exeption/errors-handler.service';
 import { QuillConfig } from 'ngx-quill-v2';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 declare var $: any;
 @Component({

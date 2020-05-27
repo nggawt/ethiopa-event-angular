@@ -1,14 +1,14 @@
-import { User, Users, UserFields } from 'src/app/types/user-type';
-import { Admin, AdminUser } from 'src/app/types/admin-type';
+import { Users, UserFields } from 'src/app/types/user-type';
+import { AdminUser } from 'src/app/types/admin-type';
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersDataService } from '../../../customers/customers-data-service';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
-import { filter, map, tap, auditTime } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 
 @Component({
   selector: 'app-customer',
@@ -53,6 +53,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
     this.pageObs = this.router.events
     .pipe(filter((param) => (param instanceof NavigationStart && !!param.url)))
     .subscribe((uriParam) => {
+      
       const currentUrl = decodeURIComponent(uriParam['url']),
             changedpathId = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
             
@@ -71,8 +72,9 @@ export class CustomerComponent implements OnInit, OnDestroy {
     return compare;
   }
 
-  checkCustomer(urlId, loggedUser) {
-    urlId = urlId == 'ארמונות-לב' ? 'ארמונות לב' : urlId;
+  checkCustomer(urlId: string, loggedUser) {
+    // urlId = urlId == 'ארמונות-לב' ? 'ארמונות לב' : urlId;
+    let fieldForSearch = (urlId.indexOf('-') > -1)? urlId.replace('-', ' '): urlId;
     let routeName = this.route.snapshot.paramMap.get('name');
     
     console.warn("Route Name: ", routeName, " id: ", urlId, " loggedUser: ", loggedUser, " ::this.auth.authUser:: ", this.auth.authUser);
@@ -81,19 +83,19 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
       if ('customers' in customersData) customersData = customersData['customers'];
 
-      let fields = this.halls.getFieldType(urlId),
+      let fields = this.halls.getFieldType(fieldForSearch),
           customers = customersData && customersData[routeName] ? customersData[routeName] : false;
 
       if (!customers) return this.goTo(urlId);
 
-      let customerWithGall = customers.find(cs => cs['customer'][fields[urlId]] == urlId);
+      let customerWithGall = customers.find(cs => cs['customer'][fields[fieldForSearch]] == fieldForSearch);
       if (! customerWithGall) return this.goTo(urlId); 
 
       this.halls.customerOb = customerWithGall;
       this.halls.CustomerEmit(customerWithGall);
 
       let customer = customerWithGall['customer'];
-      if (!customer) return this.goTo(urlId);
+      if (! customer) return this.goTo(urlId);
       
       this.accessPage = this.urlCompare(this.router.url);
       
@@ -126,6 +128,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
     this.router.navigate([path]);
     console.log("urlId: ", urlId, " path: ", path, " this.router.url: ", this.router.url);
+    this.canAccess = of(false);
     return false;
   }
 

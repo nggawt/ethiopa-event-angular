@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CustomersDataService } from '../../../../../customers/customers-data-service';
 import { Observable, of } from 'rxjs';
 import { HallType } from '../../../../../customers/hall-type';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpService } from '../../../../../services/http-service/http.service';
-import { first, find, tap } from 'rxjs/operators';
+import { find } from 'rxjs/operators';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
 import { FormProccesorService } from 'src/app/customers/form-proccesor.service';
 import { FormFilesProccesorService } from 'src/app/customers/form-files-proccesor.service';
@@ -257,7 +257,6 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
 
   textAreaAdjust(o) {
     let target = o.target;
-    // target.style.height = "1px";
     target.style.height = (25 + target.scrollHeight) + "px";
   }
 
@@ -431,7 +430,7 @@ export class AllEditComponent implements OnInit, CanDeactivateComponent {
 
         console.log(err);
         if (err["status"] === 401) {
-          this.http.nextIslogged(false);
+          // this.http.nextIslogged(false);
           window.localStorage.removeItem('user_key');
           window.location.reload();
         }

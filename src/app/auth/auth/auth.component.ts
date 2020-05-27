@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, AfterViewInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService } from '../../services/http-service/http.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 declare let $: any;
 
 @Component({

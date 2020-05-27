@@ -4,7 +4,8 @@ import { User } from 'src/app/types/user-type';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 import { Subscription } from 'rxjs';
 
 declare var $: any;

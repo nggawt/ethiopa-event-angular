@@ -8,7 +8,8 @@ import { CanDeactivateComponent } from '../services/can-deactivate-guard/can-dea
 import { FormProccesorService } from '../customers/form-proccesor.service';
 import { FormFilesProccesorService } from '../customers/form-files-proccesor.service';
 import { FormValidationsService } from '../customers/form-validations.service';
-import { AuthService } from '../services/http-service/auth.service';
+import { AuthService } from '../services/auth-service/auth.service';
+
 
 declare let $: any;
 

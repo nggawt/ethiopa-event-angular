@@ -3,7 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 declare var $;
 

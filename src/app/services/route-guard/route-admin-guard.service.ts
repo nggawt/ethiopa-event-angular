@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { find, map } from 'rxjs/operators';
 import { UserFields } from 'src/app/types/user-type';
 import { AdminUser } from 'src/app/types/admin-type';
-import { AuthService } from '../http-service/auth.service';
+import { AuthService } from '../auth-service/auth.service';
+
 
 @Injectable({
   providedIn: 'root'

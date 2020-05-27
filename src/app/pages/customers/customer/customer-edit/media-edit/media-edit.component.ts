@@ -5,7 +5,7 @@ import { CustomersDataService } from '../../../../../customers/customers-data-se
 import { find } from 'rxjs/operators';
 import { FormGroup } from '@angular/forms';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 
 @Component({
   selector: 'app-media-edit',

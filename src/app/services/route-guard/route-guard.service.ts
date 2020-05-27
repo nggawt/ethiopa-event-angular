@@ -6,7 +6,8 @@ import { CustomersDataService } from '../../customers/customers-data-service';
 import { find, map, tap, single } from 'rxjs/operators';
 import { UserFields } from 'src/app/types/user-type';
 import { AdminUser } from 'src/app/types/admin-type';
-import { AuthService } from '../http-service/auth.service';
+import { AuthService } from '../auth-service/auth.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -48,9 +49,10 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     // let reg = this.intendedUrl.indexOf('/register');
 
     /** check if exp date is expired then block access **/
-    if (!this.auth.authCheck()) {
+    if (! this.auth.authCheck()) {
       return this.goTo(this.currentUrl);
     }
+    console.log("this.auth.authCheck()::: ", this.auth.authCheck());
     
     /** if user is admin allow access **/
     if (this.autUser && this.autUser['type'] == "admin") return true;
@@ -138,17 +140,17 @@ export class RouteGuardService implements CanActivate, CanActivateChild {
     this.goTo(url);
   }
 
-  goTo(paramId?) {
+  goTo(paramId?: string) {
 
     let goTo: string;
-    paramId = paramId == 'ארמונות לב' ? 'ארמונות-לב' : paramId;
+    paramId = paramId && (paramId.indexOf(' ') > -1)? paramId.replace(' ', '-'): paramId;
 
-    if (!paramId) {
+    if (! paramId) {
       let priefixUrl = (this.intendedUrl.indexOf('customers') >= 0) ? this.intendedUrl.split('customers/')[1] : this.intendedUrl;
       priefixUrl = (priefixUrl.indexOf('/') >= 1) ? priefixUrl.split('/')[0] : priefixUrl;
       goTo = priefixUrl && (this.allawAddress.indexOf(priefixUrl) >= 0) ? "/customers/" + priefixUrl : '/';//"/error-page";
     } else {
-      goTo = this.intendedUrl == "/join" ? paramId : this.intendedUrl.split(paramId)[0] + paramId;
+      goTo = this.intendedUrl == "/join" ? '/' : this.intendedUrl.split(paramId)[0] + paramId;
     }
     console.log("paramId: ", paramId, " >><< URL: ", goTo);
     this.router.navigate([goTo]);//, { relativeTo: this.active }

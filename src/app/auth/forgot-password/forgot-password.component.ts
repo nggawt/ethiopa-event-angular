@@ -1,7 +1,8 @@
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 import { Subscription } from 'rxjs';
 
 declare var $;

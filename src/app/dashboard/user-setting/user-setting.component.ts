@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
-import { Admin } from 'src/app/types/admin-type';
+import { Admin, AdminUser } from 'src/app/types/admin-type';
 
 @Component({
   selector: 'app-user-setting',
@@ -11,18 +11,18 @@ import { Admin } from 'src/app/types/admin-type';
 })
 export class UserSettingComponent implements OnInit {
 
-  @Input() admin: Admin;
-  emailPatteren: RegExp;
+  @Input() admin: AdminUser;
+  emailPatteren: RegExp | string;
   formSetting: FormGroup;
   messages: {} | any;
 
   /***************  ********************/
   constructor(private http: HttpService, private helper: HelpersService) { }
 
-  ngOnInit() {
+  ngOnInit() { 
     this.emailPatteren = this.helper.getPatteren('email');
     console.log(this.admin);
-      // this.admin = (this.admin && this.admin.user)? this.admin.user: this.admin? this.admin: this.admin;
+      this.admin = (this.admin && this.admin.user)? this.admin.user: this.admin? this.admin: this.admin;
     if(this.admin && this.admin.user){
       this.initFormSetting();
     }
@@ -91,6 +91,4 @@ export class UserSettingComponent implements OnInit {
   displayMessages(messages?: string){
     alert("displayMessages fn need to implement");
   }
-
-
 }

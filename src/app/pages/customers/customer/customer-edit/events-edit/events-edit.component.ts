@@ -7,8 +7,8 @@ import { find } from 'rxjs/operators';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
 import { CalendarDatePickerService } from 'src/app/calendar/calendar-date-picker.service';
 import { CreateDateTableService } from 'src/app/services/create-date-table/create-date-table.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
-import { Evt } from 'src/app/types/event-type';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 declare var $: any;
 
 @Component({

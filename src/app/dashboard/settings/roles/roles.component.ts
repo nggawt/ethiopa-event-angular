@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Admin, AdminUser } from 'src/app/types/admin-type';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 declare var $: any;
 

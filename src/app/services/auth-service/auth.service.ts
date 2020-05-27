@@ -187,7 +187,10 @@ export class AuthService extends BaseAuth implements Auth {
   }
 
   authCheck(): boolean {
-    return this.validateTokens(this.tokens) ? true : false;
+    const invalid = this.authUser? this.invalidToken(this.getToken(this.authUser['type'])) :this.isExpiredToken();
+    console.info("user type::> ", (this.authUser? this.authUser['type']: this.authUser), " ::invalid:: ", invalid);
+    if(invalid && this.authUser) this.removeAuth(this.authUser['type']);
+    return invalid? false : true;
   }
 
   emit(users) {
@@ -195,47 +198,7 @@ export class AuthService extends BaseAuth implements Auth {
   }
 
   getToken(name?: string) {
-    return name && this.tokens[name] ? this.tokens[name]['token'] : this.tokens && this.tokens[this.activeted] ? this.tokens[this.activeted]['token'] : '';
+    const tokens = JSON.parse(localStorage.getItem('tokens'));
+    return name && tokens && tokens[name] ? tokens[name]['token'] : (tokens && this.activeted && tokens[this.activeted])? tokens[this.activeted]['token'] : '';
   }
 }
-
-/*
-for (const token of Object.keys(tokens)) {
-  loggedUser[Object.keys(token)[0]] = await this.http.authenticated(token);
-}
-*/
-
-/* if(tokens.length == 2){
-  loggedUser = {
-    [Object.keys(tokens[0])[0]]: await this.http.authenticated(tokens[0]),
-    [Object.keys(tokens[1])[0]]: await this.http.authenticated(tokens[1])
-  };
-}else{
-  loggedUser = {
-    [Object.keys(tokens[0])[0]]: await this.http.authenticated(tokens[0]),
-  };
-} */
-
-/*
-this.getAuth(tokens).then(user => {
-  console.log("implemented: ", user);
-  this.emit(user);
-});
-*/
-/*
-  // map(user => user && user['admin']? user['admin']: user ? user: false),
-      tap(res => {
-        let isAdmin = res['roles'] || res['authority'] || res['admin'];
-        let itemsRes = res && res['admin'] ? res['admin'] : res ? res : false;
-
-
-        if (itemsRes && itemsRes['access_token']) {
-          // this.allowLogIn.next(false);
-          this.setApiKey(itemsRes);
-
-          let user = this.getResponseUser(res);
-          this.setUserProps(user);
-          console.log("url: ", theUrl, 'response: ', res, " user: ", user);
-        }
-      })
-*/

@@ -1,14 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {  Router, ActivatedRoute, CanDeactivate } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { CustomersDataService } from '../../../../../customers/customers-data-service';
 import { Observable, of } from 'rxjs';
-import { HallType } from '../../../../../customers/hall-type';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { HttpHeaders } from '@angular/common/http';
-import { HttpService } from '../../../../../services/http-service/http.service';
-import { find, tap } from 'rxjs/operators';
+import { find } from 'rxjs/operators';
 import { CanDeactivateComponent } from '../../../../../services/can-deactivate-guard/can-deactivate-guard.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 
 @Component({
   selector: 'app-basic-edit',

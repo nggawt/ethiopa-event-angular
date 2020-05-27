@@ -5,7 +5,8 @@ import { Subscription, Observable, of } from 'rxjs';
 import { ResourcesService } from '../../services/resources/resources.service';
 import { Router } from '@angular/router';
 import { Admin } from 'src/app/types/admin-type';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 
 @Component({

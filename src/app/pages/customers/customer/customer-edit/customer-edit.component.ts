@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { of, Observable } from 'rxjs';
 import { CustomersDataService } from '../../../../customers/customers-data-service';
 import { find } from 'rxjs/operators';
-import { AuthService } from 'src/app/services/http-service/auth.service';
-
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 
 @Component({
   selector: 'app-customer-edit',

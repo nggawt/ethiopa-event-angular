@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpService } from 'src/app/services/http-service/http.service';
 import { FormProccesorService } from 'src/app/customers/form-proccesor.service'; 
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 
 @Component({
   selector: 'edit-basic-temp',

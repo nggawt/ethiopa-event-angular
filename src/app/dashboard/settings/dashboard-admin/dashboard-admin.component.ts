@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { HelpersService } from 'src/app/services/helpers/helpers.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 @Component({
   selector: 'app-dashboard-admin',

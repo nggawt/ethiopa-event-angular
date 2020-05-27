@@ -8,13 +8,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError, of } from 'rxjs';
 import { ErrorsHandler } from '../errors-exeption/errors-handler.service';
-import { HelpersService } from '../helpers/helpers.service';
+import { UrlRedirect } from './url-redirect';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class HttpService {
+export class HttpService extends UrlRedirect {
 
   public sendingMail: BehaviorSubject<{ [key: string]: boolean } | boolean> = new BehaviorSubject(false);
 
@@ -24,14 +24,6 @@ export class HttpService {
   public intendedUri: string;
   public requestUrl: string | boolean;
   public sendTo: string;
-
-  protected urls = {
-    sendEmail: "/password/email",
-    passwordReset: 'password/reset',
-    register: "/register",
-    login: "/login"
-  };
-
 
   token: string;
 
@@ -50,7 +42,9 @@ export class HttpService {
 
   constructor(private http: HttpClient,
     private router: Router,
-    private esrv: ErrorsHandler) { }
+    private esrv: ErrorsHandler) {
+    super();
+  }
 
   buildUrl(path?: string) {
     let urlKey = path ? path : window.localStorage.getItem("admin_key") ? "auth-admin" : this.sendTo ? this.sendTo : "auth-user";
@@ -209,7 +203,6 @@ export class HttpService {
   }
 
   private getHttpOpt(token?: string) {
-    // console.log(this.apiKey);
 
     return {
       headers: new HttpHeaders({
@@ -230,21 +223,6 @@ export class HttpService {
     if (!url) url = this.inexludededUrls(loc) ? '/' : this.idxUrl(loc, '/customers') ? loc : '/';
 
     console.warn("::redirect:: ", url);
-    this.router.navigate([url]);
-    // splitUrl = (splitUrl && (splitUrl[1] && splitUrl[2])) ? splitUrl[1] + "/" + splitUrl[2] : (splitUrl && splitUrl[1]) ? splitUrl[1] : "/";
-    // this.router.navigate([splitUrl]);//, { relativeTo: this.route }
+    this.router.navigate([url]); 
   }
-
-  inexludededUrls(loc) {
-
-    for (let url in this.urls) {
-      if (url == loc) return true;
-    }
-    return false;
-  }
-
-  protected idxUrl(loc, path?: string): boolean {
-    return (loc.indexOf(path) >= 0);
-  }
-
 }

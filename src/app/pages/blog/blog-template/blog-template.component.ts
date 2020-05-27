@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angu
 import { Observable, Subscription, of } from 'rxjs';
 import { skipWhile } from 'rxjs/operators';
 import { ResourcesService } from 'src/app/services/resources/resources.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service'; 
 
 @Component({
   selector: 'app-blog-template',

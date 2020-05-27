@@ -7,7 +7,8 @@ import { HttpService } from '../services/http-service/http.service';
 import { Observable, of, Subscription } from 'rxjs';
 import { User } from '../types/user-type';
 import { MessageModel } from '../types/message-model-type';
-import { AuthService } from '../services/http-service/auth.service';
+import { AuthService } from '../services/auth-service/auth.service';
+
 declare let $: any;
 
 @Component({

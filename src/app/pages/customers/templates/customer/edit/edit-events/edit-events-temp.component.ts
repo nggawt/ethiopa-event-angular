@@ -5,7 +5,7 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { Router, ActivatedRoute } from '@angular/router'; 
 import { ValidationService } from 'src/app/services/validation/validation.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
 
 @Component({
   selector: 'edit-events-temp',

@@ -3,7 +3,8 @@ import { HttpService } from 'src/app/services/http-service/http.service';
 import { Observable } from 'rxjs';
 import { filter, tap, endWith } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/http-service/auth.service';
+import { AuthService } from 'src/app/services/auth-service/auth.service';
+
 
 @Component({
   selector: 'app-security',

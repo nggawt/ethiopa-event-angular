@@ -59,23 +59,23 @@ export abstract class BaseAuth {
 
     let authenticated = Object.keys(tokens).reduce((tottal, current: string) => {
 
-      if (this.guard.indexOf(current) >= 0 && this.isValidToken(tokens[current]['token'])) {
+      if (this.guard.indexOf(current) >= 0 && (! this.invalidToken(tokens[current]['token']))) {
         tottal[current] = tokens[current];
       }
       return tottal;
-      
     }, {});
 
     return Object.keys(authenticated).length ? authenticated : false;
   }
 
-  protected isValidToken(token: string) {
-    return !this.jwt.isTokenExpired(token);
+  protected invalidToken(token: string) {
+    return this.jwt.isTokenExpired(token);
   }
 
   protected isExpiredToken() {
-    let multiTokens = this.jwt.tokenGetter('tokens');
-    if (multiTokens && Object.keys(this.getTokens(multiTokens)).length) return false;
+    let multiTokens = this.jwt.tokenGetter('tokens'),
+        validTokens = multiTokens? this.getTokens(multiTokens): false;
+    if (multiTokens && validTokens) return false;
     return true;
   }
 
