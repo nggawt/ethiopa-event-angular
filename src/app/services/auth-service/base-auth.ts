@@ -17,7 +17,7 @@ export abstract class BaseAuth {
   constructor(public jwt: JwtHelperService, public http: HttpService) {
 
     this.initAuth();
-    console.warn("RUNS BASE AUTH:> ", this.tokens);
+    // console.warn("RUNS BASE AUTH:> ", this.tokens);
   }
 
   initAuth() {
@@ -105,7 +105,7 @@ export abstract class BaseAuth {
     if (! hasActive) users['admin']? this.active(users, 'admin'): users['user'] ? this.active(users, 'user'): '';
     this.saveToken(this.tokens);
 
-    console.warn("::users:: ", currrentUsers, " ::tokens:: ", this.tokens);
+    // console.warn("::users:: ", currrentUsers, " ::tokens:: ", this.tokens);
     return this;
   }
 

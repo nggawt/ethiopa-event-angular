@@ -170,7 +170,7 @@ export class AuthService extends BaseAuth implements Auth {
     };
   }
 
-  getActiveUser(users: Users, userType?: string): AdminUser | UserFields | {} {
+  getActiveUser(users: Users, userType?: string | boolean): AdminUser | UserFields | {} {
 
     return Object.keys(users).reduce((acc, currValue) => {
       if(userType == currValue){
@@ -199,6 +199,6 @@ export class AuthService extends BaseAuth implements Auth {
 
   getToken(name?: string) {
     const tokens = JSON.parse(localStorage.getItem('tokens'));
-    return name && tokens && tokens[name] ? tokens[name]['token'] : (tokens && this.activeted && tokens[this.activeted])? tokens[this.activeted]['token'] : '';
+    return (name && tokens && tokens[name])? tokens[name]['token'] : (tokens && this.activeted && tokens[this.activeted])? tokens[this.activeted]['token'] : '';
   }
 }
