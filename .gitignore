@@ -47,3 +47,15 @@ testem.log
 .DS_Store
 Thumbs.db
 
+.browserslistrc
+tsconfig-es5.app.json
+karma.conf.js
+.editorconfig
+tsconfig.app.json
+tsconfig.spec.json
+.gitignore
+ngcc.config.js
+package-lock.json
+tslint.json
+README.md
+tsconfig.json

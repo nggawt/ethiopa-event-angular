@@ -84,7 +84,6 @@ export class CustomersDataService implements OnInit {
             console.log(decodedUrl.indexOf('/customers'));
         }
        
-        
         let prop: string | number = "company";
         if (isNumric) {
             prop = "id";
@@ -121,8 +120,6 @@ export class CustomersDataService implements OnInit {
                 this.customerOb = foundedCustomer;
                 this.customer.next(foundedCustomer);//this.customer.next(1);
             }
-
-            console.log(foundedCustomer);
             return foundedCustomer;//? true:false;
         });
     }

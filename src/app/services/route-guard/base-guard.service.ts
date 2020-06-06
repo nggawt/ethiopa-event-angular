@@ -55,26 +55,22 @@ export abstract class BaseGuard implements CanActivate, CanActivateChild {
 
         return this.auth.userObs.pipe(
             find(val => typeof val == "object"),
-            map(users => this.auth.getActiveUser(users, (uType? uType: false))),
+            map(users => this.auth.getActiveUser(users, (uType ? uType : false))),
         ).toPromise().then((user) => {
 
             if (user && user['type'] == "admin") return true;
-            return uType? this.goTo(): this.guardProccesCanActive(user);
+            return uType ? this.goTo() : this.guardProccesCanActive(user);
         });
     }
 
-    userAlreadyCostumer(param): Promise<boolean> {
-
+    userAlreadyCostumer(param: string): Promise<boolean> {
         return this.customers.getById(param)
-            .then((res) => {
-                // console.log("userAlreadyCostumer response: ", res);
-                return res ? this.goTo(this.currentUrl) : true;
-            });
+            .then((res) =>  res ? this.goTo(this.currentUrl) : true);
     }
 
     async customerIsOwner(uEmail): Promise<boolean> {
 
-        let uriRecourse = (this.uriId.indexOf('-') > -1)? this.uriId.replace('-', ' '): this.uriId;
+        let uriRecourse = (this.uriId.indexOf('-') > -1) ? this.uriId.replace('-', ' ') : this.uriId;
 
         let getCustomer = await this.customers.getById(uriRecourse),
             customer = getCustomer && getCustomer['customer'] ? getCustomer['customer'] : getCustomer;
@@ -88,13 +84,16 @@ export abstract class BaseGuard implements CanActivate, CanActivateChild {
         let goTo: string;
         paramId = paramId && (paramId.indexOf(' ') > -1) ? paramId.replace(' ', '-') : paramId;
 
-        if (! paramId) {
-            goTo = this.intendedUrl.indexOf(this.uriId) > -1? this.intendedUrl.split(this.uriId)[0]:this.currentUrl;
+        if (!paramId) {
+            goTo = (this.intendedUrl.indexOf(this.uriId) > -1 )? this.intendedUrl.split(this.uriId)[0]+"/"+this.uriId : this.currentUrl;
         } else {
-            goTo = this.intendedUrl == "/join" ? paramId : (this.intendedUrl.indexOf('customers') >= 0)? this.intendedUrl.split(paramId)[0] + paramId: paramId;
+            goTo = this.intendedUrl == "/join" ? paramId : 
+                    ((this.intendedUrl.indexOf(this.uriId) > -1) 
+                    && this.intendedUrl.indexOf('customers') >= 0) ? 
+                    this.intendedUrl.split(this.uriId )[0] +"/"+this.uriId: this.currentUrl;
         }
-        console.log("paramId: ", paramId, " >><< URL: ", goTo);
-        this.router.navigate([goTo]);//, { relativeTo: this.active }
+        console.log("this.uriId : ", this.uriId , " ::>>URL<<:: ", goTo, " ::this.currentUrl ", this.currentUrl, " ::this.intendedUrl ", this.intendedUrl);
+        this.router.navigate([goTo]);
         return false;
     }
 

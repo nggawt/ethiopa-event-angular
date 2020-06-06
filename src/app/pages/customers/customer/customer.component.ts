@@ -4,7 +4,7 @@ import { AdminUser } from 'src/app/types/admin-type';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomersDataService } from '../../../customers/customers-data-service';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map, tap, find } from 'rxjs/operators';
 import { Observable, of, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http-service/http.service';
 import { MessageModel } from 'src/app/types/message-model-type';
@@ -21,13 +21,13 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   customer: Observable<any>;
   canAccess: Observable<any> | boolean;
-  pathId: string;
+  uriId: string;
   accessPage: boolean = true;
   pageObs: Subscription;
   userSubs$: Subscription;
   num: number = 0;
   loggedUser: UserFields | AdminUser | {};
-  sendingMail: Observable<{[key: string]: boolean} | boolean>;
+  sendingMail: Observable<{ [key: string]: boolean } | boolean>;
 
   customerMessage: MessageModel;
 
@@ -40,91 +40,95 @@ export class CustomerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.pathId = this.route.snapshot.params['id'];
+    this.uriId = this.route.snapshot.params['id'];
+
+    this.route.paramMap.subscribe(urlParam => {
+      console.log(urlParam);
+      this.checkCustomer();
+    });
+
     this.customerActiveState();
 
     this.userSubs$ = this.auth.userObs.pipe(
-      map((users: Users) => this.auth.getActiveUser(users)),
+      find(user => typeof user == "object"),
+      map((users: Users) => (<UserFields | AdminUser>this.auth.getActiveUser(users))),
       tap(user => console.log("tap: ", user)))
-      .subscribe((loggedUser) => { this.checkCustomer(this.pathId, loggedUser);});
+      .subscribe((loggedUser) => { this.checkCustomer(loggedUser); });
   }
 
-  customerActiveState(){
+  customerActiveState() {
+
     this.pageObs = this.router.events
-    .pipe(filter((param) => (param instanceof NavigationStart && !!param.url)))
-    .subscribe((uriParam) => {
-      
-      const currentUrl = decodeURIComponent(uriParam['url']),
-            changedpathId = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
-            
-      this.pathId = changedpathId && changedpathId.length? changedpathId: this.route.snapshot.params['id'];
-      if(this.halls.customerOb && this.auth.authCheck()) this.accessPage = this.urlCompare(uriParam['url']); 
+      .pipe(filter((param) => (param instanceof NavigationStart && !!param.url)))
+      .subscribe((uriParam) => {
+
+        const currentUrl = decodeURIComponent(uriParam['url']),
+          changedpathId = currentUrl.indexOf('customers') ? currentUrl.split("/")[3] : false;
+
+        this.uriId = changedpathId && changedpathId.length ? changedpathId : this.route.snapshot.params['id'];
+        //if (this.halls.customerOb && this.auth.authCheck()) 
+        this.accessPage = this.urlCompare(uriParam['url']);
     });
   }
 
 
   urlCompare(uriParam): boolean {
     let decodedUrl = decodeURIComponent(uriParam),
-        pgIdExisst = decodedUrl.indexOf(this.pathId)? decodedUrl.split('/' + this.pathId): false,
-        compare = pgIdExisst && pgIdExisst.length >= 1 && (! pgIdExisst[1] || pgIdExisst[1].length === 0)? true: false;
-    
-    //console.warn(decodedUrl, " << pathId: ", this.pathId, " compareLen: ", decodedUrl[1].length);
+      pgIdExisst = decodedUrl.indexOf(this.uriId) ? decodedUrl.split('/' + this.uriId) : false,
+      compare = pgIdExisst && pgIdExisst.length >= 1 && (!pgIdExisst[1] || pgIdExisst[1].length === 0) ? true : false;
     return compare;
   }
 
-  checkCustomer(urlId: string, loggedUser) {
-    // urlId = urlId == 'ארמונות-לב' ? 'ארמונות לב' : urlId;
-    let fieldForSearch = (urlId.indexOf('-') > -1)? urlId.replace('-', ' '): urlId;
-    let routeName = this.route.snapshot.paramMap.get('name');
+  async checkCustomer(loggedUser?: UserFields | AdminUser) { 
+
+    let co = await this.halls.getById(this.uriId),
+    customer = co['customer'];
+    this.accessPage = this.urlCompare(this.uriId);
+    console.log("ppppppppp ", co);
     
-    console.warn("Route Name: ", routeName, " id: ", urlId, " loggedUser: ", loggedUser, " ::this.auth.authUser:: ", this.auth.authUser);
+    this.customer = of(customer);
+    this.allowAccess(loggedUser);
+    this.halls.customerOb = customer;
+    this.halls.CustomerEmit(customer);
+    this.accessPage = this.urlCompare(this.router.url);
+    console.log(co);
+  }
 
-    this.halls.getCustomers().then(customersData => {
+  allowAccess(user){
 
-      if ('customers' in customersData) customersData = customersData['customers'];
+    console.log(this.customer['email']);
+    if (user && (this.customer["user_id"] == user['id'])) {
+      this.canAccess = of(true);
+    } else if (this.auth.authUser && this.auth.authUser['authority']?.name == "Admin") {
+      this.canAccess = of(true);
+    } else if (this.customer['email']) {
+      this.canAccess = of(false);
+      // this.goTo(this.uriId);
+    }else{
+      this.canAccess = of(false);
+      // this.goTo(this.uriId);
+    }
+  }
 
-      let fields = this.halls.getFieldType(fieldForSearch),
-          customers = customersData && customersData[routeName] ? customersData[routeName] : false;
+  getCustomer(customers) {
+    let fieldForSearch = (this.uriId.indexOf('-') > -1) ? this.uriId.replace('-', ' ') : this.uriId,
+        routeName = this.route.snapshot.paramMap.get('name'),
+        fields = this.halls.getFieldType(fieldForSearch);
 
-      if (!customers) return this.goTo(urlId);
+    customers = customers && customers[routeName] ? customers[routeName] : false;
 
-      let customerWithGall = customers.find(cs => cs['customer'][fields[fieldForSearch]] == fieldForSearch);
-      if (! customerWithGall) return this.goTo(urlId); 
+    if (!customers) return this.goTo(this.uriId);
+    let customerWithGall = customers.find(cs => cs['customer'][fields[fieldForSearch]] == fieldForSearch);
 
-      this.halls.customerOb = customerWithGall;
-      this.halls.CustomerEmit(customerWithGall);
-
-      let customer = customerWithGall['customer'];
-      if (! customer) return this.goTo(urlId);
-      
-      this.accessPage = this.urlCompare(this.router.url);
-      
-      // console.log(customer, " loggedUser: ", loggedUser, " <" + urlCompare, " <:::> ", this.pathId + "> ", (urlCompare == this.pathId), " fields: ", fields);
-      if (customer && loggedUser && (customer["user_id"] == loggedUser['id'])) {
-        
-        this.canAccess = of(true);
-        this.customer = of(customerWithGall);
-      }else if(customer && this.auth.authUser && this.auth.authUser['authority']?.name == "Admin"){
-
-        this.canAccess = of(true);
-        this.customer = of(customerWithGall);
-      } else if(customer && customer['email']){
-        this.customer = of(customerWithGall);
-        this.canAccess = of(false);
-        
-        this.goTo(urlId);
-        return;
-      }else {
-        if (!customer) return this.goTo(urlId);
-        this.canAccess = of(false);
-      }
-      // console.log(customers, customerWithGall);
-    }); 
+    this.customer = of(customerWithGall);
+    this.halls.customerOb = customerWithGall;
+    this.halls.CustomerEmit(customerWithGall);
+    return customerWithGall;
   }
 
   goTo(urlId) {
-    
-    let path = decodeURIComponent(this.router.url).split("/"+ decodeURIComponent(urlId))[0]+"/"+urlId;
+
+    let path = decodeURIComponent(this.router.url).split("/" + decodeURIComponent(urlId))[0] + "/" + urlId;
 
     this.router.navigate([path]);
     console.log("urlId: ", urlId, " path: ", path, " this.router.url: ", this.router.url);
@@ -133,12 +137,12 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   contactModel(paramCustomer) {
-    
+
     this.customerMessage = {
-      id:'contact_customer', 
+      id: 'contact_customer',
       url: decodeURIComponent(location.pathname),
-      modalSize: "modal-lg", 
-      nameTo: paramCustomer.company, 
+      modalSize: "modal-lg",
+      nameTo: paramCustomer.company,
       nameFrom: paramCustomer.name,
       emailTo: paramCustomer.email,
       emailFrom: false,
@@ -154,12 +158,12 @@ export class CustomerComponent implements OnInit, OnDestroy {
         message: true
       }
     };
-    this.http.sendingMail.next({['contact_customer']: true});
+    this.http.sendingMail.next({ ['contact_customer']: true });
     this.sendingMail = this.http.sendingMail;
   }
 
   ngOnDestroy() {
-    if(this.pageObs) this.pageObs.unsubscribe();
-    if(this.userSubs$) this.userSubs$.unsubscribe();
+    if (this.pageObs) this.pageObs.unsubscribe();
+    if (this.userSubs$) this.userSubs$.unsubscribe();
   }
 }
