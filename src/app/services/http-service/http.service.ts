@@ -215,14 +215,16 @@ export class HttpService extends UrlRedirect {
     };
   }
 
-  redirect() {
+  redirect(urlParams?: string | boolean) {
 
+    urlParams = typeof urlParams == "string"? decodeURIComponent(urlParams): urlParams;
     let loc = decodeURIComponent(location.pathname),
-      url = this.intendedUri ? this.intendedUri : this.requestUrl ? this.requestUrl : false;
+        rqurl = typeof this.requestUrl == "string"? decodeURIComponent(this.requestUrl): this.requestUrl,
+        intended = decodeURIComponent(this.intendedUri),
+        url = intended ? intended : rqurl ? rqurl : false;
+    if (!url) url = this.exludedUrls(loc) ? '/' : this.idxUrl(loc, '/customers') ? loc : '/';
 
-    if (!url) url = this.inexludededUrls(loc) ? '/' : this.idxUrl(loc, '/customers') ? loc : '/';
-
-    console.warn("::redirect:: ", url);
-    this.router.navigate([url]); 
+    console.warn("::redirect:: ", url, " ::loc:: ", loc, " ::request from:: ", rqurl, " ::intended:: ", intended, " ::urlParams:: ", urlParams);
+    if(urlParams != loc) this.router.navigate([url]); 
   }
 }

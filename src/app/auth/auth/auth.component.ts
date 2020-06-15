@@ -31,7 +31,7 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
         /// TODO EVENTS
         console.log("element_id: ", thiz.params.id, " requestUrl: ", thiz.http.requestUrl, 'intended: ', thiz.http.intendedUri);
         
-        thiz.http.redirect();
+        thiz.http.redirect((thiz.http.requestUrl?thiz.http.requestUrl:thiz.http.intendedUri?thiz.http.intendedUri:false));
 
         // console.log(thiz.http.requestUrl);
         if ($(model).is(':hidden')) {

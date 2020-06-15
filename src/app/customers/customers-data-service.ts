@@ -103,9 +103,9 @@ export class CustomersDataService implements OnInit {
                 return this.joinPageAccessor(dataResponse, prop, customerProp);
             }
             
-            if(this.customerOb){
-                return this.customerOb;
-            }
+            // if(this.customerOb){
+            //     return this.customerOb;
+            // }
             
             let customersData = dataResponse['customers'] ? dataResponse['customers'] : dataResponse;
 

@@ -31,7 +31,7 @@ export class HelpersService {
   }
 
   slug(value: string, delimiter?: string): string {
-    return this.rmUnWantedChars(value).replace(/\s+/g, delimiter ? delimiter : '-');
+    return this.rmUnWantedChars(value).replace(/\s+/g, (delimiter ? delimiter : '-'));
   }
 
   isValidToken(typeName?: string): boolean {
@@ -45,6 +45,14 @@ export class HelpersService {
       return false;
     }
     return ! this.jwt.isTokenExpired(this.jwt.tokenGetter());;
+  }
+
+  slugToWithSpace(param){
+    return (param.indexOf('-') > -1) ? param.replace('-', ' ') : param;
+  }
+
+  isNumber(param){
+    return (!isNaN(parseFloat(param)) && isFinite(param));
   }
 
   getAuthTokens(): AuthTokens | boolean {

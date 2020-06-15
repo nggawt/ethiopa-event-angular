@@ -171,9 +171,10 @@ export class AuthService extends BaseAuth implements Auth {
   }
 
   getActiveUser(users: Users, userType?: string | boolean): AdminUser | UserFields | {} {
-
+    console.log(":::users:: ", users);
+    
     return Object.keys(users).reduce((acc, currValue) => {
-      if(userType == currValue){
+      if(userType && userType == currValue){
         acc = users[currValue];
       }else if (users[currValue].activeted) {
         acc = users[currValue];

@@ -30,10 +30,10 @@ export class RouteGuardService extends BaseGuard {
     if (! this.auth.authCheck()) {
       return this.goTo(this.currentUrl);
     }
-    console.log("this.auth.authCheck()::: ", this.auth.authCheck());
     
     /** if user is admin allow access **/
     if (this.autUser && this.autUser['type'] == "admin") return true;
+    console.log("this.auth.authCheck()::: ", this.auth.authCheck(), " ::autUser:: ", this.autUser);
 
     /** if our uri is /join and we have auth user, lets check if auth user is already our customer member and let him access join page if false **/
     if (join && uEmail) {
@@ -42,7 +42,7 @@ export class RouteGuardService extends BaseGuard {
     }
 
     /** if no user and login session not expaired get logged user check match conditions and sallow access **/
-    if (!this.auth.authUser) return this.getLoggedUser();
+    if (! this.auth.authUser) return this.getLoggedUser();
 
     let css;
     if (css = this.customers.customerOb ? (this.customers.customerOb['customer']) : false) {

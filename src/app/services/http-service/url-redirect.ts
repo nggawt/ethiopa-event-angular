@@ -9,7 +9,7 @@ export abstract class UrlRedirect {
         login: "/login"
       };
 
-      inexludededUrls(loc) {
+      exludedUrls(loc) {
 
         for (let url in this.urls) {
           if (url == loc) return true;
@@ -21,5 +21,5 @@ export abstract class UrlRedirect {
         return (loc.indexOf(path) >= 0);
       }
 
-      abstract redirect():void;
+      abstract redirect(urlParams?: string | boolean):void;
 }
