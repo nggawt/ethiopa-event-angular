@@ -89,8 +89,8 @@ export class HelpersService {
       '.', '%', '&', '=', '-', '+', '!', ':', ',', '{', '}',
       '[', ']', '`', '~', '$', '^', '/', '|', '\\'
     ];
-
-    let cleanText = text.trim();
+    console.warn(text);
+    let cleanText = text? text.trim(): "";
     unwantedChars.forEach(char => {
       if (this.arrayIsContains(cleanText, char)) cleanText = cleanText.replace((new RegExp("\\" + char, "gi")), '');
     });

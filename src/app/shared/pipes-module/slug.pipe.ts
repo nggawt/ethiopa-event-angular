@@ -10,6 +10,6 @@ export class SlugPipe implements PipeTransform {
   
   transform(value: string, ...args: any[]): any {
 
-    return this.helpFn.slug(value).trim();
+    return value && value.length? this.helpFn.slug(value).trim(): '';
   }
 }
